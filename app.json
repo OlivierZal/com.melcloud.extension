@@ -51,20 +51,13 @@
     "getMeasureTemperatureCapabilitiesForAta": {
       "method": "GET",
       "path": "/drivers/melcloud/available_temperatures"
-    },
-    "getUnitErrorLog": {
-      "method": "GET",
-      "path": "/error_log"
-    },
-    "listenToOutdoorTemperatureForAta": {
-      "method": "POST",
-      "path": "/drivers/melcloud/cooling_self_adjustment"
     }
   },
   "platforms": [
     "local"
   ],
   "permissions": [
+    "homey:app:com.melcloud",
     "homey:manager:api"
   ]
 }
