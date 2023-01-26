@@ -72,7 +72,7 @@ export default class MELCloudExtensionApp extends App {
     threshold
   }: OutdoorTemperatureListenerData): Promise<string> {
     try {
-      this.setSettings({ self_adjust_threshold: threshold })
+      this.setSettings({ threshold })
       const splitCapabilityPath: string[] = capabilityPath.split(':')
       if (splitCapabilityPath.length !== 2) {
         throw new Error('The selected outdoor temperature is invalid.')
@@ -89,8 +89,8 @@ export default class MELCloudExtensionApp extends App {
         )
       }
       this.setSettings({
-        outdoor_temperature_capability_path: capabilityPath,
-        self_adjust_enabled: enabled
+        capabilityPath,
+        enabled
       })
       return capability
     } catch (error: unknown) {
@@ -99,8 +99,8 @@ export default class MELCloudExtensionApp extends App {
         error instanceof Error ? error.message : error
       )
       this.setSettings({
-        outdoor_temperature_capability_path: '',
-        self_adjust_enabled: false
+        capabilityPath: '',
+        enabled: false
       })
       if (capabilityPath !== '') {
         throw error
@@ -119,6 +119,15 @@ export default class MELCloudExtensionApp extends App {
       this.outdoorTemperatureDevice.io = null
     }
     this.log('Listening to outdoor temperature: listener has been cleaned')
+  }
+
+
+  setSettings (settings: Partial<OutdoorTemperatureListenerData>): void {
+    for (const [setting, value] of Object.entries(settings)) {
+      if (value !== this.homey.settings.get(setting)) {
+        this.homey.settings.set(setting, value)
+      }
+    }
   }
 
   async onUninit (): Promise<void> {
