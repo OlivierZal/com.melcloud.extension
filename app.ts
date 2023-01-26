@@ -121,7 +121,6 @@ export default class MELCloudExtensionApp extends App {
     this.log('Listening to outdoor temperature: listener has been cleaned')
   }
 
-
   setSettings (settings: Partial<OutdoorTemperatureListenerData>): void {
     for (const [setting, value] of Object.entries(settings)) {
       if (value !== this.homey.settings.get(setting)) {
