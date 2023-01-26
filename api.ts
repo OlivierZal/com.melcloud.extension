@@ -1,6 +1,6 @@
 import type Homey from 'homey/lib/Homey'
 import type MELCloudAppExtension from './app'
-import { type OutdoorTemperatureListenerData } from './types'
+import { type OutdoorTemperatureListenerForAtaData } from './types'
 
 function sortByAlphabeticalOrder (value1: string, value2: string): -1 | 0 | 1 {
   if (value1 < value2) {
@@ -16,11 +16,14 @@ module.exports = {
   async getMeasureTemperatureCapabilitiesForAta ({ homey }: { homey: Homey }) {
     const app: MELCloudAppExtension = homey.app as MELCloudAppExtension
     const driverId: string = 'melcloud'
-    if (app.getDevices({ driverId }).length === 0) {
-      return []
-    }
     // @ts-expect-error bug
     const devices = await app.api.devices.getDevices()
+    const isThereMELcloudAtaDevice: boolean = Object.values(devices).some(
+      (device: any): boolean => device.driverId === driverId
+    )
+    if (!isThereMELcloudAtaDevice) {
+      return []
+    }
     return Object.values(devices)
       .filter(
         (device: any): boolean =>
@@ -54,7 +57,7 @@ module.exports = {
     body
   }: {
     homey: Homey
-    body: OutdoorTemperatureListenerData
+    body: OutdoorTemperatureListenerForAtaData
   }): Promise<void> {
     await (homey.app as MELCloudAppExtension).listenToOutdoorTemperatureForAta(
       body

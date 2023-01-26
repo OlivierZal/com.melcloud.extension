@@ -1,46 +1,46 @@
-import type Homey from "homey/lib/Homey";
-import { type OutdoorTemperatureListenerData } from "../types";
+import type Homey from 'homey/lib/Homey'
+import { type OutdoorTemperatureListenerForAtaData } from '../types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function onHomeyReady(Homey: Homey): Promise<void> {
-  await Homey.ready();
+async function onHomeyReady (Homey: Homey): Promise<void> {
+  await Homey.ready()
 
-  const minimumTemperature: number = 10;
-  const maximumTemperature: number = 38;
+  const minimumTemperature: number = 10
+  const maximumTemperature: number = 38
 
   const applySelfAdjustElement: HTMLButtonElement = document.getElementById(
-    "apply-self-adjust"
-  ) as HTMLButtonElement;
+    'apply-self-adjust'
+  ) as HTMLButtonElement
   const refreshSelfAdjustElement: HTMLButtonElement = document.getElementById(
-    "refresh-self-adjust"
-  ) as HTMLButtonElement;
+    'refresh-self-adjust'
+  ) as HTMLButtonElement
   const thresholdElement: HTMLInputElement = document.getElementById(
-    "self_adjust_threshold"
-  ) as HTMLInputElement;
+    'self_adjust_threshold'
+  ) as HTMLInputElement
   const outdoorTemperatureCapabilityElement: HTMLSelectElement =
     document.getElementById(
-      "outdoor_temperature_capability_path"
-    ) as HTMLSelectElement;
+      'outdoor_temperature_capability_path'
+    ) as HTMLSelectElement
   const selfAdjustEnabledElement: HTMLSelectElement = document.getElementById(
-    "self_adjust_enabled"
-  ) as HTMLSelectElement;
+    'self_adjust_enabled'
+  ) as HTMLSelectElement
 
-  function getHomeySetting(
+  function getHomeySetting (
     element: HTMLInputElement | HTMLSelectElement,
-    defaultValue: any = ""
+    defaultValue: any = ''
   ): void {
     // @ts-expect-error bug
     Homey.get(element.id, async (error: Error, value: any): Promise<void> => {
       if (error !== null) {
         // @ts-expect-error bug
-        await Homey.alert(error.message);
-        return;
+        await Homey.alert(error.message)
+        return
       }
-      element.value = String(value ?? defaultValue);
-    });
+      element.value = String(value ?? defaultValue)
+    })
   }
 
-  function int(
+  function int (
     element: HTMLInputElement,
     value: number = Number.parseInt(element.value)
   ): number {
@@ -49,106 +49,106 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
       value < Number(element.min) ||
       value > Number(element.max)
     ) {
-      element.value = "";
+      element.value = ''
       throw new Error(
         `${element.name} must be an integer between ${element.min} and ${element.max}.`
-      );
+      )
     }
-    return value;
+    return value
   }
 
-  function getHomeySelfAdjustSettings(): void {
-    getHomeySetting(outdoorTemperatureCapabilityElement);
-    getHomeySetting(selfAdjustEnabledElement, false);
-    getHomeySetting(thresholdElement);
+  function getHomeySelfAdjustSettings (): void {
+    getHomeySetting(outdoorTemperatureCapabilityElement)
+    getHomeySetting(selfAdjustEnabledElement, false)
+    getHomeySetting(thresholdElement)
   }
 
-  function getMeasureTemperatureCapabilitiesForAta(): void {
+  function getMeasureTemperatureCapabilitiesForAta (): void {
     // @ts-expect-error bug
     Homey.api(
-      "GET",
-      "/drivers/melcloud/available_temperatures",
+      'GET',
+      '/drivers/melcloud/available_temperatures',
       async (error: Error, devices: any[]): Promise<void> => {
         if (devices.length === 0) {
-          return;
+          return
         }
         if (error !== null) {
           // @ts-expect-error bug
-          await Homey.alert(error.message);
-          return;
+          await Homey.alert(error.message)
+          return
         }
         for (const device of devices) {
-          const { capabilityPath, capabilityName } = device;
-          const option: HTMLOptionElement = document.createElement("option");
-          option.setAttribute("value", capabilityPath);
-          const optionText: Text = document.createTextNode(capabilityName);
-          option.appendChild(optionText);
-          outdoorTemperatureCapabilityElement.appendChild(option);
+          const { capabilityPath, capabilityName } = device
+          const option: HTMLOptionElement = document.createElement('option')
+          option.setAttribute('value', capabilityPath)
+          const optionText: Text = document.createTextNode(capabilityName)
+          option.appendChild(optionText)
+          outdoorTemperatureCapabilityElement.appendChild(option)
         }
-        getHomeySelfAdjustSettings();
+        getHomeySelfAdjustSettings()
       }
-    );
+    )
   }
 
-  thresholdElement.min = String(minimumTemperature);
-  thresholdElement.max = String(maximumTemperature);
-  getMeasureTemperatureCapabilitiesForAta();
+  thresholdElement.min = String(minimumTemperature)
+  thresholdElement.max = String(maximumTemperature)
+  getMeasureTemperatureCapabilitiesForAta()
 
-  outdoorTemperatureCapabilityElement.addEventListener("change", (): void => {
-    if (outdoorTemperatureCapabilityElement.value !== "") {
-      if (selfAdjustEnabledElement.value === "false") {
-        selfAdjustEnabledElement.value = "true";
+  outdoorTemperatureCapabilityElement.addEventListener('change', (): void => {
+    if (outdoorTemperatureCapabilityElement.value !== '') {
+      if (selfAdjustEnabledElement.value === 'false') {
+        selfAdjustEnabledElement.value = 'true'
       }
     } else if (
-      outdoorTemperatureCapabilityElement.value === "" &&
-      selfAdjustEnabledElement.value === "true"
+      outdoorTemperatureCapabilityElement.value === '' &&
+      selfAdjustEnabledElement.value === 'true'
     ) {
-      selfAdjustEnabledElement.value = "false";
+      selfAdjustEnabledElement.value = 'false'
     }
-  });
+  })
 
-  thresholdElement.addEventListener("change", (): void => {
-    if (selfAdjustEnabledElement.value === "false") {
-      selfAdjustEnabledElement.value = "true";
+  thresholdElement.addEventListener('change', (): void => {
+    if (selfAdjustEnabledElement.value === 'false') {
+      selfAdjustEnabledElement.value = 'true'
     }
-  });
+  })
 
-  refreshSelfAdjustElement.addEventListener("click", (): void => {
-    getHomeySelfAdjustSettings();
-  });
+  refreshSelfAdjustElement.addEventListener('click', (): void => {
+    getHomeySelfAdjustSettings()
+  })
 
-  applySelfAdjustElement.addEventListener("click", (): void => {
-    let threshold: number = 0;
+  applySelfAdjustElement.addEventListener('click', (): void => {
+    let threshold: number = 0
     try {
-      threshold = int(thresholdElement);
+      threshold = int(thresholdElement)
     } catch (error: unknown) {
-      getHomeySelfAdjustSettings();
+      getHomeySelfAdjustSettings()
       // @ts-expect-error bug
-      Homey.alert(error.message);
-      return;
+      Homey.alert(error.message)
+      return
     }
-    const enabled: boolean = selfAdjustEnabledElement.value === "true";
-    const capabilityPath: string = outdoorTemperatureCapabilityElement.value;
-    const body: OutdoorTemperatureListenerData = {
+    const enabled: boolean = selfAdjustEnabledElement.value === 'true'
+    const capabilityPath: string = outdoorTemperatureCapabilityElement.value
+    const body: OutdoorTemperatureListenerForAtaData = {
       capabilityPath,
       enabled,
-      threshold,
-    };
+      threshold
+    }
     // @ts-expect-error bug
     Homey.api(
-      "POST",
-      "/drivers/melcloud/cooling_self_adjustment",
+      'POST',
+      '/drivers/melcloud/cooling_self_adjustment',
       body,
       async (error: Error): Promise<void> => {
-        getHomeySelfAdjustSettings();
+        getHomeySelfAdjustSettings()
         if (error !== null) {
           // @ts-expect-error bug
-          await Homey.alert(error.message);
-          return;
+          await Homey.alert(error.message)
+          return
         }
         // @ts-expect-error bug
-        await Homey.alert("Settings have been successfully saved.");
+        await Homey.alert('Settings have been successfully saved.')
       }
-    );
-  });
+    )
+  })
 }

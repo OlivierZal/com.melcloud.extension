@@ -1,13 +1,15 @@
 import { HomeyAPIApp } from 'homey-api'
-import { App } from 'homey'
-import { type OutdoorTemperatureListenerData } from './types'
+import { App, type Api } from 'homey'
+import { type OutdoorTemperatureListenerForAtaData } from './types'
 
 export default class MELCloudExtensionApp extends App {
-  api!: HomeyAPIApp | null
-  outdoorTemperatureDevice!: any
-  outdoorTemperatureListener!: any
+  melcloudApi!: Api
+  api!: HomeyAPIApp
+  device!: any
+  listener!: any
 
   async onInit (): Promise<void> {
+    this.melcloudApi = this.homey.api.getApiApp('com.melcloud')
     // @ts-expect-error bug
     this.api = new HomeyAPIApp({ homey: this.homey })
     // @ts-expect-error bug
@@ -16,7 +18,11 @@ export default class MELCloudExtensionApp extends App {
   }
 
   async listenToOutdoorTemperatureForAta (
-    { capabilityPath, enabled, threshold }: OutdoorTemperatureListenerData = {
+    {
+      capabilityPath,
+      enabled,
+      threshold
+    }: OutdoorTemperatureListenerForAtaData = {
       capabilityPath:
         this.homey.settings.get('outdoor_temperature_capability_path') ?? '',
       enabled: this.homey.settings.get('self_adjust_enabled') ?? false,
@@ -36,41 +42,35 @@ export default class MELCloudExtensionApp extends App {
     }
     this.log(
       'Listening to outdoor temperature: listener has been created for',
-      this.outdoorTemperatureDevice.name,
+      this.device.name,
       '-',
       capability,
       '...'
     )
-    this.outdoorTemperatureListener =
-      this.outdoorTemperatureDevice.makeCapabilityInstance(
-        capability,
-        async (value: number): Promise<void> => {
-          this.log(
-            'Listening to outdoor temperature:',
-            value,
-            'listened from',
-            this.outdoorTemperatureDevice.name,
-            '-',
-            capability
-          )
-          for (const device of this.getDevices({ driverId: 'melcloud' })) {
-            if (device.getCapabilityValue('operation_mode') !== 'cool') {
-              continue
-            }
-            await device.onCapability(
-              'target_temperature',
-              Math.max(threshold, Math.round(value - 8), 38)
-            )
-          }
-        }
-      )
+    this.listener = this.device.makeCapabilityInstance(
+      capability,
+      async (value: number): Promise<void> => {
+        this.log(
+          'Listening to outdoor temperature:',
+          value,
+          'listened from',
+          this.device.name,
+          '-',
+          capability
+        )
+        await this.melcloudApi.post(
+          '/drivers/melcloud/cooling_self_adjustment',
+          { threshold, value }
+        )
+      }
+    )
   }
 
   async handleOutdoorTemperatureListenerData ({
     capabilityPath,
     enabled,
     threshold
-  }: OutdoorTemperatureListenerData): Promise<string> {
+  }: OutdoorTemperatureListenerForAtaData): Promise<string> {
     try {
       this.setSettings({ threshold })
       const splitCapabilityPath: string[] = capabilityPath.split(':')
@@ -80,8 +80,8 @@ export default class MELCloudExtensionApp extends App {
       const [id, capability]: string[] = splitCapabilityPath
       // @ts-expect-error bug
       const device = await this.api.devices.getDevice({ id })
-      if (device.id !== this.outdoorTemperatureDevice?.id) {
-        this.outdoorTemperatureDevice = device
+      if (device.id !== this.device?.id) {
+        this.device = device
       }
       if (!(capability in device.capabilitiesObj)) {
         throw new Error(
@@ -112,16 +112,16 @@ export default class MELCloudExtensionApp extends App {
   }
 
   cleanOutdoorTemperatureListener (): void {
-    if (this.outdoorTemperatureListener !== null) {
-      this.outdoorTemperatureListener.destroy()
+    if (this.listener !== null) {
+      this.listener.destroy()
     }
-    if (this.outdoorTemperatureDevice !== null) {
-      this.outdoorTemperatureDevice.io = null
+    if (this.device !== null) {
+      this.device.io = null
     }
     this.log('Listening to outdoor temperature: listener has been cleaned')
   }
 
-  setSettings (settings: Partial<OutdoorTemperatureListenerData>): void {
+  setSettings (settings: Partial<OutdoorTemperatureListenerForAtaData>): void {
     for (const [setting, value] of Object.entries(settings)) {
       if (value !== this.homey.settings.get(setting)) {
         this.homey.settings.set(setting, value)
