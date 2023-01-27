@@ -1,5 +1,4 @@
 {
-  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.mecloud.extension",
   "sdk": 3,
   "brandColor": "#40e0d0",
@@ -9,9 +8,7 @@
   "description": {
     "en": "Extension for MELCloud app"
   },
-  "category": [
-    "climate"
-  ],
+  "category": ["climate"],
   "version": "1.0.0",
   "compatibility": ">=5.0.0",
   "tags": {
@@ -57,10 +54,6 @@
       "path": "/drivers/melcloud/cooling_self_adjustment"
     }
   },
-  "platforms": [
-    "local"
-  ],
-  "permissions": [
-    "homey:manager:api"
-  ]
+  "platforms": ["local"],
+  "permissions": ["homey:manager:api"]
 }
