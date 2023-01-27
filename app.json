@@ -7,12 +7,12 @@
     "en": "MELCloud Extension"
   },
   "description": {
-    "en": "Extension for Homey MELCloud app"
+    "en": "Expand the functionality of the MELCloud Homey app"
   },
   "category": [
     "climate"
   ],
-  "version": "1.0.1",
+  "version": "1.0.2",
   "compatibility": ">=5.0.0",
   "tags": {
     "en": [
@@ -48,11 +48,11 @@
     }
   },
   "api": {
-    "getMeasureTemperatureCapabilitiesForAta": {
+    "getMeasureTemperatureDevices": {
       "method": "GET",
       "path": "/drivers/melcloud/available_temperatures"
     },
-    "listenToOutdoorTemperatureForAta": {
+    "selfAdjustCooling": {
       "method": "POST",
       "path": "/drivers/melcloud/cooling_self_adjustment"
     }
