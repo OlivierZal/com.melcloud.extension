@@ -9,8 +9,7 @@ export default class MELCloudExtensionApp extends App {
   api!: HomeyAPIApp
   melCloudDriverIds!: MELCloudDriverId[]
   melCloudDevices!: any
-  device!: any
-  listener!: any
+  listener!: { device?: any, capability?: any }
 
   async onInit (): Promise<void> {
     // @ts-expect-error bug
@@ -22,8 +21,7 @@ export default class MELCloudExtensionApp extends App {
     this.melCloudDevices = {}
     await this.retrieveDevices()
 
-    this.device = null
-    this.listener = null
+    this.listener = {}
     await this.listenToOutdoorTemperatureForAta().catch(this.error)
   }
 
@@ -71,19 +69,19 @@ export default class MELCloudExtensionApp extends App {
     }
     this.log(
       'Listening to outdoor temperature: listener has been created for',
-      this.device.name,
+      this.listener.device.name,
       '-',
       capability,
       '...'
     )
-    this.listener = this.device.makeCapabilityInstance(
-      'onoff',
+    this.listener.capability = this.listener.device.makeCapabilityInstance(
+      capability,
       async (value: number): Promise<void> => {
         this.log(
           'Listening to outdoor temperature:',
           value,
           'listened from',
-          this.device.name,
+          this.listener.device.name,
           '-',
           capability
         )
@@ -92,11 +90,18 @@ export default class MELCloudExtensionApp extends App {
             continue
           }
           await ataDevice.setCapabilityValue(
-            Math.max(threshold, Math.round(value - 8), 38)
+            this.getTargetTemperature(threshold, value)
           )
         }
       }
     )
+    this.listener.capability.setValue(
+      this.getTargetTemperature(threshold, this.listener.capability.value)
+    )
+  }
+
+  getTargetTemperature (threshold: number, value: number): number {
+    return Math.max(threshold, Math.round(value - 8), 38)
   }
 
   async handleOutdoorTemperatureListenerData ({
@@ -113,8 +118,8 @@ export default class MELCloudExtensionApp extends App {
       const [id, capability]: string[] = splitCapabilityPath
       // @ts-expect-error bug
       const device = await this.api.devices.getDevice({ id })
-      if (device.id !== this.device?.id) {
-        this.device = device
+      if (device.id !== this.listener?.device?.id) {
+        this.listener.device = device
       }
       if (!(capability in device.capabilitiesObj)) {
         throw new Error(
@@ -145,11 +150,11 @@ export default class MELCloudExtensionApp extends App {
   }
 
   cleanOutdoorTemperatureListener (): void {
-    if (this.listener !== null) {
-      this.listener.destroy()
+    if (this.listener?.capability !== undefined) {
+      this.listener.capability.destroy()
     }
-    if (this.device !== null) {
-      this.device.io = null
+    if (this.listener?.device?.io !== undefined) {
+      this.listener.device.io = null
     }
     this.log('Listening to outdoor temperature: listener has been cleaned')
   }
