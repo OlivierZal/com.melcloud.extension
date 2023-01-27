@@ -6,10 +6,10 @@
     "en": "MELCloud Extension"
   },
   "description": {
-    "en": "Extension for MELCloud app"
+    "en": "Extension for Homey MELCloud app"
   },
   "category": ["climate"],
-  "version": "1.0.0",
+  "version": "1.0.1",
   "compatibility": ">=5.0.0",
   "tags": {
     "en": [
