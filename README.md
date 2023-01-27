@@ -1,5 +1,5 @@
-# MELCloud Extension for Homey MELCloud App
+# Extension for MELCloud Homey App
 
 ## Introduction
 
-This app adds features to Homey MELCloud App.
+This app extends the functionality of the MELCloud Homey App.
