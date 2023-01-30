@@ -6,4 +6,9 @@ Why?
 - Because it's better for your health.
 - Because it's better for the environment.
 
+Prerequisites:
+
+- Have installed the MECloud application.
+- Have installed a Homey app that returns the outdoor temperature.
+
 This app is not endorsed, verified or approved by Mitsubishi Electric Corporation. Mitsubishi cannot be held liable for any and all claims in the event of any damages that may occur when using this app to control MELCloud applications or devices.

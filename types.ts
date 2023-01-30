@@ -11,6 +11,10 @@ export interface Listener {
     name: string
     capabilitiesObj: any
     io: any
+    setCapabilityValue: (
+      capability: string,
+      value: boolean | number | string
+    ) => Promise<void>
     makeCapabilityInstance: (
       capability: string,
       onCapability: (value: number) => Promise<void>

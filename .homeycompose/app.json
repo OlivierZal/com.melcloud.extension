@@ -9,7 +9,7 @@
     "en": "Expand the functionality of the MELCloud Homey app"
   },
   "category": ["climate"],
-  "version": "1.0.3",
+  "version": "1.0.4",
   "compatibility": ">=5.0.0",
   "tags": {
     "en": [

@@ -9,3 +9,8 @@ Why?
 -   Because it's better for your heat pumps.
 -   Because it's better for your health.
 -   Because it's better for the environment.
+
+Prerequisites:
+
+-   Have installed the MECloud application.
+-   Have installed a Homey app that returns the outdoor temperature.
