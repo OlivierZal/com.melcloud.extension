@@ -2,8 +2,10 @@
 
 ## Introduction
 
-This app extends the functionality of the MELCloud Homey app.
+This app extends the functionality of the MELCloud Homey app with self-adjustment of the air-to-air cooling temperature with a maximum deviation of 8 °C from the outdoor temperature.
 
-Available features:
+Why?
 
--   for air-to-air heat pumps: self-regulating cooling with a maximum difference of 8 °C.
+-   Because it's better for your heat pumps.
+-   Because it's better for your health.
+-   Because it's better for the environment.
