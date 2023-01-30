@@ -1,12 +1,9 @@
 import type Homey from 'homey/lib/Homey'
-import { type OutdoorTemperatureListenerForAtaData } from '../types'
+import { type OutdoorTemperatureListenerData } from '../types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function onHomeyReady (Homey: Homey): Promise<void> {
   await Homey.ready()
-
-  const minimumTemperature: number = 10
-  const maximumTemperature: number = 38
 
   const applyElement: HTMLButtonElement = document.getElementById(
     'apply'
@@ -14,9 +11,6 @@ async function onHomeyReady (Homey: Homey): Promise<void> {
   const refreshElement: HTMLButtonElement = document.getElementById(
     'refresh'
   ) as HTMLButtonElement
-  const thresholdElement: HTMLInputElement = document.getElementById(
-    'threshold'
-  ) as HTMLInputElement
   const capabilityPathElement: HTMLSelectElement = document.getElementById(
     'capabilityPath'
   ) as HTMLSelectElement
@@ -39,41 +33,51 @@ async function onHomeyReady (Homey: Homey): Promise<void> {
     })
   }
 
-  function int (
-    element: HTMLInputElement,
-    value: number = Number.parseInt(element.value)
-  ): number {
-    if (
-      Number.isNaN(value) ||
-      value < Number(element.min) ||
-      value > Number(element.max)
-    ) {
-      element.value = ''
-      throw new Error(
-        `${element.name} must be an integer between ${element.min} and ${element.max}.`
-      )
-    }
-    return value
-  }
-
   function getHomeySelfAdjustSettings (): void {
     getHomeySetting(capabilityPathElement)
     getHomeySetting(enabledElement, false)
-    getHomeySetting(thresholdElement, 22)
   }
 
-  function getMeasureTemperatureCapabilitiesForAta (): void {
+  async function handleGetMeasureTemperatureDevicesError (error: Error): Promise<void> {
+    if (error.message === 'no_device') {
+      // @ts-expect-error bug
+      await Homey.confirm(
+        'First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?',
+        null,
+        async (error: Error, ok: boolean): Promise<void> => {
+          if (error !== null) {
+            // @ts-expect-error bug
+            await Homey.alert(error.message)
+          }
+          if (ok) {
+            // @ts-expect-error bug
+            await Homey.openURL(
+              'https://homey.app/fr-fr/app/com.mecloud/MELCloud'
+            )
+          }
+        }
+      )
+      return
+    }
+    // @ts-expect-error bug
+    await Homey.alert(error.message)
+  }
+
+  function getMeasureTemperatureDevices (): void {
     // @ts-expect-error bug
     Homey.api(
       'GET',
       '/drivers/melcloud/available_temperatures',
       async (error: Error, devices: any[]): Promise<void> => {
-        if (devices.length === 0) {
+        if (error !== null) {
+          await handleGetMeasureTemperatureDevicesError(error)
           return
         }
-        if (error !== null) {
+        if (devices.length === 0) {
           // @ts-expect-error bug
-          await Homey.alert(error.message)
+          await Homey.alert(
+            'You do not have any eligible devices to cooling self-adjustment.'
+          )
           return
         }
         for (const device of devices) {
@@ -89,9 +93,7 @@ async function onHomeyReady (Homey: Homey): Promise<void> {
     )
   }
 
-  thresholdElement.min = String(minimumTemperature)
-  thresholdElement.max = String(maximumTemperature)
-  getMeasureTemperatureCapabilitiesForAta()
+  getMeasureTemperatureDevices()
 
   capabilityPathElement.addEventListener('change', (): void => {
     if (capabilityPathElement.value !== '') {
@@ -106,32 +108,16 @@ async function onHomeyReady (Homey: Homey): Promise<void> {
     }
   })
 
-  thresholdElement.addEventListener('change', (): void => {
-    if (enabledElement.value === 'false') {
-      enabledElement.value = 'true'
-    }
-  })
-
   refreshElement.addEventListener('click', (): void => {
     getHomeySelfAdjustSettings()
   })
 
   applyElement.addEventListener('click', (): void => {
-    let threshold: number = 0
-    try {
-      threshold = int(thresholdElement)
-    } catch (error: unknown) {
-      getHomeySelfAdjustSettings()
-      // @ts-expect-error bug
-      Homey.alert(error.message)
-      return
-    }
     const enabled: boolean = enabledElement.value === 'true'
     const capabilityPath: string = capabilityPathElement.value
-    const body: OutdoorTemperatureListenerForAtaData = {
+    const body: OutdoorTemperatureListenerData = {
       capabilityPath,
-      enabled,
-      threshold
+      enabled
     }
     // @ts-expect-error bug
     Homey.api(

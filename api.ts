@@ -1,9 +1,6 @@
 import type Homey from 'homey/lib/Homey'
 import type MELCloudExtensionApp from './app'
-import {
-  type MELCloudDriverId,
-  type OutdoorTemperatureListenerForAtaData
-} from './types'
+import { type OutdoorTemperatureListenerData } from './types'
 
 function sortByAlphabeticalOrder (value1: string, value2: string): -1 | 0 | 1 {
   if (value1 < value2) {
@@ -16,19 +13,18 @@ function sortByAlphabeticalOrder (value1: string, value2: string): -1 | 0 | 1 {
 }
 
 module.exports = {
-  async getMeasureTemperatureCapabilitiesForAta ({ homey }: { homey: Homey }) {
+  async getMeasureTemperatureDevices ({ homey }: { homey: Homey }) {
     const app: MELCloudExtensionApp = homey.app as MELCloudExtensionApp
     const capabilityId: string = 'measure_temperature'
-    const driverId: MELCloudDriverId = 'melcloud'
-    // @ts-expect-error bug
-    const devices = Object.values(await app.api.devices.getDevices())
+    const devices = await app.refreshMelCloudDevicesAndGetExternalDevices()
+    if (app.melCloudDevices.length === 0) {
+      throw new Error('no_device')
+    }
     return devices
-      .filter(
-        (device: any): boolean =>
-          device.driverId !== driverId &&
-          device.capabilities.some((capability: string): boolean =>
-            capability.startsWith(capabilityId)
-          )
+      .filter((device: any): boolean =>
+        device.capabilities.some((capability: string): boolean =>
+          capability.startsWith(capabilityId)
+        )
       )
       .map((device: any) =>
         Object.values(device.capabilitiesObj)
@@ -50,15 +46,13 @@ module.exports = {
       )
   },
 
-  async listenToOutdoorTemperatureForAta ({
+  async selfAdjustCooling ({
     homey,
     body
   }: {
     homey: Homey
-    body: OutdoorTemperatureListenerForAtaData
+    body: OutdoorTemperatureListenerData
   }): Promise<void> {
-    await (homey.app as MELCloudExtensionApp).listenToOutdoorTemperatureForAta(
-      body
-    )
+    await (homey.app as MELCloudExtensionApp).listenToOutdoorTemperature(body)
   }
 }
