@@ -1,5 +1,8 @@
 import type Homey from 'homey/lib/Homey'
-import { type MeasureTemperatureDevice, type OutdoorTemperatureListenerData } from '../types'
+import {
+  type MeasureTemperatureDevice,
+  type OutdoorTemperatureListenerData
+} from '../types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function onHomeyReady (Homey: Homey): Promise<void> {
@@ -38,7 +41,9 @@ async function onHomeyReady (Homey: Homey): Promise<void> {
     getHomeySetting(enabledElement, false)
   }
 
-  async function handleGetMeasureTemperatureDevicesError (error: Error): Promise<void> {
+  async function handleGetMeasureTemperatureDevicesError (
+    error: Error
+  ): Promise<void> {
     if (error.message === 'no_device') {
       // @ts-expect-error bug
       await Homey.confirm(
@@ -68,7 +73,10 @@ async function onHomeyReady (Homey: Homey): Promise<void> {
     Homey.api(
       'GET',
       '/drivers/melcloud/available_temperatures',
-      async (error: Error, devices: MeasureTemperatureDevice[]): Promise<void> => {
+      async (
+        error: Error,
+        devices: MeasureTemperatureDevice[]
+      ): Promise<void> => {
         if (error !== null) {
           await handleGetMeasureTemperatureDevicesError(error)
           return

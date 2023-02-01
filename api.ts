@@ -46,7 +46,9 @@ module.exports = {
             .map(
               (capabilityObj): MeasureTemperatureDevice => ({
                 capabilityPath: `${device.id}:${capabilityObj.id as string}`,
-                capabilityName: `${device.name} - ${capabilityObj.title as string}`
+                capabilityName: `${device.name} - ${
+                  capabilityObj.title as string
+                }`
               })
             )
       )
