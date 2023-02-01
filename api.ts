@@ -40,13 +40,13 @@ module.exports = {
           device: HomeyAPIV2.ManagerDevices.Device
         ): MeasureTemperatureDevice[] =>
           Object.values(device.capabilitiesObj)
-            .filter((capabilityObj: { id: string, title: string }): boolean =>
+            .filter((capabilityObj): boolean =>
               capabilityObj.id.startsWith(capabilityId)
             )
             .map(
-              (capabilityObj: { id: string, title: string }): MeasureTemperatureDevice => ({
-                capabilityPath: `${device.id}:${capabilityObj.id}`,
-                capabilityName: `${device.name} - ${capabilityObj.title}`
+              (capabilityObj): MeasureTemperatureDevice => ({
+                capabilityPath: `${device.id}:${capabilityObj.id as string}`,
+                capabilityName: `${device.name} - ${capabilityObj.title as string}`
               })
             )
       )
