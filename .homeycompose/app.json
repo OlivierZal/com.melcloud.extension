@@ -49,7 +49,7 @@
       "method": "GET",
       "path": "/drivers/melcloud/available_temperatures"
     },
-    "selfAdjustCooling": {
+    "selfAdjustAtaCooling": {
       "method": "POST",
       "path": "/drivers/melcloud/cooling_self_adjustment"
     }
