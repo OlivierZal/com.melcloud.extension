@@ -8,7 +8,7 @@ Why?
 
 Prerequisites:
 
-- Have installed the MECloud application.
-- Have installed a Homey app that returns the outdoor temperature.
+- Have installed the MECloud Homey app: https://homey.app/en-us/app/com.mecloud/MELCloud.
+- Have installed any Homey app that returns the outdoor temperature.
 
 This app is not endorsed, verified or approved by Mitsubishi Electric Corporation. Mitsubishi cannot be held liable for any and all claims in the event of any damages that may occur when using this app to control MELCloud applications or devices.
