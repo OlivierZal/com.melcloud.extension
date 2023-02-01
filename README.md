@@ -12,5 +12,5 @@ Why?
 
 Prerequisites:
 
--   Have installed the MECloud application.
--   Have installed a Homey app that returns the outdoor temperature.
+-   Have installed the [MECloud Homey app](https://homey.app/en-us/app/com.mecloud/MELCloud).
+-   Have installed any Homey app that returns the outdoor temperature.

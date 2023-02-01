@@ -1,5 +1,5 @@
 import type Homey from 'homey/lib/Homey'
-import { type OutdoorTemperatureListenerData } from '../types'
+import { type MeasureTemperatureDevice, type OutdoorTemperatureListenerData } from '../types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function onHomeyReady (Homey: Homey): Promise<void> {
@@ -52,7 +52,7 @@ async function onHomeyReady (Homey: Homey): Promise<void> {
           if (ok) {
             // @ts-expect-error bug
             await Homey.openURL(
-              'https://homey.app/fr-fr/app/com.mecloud/MELCloud'
+              'https://homey.app/en-us/app/com.mecloud/MELCloud'
             )
           }
         }
@@ -68,7 +68,7 @@ async function onHomeyReady (Homey: Homey): Promise<void> {
     Homey.api(
       'GET',
       '/drivers/melcloud/available_temperatures',
-      async (error: Error, devices: any[]): Promise<void> => {
+      async (error: Error, devices: MeasureTemperatureDevice[]): Promise<void> => {
         if (error !== null) {
           await handleGetMeasureTemperatureDevicesError(error)
           return
