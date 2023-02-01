@@ -24,7 +24,7 @@ export default class MELCloudExtensionApp extends App {
     this.outdoorTemperatureListener = {}
     this.outdoorTemperatureCapability = ''
     await this.refreshMelCloudDevicesAndGetExternalDevices()
-    await this.selfAdjustAtaCooling().catch(this.error)
+    await this.selfAdjustCoolingAta().catch(this.error)
   }
 
   async refreshMelCloudDevicesAndGetExternalDevices (): Promise<
@@ -43,7 +43,7 @@ export default class MELCloudExtensionApp extends App {
     )
   }
 
-  async selfAdjustAtaCooling (
+  async selfAdjustCoolingAta (
     { capabilityPath, enabled }: OutdoorTemperatureListenerData = {
       capabilityPath: this.homey.settings.get('capabilityPath') ?? '',
       enabled: this.homey.settings.get('enabled') ?? false
@@ -57,12 +57,11 @@ export default class MELCloudExtensionApp extends App {
       enabled
     })
     if (
-      this.outdoorTemperatureListener.device === undefined ||
-      this.homey.settings.get('enabled') === false
+      this.outdoorTemperatureListener.device !== undefined &&
+      this.homey.settings.get('enabled') === true
     ) {
-      return
+      this.listenToThermostatModes()
     }
-    this.listenToThermostatModes()
   }
 
   async handleoutdoorTemperatureListenerData ({
@@ -136,9 +135,8 @@ export default class MELCloudExtensionApp extends App {
   async listenToTargetTemperature (
     listener: Listener,
     // @ts-expect-error bug
-    outdoorTemperature: number = this.outdoorTemperatureListener.device?.capabilitiesObj[
-      this.outdoorTemperatureCapability
-    ]?.value
+    outdoorTemperature: number = this.outdoorTemperatureListener.device
+      ?.capabilitiesObj[this.outdoorTemperatureCapability]?.value
   ): Promise<void> {
     const threshold: number =
       this.homey.settings.get('thresholds')?.[listener.device.id]
@@ -160,11 +158,7 @@ export default class MELCloudExtensionApp extends App {
         'target_temperature',
         // @ts-expect-error bug
         async (targetTemperature: number): Promise<void> => {
-          await this.updateTargetTemperature(
-            listener,
-            targetTemperature,
-            this.outdoorTemperatureListener.temperature?.value as number
-          )
+          await this.updateTargetTemperature(listener, targetTemperature)
         }
       )
       this.log(
@@ -172,14 +166,19 @@ export default class MELCloudExtensionApp extends App {
         listener.device.name,
         '- target_temperature'
       )
-      await this.updateTargetTemperature(listener, threshold, outdoorTemperature)
+      await this.updateTargetTemperature(
+        listener,
+        threshold,
+        outdoorTemperature
+      )
     }
   }
 
   async updateTargetTemperature (
     listener: Listener,
     targetTemperature: number,
-    outdoorTemperature: number
+    outdoorTemperature: number = this.outdoorTemperatureListener.temperature
+      ?.value as number
   ): Promise<void> {
     this.log(
       targetTemperature,
@@ -198,35 +197,19 @@ export default class MELCloudExtensionApp extends App {
       .catch(this.error)
   }
 
-  listenToOutdoorTemperature (): void {
-    if (
-      this.outdoorTemperatureListener.device === undefined ||
-      this.outdoorTemperatureListener.temperature !== undefined
-    ) {
-      return
-    }
-    this.outdoorTemperatureListener.temperature =
-      this.outdoorTemperatureListener.device.makeCapabilityInstance(
-        this.outdoorTemperatureCapability,
-        // @ts-expect-error bug
-        async (outdoorTemperature: number): Promise<void> => {
-          this.log(
-            outdoorTemperature,
-            '°C listened from',
-            this.outdoorTemperatureListener.device?.name ?? 'undefined',
-            '-',
-            this.outdoorTemperatureCapability
-          )
-          for (const melCloudListener of this.melCloudListeners) {
-            await this.listenToTargetTemperature(melCloudListener, outdoorTemperature)
-          }
-        }
-      )
+  saveTargetTemperature (
+    listener: Listener,
+    // @ts-expect-error bug
+    threshold: number = listener.device.capabilitiesObj.target_temperature.value
+  ): void {
+    const thresholds: any = this.homey.settings.get('thresholds') ?? {}
+    thresholds[listener.device.id] = threshold
+    this.setSettings({ thresholds })
     this.log(
-      'Listener has been created for',
-      this.outdoorTemperatureListener.device.name,
-      '-',
-      this.outdoorTemperatureCapability
+      threshold,
+      '°C saved for',
+      listener.device.name,
+      '- target_temperature'
     )
   }
 
@@ -254,19 +237,38 @@ export default class MELCloudExtensionApp extends App {
     return newTargetTemperature
   }
 
-  saveTargetTemperature (
-    listener: Listener,
-    // @ts-expect-error bug
-    threshold: number = listener.device.capabilitiesObj.target_temperature.value
-  ): void {
-    const thresholds: any = this.homey.settings.get('thresholds') ?? {}
-    thresholds[listener.device.id] = threshold
-    this.setSettings({ thresholds })
+  listenToOutdoorTemperature (): void {
+    if (
+      this.outdoorTemperatureListener.device === undefined ||
+      this.outdoorTemperatureListener.temperature !== undefined
+    ) {
+      return
+    }
+    this.outdoorTemperatureListener.temperature =
+      this.outdoorTemperatureListener.device.makeCapabilityInstance(
+        this.outdoorTemperatureCapability,
+        // @ts-expect-error bug
+        async (outdoorTemperature: number): Promise<void> => {
+          this.log(
+            outdoorTemperature,
+            '°C listened from',
+            this.outdoorTemperatureListener.device?.name ?? 'undefined',
+            '-',
+            this.outdoorTemperatureCapability
+          )
+          for (const melCloudListener of this.melCloudListeners) {
+            await this.listenToTargetTemperature(
+              melCloudListener,
+              outdoorTemperature
+            )
+          }
+        }
+      )
     this.log(
-      threshold,
-      '°C saved for',
-      listener.device.name,
-      '- target_temperature'
+      'Listener has been created for',
+      this.outdoorTemperatureListener.device.name,
+      '-',
+      this.outdoorTemperatureCapability
     )
   }
 

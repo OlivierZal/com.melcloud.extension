@@ -17,7 +17,7 @@ function sortByAlphabeticalOrder (value1: string, value2: string): -1 | 0 | 1 {
 }
 
 module.exports = {
-  async getMeasureTemperatureDevices ({
+  async getMeasureTemperatureDevicesAta ({
     homey
   }: {
     homey: Homey
@@ -65,13 +65,13 @@ module.exports = {
       )
   },
 
-  async selfAdjustAtaCooling ({
+  async selfAdjustCoolingAta ({
     homey,
     body
   }: {
     homey: Homey
     body: OutdoorTemperatureListenerData
   }): Promise<void> {
-    await (homey.app as MELCloudExtensionApp).selfAdjustAtaCooling(body)
+    await (homey.app as MELCloudExtensionApp).selfAdjustCoolingAta(body)
   }
 }

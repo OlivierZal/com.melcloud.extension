@@ -45,11 +45,11 @@
     }
   },
   "api": {
-    "getMeasureTemperatureDevices": {
+    "getMeasureTemperatureDevicesAta": {
       "method": "GET",
       "path": "/drivers/melcloud/available_temperatures"
     },
-    "selfAdjustAtaCooling": {
+    "selfAdjustCoolingAta": {
       "method": "POST",
       "path": "/drivers/melcloud/cooling_self_adjustment"
     }
