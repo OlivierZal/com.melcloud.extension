@@ -67,13 +67,11 @@ export default class MELCloudExtensionApp extends App {
         // @ts-expect-error bug
         async (value: number): Promise<void> => {
           this.log(
-            'Listening to',
-            this.externalListener.device?.name ?? 'Undefined',
-            '-',
-            capability,
-            ': listened',
             value,
-            '°C'
+            '°C listened from',
+            this.externalListener.device?.name ?? 'undefined',
+            '-',
+            capability
           )
           for (const melCloudListener of this.melCloudListeners) {
             await this.listenToMelCloudDevice(melCloudListener, value)
@@ -168,10 +166,10 @@ export default class MELCloudExtensionApp extends App {
         // @ts-expect-error bug
         async (thermostatMode: number): Promise<void> => {
           this.log(
-            'Listening to',
+            thermostatMode,
+            'listened from',
             listener.device.name,
-            '- thermostat_mode: listened',
-            thermostatMode
+            '- thermostat_mode'
           )
           await this.listenToMelCloudDevice(
             listener,
@@ -203,11 +201,10 @@ export default class MELCloudExtensionApp extends App {
           // @ts-expect-error bug
           async (targetTemperature: number): Promise<void> => {
             this.log(
-              'Listening to',
-              listener.device.name,
-              '- target_temperature: listened',
               targetTemperature,
-              '°C'
+              '°C listened from',
+              listener.device.name,
+              '- target_temperature'
             )
             this.saveTargetTemperature(listener, targetTemperature)
             const newTargetTemperature: number = this.getTargetTemperature(
@@ -250,11 +247,10 @@ export default class MELCloudExtensionApp extends App {
     listener.temperature.destroy()
     delete listener.temperature
     this.log(
-      'Listener for',
       listener.device.name,
-      '- target_temperature has been cleaned and reverted to',
+      '- target_temperature reverted to',
       targetTemperature,
-      '°C'
+      '°C, listener has been cleaned'
     )
   }
 
@@ -288,12 +284,12 @@ export default class MELCloudExtensionApp extends App {
       listener.device.name,
       '- target_temperature:',
       newTargetTemperature,
-      '°C from threshold',
+      '°C (from threshold',
       threshold,
       'and',
       this.externalListener.device?.name ?? 'Undefined',
       value,
-      '°C'
+      '°C)'
     )
     return newTargetTemperature
   }
