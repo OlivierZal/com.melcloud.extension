@@ -109,7 +109,6 @@ export default class MELCloudExtensionApp extends App {
       })
     )
     for (const listener of this.melCloudListeners) {
-      this.saveTargetTemperature(listener)
       listener.thermostatMode = listener.device.makeCapabilityInstance(
         'thermostat_mode',
         // @ts-expect-error bug
@@ -137,7 +136,7 @@ export default class MELCloudExtensionApp extends App {
   async listenToTargetTemperature (
     listener: Listener,
     // @ts-expect-error bug
-    value: number = this.outdoorTemperatureListener.device?.capabilitiesObj[
+    outdoorTemperature: number = this.outdoorTemperatureListener.device?.capabilitiesObj[
       this.outdoorTemperatureCapability
     ]?.value
   ): Promise<void> {
@@ -161,20 +160,11 @@ export default class MELCloudExtensionApp extends App {
         'target_temperature',
         // @ts-expect-error bug
         async (targetTemperature: number): Promise<void> => {
-          this.log(
-            targetTemperature,
-            '°C listened from',
-            listener.device.name,
-            '- target_temperature'
-          )
-          this.saveTargetTemperature(listener, targetTemperature)
-          const newTargetTemperature: number = this.getTargetTemperature(
+          await this.updateTargetTemperature(
             listener,
-            targetTemperature
+            targetTemperature,
+            this.outdoorTemperatureListener.temperature?.value as number
           )
-          await listener.temperature
-            ?.setValue(newTargetTemperature, {})
-            .catch(this.error)
         }
       )
       this.log(
@@ -182,14 +172,29 @@ export default class MELCloudExtensionApp extends App {
         listener.device.name,
         '- target_temperature'
       )
+      await this.updateTargetTemperature(listener, threshold, outdoorTemperature)
     }
+  }
+
+  async updateTargetTemperature (
+    listener: Listener,
+    targetTemperature: number,
+    outdoorTemperature: number
+  ): Promise<void> {
+    this.log(
+      targetTemperature,
+      '°C listened from',
+      listener.device.name,
+      '- target_temperature'
+    )
+    this.saveTargetTemperature(listener, targetTemperature)
     const newTargetTemperature: number = this.getTargetTemperature(
       listener,
-      threshold,
-      value
+      targetTemperature,
+      outdoorTemperature
     )
     await listener.temperature
-      .setValue(newTargetTemperature, {})
+      ?.setValue(newTargetTemperature, {})
       .catch(this.error)
   }
 
@@ -204,16 +209,16 @@ export default class MELCloudExtensionApp extends App {
       this.outdoorTemperatureListener.device.makeCapabilityInstance(
         this.outdoorTemperatureCapability,
         // @ts-expect-error bug
-        async (value: number): Promise<void> => {
+        async (outdoorTemperature: number): Promise<void> => {
           this.log(
-            value,
+            outdoorTemperature,
             '°C listened from',
             this.outdoorTemperatureListener.device?.name ?? 'undefined',
             '-',
             this.outdoorTemperatureCapability
           )
           for (const melCloudListener of this.melCloudListeners) {
-            await this.listenToTargetTemperature(melCloudListener, value)
+            await this.listenToTargetTemperature(melCloudListener, outdoorTemperature)
           }
         }
       )
@@ -228,10 +233,10 @@ export default class MELCloudExtensionApp extends App {
   getTargetTemperature (
     listener: Listener,
     threshold: number,
-    value: number = this.outdoorTemperatureListener.temperature?.value as number
+    outdoorTemperature: number
   ): number {
     const newTargetTemperature: number = Math.min(
-      Math.max(threshold, Math.round(value - 8)),
+      Math.max(threshold, Math.round(outdoorTemperature - 8)),
       38
     )
     this.log(
@@ -243,7 +248,7 @@ export default class MELCloudExtensionApp extends App {
       threshold,
       'and',
       this.outdoorTemperatureListener.device?.name ?? 'Undefined',
-      value,
+      outdoorTemperature,
       '°C)'
     )
     return newTargetTemperature
