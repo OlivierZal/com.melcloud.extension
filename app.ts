@@ -135,7 +135,7 @@ export default class MELCloudExtensionApp extends App {
   }
 
   async cleanListeners (): Promise<void> {
-    if (this.externalListener?.temperature !== undefined) {
+    if (this.externalListener.temperature !== undefined) {
       this.externalListener.temperature.destroy()
       this.externalListener = {}
     }
@@ -232,7 +232,7 @@ export default class MELCloudExtensionApp extends App {
         listener
       )
       await listener.temperature
-        ?.setValue(newTargetTemperature, {})
+        .setValue(newTargetTemperature, {})
         .catch(this.error)
     }
   }
