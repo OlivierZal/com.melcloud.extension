@@ -9,7 +9,7 @@
     "en": "Automatically adjust cooling temperature of your MELCloud air-to-air devices"
   },
   "category": ["climate"],
-  "version": "1.0.6",
+  "version": "1.0.7",
   "compatibility": ">=5.0.0",
   "tags": {
     "en": [
