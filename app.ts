@@ -128,7 +128,8 @@ export default class MELCloudExtensionApp extends App {
             this.melCloudListeners.every(
               (listener: MelCloudListener): boolean =>
                 listener.thermostatMode?.value !== 'cool'
-            )) {
+            )
+          ) {
             this.cleanOutdoorTemperatureListener()
           }
         }
@@ -185,7 +186,7 @@ export default class MELCloudExtensionApp extends App {
           this.log(
             outdoorTemperature,
             '°C listened from',
-            this.outdoorTemperatureListener.device?.name ?? 'undefined',
+            this.outdoorTemperatureListener.device?.name ?? 'Undefined',
             '-',
             this.outdoorTemperatureCapability
           )
@@ -193,8 +194,7 @@ export default class MELCloudExtensionApp extends App {
             await this.updateTargetTemperature(
               melCloudListener,
               undefined,
-              outdoorTemperature,
-              false
+              outdoorTemperature
             )
           }
         }
@@ -210,8 +210,7 @@ export default class MELCloudExtensionApp extends App {
   async updateTargetTemperature (
     listener: MelCloudListener,
     targetTemperature: number = listener.temperature?.value as number,
-    outdoorTemperature: number = this.outdoorTemperatureListener.temperature?.value as number,
-    saveTargetTemperature: boolean = true
+    outdoorTemperature?: number
   ): Promise<void> {
     this.listenToOutdoorTemperature()
     if (
@@ -220,7 +219,9 @@ export default class MELCloudExtensionApp extends App {
     ) {
       return
     }
-    if (saveTargetTemperature) {
+    if (outdoorTemperature === undefined) {
+      outdoorTemperature = this.outdoorTemperatureListener.temperature
+        .value as number
       this.saveTargetTemperature(listener)
     }
     const newTargetTemperature: number = this.getTargetTemperature(
@@ -239,7 +240,7 @@ export default class MELCloudExtensionApp extends App {
     }
     const threshold: number = listener.temperature.value as number
     const thresholds: any = this.homey.settings.get('thresholds') ?? {}
-    thresholds[listener.device.id] = listener.temperature?.value
+    thresholds[listener.device.id] = listener.temperature.value
     this.setSettings({ thresholds })
     this.log(
       threshold,
@@ -338,7 +339,7 @@ export default class MELCloudExtensionApp extends App {
       delete this.outdoorTemperatureListener.temperature
       this.log(
         'Listener for',
-        this.outdoorTemperatureListener.device?.name ?? 'undefined',
+        this.outdoorTemperatureListener.device?.name ?? 'Undefined',
         '-',
         this.outdoorTemperatureCapability,
         'has been cleaned'
