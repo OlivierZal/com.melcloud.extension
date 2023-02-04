@@ -12,12 +12,13 @@ Why?
 
 Prerequisites:
 
-- Have installed the [MECloud Homey app](https://homey.app/en-us/app/com.mecloud/MELCloud).
-- Have installed any Homey app that returns the outdoor temperature.
+- You must have a Homey Pro.
+- You must have the [MELCloud Homey app](https://homey.app/en-us/app/com.mecloud/MELCloud) installed.
+- You must have a Homey app installed that returns the outdoor temperature.
 
 ## Usage
 
-1.  You need to have a Homey Pro.
+1.  You must have a Homey Pro.
 2.  Install the [MELCloud Homey app](https://homey.app/fr-fr/app/com.mecloud/MELCloud/) from the Homey App Store.
 3.  Pair your devices!
 4.  Install the [MELCloud Homey app extension](https://homey.app/fr-fr/app/com.mecloud/MELCloud/) from the Homey App Store.
