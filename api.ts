@@ -6,7 +6,7 @@ import {
   type OutdoorTemperatureListenerData
 } from './types'
 
-function sortByAlphabeticalOrder (value1: string, value2: string): -1 | 0 | 1 {
+function sortByAlphabeticalOrder(value1: string, value2: string): -1 | 0 | 1 {
   if (value1 < value2) {
     return -1
   }
@@ -17,7 +17,7 @@ function sortByAlphabeticalOrder (value1: string, value2: string): -1 | 0 | 1 {
 }
 
 module.exports = {
-  async getMeasureTemperatureDevicesAta ({
+  async getMeasureTemperatureDevicesAta({
     homey
   }: {
     homey: Homey
@@ -65,7 +65,7 @@ module.exports = {
       )
   },
 
-  async selfAdjustCoolingAta ({
+  async selfAdjustCoolingAta({
     homey,
     body
   }: {

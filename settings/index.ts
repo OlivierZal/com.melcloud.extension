@@ -5,7 +5,7 @@ import {
 } from '../types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function onHomeyReady (Homey: Homey): Promise<void> {
+async function onHomeyReady(Homey: Homey): Promise<void> {
   await Homey.ready()
 
   const applyElement: HTMLButtonElement = document.getElementById(
@@ -21,7 +21,7 @@ async function onHomeyReady (Homey: Homey): Promise<void> {
     'enabled'
   ) as HTMLSelectElement
 
-  function getHomeySetting (
+  function getHomeySetting(
     element: HTMLInputElement | HTMLSelectElement,
     defaultValue: any = ''
   ): void {
@@ -36,12 +36,12 @@ async function onHomeyReady (Homey: Homey): Promise<void> {
     })
   }
 
-  function getHomeySelfAdjustSettings (): void {
+  function getHomeySelfAdjustSettings(): void {
     getHomeySetting(capabilityPathElement)
     getHomeySetting(enabledElement, false)
   }
 
-  async function handleGetMeasureTemperatureDevicesError (
+  async function handleGetMeasureTemperatureDevicesError(
     error: Error
   ): Promise<void> {
     if (error.message === 'no_device') {
@@ -68,7 +68,7 @@ async function onHomeyReady (Homey: Homey): Promise<void> {
     await Homey.alert(error.message)
   }
 
-  function getMeasureTemperatureDevices (): void {
+  function getMeasureTemperatureDevices(): void {
     // @ts-expect-error bug
     Homey.api(
       'GET',

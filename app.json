@@ -9,9 +9,7 @@
   "description": {
     "en": "Automatically adjust cooling temperature of your MELCloud air-to-air devices"
   },
-  "category": [
-    "climate"
-  ],
+  "category": ["climate"],
   "version": "1.0.7",
   "compatibility": ">=5.0.0",
   "tags": {
@@ -57,10 +55,6 @@
       "path": "/drivers/melcloud/cooling_self_adjustment"
     }
   },
-  "platforms": [
-    "local"
-  ],
-  "permissions": [
-    "homey:manager:api"
-  ]
+  "platforms": ["local"],
+  "permissions": ["homey:manager:api"]
 }
