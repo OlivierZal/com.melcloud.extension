@@ -13,8 +13,8 @@ Why?
 Prerequisites:
 
 - You must have a Homey Pro.
-- You must have the [MELCloud Homey app](https://homey.app/en-us/app/com.mecloud/MELCloud) installed.
 - You must have a Homey app installed that returns the outdoor temperature.
+- You must have the [MELCloud Homey app](https://homey.app/en-us/app/com.mecloud/MELCloud) installed.
 
 ## Usage
 
