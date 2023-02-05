@@ -56,9 +56,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
           }
           if (ok) {
             // @ts-expect-error bug
-            await Homey.openURL(
-              'https://homey.app/en-us/app/com.mecloud/MELCloud'
-            )
+            await Homey.openURL('https://homey.app/en-us/app/com.mecloud/')
           }
         }
       )
