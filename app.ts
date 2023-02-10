@@ -1,4 +1,4 @@
-import { HomeyAPIApp, type HomeyAPIV2 } from 'homey-api'
+import { HomeyAPI, type HomeyAPIV2 } from 'homey-api'
 import { App } from 'homey'
 import {
   type MelCloudListener,
@@ -8,7 +8,7 @@ import {
 } from './types'
 
 export default class MELCloudExtensionApp extends App {
-  api!: HomeyAPIApp
+  api!: HomeyAPI
   melCloudDevices!: HomeyAPIV2.ManagerDevices.Device[]
   melCloudListeners!: MelCloudListener[]
   outdoorTemperatureListener!: Partial<OutdoorTemperatureListener>
@@ -16,7 +16,7 @@ export default class MELCloudExtensionApp extends App {
 
   async onInit(): Promise<void> {
     // @ts-expect-error bug
-    this.api = new HomeyAPIApp({ homey: this.homey })
+    this.api = await HomeyAPI.createAppAPI({ homey: this.homey })
     // @ts-expect-error bug
     await this.api.devices.connect()
 
@@ -24,14 +24,14 @@ export default class MELCloudExtensionApp extends App {
     this.melCloudListeners = []
     this.outdoorTemperatureListener = {}
     this.outdoorTemperatureCapability = ''
-    await this.refreshMelCloudDevicesAndGetExternalDevices()
+    await this.refreshMelCloudDevicesAndGetMeasureTemperatureDevices()
     await this.selfAdjustCoolingAta().catch(this.error)
   }
 
-  async refreshMelCloudDevicesAndGetExternalDevices(): Promise<
+  async refreshMelCloudDevicesAndGetMeasureTemperatureDevices(): Promise<
     HomeyAPIV2.ManagerDevices.Device[]
   > {
-    const driverId: string = 'melcloud'
+    const driverId: string = 'homey:app:com.mecloud:melcloud'
     // @ts-expect-error bug
     const devices: any[] = Object.values(await this.api.devices.getDevices())
     this.melCloudDevices = devices.filter(
@@ -40,7 +40,10 @@ export default class MELCloudExtensionApp extends App {
     )
     return devices.filter(
       (device: HomeyAPIV2.ManagerDevices.Device): boolean =>
-        device.driverId !== driverId
+        device.driverId !== driverId &&
+        device.capabilities.some((capability: string): boolean =>
+          capability.startsWith('measure_temperature')
+        )
     )
   }
 
@@ -109,9 +112,9 @@ export default class MELCloudExtensionApp extends App {
       })
     )
     for (const listener of this.melCloudListeners) {
+      // @ts-expect-error bug
       listener.thermostatMode = listener.device.makeCapabilityInstance(
         'thermostat_mode',
-        // @ts-expect-error bug
         async (thermostatMode: number): Promise<void> => {
           this.log(
             thermostatMode,
@@ -139,7 +142,7 @@ export default class MELCloudExtensionApp extends App {
         listener.device.name,
         '- thermostat_mode'
       )
-      if (listener.thermostatMode.value === 'cool') {
+      if (listener.thermostatMode?.value === 'cool') {
         await this.listenToTargetTemperature(listener)
       }
     }
@@ -150,9 +153,9 @@ export default class MELCloudExtensionApp extends App {
       return
     }
     this.listenToOutdoorTemperature()
+    // @ts-expect-error bug
     listener.temperature = listener.device.makeCapabilityInstance(
       'target_temperature',
-      // @ts-expect-error bug
       async (targetTemperature: number): Promise<void> => {
         this.log(
           targetTemperature,
@@ -179,9 +182,9 @@ export default class MELCloudExtensionApp extends App {
       return
     }
     this.outdoorTemperatureListener.temperature =
+      // @ts-expect-error bug
       this.outdoorTemperatureListener.device.makeCapabilityInstance(
         this.outdoorTemperatureCapability,
-        // @ts-expect-error bug
         async (outdoorTemperature: number): Promise<void> => {
           this.log(
             outdoorTemperature,

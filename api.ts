@@ -23,25 +23,19 @@ module.exports = {
     homey: Homey
   }): Promise<MeasureTemperatureDevice[]> {
     const app: MELCloudExtensionApp = homey.app as MELCloudExtensionApp
-    const capabilityId: string = 'measure_temperature'
     const devices: HomeyAPIV2.ManagerDevices.Device[] =
-      await app.refreshMelCloudDevicesAndGetExternalDevices()
+      await app.refreshMelCloudDevicesAndGetMeasureTemperatureDevices()
     if (app.melCloudDevices.length === 0) {
       throw new Error('no_device')
     }
     return devices
-      .filter((device: HomeyAPIV2.ManagerDevices.Device): boolean =>
-        device.capabilities.some((capability: string): boolean =>
-          capability.startsWith(capabilityId)
-        )
-      )
       .map(
         (
           device: HomeyAPIV2.ManagerDevices.Device
         ): MeasureTemperatureDevice[] =>
           Object.values(device.capabilitiesObj)
             .filter((capabilityObj): boolean =>
-              capabilityObj.id.startsWith(capabilityId)
+              capabilityObj.id.startsWith('measure_temperature')
             )
             .map(
               (capabilityObj): MeasureTemperatureDevice => ({
