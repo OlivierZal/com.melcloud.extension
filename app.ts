@@ -19,10 +19,6 @@ export default class MELCloudExtensionApp extends App {
     this.api = await HomeyAPI.createAppAPI({ homey: this.homey })
     // @ts-expect-error bug
     await this.api.devices.connect()
-    // @ts-expect-error bug
-    this.api.devices.on('device.create', async (): Promise<void> => {
-      await this.initialize()
-    })
 
     this.melCloudDevices = []
     this.melCloudListeners = []
@@ -30,6 +26,23 @@ export default class MELCloudExtensionApp extends App {
     this.outdoorTemperatureCapability = ''
     await this.initialize()
 
+    // @ts-expect-error bug
+    this.api.devices.on('device.create', async (): Promise<void> => {
+      await this.initialize()
+    })
+    // @ts-expect-error bug
+    this.api.devices.on('device.update', async (): Promise<void> => {
+      if (
+        this.outdoorTemperatureListener.device !== undefined &&
+        this.outdoorTemperatureCapability !== '' &&
+        !this.hasDeviceCapability(
+          this.outdoorTemperatureListener.device,
+          this.outdoorTemperatureCapability
+        )
+      ) {
+        this.cleanListeners()
+      }
+    })
     this.homey.on('unload', (): void => {
       this.cleanListeners()
     })
@@ -154,11 +167,7 @@ export default class MELCloudExtensionApp extends App {
       const [id, capability]: string[] = splitCapabilityPath
       // @ts-expect-error bug
       const device = await this.api.devices.getDevice({ id })
-      if (!(capability in device.capabilitiesObj)) {
-        throw new Error(
-          `${capability} cannot be found on ${device.name as string}.`
-        )
-      }
+      this.hasDeviceCapability(device, capability, false)
       this.setSettings({
         capabilityPath,
         enabled
@@ -177,6 +186,20 @@ export default class MELCloudExtensionApp extends App {
     } finally {
       this.cleanListeners()
     }
+  }
+
+  hasDeviceCapability(
+    device: HomeyAPIV2.ManagerDevices.Device,
+    capability: string,
+    safe: boolean = true
+  ): boolean {
+    if (capability in device.capabilitiesObj) {
+      return true
+    }
+    if (!safe) {
+      throw new Error(`${capability} cannot be found on ${device.name}.`)
+    }
+    return false
   }
 
   async listenToThermostatModes(): Promise<void> {
