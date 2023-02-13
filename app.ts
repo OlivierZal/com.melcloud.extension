@@ -46,13 +46,13 @@ export default class MELCloudExtensionApp extends App {
     await this.selfAdjustCoolingAta().catch(this.error)
   }
 
-  cleanListeners(): void {
+  cleanListeners(resetOutdoorTemperatureListener: boolean = false): void {
     for (const listener of this.melCloudListeners) {
       this.cleanThermostatModeListener(listener)
       this.cleanTargetTemperatureListener(listener)
     }
     this.melCloudListeners = []
-    this.cleanOutdoorTemperatureListener()
+    this.cleanOutdoorTemperatureListener(resetOutdoorTemperatureListener)
     this.log('All listeners have been cleaned')
   }
 
@@ -94,7 +94,9 @@ export default class MELCloudExtensionApp extends App {
     }
   }
 
-  cleanOutdoorTemperatureListener(): void {
+  cleanOutdoorTemperatureListener(
+    resetOutdoorTemperatureListener: boolean = false
+  ): void {
     if (this.outdoorTemperatureListener.temperature !== undefined) {
       this.outdoorTemperatureListener.temperature.destroy()
       this.log(
@@ -105,12 +107,14 @@ export default class MELCloudExtensionApp extends App {
         'has been cleaned'
       )
     }
-    this.setSettings({
-      capabilityPath: '',
-      enabled: false
-    })
-    this.outdoorTemperatureCapability = ''
-    this.outdoorTemperatureListener = {}
+    if (resetOutdoorTemperatureListener) {
+      this.setSettings({
+        capabilityPath: '',
+        enabled: false
+      })
+      this.outdoorTemperatureCapability = ''
+      this.outdoorTemperatureListener = {}
+    }
   }
 
   async refreshMelCloudDevices(): Promise<void> {
@@ -153,6 +157,7 @@ export default class MELCloudExtensionApp extends App {
     capabilityPath,
     enabled
   }: OutdoorTemperatureListenerData): Promise<void> {
+    let isError: boolean = false
     try {
       const splitCapabilityPath: string[] = capabilityPath.split(':')
       if (splitCapabilityPath.length !== 2 || splitCapabilityPath[1] === '') {
@@ -167,7 +172,6 @@ export default class MELCloudExtensionApp extends App {
           `Outdoor temperature ${capabilityPath} cannot be found.`
         )
       }
-      this.cleanListeners()
       this.setSettings({
         capabilityPath,
         enabled
@@ -187,16 +191,18 @@ export default class MELCloudExtensionApp extends App {
             )
           ) {
             this.error('Outdoor temperature', capabilityPath, 'cannot be found')
-            this.cleanListeners()
+            this.cleanListeners(true)
           }
         }
       )
     } catch (error: unknown) {
+      isError = true
       this.error(error instanceof Error ? error.message : error)
-      this.cleanListeners()
       if (capabilityPath !== '') {
         throw error
       }
+    } finally {
+      this.cleanListeners(isError)
     }
   }
 
