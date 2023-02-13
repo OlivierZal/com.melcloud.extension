@@ -7,6 +7,8 @@ import {
   type Settings
 } from './types'
 
+const melcloudAtaDriverId: string = 'homey:app:com.mecloud:melcloud'
+
 export default class MELCloudExtensionApp extends App {
   api!: HomeyAPI
   melCloudDevices!: HomeyAPIV2.ManagerDevices.Device[]
@@ -30,23 +32,27 @@ export default class MELCloudExtensionApp extends App {
     this.api.devices.on('device.create', async (): Promise<void> => {
       await this.initialize()
     })
+    // @ts-expect-error bug
+    this.api.devices.on('device.delete', async (): Promise<void> => {
+      await this.initialize()
+    })
     this.homey.on('unload', (): void => {
       this.cleanListeners()
     })
   }
 
   async initialize(): Promise<void> {
-    await this.refreshMelCloudDevicesAndGetMeasureTemperatureDevices()
+    await this.refreshMelCloudDevices()
     await this.selfAdjustCoolingAta().catch(this.error)
   }
 
-  cleanListeners(): void {
+  cleanListeners(resetOutdoorTemperatureListener: boolean = false): void {
     for (const listener of this.melCloudListeners) {
       this.cleanThermostatModeListener(listener)
       this.cleanTargetTemperatureListener(listener)
     }
     this.melCloudListeners = []
-    this.cleanOutdoorTemperatureListener()
+    this.cleanOutdoorTemperatureListener(resetOutdoorTemperatureListener)
     this.log('All listeners have been cleaned')
   }
 
@@ -88,10 +94,11 @@ export default class MELCloudExtensionApp extends App {
     }
   }
 
-  cleanOutdoorTemperatureListener(): void {
+  cleanOutdoorTemperatureListener(
+    resetOutdoorTemperatureListener: boolean = false
+  ): void {
     if (this.outdoorTemperatureListener.temperature !== undefined) {
       this.outdoorTemperatureListener.temperature.destroy()
-      delete this.outdoorTemperatureListener.temperature
       this.log(
         'Listener for',
         this.outdoorTemperatureListener.device?.name ?? 'Undefined',
@@ -100,24 +107,28 @@ export default class MELCloudExtensionApp extends App {
         'has been cleaned'
       )
     }
+    if (resetOutdoorTemperatureListener) {
+      this.setSettings({
+        capabilityPath: '',
+        enabled: false
+      })
+      this.outdoorTemperatureCapability = ''
+      this.outdoorTemperatureListener = {}
+    }
   }
 
-  async refreshMelCloudDevicesAndGetMeasureTemperatureDevices(): Promise<
-    HomeyAPIV2.ManagerDevices.Device[]
-  > {
-    const driverId: string = 'homey:app:com.mecloud:melcloud'
-    // @ts-expect-error bug
-    const devices: any[] = Object.values(await this.api.devices.getDevices())
+  async refreshMelCloudDevices(): Promise<void> {
+    const devices: HomeyAPIV2.ManagerDevices.Device[] = await this.getDevices()
     this.melCloudDevices = devices.filter(
       (device: HomeyAPIV2.ManagerDevices.Device): boolean =>
-        device.driverId === driverId
+        device.driverId === melcloudAtaDriverId
     )
-    return devices.filter(
-      (device: HomeyAPIV2.ManagerDevices.Device): boolean =>
-        device.driverId !== driverId &&
-        device.capabilities.some((capability: string): boolean =>
-          capability.startsWith('measure_temperature')
-        )
+  }
+
+  async getDevices(): Promise<HomeyAPIV2.ManagerDevices.Device[]> {
+    return Object.values(
+      // @ts-expect-error bug
+      await this.api.devices.getDevices()
     )
   }
 
@@ -146,6 +157,7 @@ export default class MELCloudExtensionApp extends App {
     capabilityPath,
     enabled
   }: OutdoorTemperatureListenerData): Promise<void> {
+    let isError: boolean = false
     try {
       const splitCapabilityPath: string[] = capabilityPath.split(':')
       if (splitCapabilityPath.length !== 2 || splitCapabilityPath[1] === '') {
@@ -157,26 +169,40 @@ export default class MELCloudExtensionApp extends App {
         await this.api.devices.getDevice({ id })
       if (!(capability in device.capabilitiesObj)) {
         throw new Error(
-          `Outdoor temperature cannot be found (${capabilityPath}).`
+          `Outdoor temperature ${capabilityPath} cannot be found.`
         )
       }
       this.setSettings({
         capabilityPath,
         enabled
       })
-      this.outdoorTemperatureListener.device = device
       this.outdoorTemperatureCapability = capability
+      this.outdoorTemperatureListener.device = device
+      // @ts-expect-error bug
+      this.outdoorTemperatureListener.device.on(
+        'update',
+        async (): Promise<void> => {
+          if (
+            this.outdoorTemperatureListener.device !== undefined &&
+            this.outdoorTemperatureListener.device.id === id &&
+            !(
+              this.outdoorTemperatureCapability in
+              this.outdoorTemperatureListener.device.capabilitiesObj
+            )
+          ) {
+            this.error('Outdoor temperature', capabilityPath, 'cannot be found')
+            this.cleanListeners(true)
+          }
+        }
+      )
     } catch (error: unknown) {
+      isError = true
       this.error(error instanceof Error ? error.message : error)
-      this.setSettings({
-        capabilityPath: '',
-        enabled: false
-      })
       if (capabilityPath !== '') {
         throw error
       }
     } finally {
-      this.cleanListeners()
+      this.cleanListeners(isError)
     }
   }
 
@@ -348,6 +374,19 @@ export default class MELCloudExtensionApp extends App {
       '°C)'
     )
     return newTargetTemperature
+  }
+
+  async getMeasureTemperatureDevicesAta(): Promise<
+    HomeyAPIV2.ManagerDevices.Device[]
+  > {
+    const devices: HomeyAPIV2.ManagerDevices.Device[] = await this.getDevices()
+    return devices.filter(
+      (device: HomeyAPIV2.ManagerDevices.Device): boolean =>
+        device.driverId !== melcloudAtaDriverId &&
+        device.capabilities.some((capability: string): boolean =>
+          capability.startsWith('measure_temperature')
+        )
+    )
   }
 
   setSettings(settings: Settings): void {

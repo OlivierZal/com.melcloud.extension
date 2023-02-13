@@ -23,11 +23,11 @@ module.exports = {
     homey: Homey
   }): Promise<MeasureTemperatureDevice[]> {
     const app: MELCloudExtensionApp = homey.app as MELCloudExtensionApp
-    const devices: HomeyAPIV2.ManagerDevices.Device[] =
-      await app.refreshMelCloudDevicesAndGetMeasureTemperatureDevices()
     if (app.melCloudDevices.length === 0) {
       throw new Error('no_device')
     }
+    const devices: HomeyAPIV2.ManagerDevices.Device[] =
+      await app.getMeasureTemperatureDevicesAta()
     return devices
       .map(
         (
