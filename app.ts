@@ -157,7 +157,7 @@ export default class MELCloudExtensionApp extends App {
     capabilityPath,
     enabled
   }: OutdoorTemperatureListenerData): Promise<void> {
-    let isError: boolean = false
+    let resetOutdoorTemperatureListener: boolean = false
     try {
       const splitCapabilityPath: string[] = capabilityPath.split(':')
       if (splitCapabilityPath.length !== 2 || splitCapabilityPath[1] === '') {
@@ -196,13 +196,13 @@ export default class MELCloudExtensionApp extends App {
         }
       )
     } catch (error: unknown) {
-      isError = true
+      resetOutdoorTemperatureListener = true
       this.error(error instanceof Error ? error.message : error)
       if (capabilityPath !== '') {
         throw error
       }
     } finally {
-      this.cleanListeners(isError)
+      this.cleanListeners(resetOutdoorTemperatureListener)
     }
   }
 
