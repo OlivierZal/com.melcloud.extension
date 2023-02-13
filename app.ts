@@ -46,13 +46,13 @@ export default class MELCloudExtensionApp extends App {
     await this.selfAdjustCoolingAta().catch(this.error)
   }
 
-  cleanListeners(resetOutdoorTemperature: boolean = false): void {
+  cleanListeners(): void {
     for (const listener of this.melCloudListeners) {
       this.cleanThermostatModeListener(listener)
       this.cleanTargetTemperatureListener(listener)
     }
     this.melCloudListeners = []
-    this.cleanOutdoorTemperatureListener(resetOutdoorTemperature)
+    this.cleanOutdoorTemperatureListener()
     this.log('All listeners have been cleaned')
   }
 
@@ -94,9 +94,7 @@ export default class MELCloudExtensionApp extends App {
     }
   }
 
-  cleanOutdoorTemperatureListener(
-    resetOutdoorTemperature: boolean = false
-  ): void {
+  cleanOutdoorTemperatureListener(): void {
     if (this.outdoorTemperatureListener.temperature !== undefined) {
       this.outdoorTemperatureListener.temperature.destroy()
       this.log(
@@ -107,10 +105,12 @@ export default class MELCloudExtensionApp extends App {
         'has been cleaned'
       )
     }
-    if (resetOutdoorTemperature) {
-      this.outdoorTemperatureListener = {}
-      this.outdoorTemperatureCapability = ''
-    }
+    this.setSettings({
+      capabilityPath: '',
+      enabled: false
+    })
+    this.outdoorTemperatureCapability = ''
+    this.outdoorTemperatureListener = {}
   }
 
   async refreshMelCloudDevices(): Promise<void> {
@@ -167,12 +167,13 @@ export default class MELCloudExtensionApp extends App {
           `Outdoor temperature ${capabilityPath} cannot be found.`
         )
       }
+      this.cleanListeners()
       this.setSettings({
         capabilityPath,
         enabled
       })
-      this.outdoorTemperatureListener.device = device
       this.outdoorTemperatureCapability = capability
+      this.outdoorTemperatureListener.device = device
       // @ts-expect-error bug
       this.outdoorTemperatureListener.device.on(
         'update',
@@ -186,18 +187,13 @@ export default class MELCloudExtensionApp extends App {
             )
           ) {
             this.error('Outdoor temperature', capabilityPath, 'cannot be found')
-            this.cleanListeners(true)
+            this.cleanListeners()
           }
         }
       )
-      this.cleanListeners()
     } catch (error: unknown) {
       this.error(error instanceof Error ? error.message : error)
-      this.setSettings({
-        capabilityPath: '',
-        enabled: false
-      })
-      this.cleanListeners(true)
+      this.cleanListeners()
       if (capabilityPath !== '') {
         throw error
       }
