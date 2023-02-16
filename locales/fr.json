@@ -1,0 +1,12 @@
+{
+  "settings": {
+    "title": "Paramètres de l'extension MELCloud",
+    "self-adjust": "Ajuster automatiquement la température de climatisation des pompes à chaleur air-air",
+    "enabled": "Limiter la différence avec la température extérieure à 8 °C",
+    "no": "Non",
+    "yes": "Oui",
+    "capabilities": "Température extérieure",
+    "refresh": "Rafraîchir",
+    "apply": "Appliquer à tous les appareils"
+  }
+}

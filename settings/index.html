@@ -14,28 +14,41 @@
       <h1 class="homey-title" data-i18n="settings.title" />
     </header>
     <fieldset class="homey-form-fieldset">
-      <legend class="homey-form-legend">Self-Adjust Air-to-Air Cooling</legend>
+      <legend
+        class="homey-form-legend"
+        data-i18n="settings.self-adjust"
+      ></legend>
       <div class="homey-form-group">
-        <label class="homey-form-label" for="enabled"
-          >Enable <strong>Maximum Deviation of 8 °C</strong></label
-        >
+        <label
+          class="homey-form-label"
+          for="enabled"
+          data-i18n="settings.enabled"
+        ></label>
         <select class="homey-form-select" id="enabled">
-          <option value="false">No</option>
-          <option value="true">Yes</option>
+          <option value="false" data-i18n="settings.no"></option>
+          <option value="true" data-i18n="settings.yes"></option>
         </select>
       </div>
       <div class="homey-form-group">
-        <label class="homey-form-label" for="capabilityPath"
-          >Outdoor Temperature</label
-        >
+        <label
+          class="homey-form-label"
+          for="capabilityPath"
+          data-i18n="settings.capabilities"
+        ></label>
         <select class="homey-form-select" id="capabilityPath">
           <option value=""></option>
         </select>
       </div>
-      <button id="refresh" class="homey-button-secondary-full">Refresh</button>
-      <button id="apply" class="homey-button-primary-full">
-        Apply to all Air-to-Air Devices
-      </button>
+      <button
+        id="refresh"
+        class="homey-button-secondary-full"
+        data-i18n="settings.refresh"
+      />
+      <button
+        id="apply"
+        class="homey-button-primary-full"
+        data-i18n="settings.apply"
+      />
     </fieldset>
   </body>
 </html>

@@ -3,21 +3,32 @@
   "sdk": 3,
   "brandColor": "#40e0d0",
   "name": {
-    "en": "MELCloud Extension"
+    "en": "MELCloud Extension",
+    "fr": "MELCloud Extension"
   },
   "description": {
-    "en": "Automatically adjust cooling temperature of your air-to-air devices"
+    "en": "Automatically adjust the temperature of your air conditioning",
+    "fr": "Ajustez automatiquement la température de votre climatisation"
   },
   "category": ["climate"],
-  "version": "1.0.9",
+  "version": "1.1.0",
   "compatibility": ">=5.0.0",
   "tags": {
     "en": [
       "air conditioner",
+      "air conditioning",
       "air-to-air",
-      "air-to-water",
-      "ecodan",
+      "conditioned air",
       "heat pump",
+      "melcloud",
+      "mitsubishi"
+    ],
+    "fr": [
+      "climatiseur",
+      "climatisation",
+      "air-air",
+      "air conditionné",
+      "pompe à chaleur",
       "melcloud",
       "mitsubishi"
     ]
