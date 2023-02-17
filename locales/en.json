@@ -2,11 +2,11 @@
   "settings": {
     "title": "MELCloud Extension Settings",
     "self-adjust": "Self-Adjust Air-to-Air Heat Pump Cooling Temperature",
-    "enabled": "Limit difference with outdoor temperature to 8 °C",
+    "enabled": "Limit Difference with Outdoor Temperature to 8 °C",
     "no": "No",
     "yes": "Yes",
-    "capabilities": "Outdoor temperature",
+    "capabilities": "Outdoor Temperature",
     "refresh": "Refresh",
-    "apply": "Apply to all air-to-air devices"
+    "apply": "Apply to all Air-to-Air Devices"
   }
 }
