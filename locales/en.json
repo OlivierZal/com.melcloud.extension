@@ -7,6 +7,14 @@
     "yes": "Yes",
     "capabilities": "Outdoor Temperature",
     "refresh": "Refresh",
-    "apply": "Apply to all Air-to-Air Devices"
-  }
+    "apply": "Apply to all Air-to-Air Devices",
+    "melcloud_app": "https://homey.app/en-us/app/com.mecloud",
+    "no_device": "You do not have an eligible device.",
+    "save_success": "The parameters have been successfully saved.",
+    "no_device_ata": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
+    "no_device_measure": "You do not have a temperature measurement app in Homey."
+  },
+  "outdoor_temperature_invalid": "Outdoor temperature is invalid (__capabilityPath__).",
+  "outdoor_temperature_missing": "Outdoor temperature is missing.",
+  "outdoor_temperature_notfound": "Outdoor temperature __capabilityPath__ cannot be found."
 }

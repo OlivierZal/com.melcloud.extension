@@ -139,7 +139,7 @@ export default class MELCloudExtensionApp extends App {
     }
   ): Promise<void> {
     if (enabled && capabilityPath === '') {
-      throw new Error('Outdoor temperature is missing.')
+      throw new Error(this.homey.__('outdoor_temperature_missing'))
     }
     await this.handleoutdoorTemperatureListenerData({
       capabilityPath,
@@ -161,7 +161,9 @@ export default class MELCloudExtensionApp extends App {
     try {
       const splitCapabilityPath: string[] = capabilityPath.split(':')
       if (splitCapabilityPath.length !== 2 || splitCapabilityPath[1] === '') {
-        throw new Error(`Outdoor temperature is invalid (${capabilityPath}).`)
+        throw new Error(
+          this.homey.__('outdoor_temperature_invalid', { capabilityPath })
+        )
       }
       const [id, capability]: string[] = splitCapabilityPath
       const device: HomeyAPIV2.ManagerDevices.Device =
@@ -169,7 +171,7 @@ export default class MELCloudExtensionApp extends App {
         await this.api.devices.getDevice({ id })
       if (!(capability in device.capabilitiesObj)) {
         throw new Error(
-          `Outdoor temperature ${capabilityPath} cannot be found.`
+          this.homey.__('outdoor_temperature_notfound', { capabilityPath })
         )
       }
       this.setSettings({

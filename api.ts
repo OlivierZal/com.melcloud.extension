@@ -24,7 +24,7 @@ module.exports = {
   }): Promise<MeasureTemperatureDevice[]> {
     const app: MELCloudExtensionApp = homey.app as MELCloudExtensionApp
     if (app.melCloudDevices.length === 0) {
-      throw new Error('no_device')
+      throw new Error('no_device_ata')
     }
     const devices: HomeyAPIV2.ManagerDevices.Device[] =
       await app.getMeasureTemperatureDevicesAta()

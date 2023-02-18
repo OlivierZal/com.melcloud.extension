@@ -44,10 +44,10 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   async function handleGetMeasureTemperatureDevicesError(
     error: Error
   ): Promise<void> {
-    if (error.message === 'no_device') {
+    if (error.message === 'no_device_ata') {
       // @ts-expect-error bug
       await Homey.confirm(
-        'First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?',
+        Homey.__('settings.no_device_ata'),
         null,
         async (error: Error, ok: boolean): Promise<void> => {
           if (error !== null) {
@@ -56,7 +56,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
           }
           if (ok) {
             // @ts-expect-error bug
-            await Homey.openURL('https://homey.app/en-us/app/com.mecloud')
+            await Homey.openURL(Homey.__('settings.melcloud_app'))
           }
         }
       )
@@ -81,9 +81,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
         }
         if (devices.length === 0) {
           // @ts-expect-error bug
-          await Homey.alert(
-            'You do not have any eligible devices to cooling self-adjustment.'
-          )
+          await Homey.alert(Homey.__('settings.no_device_measure'))
           return
         }
         for (const device of devices) {
@@ -138,7 +136,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
           return
         }
         // @ts-expect-error bug
-        await Homey.alert('Settings have been successfully saved.')
+        await Homey.alert(Homey.__('settings.save_success'))
       }
     )
   })
