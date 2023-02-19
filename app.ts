@@ -171,7 +171,7 @@ export default class MELCloudExtensionApp extends App {
         await this.api.devices.getDevice({ id })
       if (!(capability in device.capabilitiesObj)) {
         throw new Error(
-          this.homey.__('outdoor_temperature_notfound', { capabilityPath })
+          this.homey.__('outdoor_temperature_not_found', { capabilityPath })
         )
       }
       this.setSettings({

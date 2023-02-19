@@ -9,8 +9,11 @@
     "refresh": "Rafraîchir",
     "apply": "Appliquer à tous les appareils air-air",
     "melcloud_app": "https://homey.app/fr-fr/app/com.mecloud",
+    "save_success": "Les paramètres ont été sauvegardés avec succès.",
     "no_device_ata": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
-    "no_device_measure": "Vous ne disposez pas d'appli de mesure de la température dans Homey.",
-    "save_success": "Les paramètres ont été sauvegardés avec succès."
-  }
+    "no_device_measure": "Vous ne disposez pas d'appli de mesure de la température dans Homey."
+  },
+  "outdoor_temperature_invalid": "La température extérieure __capabilityPath__ est invalide.",
+  "outdoor_temperature_missing": "La température extérieure est manquante.",
+  "outdoor_temperature_not_found": "La température extérieure __capabilityPath__ est introuvable."
 }
