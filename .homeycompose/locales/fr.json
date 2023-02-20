@@ -1,19 +1,25 @@
 {
-  "settings": {
-    "title": "Paramètres de l'extension MELCloud",
-    "self-adjust": "Ajuster automatiquement la température de climatisation des pompes à chaleur air-air",
-    "enabled": "Limiter la différence avec la température extérieure à 8 °C",
-    "no": "Non",
-    "yes": "Oui",
-    "capabilities": "Température extérieure",
-    "refresh": "Rafraîchir",
-    "apply": "Appliquer à tous les appareils air-air",
-    "melcloud_app": "https://homey.app/fr-fr/app/com.mecloud",
-    "save_success": "Les paramètres ont été sauvegardés avec succès.",
-    "no_device_ata": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
-    "no_device_measure": "Vous ne disposez pas d'appli de mesure de la température dans Homey."
+  "app": {
+    "outdoor_temperature": {
+      "invalid": "La température extérieure __capabilityPath__ est invalide.",
+      "missing": "La température extérieure est manquante.",
+      "not_found": "La température extérieure __capabilityPath__ est introuvable."
+    }
   },
-  "outdoor_temperature_invalid": "La température extérieure __capabilityPath__ est invalide.",
-  "outdoor_temperature_missing": "La température extérieure est manquante.",
-  "outdoor_temperature_not_found": "La température extérieure __capabilityPath__ est introuvable."
+  "settings": {
+    "apply": "Appliquer à tous les appareils air-air",
+    "boolean": {
+      "false": "Non",
+      "true": "Oui"
+    },
+    "capabilities": "Température extérieure",
+    "enabled": "Limiter la différence avec la température extérieure à 8 °C",
+    "label": "Ajuster automatiquement la température de climatisation des pompes à chaleur air-air",
+    "melcloud": "https://homey.app/fr-fr/app/com.mecloud",
+    "no_device_ata": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
+    "no_device_measure": "Vous ne disposez pas d'appli de mesure de la température dans Homey.",
+    "refresh": "Rafraîchir",
+    "success": "Les paramètres ont été sauvegardés avec succès.",
+    "title": "Paramètres de l'extension MELCloud"
+  }
 }

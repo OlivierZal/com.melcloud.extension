@@ -7,15 +7,25 @@
     "yes": "Yes",
     "capabilities": "Outdoor temperature",
     "refresh": "Refresh",
-    "apply": "Apply to all air-to-air Devices",
+    "apply": "Apply to all air-to-air devices",
     "melcloud_app": "https://homey.app/en-us/app/com.mecloud",
     "no_device": "You do not have an eligible device.",
     "save_success": "The parameters have been successfully saved.",
     "no_device_ata": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
-    "no_device_measure": "You do not have a temperature measurement app in Homey."
+    "no_device_measure": "You do not have a temperature measurement app in Homey.",
+    "boolean": {
+      "false": "No",
+      "true": "Yes"
+    },
+    "label": "Self-Adjust Air-to-Air Heat Pump Cooling Temperature",
+    "melcloud": "https://homey.app/en-us/app/com.mecloud",
+    "success": "The parameters have been successfully saved."
   },
-  "outdoor_temperature_invalid": "Outdoor temperature __capabilityPath__ is invalid.",
-  "outdoor_temperature_missing": "Outdoor temperature is missing.",
-  "outdoor_temperature_notfound": "Outdoor temperature __capabilityPath__ cannot be found.",
-  "outdoor_temperature_not_found": "Outdoor temperature __capabilityPath__ cannot be found."
+  "app": {
+    "outdoor_temperature": {
+      "invalid": "Outdoor temperature __capabilityPath__ is invalid.",
+      "missing": "Outdoor temperature is missing.",
+      "not_found": "Outdoor temperature __capabilityPath__ cannot be found."
+    }
+  }
 }

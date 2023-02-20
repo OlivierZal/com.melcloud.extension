@@ -12,10 +12,20 @@
     "no_device": "Vous n'avez pas d'appareil éligible.",
     "save_success": "Les paramètres ont été sauvegardés avec succès.",
     "no_device_ata": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
-    "no_device_measure": "Vous ne disposez pas d'appli de mesure de la température dans Homey."
+    "no_device_measure": "Vous ne disposez pas d'appli de mesure de la température dans Homey.",
+    "boolean": {
+      "false": "Non",
+      "true": "Oui"
+    },
+    "label": "Ajuster automatiquement la température de climatisation des pompes à chaleur air-air",
+    "melcloud": "https://homey.app/fr-fr/app/com.mecloud",
+    "success": "Les paramètres ont été sauvegardés avec succès."
   },
-  "outdoor_temperature_invalid": "La température extérieure __capabilityPath__ est invalide.",
-  "outdoor_temperature_missing": "La température extérieure est manquante.",
-  "outdoor_temperature_notfound": "La température extérieure __capabilityPath__ est introuvable.",
-  "outdoor_temperature_not_found": "La température extérieure __capabilityPath__ est introuvable."
+  "app": {
+    "outdoor_temperature": {
+      "invalid": "La température extérieure __capabilityPath__ est invalide.",
+      "missing": "La température extérieure est manquante.",
+      "not_found": "La température extérieure __capabilityPath__ est introuvable."
+    }
+  }
 }

@@ -56,7 +56,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
           }
           if (ok) {
             // @ts-expect-error bug
-            await Homey.openURL(Homey.__('settings.melcloud_app'))
+            await Homey.openURL(Homey.__('settings.melcloud'))
           }
         }
       )
@@ -136,7 +136,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
           return
         }
         // @ts-expect-error bug
-        await Homey.alert(Homey.__('settings.save_success'))
+        await Homey.alert(Homey.__('settings.success'))
       }
     )
   })
