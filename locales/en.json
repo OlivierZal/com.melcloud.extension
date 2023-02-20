@@ -1,31 +1,25 @@
 {
-  "settings": {
-    "title": "MELCloud Extension Settings",
-    "self-adjust": "Self-Adjust Air-to-Air Heat Pump Cooling Temperature",
-    "enabled": "Limit difference with outdoor temperature to 8 °C",
-    "no": "No",
-    "yes": "Yes",
-    "capabilities": "Outdoor temperature",
-    "refresh": "Refresh",
-    "apply": "Apply to all air-to-air devices",
-    "melcloud_app": "https://homey.app/en-us/app/com.mecloud",
-    "no_device": "You do not have an eligible device.",
-    "save_success": "The parameters have been successfully saved.",
-    "no_device_ata": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
-    "no_device_measure": "You do not have a temperature measurement app in Homey.",
-    "boolean": {
-      "false": "No",
-      "true": "Yes"
-    },
-    "label": "Self-Adjust Air-to-Air Heat Pump Cooling Temperature",
-    "melcloud": "https://homey.app/en-us/app/com.mecloud",
-    "success": "The parameters have been successfully saved."
-  },
   "app": {
     "outdoor_temperature": {
       "invalid": "Outdoor temperature __capabilityPath__ is invalid.",
       "missing": "Outdoor temperature is missing.",
       "not_found": "Outdoor temperature __capabilityPath__ cannot be found."
     }
+  },
+  "settings": {
+    "apply": "Apply to all air-to-air devices",
+    "boolean": {
+      "false": "No",
+      "true": "Yes"
+    },
+    "capabilities": "Outdoor temperature",
+    "enabled": "Limit difference with outdoor temperature to 8 °C",
+    "label": "Self-Adjust Air-to-Air Heat Pump Cooling Temperature",
+    "melcloud": "https://homey.app/en-us/app/com.mecloud",
+    "no_device_ata": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
+    "no_device_measure": "You do not have a temperature measurement app in Homey.",
+    "refresh": "Refresh",
+    "success": "The parameters have been successfully saved.",
+    "title": "MELCloud Extension Settings"
   }
 }
