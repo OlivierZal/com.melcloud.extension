@@ -1,0 +1,25 @@
+{
+  "app": {
+    "outdoor_temperature": {
+      "invalid": "La temperatura exterior __capabilityPath__ no es válida.",
+      "missing": "Falta la temperatura exterior.",
+      "not_found": "No se puede encontrar la temperatura exterior __capabilityPath__."
+    }
+  },
+  "settings": {
+    "apply": "Aplicar a todos los dispositivos de aire a aire",
+    "boolean": {
+      "false": "No",
+      "true": "Sí"
+    },
+    "capabilities": "Temperatura exterior",
+    "enabled": "Limitar la diferencia con la temperatura exterior a 8 °C",
+    "label": "Ajuste personalizado de la temperatura de enfriamiento de la bomba de calor aire-aire",
+    "melcloud": "https://homey.app/es-es/app/com.mecloud",
+    "no_device_ata": "Primero, debes configurar tus dispositivos en la aplicación MELCloud Homey.\n\n¿Deseas instalarla?",
+    "no_device_measure": "No tienes una aplicación de medición de temperatura en Homey.",
+    "refresh": "Actualizar",
+    "success": "Los parámetros se han guardado correctamente.",
+    "title": "Configuración de extensión de MELCloud"
+  }
+}

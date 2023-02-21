@@ -1,0 +1,25 @@
+{
+  "app": {
+    "outdoor_temperature": {
+      "invalid": "Udendørstemperaturen __capabilityPath__ er ugyldig.",
+      "missing": "Udendørstemperaturen mangler.",
+      "not_found": "Udendørstemperaturen __capabilityPath__ kan ikke findes."
+    }
+  },
+  "settings": {
+    "apply": "Anvend på alle luft-til-luft enheder",
+    "boolean": {
+      "false": "Nej",
+      "true": "Ja"
+    },
+    "capabilities": "Udendørstemperatur",
+    "enabled": "Begræns forskellen med udendørstemperaturen til 8 °C",
+    "label": "Tilpas selv køletemperaturen for luft-til-luft varmepumpe",
+    "melcloud": "https://homey.app/da-dk/app/com.mecloud",
+    "no_device_ata": "Først skal du sætte dine enheder op i MELCloud Homey app'en.\n\nVil du installere den?",
+    "no_device_measure": "Du har ikke en temperaturmålingsapp i Homey.",
+    "refresh": "Opdater",
+    "success": "Parametrene er blevet gemt.",
+    "title": "MELCloud Udvidelsesindstillinger"
+  }
+}

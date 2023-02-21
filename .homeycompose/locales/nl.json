@@ -1,0 +1,25 @@
+{
+  "app": {
+    "outdoor_temperature": {
+      "invalid": "Buitentemperatuur __capabilityPath__ is ongeldig.",
+      "missing": "Buitentemperatuur ontbreekt.",
+      "not_found": "Buitentemperatuur __capabilityPath__ kan niet worden gevonden."
+    }
+  },
+  "settings": {
+    "apply": "Toepassen op alle air-to-air apparaten",
+    "boolean": {
+      "false": "Nee",
+      "true": "Ja"
+    },
+    "capabilities": "Buitentemperatuur",
+    "enabled": "Beperk verschil met buitentemperatuur tot 8 °C",
+    "label": "Pas zelf de koeltemperatuur van de air-to-air warmtepomp aan",
+    "melcloud": "https://homey.app/nl-nl/app/com.mecloud",
+    "no_device_ata": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
+    "no_device_measure": "Je hebt geen temperatuur meet app in Homey.",
+    "refresh": "Vernieuwen",
+    "success": "De parameters zijn succesvol opgeslagen.",
+    "title": "MELCloud Extensie Instellingen"
+  }
+}

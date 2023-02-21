@@ -1,0 +1,25 @@
+{
+  "app": {
+    "outdoor_temperature": {
+      "invalid": "Utomhustemperaturen __capabilityPath__ är ogiltig.",
+      "missing": "Utomhustemperaturen saknas.",
+      "not_found": "Utomhustemperaturen __capabilityPath__ kan inte hittas."
+    }
+  },
+  "settings": {
+    "apply": "Tillämpa på alla luft-luft-enheter",
+    "boolean": {
+      "false": "Nej",
+      "true": "Ja"
+    },
+    "capabilities": "Utomhustemperatur",
+    "enabled": "Begränsa skillnaden med utomhustemperaturen till 8 °C",
+    "label": "Anpassa själv kyltemperaturen för luft-luftvärmepumpen",
+    "melcloud": "https://homey.app/sv-se/app/com.mecloud",
+    "no_device_ata": "Du behöver först konfigurera dina enheter i MELCloud Homey-appen.\n\nVill du installera den?",
+    "no_device_measure": "Du har ingen temperaturmätningsapp i Homey.",
+    "refresh": "Uppdatera",
+    "success": "Parametrarna har sparats.",
+    "title": "MELCloud Extension Inställningar"
+  }
+}
