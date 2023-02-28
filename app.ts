@@ -101,7 +101,7 @@ export default class MELCloudExtensionApp extends App {
       this.outdoorTemperatureListener.temperature.destroy()
       this.log(
         'Listener for',
-        this.outdoorTemperatureListener.device?.name ?? 'Undefined',
+        this.getOutdoorTemperatureDeviceName(),
         '-',
         this.outdoorTemperatureCapability,
         'has been cleaned'
@@ -292,7 +292,7 @@ export default class MELCloudExtensionApp extends App {
           this.log(
             outdoorTemperature,
             '°C listened from',
-            this.outdoorTemperatureListener.device?.name ?? 'Undefined',
+            this.getOutdoorTemperatureDeviceName(),
             '-',
             this.outdoorTemperatureCapability
           )
@@ -371,7 +371,7 @@ export default class MELCloudExtensionApp extends App {
       '°C (from threshold',
       threshold,
       'and',
-      this.outdoorTemperatureListener.device?.name ?? 'Undefined',
+      this.getOutdoorTemperatureDeviceName(),
       outdoorTemperature,
       '°C)'
     )
@@ -389,6 +389,10 @@ export default class MELCloudExtensionApp extends App {
           capability.startsWith('measure_temperature')
         )
     )
+  }
+
+  getOutdoorTemperatureDeviceName(): string {
+    return this.outdoorTemperatureListener.device?.name ?? 'Undefined'
   }
 
   setSettings(settings: Settings): void {
