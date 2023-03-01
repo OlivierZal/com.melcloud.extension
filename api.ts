@@ -17,6 +17,10 @@ function sortByAlphabeticalOrder(value1: string, value2: string): -1 | 0 | 1 {
 }
 
 module.exports = {
+  async getLocale({ homey }: { homey: Homey }): Promise<string> {
+    return homey.i18n.getLanguage()
+  },
+
   async getMeasureTemperatureDevicesAta({
     homey
   }: {

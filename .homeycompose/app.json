@@ -110,6 +110,10 @@
     }
   },
   "api": {
+    "getLocale": {
+      "method": "GET",
+      "path": "/locale"
+    },
     "getMeasureTemperatureDevicesAta": {
       "method": "GET",
       "path": "/drivers/melcloud/available_temperatures"

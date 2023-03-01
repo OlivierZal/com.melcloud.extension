@@ -7,6 +7,19 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function onHomeyReady(Homey: Homey): Promise<void> {
   await Homey.ready()
+  // @ts-expect-error bug
+  Homey.api(
+    'GET',
+    '/locale',
+    async (error: Error, data: string): Promise<void> => {
+      if (error !== null) {
+        // @ts-expect-error bug
+        await Homey.alert(error.message)
+        return
+      }
+      document.documentElement.setAttribute('lang', data)
+    }
+  )
 
   const applyElement: HTMLButtonElement = document.getElementById(
     'apply'
