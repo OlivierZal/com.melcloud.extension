@@ -8,8 +8,6 @@
     "fr": "MELCloud Extension",
     "nl": "MELCloud Extension",
     "sv": "MELCloud Extension",
-    "da": "MELCloud Extension",
-    "pl": "MELCloud Extension",
     "es": "MELCloud Extension"
   },
   "description": {
@@ -17,8 +15,6 @@
     "fr": "Ajustez automatiquement la température de votre climatisation",
     "nl": "Pas de beschrijving beschikbaar",
     "sv": "Angepassa temperaturer automatiskt för ditt luftkonditioneringssystem",
-    "da": "Automatisk justering af temperatur for dit luftkonditioneringsanlæg",
-    "pl": "Automatycznie dostosuj temperaturę swojego klimatyzatora",
     "es": "Ajuste automático de la temperatura de su aire acondicionado"
   },
   "category": [
@@ -63,24 +59,6 @@
       "melcloud",
       "mitsubishi",
       "värmepump"
-    ],
-    "da": [
-      "ecodan",
-      "klimaanlæg",
-      "klimaanlægning",
-      "klimatiseret luft",
-      "luft til luft",
-      "melcloud",
-      "mitsubishi",
-      "varmepumpe"
-    ],
-    "pl": [
-      "klimatyzacja",
-      "klimatyzator",
-      "powietrze powietrze",
-      "pompa ciepła",
-      "melcloud",
-      "mitsubishi"
     ],
     "es": [
       "aire acondicionado",
