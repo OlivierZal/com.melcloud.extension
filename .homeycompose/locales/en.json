@@ -15,7 +15,6 @@
     "capabilities": "Outdoor temperature",
     "enabled": "Limit difference with outdoor temperature to 8 °C",
     "label": "Self-Adjust Air-to-Air Heat Pump Cooling Temperature",
-    "melcloud": "https://homey.app/en-us/app/com.mecloud",
     "no_device_ata": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
     "no_device_measure": "You do not have a temperature measurement app in Homey.",
     "refresh": "Refresh",

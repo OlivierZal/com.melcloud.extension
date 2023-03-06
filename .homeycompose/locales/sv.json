@@ -15,7 +15,6 @@
     "capabilities": "Utomhustemperatur",
     "enabled": "Begränsa skillnaden med utomhustemperaturen till 8 °C",
     "label": "Anpassa själv kyltemperaturen för luft-luftvärmepumpen",
-    "melcloud": "https://homey.app/sv-se/app/com.mecloud",
     "no_device_ata": "Du behöver först konfigurera dina enheter i MELCloud Homey-appen.\n\nVill du installera den?",
     "no_device_measure": "Du har ingen temperaturmätningsapp i Homey.",
     "refresh": "Uppdatera",
