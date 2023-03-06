@@ -1,5 +1,8 @@
 {
   "1.0.0": {
     "en": "Created an extension for MELCloud Homey app."
+  },
+  "2.0.0": {
+    "en": "Translated app and upgraded for new Homey Web API."
   }
 }
