@@ -17,7 +17,7 @@
     "label": "Anpassa själv kyltemperaturen för luft-luftvärmepumpen",
     "no_device_ata": "Du behöver först konfigurera dina enheter i MELCloud Homey-appen.\n\nVill du installera den?",
     "no_device_measure": "Du har ingen temperaturmätningsapp i Homey.",
-    "refresh": "Uppdatera",
+    "refresh": "Ladda om",
     "success": "Parametrarna har sparats.",
     "title": "MELCloud Extension Inställningar"
   }
