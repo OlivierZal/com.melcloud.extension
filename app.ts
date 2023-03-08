@@ -141,7 +141,7 @@ export default class MELCloudExtensionApp extends App {
     if (enabled && capabilityPath === '') {
       throw new Error(this.homey.__('app.outdoor_temperature.missing'))
     }
-    await this.handleoutdoorTemperatureListenerData({
+    await this.handleOutdoorTemperatureListenerData({
       capabilityPath,
       enabled
     })
@@ -153,7 +153,7 @@ export default class MELCloudExtensionApp extends App {
     }
   }
 
-  async handleoutdoorTemperatureListenerData({
+  async handleOutdoorTemperatureListenerData({
     capabilityPath,
     enabled
   }: OutdoorTemperatureListenerData): Promise<void> {
