@@ -7,18 +7,18 @@
     }
   },
   "settings": {
-    "apply": "Aplicar a todos los dispositivos de aire a aire",
+    "apply": "Aplicar a todos los dispositivos aire-aire",
     "boolean": {
       "false": "No",
       "true": "Sí"
     },
     "capabilities": "Temperatura exterior",
     "enabled": "Limitar la diferencia con la temperatura exterior a 8 °C",
-    "label": "Ajuste personalizado de la temperatura de enfriamiento de la bomba de calor aire-aire",
-    "no_device_ata": "Primero, debes configurar tus dispositivos en la aplicación MELCloud Homey.\n\n¿Deseas instalarla?",
+    "label": "Ajustar automáticamente la temperatura de enfriamiento de la bombas de calor aire-aire",
+    "no_device_ata": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
     "no_device_measure": "No tienes una aplicación de medición de temperatura en Homey.",
-    "refresh": "Actualizar",
+    "refresh": "Refrescar",
     "success": "Los parámetros se han guardado correctamente.",
-    "title": "Configuración de extensión de MELCloud"
+    "title": "Configuración de la extensión de MELCloud"
   }
 }

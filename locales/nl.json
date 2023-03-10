@@ -7,18 +7,18 @@
     }
   },
   "settings": {
-    "apply": "Toepassen op alle air-to-air apparaten",
+    "apply": "Toepassen op alle lucht-lucht apparaten",
     "boolean": {
       "false": "Nee",
       "true": "Ja"
     },
     "capabilities": "Buitentemperatuur",
     "enabled": "Beperk verschil met buitentemperatuur tot 8 °C",
-    "label": "Pas zelf de koeltemperatuur van de air-to-air warmtepomp aan",
+    "label": "Automatisch aanpassen de koeltemperatuur van de lucht-lucht warmtepompen",
     "no_device_ata": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
     "no_device_measure": "Je hebt geen temperatuur meet app in Homey.",
-    "refresh": "Vernieuwen",
+    "refresh": "Verversen",
     "success": "De parameters zijn succesvol opgeslagen.",
-    "title": "MELCloud Extensie Instellingen"
+    "title": "Instellingen van de MELCloud-extensie"
   }
 }
