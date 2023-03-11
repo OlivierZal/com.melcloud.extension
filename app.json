@@ -8,6 +8,7 @@
     "fr": "MELCloud Extension",
     "nl": "MELCloud Extension",
     "sv": "MELCloud Extension",
+    "no": "MELCloud Extension",
     "es": "MELCloud Extension"
   },
   "description": {
@@ -20,7 +21,7 @@
   "category": [
     "climate"
   ],
-  "version": "2.0.5",
+  "version": "2.0.4",
   "compatibility": ">=5.0.0",
   "tags": {
     "en": [
@@ -52,13 +53,18 @@
       "warmtepomp"
     ],
     "sv": [
-      "ecodan",
-      "konditionerad luft",
       "luft luft",
       "luftkonditionering",
       "melcloud",
       "mitsubishi",
       "värmepump"
+    ],
+    "no": [
+      "luft til luft",
+      "luftkondisjonering",
+      "melcloud",
+      "mitsubishi",
+      "varmepumpe"
     ],
     "es": [
       "aire acondicionado",

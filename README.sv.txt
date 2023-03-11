@@ -9,7 +9,7 @@ Varför?
 Förutsättningar:
 
 - Du måste ha en Homey Pro.
-- Homey MELCloud-appen måste vara installerad.
+- MELCloud Homey-appen måste vara installerad.
 - En Homey-app som returnerar utomhustemperaturen måste vara installerad.
 
 Denna app stöds inte, verifieras eller godkänns av Mitsubishi Electric Corporation. Mitsubishi kan inte hållas ansvarigt för alla påståenden vid eventuella skador som kan uppstå vid användning av denna app för att kontrollera MELCloud-applikationer eller enheter.
