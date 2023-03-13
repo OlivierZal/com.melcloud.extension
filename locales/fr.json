@@ -14,7 +14,7 @@
     },
     "capabilities": "Température extérieure",
     "enabled": "Limiter la différence avec la température extérieure à 8 °C",
-    "label": "Ajuster automatiquement la température de climatisation des pompes à chaleur air-air",
+    "label": "Auto-ajuster la température de la climatisation",
     "no_device_ata": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
     "no_device_measure": "Vous ne disposez pas d'appli de mesure de la température dans Homey.",
     "refresh": "Rafraîchir",

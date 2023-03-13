@@ -14,7 +14,7 @@
     },
     "capabilities": "Temperatura exterior",
     "enabled": "Limitar la diferencia con la temperatura exterior a 8 °C",
-    "label": "Ajustar automáticamente la temperatura de enfriamiento de la bombas de calor aire-aire",
+    "label": "Autoajustar la temperatura del aire acondicionado",
     "no_device_ata": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
     "no_device_measure": "No tienes una aplicación de medición de temperatura en Homey.",
     "refresh": "Refrescar",

@@ -14,8 +14,9 @@
   "description": {
     "en": "Automatically adjust the temperature of your air conditioning",
     "fr": "Ajustez automatiquement la température de votre climatisation",
-    "nl": "Pas de beschrijving beschikbaar",
-    "sv": "Angepassa temperaturer automatiskt för ditt luftkonditioneringssystem",
+    "nl": "Stel automatisch de temperatuur van uw airco af",
+    "sv": "Justera automatiskt temperaturen på din luftkonditionering",
+    "no": "Juster automatisk temperaturen på din aircondition",
     "es": "Ajuste automático de la temperatura de su aire acondicionado"
   },
   "category": [
