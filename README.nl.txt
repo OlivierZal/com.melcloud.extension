@@ -1,4 +1,4 @@
-Deze app breidt de functionaliteit van de MELCloud Homey app uit door de koeltemperatuur van de airco met een maximumafwijking van 8°C van de buitentemperatuur automatisch aan te passen.
+Deze app breidt de MELCloud Homey-app uit door automatisch de koeltemperatuur van uw lucht-lucht warmtepompen binnen 8°C van de buitentemperatuur blijft.
 
 Waarom?
 

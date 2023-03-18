@@ -1,4 +1,4 @@
-Denna app utökar funktionaliteten hos MELCloud Homey-appen genom att automatiskt justera luft till luft-värmepumpens kyltemperatur med en maximal avvikelse på 8 °C från utomhustemperaturen.
+Denna app utökar MELCloud Homey-appen genom att automatiskt hålla kyltemperaturen för dina luft-luft värmepumpar inom 8°C från utomhustemperaturen.
 
 Varför?
 

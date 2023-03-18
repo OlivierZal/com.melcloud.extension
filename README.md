@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This app extends the functionality of the MELCloud Homey app by auto-adjusting the air-to-air heat pump cooling temperature with a maximum deviation of 8°C from the outdoor temperature.
+This app extends the MELCloud Homey app by automatically keeping your air-to-air heat pumps' cooling temperature within 8°C of the outdoor temperature.
 
 Why?
 

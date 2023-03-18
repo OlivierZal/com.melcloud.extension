@@ -1,4 +1,4 @@
-Denne appen utvider funksjonaliteten til MELCloud Homey-appen ved å automatisk justere kjølingstemperaturen for luft-til-luft varmepumper med en maksimal avvik på 8 °C fra utetemperaturen.
+Denne appen utvider MELCloud Homey-appen ved å automatisk holde kjølingstemperaturen til dine luft-til-luft varmepumper innenfor 8°C fra utetemperaturen.
 
 Hvorfor?
 

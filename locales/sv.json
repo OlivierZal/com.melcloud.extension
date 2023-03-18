@@ -7,18 +7,18 @@
     }
   },
   "settings": {
-    "apply": "Tillämpa på alla luft-luft enheter",
+    "apply": "Håll inom 8°C från utomhustemperaturen",
     "boolean": {
       "false": "Nej",
       "true": "Ja"
     },
     "capabilities": "Utomhustemperatur",
-    "enabled": "Begränsa skillnaden med utomhustemperaturen till 8 °C",
+    "enabled": "Håll inom 8°C från utomhustemperaturen",
     "label": "Autojustera luftkonditioneringstemperaturen",
     "no_device_ata": "Du behöver först konfigurera dina enheter i MELCloud Homey-appen.\n\nVill du installera den?",
     "no_device_measure": "Du har ingen temperaturmätningsapp i Homey.",
     "refresh": "Uppfräscha",
-    "success": "Parametrarna har sparats.",
+    "success": "Uppdatering lyckades.",
     "title": "Inställningar för MELCloud-tillägg"
   }
 }
