@@ -7,7 +7,7 @@
     }
   },
   "settings": {
-    "apply": "Bruk på alle luft-til-luft enheter",
+    "apply": "Bruk på alle luft-luft enheter",
     "boolean": {
       "false": "Nei",
       "true": "Ja"

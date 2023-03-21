@@ -7,7 +7,7 @@
     }
   },
   "settings": {
-    "apply": "Håll inom 8°C från utomhustemperaturen",
+    "apply": "Tillämpa på alla luft-luft enheter",
     "boolean": {
       "false": "Nej",
       "true": "Ja"
