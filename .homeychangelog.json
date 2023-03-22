@@ -4,5 +4,8 @@
   },
   "2.0.0": {
     "en": "Translated app and upgraded for new Homey Web API."
+  },
+  "2.0.10": {
+    "en": "Translated into Danish."
   }
 }
