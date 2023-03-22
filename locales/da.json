@@ -1,0 +1,24 @@
+{
+  "app": {
+    "outdoor_temperature": {
+      "invalid": "Udendørstemperaturen __capabilityPath__ er ugyldig.",
+      "missing": "Udendørstemperaturen mangler.",
+      "not_found": "Udendørstemperaturen __capabilityPath__ kan ikke findes."
+    }
+  },
+  "settings": {
+    "apply": "Anvend på alle luft-luft enheder",
+    "boolean": {
+      "false": "Nej",
+      "true": "Ja"
+    },
+    "capabilities": "Udendørstemperatur",
+    "enabled": "Hold inden for 8°C af udendørstemperaturen",
+    "label": "Autojuster aircondition-temperaturen",
+    "no_device_ata": "Du skal først konfigurere dine enheder i MELCloud Homey-appen.\n\nØnsker du at installere den?",
+    "no_device_measure": "Du har ingen temperaturmåleapp i Homey.",
+    "refresh": "Genindlæs",
+    "success": "Opdatering lykkedes.",
+    "title": "Indstillinger for MELCloud-udvidelse"
+  }
+}

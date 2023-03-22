@@ -19,7 +19,7 @@
     "es": "Ajuste automático de la temperatura de su aire acondicionado"
   },
   "category": ["climate"],
-  "version": "2.0.9",
+  "version": "2.0.10",
   "compatibility": ">=5.0.0",
   "tags": {
     "en": [
@@ -60,6 +60,14 @@
     "no": [
       "luft luft",
       "luftkondisjonering",
+      "melcloud",
+      "mitsubishi",
+      "varmepumpe"
+    ],
+    "da": [
+      "aircondition",
+      "klimaanlæg",
+      "luft luft",
       "melcloud",
       "mitsubishi",
       "varmepumpe"

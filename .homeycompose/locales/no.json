@@ -17,8 +17,8 @@
     "label": "Autojuster aircondition-temperaturen",
     "no_device_ata": "Først må du sette opp enhetene dine i MELCloud Homey-appen.\n\nVil du installere den?",
     "no_device_measure": "Du har ingen temperaturmålingsapp i Homey.",
-    "refresh": "Oppfrisk",
+    "refresh": "Gjenta",
     "success": "Oppdatering vellykket.",
-    "title": "Innstillinger for MELCloud-utvidelsen"
+    "title": "Innstillinger for MELCloud-utvidelse"
   }
 }
