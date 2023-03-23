@@ -13,39 +13,41 @@
     <header class="homey-header">
       <h1 class="homey-title" data-i18n="settings.title" />
     </header>
-    <fieldset class="homey-form-fieldset">
-      <legend class="homey-form-legend" data-i18n="settings.label"></legend>
-      <div class="homey-form-group">
-        <label
-          class="homey-form-label"
-          for="enabled"
-          data-i18n="settings.enabled"
-        ></label>
-        <select class="homey-form-select" id="enabled">
-          <option value="false" data-i18n="settings.boolean.false"></option>
-          <option value="true" data-i18n="settings.boolean.true"></option>
-        </select>
-      </div>
-      <div class="homey-form-group">
-        <label
-          class="homey-form-label"
-          for="capabilityPath"
-          data-i18n="settings.capabilities"
-        ></label>
-        <select class="homey-form-select" id="capabilityPath">
-          <option value=""></option>
-        </select>
-      </div>
-      <button
-        id="refresh"
-        class="homey-button-secondary-full"
-        data-i18n="settings.refresh"
-      ></button>
-      <button
-        id="apply"
-        class="homey-button-primary-full"
-        data-i18n="settings.apply"
-      ></button>
-    </fieldset>
+    <form class="homey-form">
+      <fieldset class="homey-form-fieldset">
+        <legend class="homey-form-legend" data-i18n="settings.label"></legend>
+        <div class="homey-form-group">
+          <label
+            class="homey-form-label"
+            for="enabled"
+            data-i18n="settings.enabled"
+          ></label>
+          <select class="homey-form-select" id="enabled">
+            <option value="false" data-i18n="settings.boolean.false"></option>
+            <option value="true" data-i18n="settings.boolean.true"></option>
+          </select>
+        </div>
+        <div class="homey-form-group">
+          <label
+            class="homey-form-label"
+            for="capabilityPath"
+            data-i18n="settings.capabilities"
+          ></label>
+          <select class="homey-form-select" id="capabilityPath">
+            <option value=""></option>
+          </select>
+        </div>
+        <button
+          id="refresh"
+          class="homey-button-secondary-full"
+          data-i18n="settings.refresh"
+        ></button>
+        <button
+          id="apply"
+          class="homey-button-primary-full"
+          data-i18n="settings.apply"
+        ></button>
+      </fieldset>
+    </form>
   </body>
 </html>
