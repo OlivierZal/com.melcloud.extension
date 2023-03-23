@@ -169,7 +169,7 @@ export default class MELCloudExtensionApp extends App {
       const device: HomeyAPIV2.ManagerDevices.Device =
         // @ts-expect-error bug
         await this.api.devices.getDevice({ id })
-      if (!(capability in device.capabilitiesObj)) {
+      if (!(capability in (device.capabilitiesObj ?? {}))) {
         throw new Error(
           this.homey.__('app.outdoor_temperature.not_found', { capabilityPath })
         )
@@ -189,7 +189,7 @@ export default class MELCloudExtensionApp extends App {
             this.outdoorTemperatureListener.device.id === id &&
             !(
               this.outdoorTemperatureCapability in
-              this.outdoorTemperatureListener.device.capabilitiesObj
+              (this.outdoorTemperatureListener.device.capabilitiesObj ?? {})
             )
           ) {
             this.error('Outdoor temperature', capabilityPath, 'cannot be found')

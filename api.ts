@@ -37,7 +37,7 @@ module.exports = {
         (
           device: HomeyAPIV2.ManagerDevices.Device
         ): MeasureTemperatureDevice[] =>
-          Object.values(device.capabilitiesObj)
+          Object.values(device.capabilitiesObj ?? {})
             .filter((capabilityObj): boolean =>
               capabilityObj.id.startsWith('measure_temperature')
             )
