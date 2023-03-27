@@ -33,7 +33,7 @@ module.exports = {
     const devices: HomeyAPIV2.ManagerDevices.Device[] =
       await app.getMeasureTemperatureDevicesAta()
     return devices
-      .map(
+      .flatMap(
         (
           device: HomeyAPIV2.ManagerDevices.Device
         ): MeasureTemperatureDevice[] =>
@@ -50,7 +50,6 @@ module.exports = {
               })
             )
       )
-      .flat()
       .sort(
         (
           device1: MeasureTemperatureDevice,
