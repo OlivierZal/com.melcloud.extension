@@ -6,19 +6,9 @@ import {
   type OutdoorTemperatureListenerData
 } from './types'
 
-function sortByAlphabeticalOrder(value1: string, value2: string): -1 | 0 | 1 {
-  if (value1 < value2) {
-    return -1
-  }
-  if (value1 > value2) {
-    return 1
-  }
-  return 0
-}
-
 module.exports = {
   async getLocale({ homey }: { homey: Homey }): Promise<string> {
-    return homey.i18n.getLanguage()
+    return (homey.app as MELCloudExtensionApp).locale
   },
 
   async getMeasureTemperatureDevicesAta({
@@ -54,11 +44,8 @@ module.exports = {
         (
           device1: MeasureTemperatureDevice,
           device2: MeasureTemperatureDevice
-        ): -1 | 0 | 1 =>
-          sortByAlphabeticalOrder(
-            device1.capabilityName,
-            device2.capabilityName
-          )
+        ): number =>
+          device1.capabilityName.localeCompare(device2.capabilityName)
       )
   },
 

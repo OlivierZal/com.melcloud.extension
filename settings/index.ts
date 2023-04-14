@@ -7,19 +7,22 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function onHomeyReady(Homey: Homey): Promise<void> {
   await Homey.ready()
-  // @ts-expect-error bug
-  Homey.api(
-    'GET',
-    '/locale',
-    async (error: Error, data: string): Promise<void> => {
-      if (error !== null) {
-        // @ts-expect-error bug
-        await Homey.alert(error.message)
-        return
+
+  await new Promise<string>((resolve, reject) => {
+    // @ts-expect-error bug
+    Homey.api(
+      'GET',
+      '/locale',
+      async (error: Error, locale: string): Promise<void> => {
+        if (error !== null) {
+          reject(error)
+          return
+        }
+        document.documentElement.setAttribute('lang', locale)
+        resolve(locale)
       }
-      document.documentElement.setAttribute('lang', data)
-    }
-  )
+    )
+  })
 
   const applyElement: HTMLButtonElement = document.getElementById(
     'apply'
@@ -34,24 +37,28 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     'enabled'
   ) as HTMLSelectElement
 
-  function getHomeySetting(
+  async function getHomeySetting(
     element: HTMLInputElement | HTMLSelectElement,
     defaultValue: any = ''
-  ): void {
-    // @ts-expect-error bug
-    Homey.get(element.id, async (error: Error, value: any): Promise<void> => {
-      if (error !== null) {
-        // @ts-expect-error bug
-        await Homey.alert(error.message)
-        return
-      }
-      element.value = String(value ?? defaultValue)
+  ): Promise<void> {
+    await new Promise<void>((resolve, reject) => {
+      // @ts-expect-error bug
+      Homey.get(element.id, async (error: Error, value: any): Promise<void> => {
+        if (error !== null) {
+          // @ts-expect-error bug
+          await Homey.alert(error.message)
+          reject(error)
+          return
+        }
+        element.value = String(value ?? defaultValue)
+        resolve()
+      })
     })
   }
 
-  function getHomeySelfAdjustSettings(): void {
-    getHomeySetting(capabilityPathElement)
-    getHomeySetting(enabledElement, false)
+  async function getHomeySelfAdjustSettings(): Promise<void> {
+    await getHomeySetting(capabilityPathElement)
+    await getHomeySetting(enabledElement, false)
   }
 
   async function handleGetMeasureTemperatureDevicesError(
@@ -79,7 +86,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     await Homey.alert(error.message)
   }
 
-  function getMeasureTemperatureDevices(): void {
+  async function getMeasureTemperatureDevices(): Promise<void> {
     // @ts-expect-error bug
     Homey.api(
       'GET',
@@ -97,20 +104,20 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
           await Homey.alert(Homey.__('settings.no_device_measure'))
           return
         }
-        for (const device of devices) {
+        devices.forEach((device: MeasureTemperatureDevice): void => {
           const { capabilityPath, capabilityName } = device
           const option: HTMLOptionElement = document.createElement('option')
           option.setAttribute('value', capabilityPath)
           const optionText: Text = document.createTextNode(capabilityName)
           option.appendChild(optionText)
           capabilityPathElement.appendChild(option)
-        }
-        getHomeySelfAdjustSettings()
+        })
+        await getHomeySelfAdjustSettings()
       }
     )
   }
 
-  getMeasureTemperatureDevices()
+  await getMeasureTemperatureDevices()
 
   capabilityPathElement.addEventListener('change', (): void => {
     if (capabilityPathElement.value !== '') {
@@ -126,7 +133,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   })
 
   refreshElement.addEventListener('click', (): void => {
-    getHomeySelfAdjustSettings()
+    void getHomeySelfAdjustSettings()
   })
 
   applyElement.addEventListener('click', (): void => {
@@ -142,7 +149,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
       '/drivers/melcloud/cooling_self_adjustment',
       body,
       async (error: Error): Promise<void> => {
-        getHomeySelfAdjustSettings()
+        await getHomeySelfAdjustSettings()
         if (error !== null) {
           // @ts-expect-error bug
           await Homey.alert(error.message)
