@@ -20,6 +20,6 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "homey-api": "^3.0.0-rc.18"
+    "homey-api": "^3.0.0-rc.19"
   }
 }
