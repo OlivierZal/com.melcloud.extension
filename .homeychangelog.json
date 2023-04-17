@@ -4,5 +4,8 @@
   },
   "2.0.0": {
     "en": "Translated app and upgraded for new Homey Web API."
+  },
+  "3.0.0": {
+    "en": "Optimized loops."
   }
 }
