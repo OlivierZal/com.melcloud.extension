@@ -2,6 +2,11 @@ import { type HomeyAPIV2 } from 'homey-api'
 
 export type Settings = Record<string, any>
 
+export interface CapabilityObj {
+  id: string
+  title: string
+}
+
 export interface MeasureTemperatureDevice {
   readonly capabilityName: string
   readonly capabilityPath: string

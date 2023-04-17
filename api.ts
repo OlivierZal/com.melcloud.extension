@@ -2,6 +2,7 @@ import { type HomeyAPIV2 } from 'homey-api'
 import type Homey from 'homey/lib/Homey'
 import type MELCloudExtensionApp from './app'
 import {
+  type CapabilityObj,
   type MeasureTemperatureDevice,
   type OutdoorTemperatureListenerData
 } from './types'
@@ -28,15 +29,13 @@ module.exports = {
           device: HomeyAPIV2.ManagerDevices.Device
         ): MeasureTemperatureDevice[] =>
           Object.values(device.capabilitiesObj ?? {})
-            .filter((capabilityObj): boolean =>
+            .filter((capabilityObj: CapabilityObj): boolean =>
               capabilityObj.id.startsWith('measure_temperature')
             )
             .map(
-              (capabilityObj): MeasureTemperatureDevice => ({
-                capabilityPath: `${device.id}:${capabilityObj.id as string}`,
-                capabilityName: `${device.name} - ${
-                  capabilityObj.title as string
-                }`
+              (capabilityObj: CapabilityObj): MeasureTemperatureDevice => ({
+                capabilityPath: `${device.id}:${capabilityObj.id}`,
+                capabilityName: `${device.name} - ${capabilityObj.title}`
               })
             )
       )
