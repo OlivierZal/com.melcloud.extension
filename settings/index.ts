@@ -12,14 +12,14 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     // @ts-expect-error bug
     Homey.api(
       'GET',
-      '/locale',
-      async (error: Error, locale: string): Promise<void> => {
+      '/language',
+      async (error: Error, language: string): Promise<void> => {
         if (error !== null) {
           reject(error)
           return
         }
-        document.documentElement.setAttribute('lang', locale)
-        resolve(locale)
+        document.documentElement.setAttribute('lang', language)
+        resolve(language)
       }
     )
   })

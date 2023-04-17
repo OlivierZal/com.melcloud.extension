@@ -7,8 +7,8 @@ import {
 } from './types'
 
 module.exports = {
-  async getLocale({ homey }: { homey: Homey }): Promise<string> {
-    return (homey.app as MELCloudExtensionApp).locale
+  async getLanguage({ homey }: { homey: Homey }): Promise<string> {
+    return (homey.app as MELCloudExtensionApp).getLanguage()
   },
 
   async getMeasureTemperatureDevicesAta({

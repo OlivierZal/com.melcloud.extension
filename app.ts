@@ -11,7 +11,6 @@ const melcloudAtaDriverId: string = 'homey:app:com.mecloud:melcloud'
 
 export default class MELCloudExtensionApp extends App {
   api!: HomeyAPI
-  locale!: string
   melCloudDevices!: HomeyAPIV2.ManagerDevices.Device[]
   melCloudListeners!: MelCloudListener[]
   outdoorTemperatureListener!: Partial<OutdoorTemperatureListener>
@@ -23,7 +22,6 @@ export default class MELCloudExtensionApp extends App {
     // @ts-expect-error bug
     await this.api.devices.connect()
 
-    this.locale = this.homey.i18n.getLanguage()
     this.melCloudDevices = []
     this.melCloudListeners = []
     this.outdoorTemperatureListener = {}
@@ -417,6 +415,10 @@ export default class MELCloudExtensionApp extends App {
 
   async onUninit(): Promise<void> {
     this.cleanListeners()
+  }
+
+  getLanguage(): string {
+    return this.homey.i18n.getLanguage()
   }
 }
 

@@ -22,7 +22,7 @@
   "category": [
     "climate"
   ],
-  "version": "3.0.0",
+  "version": "3.0.1",
   "compatibility": ">=5.0.0",
   "tags": {
     "en": [
@@ -106,9 +106,9 @@
     }
   },
   "api": {
-    "getLocale": {
+    "getLanguage": {
       "method": "GET",
-      "path": "/locale"
+      "path": "/language"
     },
     "getMeasureTemperatureDevicesAta": {
       "method": "GET",
