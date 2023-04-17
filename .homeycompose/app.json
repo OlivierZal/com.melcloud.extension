@@ -103,6 +103,10 @@
     }
   },
   "api": {
+    "autoAdjustCoolingAta": {
+      "method": "POST",
+      "path": "/drivers/melcloud/cooling_auto_adjustment"
+    },
     "getLanguage": {
       "method": "GET",
       "path": "/language"
@@ -110,10 +114,6 @@
     "getMeasureTemperatureDevicesAta": {
       "method": "GET",
       "path": "/drivers/melcloud/available_temperatures"
-    },
-    "selfAdjustCoolingAta": {
-      "method": "POST",
-      "path": "/drivers/melcloud/cooling_self_adjustment"
     }
   },
   "platforms": ["local"],

@@ -43,7 +43,7 @@ export default class MELCloudExtensionApp extends App {
 
   async initialize(): Promise<void> {
     await this.refreshMelCloudDevices()
-    await this.selfAdjustCoolingAta().catch(this.error)
+    await this.autoAdjustCoolingAta().catch(this.error)
   }
 
   cleanListeners(resetOutdoorTemperatureListener: boolean = false): void {
@@ -132,7 +132,7 @@ export default class MELCloudExtensionApp extends App {
     )
   }
 
-  async selfAdjustCoolingAta(
+  async autoAdjustCoolingAta(
     { capabilityPath, enabled }: OutdoorTemperatureListenerData = {
       capabilityPath: this.homey.settings.get('capabilityPath') ?? '',
       enabled: this.homey.settings.get('enabled') ?? false

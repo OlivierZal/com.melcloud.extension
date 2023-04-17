@@ -56,7 +56,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     })
   }
 
-  async function getHomeySelfAdjustSettings(): Promise<void> {
+  async function getAutoAdjustmentSettings(): Promise<void> {
     await getHomeySetting(capabilityPathElement)
     await getHomeySetting(enabledElement, false)
   }
@@ -112,7 +112,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
           option.appendChild(optionText)
           capabilityPathElement.appendChild(option)
         })
-        await getHomeySelfAdjustSettings()
+        await getAutoAdjustmentSettings()
       }
     )
   }
@@ -133,7 +133,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   })
 
   refreshElement.addEventListener('click', (): void => {
-    void getHomeySelfAdjustSettings()
+    void getAutoAdjustmentSettings()
   })
 
   applyElement.addEventListener('click', (): void => {
@@ -146,10 +146,10 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     // @ts-expect-error bug
     Homey.api(
       'POST',
-      '/drivers/melcloud/cooling_self_adjustment',
+      '/drivers/melcloud/cooling_auto_adjustment',
       body,
       async (error: Error): Promise<void> => {
-        await getHomeySelfAdjustSettings()
+        await getAutoAdjustmentSettings()
         if (error !== null) {
           // @ts-expect-error bug
           await Homey.alert(error.message)

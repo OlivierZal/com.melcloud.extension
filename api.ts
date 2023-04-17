@@ -49,13 +49,13 @@ module.exports = {
       )
   },
 
-  async selfAdjustCoolingAta({
+  async autoAdjustCoolingAta({
     homey,
     body
   }: {
     homey: Homey
     body: OutdoorTemperatureListenerData
   }): Promise<void> {
-    await (homey.app as MELCloudExtensionApp).selfAdjustCoolingAta(body)
+    await (homey.app as MELCloudExtensionApp).autoAdjustCoolingAta(body)
   }
 }
