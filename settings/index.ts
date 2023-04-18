@@ -59,6 +59,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   async function getAutoAdjustmentSettings(): Promise<void> {
     await getHomeySetting(capabilityPathElement)
     await getHomeySetting(enabledElement, false)
+    refreshElement.classList.remove('is-disabled')
   }
 
   async function handleGetMeasureTemperatureDevicesError(
@@ -133,10 +134,12 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   })
 
   refreshElement.addEventListener('click', (): void => {
+    refreshElement.classList.add('is-disabled')
     void getAutoAdjustmentSettings()
   })
 
   applyElement.addEventListener('click', (): void => {
+    applyElement.classList.add('is-disabled')
     const enabled: boolean = enabledElement.value === 'true'
     const capabilityPath: string = capabilityPathElement.value
     const body: OutdoorTemperatureListenerData = {
@@ -149,8 +152,9 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
       '/drivers/melcloud/cooling_auto_adjustment',
       body,
       async (error: Error): Promise<void> => {
-        await getAutoAdjustmentSettings()
+        applyElement.classList.remove('is-disabled')
         if (error !== null) {
+          await getAutoAdjustmentSettings()
           // @ts-expect-error bug
           await Homey.alert(error.message)
           return
