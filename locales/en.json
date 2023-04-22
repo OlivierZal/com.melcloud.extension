@@ -14,7 +14,7 @@
     },
     "capabilities": "Outdoor temperature",
     "enabled": "Keep within 8°C of the outdoor temperature",
-    "label": "Auto-Adjust Air Conditioning Temperature",
+    "legend": "Auto-Adjust Air Conditioning Temperature",
     "no_device_ata": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
     "no_device_measure": "You do not have a temperature measurement app in Homey.",
     "refresh": "Refresh",
