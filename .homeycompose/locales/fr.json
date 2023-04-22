@@ -14,7 +14,7 @@
     },
     "capabilities": "Température extérieure",
     "enabled": "Maintenir à moins de 8°C de la température extérieure",
-    "label": "Auto-ajuster la température de la climatisation",
+    "legend": "Auto-ajuster la température de la climatisation",
     "no_device_ata": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
     "no_device_measure": "Vous ne disposez pas d'appli de mesure de la température dans Homey.",
     "refresh": "Rafraîchir",

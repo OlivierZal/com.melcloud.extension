@@ -14,7 +14,7 @@
     },
     "capabilities": "Buitentemperatuur",
     "enabled": "Blijf binnen 8°C van de buitentemperatuur",
-    "label": "Auto-afstellen airco-temperatuur",
+    "legend": "Auto-afstellen airco-temperatuur",
     "no_device_ata": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
     "no_device_measure": "Je hebt geen temperatuur meet app in Homey.",
     "refresh": "Herladen",

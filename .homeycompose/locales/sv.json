@@ -14,7 +14,7 @@
     },
     "capabilities": "Utomhustemperatur",
     "enabled": "Håll inom 8°C från utomhustemperaturen",
-    "label": "Autojustera luftkonditioneringstemperaturen",
+    "legend": "Autojustera luftkonditioneringstemperaturen",
     "no_device_ata": "Du behöver först konfigurera dina enheter i MELCloud Homey-appen.\n\nVill du installera den?",
     "no_device_measure": "Du har ingen temperaturmätningsapp i Homey.",
     "refresh": "Ladda om",
