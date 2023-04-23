@@ -1,0 +1,24 @@
+{
+  "app": {
+    "outdoor_temperature": {
+      "invalid": "La température extérieure __capabilityPath__ est invalide.",
+      "missing": "La température extérieure est manquante.",
+      "not_found": "La température extérieure __capabilityPath__ est introuvable."
+    }
+  },
+  "settings": {
+    "apply": "Appliquer à tous les appareils air-air",
+    "boolean": {
+      "false": "Non",
+      "true": "Oui"
+    },
+    "capabilities": "Température extérieure",
+    "enabled": "Maintenir à moins de 8°C de la température extérieure",
+    "legend": "Auto-ajuster la température de la climatisation",
+    "no_device_ata": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
+    "no_device_measure": "Vous ne disposez pas d'appli de mesure de la température dans Homey.",
+    "refresh": "Rafraîchir",
+    "success": "La mise à jour a réussi.",
+    "title": "Paramètres de l'extension de MELCloud"
+  }
+}
