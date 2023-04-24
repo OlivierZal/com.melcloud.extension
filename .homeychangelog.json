@@ -7,5 +7,8 @@
   },
   "3.0.0": {
     "en": "Optimized loops."
+  },
+  "4.0.0": {
+    "en": "Reshaped error management."
   }
 }
