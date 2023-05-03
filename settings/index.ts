@@ -18,7 +18,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
           reject(error)
           return
         }
-        document.documentElement.setAttribute('lang', language)
+        document.documentElement.lang = language
         resolve(language)
       }
     )
@@ -107,11 +107,11 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
         }
         devices.forEach((device: MeasureTemperatureDevice): void => {
           const { capabilityPath, capabilityName } = device
-          const option: HTMLOptionElement = document.createElement('option')
-          option.setAttribute('value', capabilityPath)
-          const optionText: Text = document.createTextNode(capabilityName)
-          option.appendChild(optionText)
-          capabilityPathElement.appendChild(option)
+          const optionElement: HTMLOptionElement =
+            document.createElement('option')
+          optionElement.value = capabilityPath
+          optionElement.innerText = capabilityName
+          capabilityPathElement.appendChild(optionElement)
         })
         await getAutoAdjustmentSettings()
       }
