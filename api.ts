@@ -9,7 +9,7 @@ import {
 
 module.exports = {
   async getLanguage({ homey }: { homey: Homey }): Promise<string> {
-    return (homey.app as MELCloudExtensionApp).getLanguage()
+    return homey.i18n.getLanguage()
   },
 
   async getMeasureTemperatureDevicesAta({

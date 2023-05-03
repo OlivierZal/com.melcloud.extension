@@ -416,10 +416,6 @@ export default class MELCloudExtensionApp extends App {
   async onUninit(): Promise<void> {
     this.cleanListeners()
   }
-
-  getLanguage(): string {
-    return this.homey.i18n.getLanguage()
-  }
 }
 
 module.exports = MELCloudExtensionApp
