@@ -22,6 +22,6 @@ export interface OutdoorTemperatureListener {
   temperature?: HomeyAPIV2.ManagerDevices.Device.DeviceCapability
 }
 
-export interface MelCloudListener extends OutdoorTemperatureListener {
+export interface MELCloudListener extends OutdoorTemperatureListener {
   thermostatMode?: HomeyAPIV2.ManagerDevices.Device.DeviceCapability
 }
