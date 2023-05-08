@@ -13,5 +13,8 @@
   },
   "4.0.1": {
     "en": "Improved performances."
+  },
+  "4.0.2": {
+    "en": "Made code faster."
   }
 }
