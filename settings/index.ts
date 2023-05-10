@@ -1,7 +1,7 @@
 import type Homey from 'homey/lib/Homey'
 import {
   type MeasureTemperatureDevice,
-  type OutdoorTemperatureListenerData
+  type OutdoorTemperatureListenerData,
 } from '../types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -144,7 +144,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     const capabilityPath: string = capabilityPathElement.value
     const body: OutdoorTemperatureListenerData = {
       capabilityPath,
-      enabled
+      enabled,
     }
     // @ts-expect-error bug
     Homey.api(

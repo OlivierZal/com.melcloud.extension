@@ -4,7 +4,7 @@ import type MELCloudExtensionApp from './app'
 import {
   type CapabilityObj,
   type MeasureTemperatureDevice,
-  type OutdoorTemperatureListenerData
+  type OutdoorTemperatureListenerData,
 } from './types'
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
   },
 
   async getMeasureTemperatureDevicesAta({
-    homey
+    homey,
   }: {
     homey: Homey
   }): Promise<MeasureTemperatureDevice[]> {
@@ -34,7 +34,7 @@ module.exports = {
             if (capabilityObj.id.startsWith('measure_temperature')) {
               devices.push({
                 capabilityPath: `${device.id}:${capabilityObj.id}`,
-                capabilityName: `${device.name} - ${capabilityObj.title}`
+                capabilityName: `${device.name} - ${capabilityObj.title}`,
               })
             }
             return devices
@@ -51,11 +51,11 @@ module.exports = {
 
   async autoAdjustCoolingAta({
     homey,
-    body
+    body,
   }: {
     homey: Homey
     body: OutdoorTemperatureListenerData
   }): Promise<void> {
     await (homey.app as MELCloudExtensionApp).autoAdjustCoolingAta(body)
-  }
+  },
 }

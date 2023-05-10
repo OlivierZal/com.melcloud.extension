@@ -4,7 +4,7 @@ import {
   type MELCloudListener,
   type OutdoorTemperatureListener,
   type OutdoorTemperatureListenerData,
-  type Settings
+  type Settings,
 } from './types'
 
 const melcloudAtaDriverId: string = 'homey:app:com.mecloud:melcloud'
@@ -110,7 +110,7 @@ export default class MELCloudExtensionApp extends App {
     if (resetOutdoorTemperatureListener) {
       this.setSettings({
         capabilityPath: '',
-        enabled: false
+        enabled: false,
       })
       this.outdoorTemperatureCapability = ''
       this.outdoorTemperatureListener = {}
@@ -142,7 +142,7 @@ export default class MELCloudExtensionApp extends App {
   async autoAdjustCoolingAta(
     { capabilityPath, enabled }: OutdoorTemperatureListenerData = {
       capabilityPath: this.homey.settings.get('capabilityPath') ?? '',
-      enabled: this.homey.settings.get('enabled') ?? false
+      enabled: this.homey.settings.get('enabled') ?? false,
     }
   ): Promise<void> {
     if (enabled && capabilityPath === '') {
@@ -150,7 +150,7 @@ export default class MELCloudExtensionApp extends App {
     }
     await this.handleOutdoorTemperatureListenerData({
       capabilityPath,
-      enabled
+      enabled,
     })
     if (
       this.outdoorTemperatureListener.device !== undefined &&
@@ -162,7 +162,7 @@ export default class MELCloudExtensionApp extends App {
 
   async handleOutdoorTemperatureListenerData({
     capabilityPath,
-    enabled
+    enabled,
   }: OutdoorTemperatureListenerData): Promise<void> {
     let resetOutdoorTemperatureListener: boolean = false
     try {
@@ -183,7 +183,7 @@ export default class MELCloudExtensionApp extends App {
       }
       this.setSettings({
         capabilityPath,
-        enabled
+        enabled,
       })
       this.outdoorTemperatureCapability = capability
       this.outdoorTemperatureListener.device = device
@@ -218,7 +218,7 @@ export default class MELCloudExtensionApp extends App {
   async listenToThermostatModes(): Promise<void> {
     this.melCloudListeners = this.melCloudDevices.map(
       (device: HomeyAPIV2.ManagerDevices.Device): MELCloudListener => ({
-        device
+        device,
       })
     )
     await Promise.all(
