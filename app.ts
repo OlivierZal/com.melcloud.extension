@@ -201,8 +201,7 @@ export default class MELCloudExtensionApp extends App {
         'update',
         async (): Promise<void> => {
           if (
-            this.outdoorTemperatureListener.device !== undefined &&
-            this.outdoorTemperatureListener.device.id === id &&
+            this.outdoorTemperatureListener.device?.id === id &&
             !(
               this.outdoorTemperatureCapability in
               // @ts-expect-error bug
