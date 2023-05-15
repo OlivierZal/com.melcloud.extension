@@ -13,7 +13,7 @@ export default class MELCloudExtensionApp extends App {
   api!: HomeyAPIV3Local
   melCloudDevices!: HomeyAPIV3Local.ManagerDevices.Device[]
   melCloudListeners!: MELCloudListener[]
-  outdoorTemperatureListener!: Partial<OutdoorTemperatureListener>
+  outdoorTemperatureListener!: OutdoorTemperatureListener | null
   outdoorTemperatureCapability!: string
 
   async onInit(): Promise<void> {
@@ -24,7 +24,7 @@ export default class MELCloudExtensionApp extends App {
 
     this.melCloudDevices = []
     this.melCloudListeners = []
-    this.outdoorTemperatureListener = {}
+    this.outdoorTemperatureListener = null
     this.outdoorTemperatureCapability = ''
     await this.initialize()
 
@@ -97,11 +97,13 @@ export default class MELCloudExtensionApp extends App {
   cleanOutdoorTemperatureListener(
     resetOutdoorTemperatureListener: boolean = false
   ): void {
-    if (this.outdoorTemperatureListener.temperature !== undefined) {
+    if (this.outdoorTemperatureListener?.temperature !== undefined) {
       this.outdoorTemperatureListener.temperature.destroy()
       this.log(
         'Listener for',
-        this.getOutdoorTemperatureDeviceName(),
+        this.getOutdoorTemperatureDeviceName(
+          this.outdoorTemperatureListener.device
+        ),
         '-',
         this.outdoorTemperatureCapability,
         'has been cleaned'
@@ -113,7 +115,7 @@ export default class MELCloudExtensionApp extends App {
         enabled: false,
       })
       this.outdoorTemperatureCapability = ''
-      this.outdoorTemperatureListener = {}
+      this.outdoorTemperatureListener = null
     }
   }
 
@@ -161,7 +163,7 @@ export default class MELCloudExtensionApp extends App {
       enabled,
     })
     if (
-      this.outdoorTemperatureListener.device !== undefined &&
+      this.outdoorTemperatureListener?.device !== undefined &&
       this.homey.settings.get('enabled') === true
     ) {
       await this.listenToThermostatModes()
@@ -195,13 +197,13 @@ export default class MELCloudExtensionApp extends App {
         enabled,
       })
       this.outdoorTemperatureCapability = capability
-      this.outdoorTemperatureListener.device = device
+      this.outdoorTemperatureListener = { device }
       // @ts-expect-error bug
       this.outdoorTemperatureListener.device.on(
         'update',
         async (): Promise<void> => {
           if (
-            this.outdoorTemperatureListener.device?.id === id &&
+            this.outdoorTemperatureListener?.device.id === id &&
             !(
               this.outdoorTemperatureCapability in
               // @ts-expect-error bug
@@ -299,7 +301,7 @@ export default class MELCloudExtensionApp extends App {
 
   listenToOutdoorTemperature(): void {
     if (
-      this.outdoorTemperatureListener.device === undefined ||
+      this.outdoorTemperatureListener?.device === undefined ||
       this.outdoorTemperatureListener.temperature !== undefined
     ) {
       return
@@ -312,7 +314,9 @@ export default class MELCloudExtensionApp extends App {
           this.log(
             outdoorTemperature,
             '°C listened from',
-            this.getOutdoorTemperatureDeviceName(),
+            this.getOutdoorTemperatureDeviceName(
+              this.outdoorTemperatureListener?.device
+            ),
             '-',
             this.outdoorTemperatureCapability
           )
@@ -345,7 +349,7 @@ export default class MELCloudExtensionApp extends App {
     this.listenToOutdoorTemperature()
     if (
       listener.temperature === undefined ||
-      this.outdoorTemperatureListener.temperature === undefined
+      this.outdoorTemperatureListener?.temperature === undefined
     ) {
       return
     }
@@ -395,15 +399,19 @@ export default class MELCloudExtensionApp extends App {
       '°C (from threshold',
       threshold,
       'and',
-      this.getOutdoorTemperatureDeviceName(),
+      this.getOutdoorTemperatureDeviceName(
+        this.outdoorTemperatureListener?.device
+      ),
       outdoorTemperature,
       '°C)'
     )
     return newTargetTemperature
   }
 
-  getOutdoorTemperatureDeviceName(): string {
-    return this.outdoorTemperatureListener.device?.name ?? 'Undefined'
+  getOutdoorTemperatureDeviceName(
+    device?: HomeyAPIV3Local.ManagerDevices.Device
+  ): string {
+    return device?.name ?? 'Undefined'
   }
 
   setSettings(settings: Settings): void {
