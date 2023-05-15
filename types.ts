@@ -1,4 +1,4 @@
-import { type HomeyAPIV2 } from 'homey-api'
+import { type HomeyAPIV3Local } from 'homey-api'
 
 export type Settings = Record<string, any>
 
@@ -17,11 +17,14 @@ export interface OutdoorTemperatureListenerData {
   readonly enabled: boolean
 }
 
+// @ts-expect-error bug
+type DeviceCapability = HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability
+
 export interface OutdoorTemperatureListener {
-  device: HomeyAPIV2.ManagerDevices.Device
-  temperature?: HomeyAPIV2.ManagerDevices.Device.DeviceCapability
+  device: HomeyAPIV3Local.ManagerDevices.Device
+  temperature?: DeviceCapability
 }
 
 export interface MELCloudListener extends OutdoorTemperatureListener {
-  thermostatMode?: HomeyAPIV2.ManagerDevices.Device.DeviceCapability
+  thermostatMode?: DeviceCapability
 }

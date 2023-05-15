@@ -1,4 +1,4 @@
-import { HomeyAPI, type HomeyAPIV2 } from 'homey-api'
+import { HomeyAPIV3Local } from 'homey-api'
 import { App } from 'homey'
 import {
   type MELCloudListener,
@@ -10,15 +10,15 @@ import {
 const melcloudAtaDriverId: string = 'homey:app:com.mecloud:melcloud'
 
 export default class MELCloudExtensionApp extends App {
-  api!: HomeyAPI
-  melCloudDevices!: HomeyAPIV2.ManagerDevices.Device[]
+  api!: HomeyAPIV3Local
+  melCloudDevices!: HomeyAPIV3Local.ManagerDevices.Device[]
   melCloudListeners!: MELCloudListener[]
   outdoorTemperatureListener!: Partial<OutdoorTemperatureListener>
   outdoorTemperatureCapability!: string
 
   async onInit(): Promise<void> {
     // @ts-expect-error bug
-    this.api = await HomeyAPI.createAppAPI({ homey: this.homey })
+    this.api = await HomeyAPIV3Local.createAppAPI({ homey: this.homey })
     // @ts-expect-error bug
     await this.api.devices.connect()
 
@@ -117,16 +117,24 @@ export default class MELCloudExtensionApp extends App {
     }
   }
 
-  async refreshDevices(): Promise<HomeyAPIV2.ManagerDevices.Device[]> {
+  async refreshDevices(): Promise<HomeyAPIV3Local.ManagerDevices.Device[]> {
     this.melCloudDevices = []
-    const devices: HomeyAPIV2.ManagerDevices.Device[] =
+    const devices: HomeyAPIV3Local.ManagerDevices.Device[] =
       // @ts-expect-error bug
       await this.api.devices.getDevices()
-    return Object.values(devices).reduce<HomeyAPIV2.ManagerDevices.Device[]>(
-      (measureTemperatureDevices, device: HomeyAPIV2.ManagerDevices.Device) => {
+    return Object.values(devices).reduce<
+      HomeyAPIV3Local.ManagerDevices.Device[]
+    >(
+      (
+        measureTemperatureDevices,
+        device: HomeyAPIV3Local.ManagerDevices.Device
+      ) => {
+        // @ts-expect-error bug
         if (device.driverId === melcloudAtaDriverId) {
           this.melCloudDevices.push(device)
         } else if (
+          // @ts-expect-error bug
+          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
           device.capabilities.some((capability: string): boolean =>
             capability.startsWith('measure_temperature')
           )
@@ -173,9 +181,10 @@ export default class MELCloudExtensionApp extends App {
         )
       }
       const [id, capability]: string[] = splitCapabilityPath
-      const device: HomeyAPIV2.ManagerDevices.Device =
+      const device: HomeyAPIV3Local.ManagerDevices.Device =
         // @ts-expect-error bug
         await this.api.devices.getDevice({ id })
+      // @ts-expect-error bug
       if (!(capability in (device.capabilitiesObj ?? {}))) {
         throw new Error(
           this.homey.__('app.outdoor_temperature.not_found', { capabilityPath })
@@ -196,6 +205,7 @@ export default class MELCloudExtensionApp extends App {
             this.outdoorTemperatureListener.device.id === id &&
             !(
               this.outdoorTemperatureCapability in
+              // @ts-expect-error bug
               (this.outdoorTemperatureListener.device.capabilitiesObj ?? {})
             )
           ) {
@@ -217,7 +227,7 @@ export default class MELCloudExtensionApp extends App {
 
   async listenToThermostatModes(): Promise<void> {
     this.melCloudListeners = this.melCloudDevices.map(
-      (device: HomeyAPIV2.ManagerDevices.Device): MELCloudListener => ({
+      (device: HomeyAPIV3Local.ManagerDevices.Device): MELCloudListener => ({
         device,
       })
     )

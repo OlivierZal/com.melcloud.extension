@@ -1,4 +1,4 @@
-import { type HomeyAPIV2 } from 'homey-api'
+import { type HomeyAPIV3Local } from 'homey-api'
 import type Homey from 'homey/lib/Homey'
 import type MELCloudExtensionApp from './app'
 import {
@@ -18,7 +18,7 @@ module.exports = {
     homey: Homey
   }): Promise<MeasureTemperatureDevice[]> {
     const app: MELCloudExtensionApp = homey.app as MELCloudExtensionApp
-    const measureTemperatureDevices: HomeyAPIV2.ManagerDevices.Device[] =
+    const measureTemperatureDevices: HomeyAPIV3Local.ManagerDevices.Device[] =
       await app.refreshDevices()
     if (app.melCloudDevices.length === 0) {
       throw new Error('no_device_ata')
@@ -26,10 +26,12 @@ module.exports = {
     return measureTemperatureDevices
       .flatMap(
         (
-          device: HomeyAPIV2.ManagerDevices.Device
+          device: HomeyAPIV3Local.ManagerDevices.Device
         ): MeasureTemperatureDevice[] =>
+          // @ts-expect-error bug
           Object.values(device.capabilitiesObj ?? {}).reduce<
             MeasureTemperatureDevice[]
+            // @ts-expect-error bug
           >((devices, capabilityObj: CapabilityObj) => {
             if (capabilityObj.id.startsWith('measure_temperature')) {
               devices.push({
