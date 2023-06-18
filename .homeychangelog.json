@@ -13,5 +13,8 @@
   },
   "5.0.0": {
     "en": "Improved recording of target temperature to restore it when refreshing stops."
+  },
+  "6.0.0": {
+    "en": "Improved value fetching."
   }
 }
