@@ -37,28 +37,27 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     'enabled'
   ) as HTMLSelectElement
 
-  async function getHomeySetting(
-    element: HTMLInputElement | HTMLSelectElement,
-    defaultValue: any = ''
-  ): Promise<void> {
-    await new Promise<void>((resolve, reject) => {
+  async function getHomeySettings(): Promise<Record<string, any>> {
+    return await new Promise<Record<string, any>>((resolve, reject) => {
       // @ts-expect-error bug
-      Homey.get(element.id, async (error: Error, value: any): Promise<void> => {
-        if (error !== null) {
-          // @ts-expect-error bug
-          await Homey.alert(error.message)
-          reject(error)
-          return
+      Homey.get(
+        async (error: Error, settings: Record<string, any>): Promise<void> => {
+          if (error !== null) {
+            // @ts-expect-error bug
+            await Homey.alert(error.message)
+            reject(error)
+            return
+          }
+          resolve(settings)
         }
-        element.value = String(value ?? defaultValue)
-        resolve()
-      })
+      )
     })
   }
 
   async function getAutoAdjustmentSettings(): Promise<void> {
-    await getHomeySetting(capabilityPathElement)
-    await getHomeySetting(enabledElement, false)
+    const homeySettings: Record<string, any> = await getHomeySettings()
+    capabilityPathElement.value = homeySettings[capabilityPathElement.id] ?? ''
+    enabledElement.value = String(homeySettings[enabledElement.id] ?? false)
     refreshElement.classList.remove('is-disabled')
   }
 
