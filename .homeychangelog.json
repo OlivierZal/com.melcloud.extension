@@ -16,5 +16,8 @@
   },
   "6.0.0": {
     "en": "Improved value fetching."
+  },
+  "7.0.0": {
+    "en": "Added logs to app settings."
   }
 }
