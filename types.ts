@@ -28,3 +28,7 @@ export interface OutdoorTemperatureListener {
 export interface MELCloudListener extends OutdoorTemperatureListener {
   thermostatMode?: DeviceCapability
 }
+
+export interface Log {
+  message: string
+}

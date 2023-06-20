@@ -1,5 +1,6 @@
 import type Homey from 'homey/lib/Homey'
 import {
+  type Log,
   type MeasureTemperatureDevice,
   type OutdoorTemperatureListenerData,
 } from '../types'
@@ -24,19 +25,6 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     )
   })
 
-  const applyElement: HTMLButtonElement = document.getElementById(
-    'apply'
-  ) as HTMLButtonElement
-  const refreshElement: HTMLButtonElement = document.getElementById(
-    'refresh'
-  ) as HTMLButtonElement
-  const capabilityPathElement: HTMLSelectElement = document.getElementById(
-    'capabilityPath'
-  ) as HTMLSelectElement
-  const enabledElement: HTMLSelectElement = document.getElementById(
-    'enabled'
-  ) as HTMLSelectElement
-
   async function getHomeySettings(): Promise<Record<string, any>> {
     return await new Promise<Record<string, any>>((resolve, reject) => {
       // @ts-expect-error bug
@@ -54,8 +42,25 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     })
   }
 
+  const homeySettings: Record<string, any> = await getHomeySettings()
+
+  const applyElement: HTMLButtonElement = document.getElementById(
+    'apply'
+  ) as HTMLButtonElement
+  const refreshElement: HTMLButtonElement = document.getElementById(
+    'refresh'
+  ) as HTMLButtonElement
+  const capabilityPathElement: HTMLSelectElement = document.getElementById(
+    'capabilityPath'
+  ) as HTMLSelectElement
+  const enabledElement: HTMLSelectElement = document.getElementById(
+    'enabled'
+  ) as HTMLSelectElement
+  const logsElement: HTMLTableSectionElement = document.getElementById(
+    'logs'
+  ) as HTMLTableSectionElement
+
   async function getAutoAdjustmentSettings(): Promise<void> {
-    const homeySettings: Record<string, any> = await getHomeySettings()
     capabilityPathElement.value = homeySettings[capabilityPathElement.id] ?? ''
     enabledElement.value = String(homeySettings[enabledElement.id] ?? false)
     refreshElement.classList.remove('is-disabled')
@@ -162,5 +167,19 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
         await Homey.alert(Homey.__('settings.success'))
       }
     )
+  })
+
+  function addLog(log: string): void {
+    const rowElement: HTMLTableRowElement = logsElement.insertRow(0)
+    const cellElement: HTMLTableCellElement = rowElement.insertCell()
+    cellElement.innerText = `${log}\n\n`
+  }
+
+  homeySettings.lastLogs.reverse().forEach((log: string): void => {
+    addLog(log)
+  })
+
+  Homey.on('log', (log: Log): void => {
+    addLog(log.message)
   })
 }
