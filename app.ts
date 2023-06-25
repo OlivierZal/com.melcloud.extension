@@ -453,7 +453,7 @@ export default class MELCloudExtensionApp extends App {
           newTargetTemperature,
           '°C (from threshold',
           threshold,
-          'and',
+          '°C and',
           this.getOutdoorTemperatureDeviceName(
             this.outdoorTemperatureListener?.device
           ),
