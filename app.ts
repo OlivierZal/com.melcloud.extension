@@ -1,6 +1,7 @@
 import { HomeyAPIV3Local } from 'homey-api'
 import { App } from 'homey'
 import {
+  type Log,
   type MELCloudListener,
   type OutdoorTemperatureListener,
   type OutdoorTemperatureListenerData,
@@ -45,9 +46,7 @@ export default class MELCloudExtensionApp extends App {
     await this.autoAdjustCoolingAta().catch(this.error)
   }
 
-  async cleanListeners(
-    resetOutdoorTemperatureListener: boolean = false
-  ): Promise<void> {
+  async cleanListeners(): Promise<void> {
     await Promise.all(
       this.melCloudListeners.map(
         async (listener: MELCloudListener): Promise<void> => {
@@ -57,7 +56,7 @@ export default class MELCloudExtensionApp extends App {
       )
     )
     this.melCloudListeners = []
-    this.cleanOutdoorTemperatureListener(resetOutdoorTemperatureListener)
+    this.cleanOutdoorTemperatureListener()
     this.log('All listeners have been cleaned')
   }
 
@@ -119,9 +118,7 @@ export default class MELCloudExtensionApp extends App {
     return threshold
   }
 
-  cleanOutdoorTemperatureListener(
-    resetOutdoorTemperatureListener: boolean = false
-  ): void {
+  cleanOutdoorTemperatureListener(): void {
     if (this.outdoorTemperatureListener?.temperature !== undefined) {
       this.outdoorTemperatureListener.temperature.destroy()
       this.log(
@@ -133,14 +130,6 @@ export default class MELCloudExtensionApp extends App {
         this.outdoorTemperatureCapability,
         'has been cleaned'
       )
-    }
-    if (resetOutdoorTemperatureListener) {
-      this.setSettings({
-        capabilityPath: '',
-        enabled: false,
-      })
-      this.outdoorTemperatureCapability = ''
-      this.outdoorTemperatureListener = null
     }
   }
 
@@ -199,56 +188,75 @@ export default class MELCloudExtensionApp extends App {
     capabilityPath,
     enabled,
   }: OutdoorTemperatureListenerData): Promise<void> {
-    let resetOutdoorTemperatureListener: boolean = false
     try {
-      const splitCapabilityPath: string[] = capabilityPath.split(':')
-      if (splitCapabilityPath.length !== 2 || splitCapabilityPath[1] === '') {
-        throw new Error(
-          this.homey.__('app.outdoor_temperature.invalid', { capabilityPath })
-        )
-      }
-      const [id, capability]: string[] = splitCapabilityPath
-      const device: HomeyAPIV3Local.ManagerDevices.Device =
-        // @ts-expect-error bug
-        await this.api.devices.getDevice({ id })
-      // @ts-expect-error bug
-      if (!(capability in (device.capabilitiesObj ?? {}))) {
-        throw new Error(
-          this.homey.__('app.outdoor_temperature.not_found', { capabilityPath })
-        )
-      }
+      const [device, capability]: [
+        HomeyAPIV3Local.ManagerDevices.Device,
+        string
+      ] = await this.validateCapabilityPath(capabilityPath)
       this.setSettings({
         capabilityPath,
         enabled,
       })
       this.outdoorTemperatureCapability = capability
       this.outdoorTemperatureListener = { device }
-      // @ts-expect-error bug
-      this.outdoorTemperatureListener.device.on(
-        'update',
-        async (): Promise<void> => {
-          if (
-            this.outdoorTemperatureListener?.device.id === id &&
-            !(
-              this.outdoorTemperatureCapability in
-              // @ts-expect-error bug
-              (this.outdoorTemperatureListener.device.capabilitiesObj ?? {})
-            )
-          ) {
-            this.error('Outdoor temperature', capabilityPath, 'cannot be found')
-            await this.cleanListeners(true)
-          }
-        }
-      )
+      this.handleOutdoorTemperatureDeviceUpdate(capabilityPath)
     } catch (error: unknown) {
-      resetOutdoorTemperatureListener = true
-      this.error(error instanceof Error ? error.message : error)
       if (capabilityPath !== '') {
-        throw error
+        this.error(error instanceof Error ? error.message : error)
       }
     } finally {
-      await this.cleanListeners(resetOutdoorTemperatureListener)
+      await this.cleanListeners()
     }
+  }
+
+  async validateCapabilityPath(
+    capabilityPath: string
+  ): Promise<[HomeyAPIV3Local.ManagerDevices.Device, string]> {
+    const [id, capability]: string[] = capabilityPath.split(':')
+    if (capability === undefined || capability === '') {
+      throw new Error(
+        this.homey.__('app.outdoor_temperature.invalid', { capabilityPath })
+      )
+    }
+    let device: HomeyAPIV3Local.ManagerDevices.Device | null = null
+    try {
+      // @ts-expect-error bug
+      device = await this.api.devices.getDevice({
+        id,
+      })
+    } catch (error: unknown) {
+      throw new Error(this.homey.__('app.device.not_found', { id }))
+    }
+    // @ts-expect-error bug
+    if (device === null || !(capability in (device.capabilitiesObj ?? {}))) {
+      throw new Error(
+        this.homey.__('app.outdoor_temperature.not_found', { capabilityPath })
+      )
+    }
+    return [device, capability]
+  }
+
+  handleOutdoorTemperatureDeviceUpdate(capabilityPath: string): void {
+    // @ts-expect-error bug
+    this.outdoorTemperatureListener.device.on(
+      'update',
+      async (): Promise<void> => {
+        if (
+          !(
+            this.outdoorTemperatureCapability in
+            // @ts-expect-error bug
+            (this.outdoorTemperatureListener.device.capabilitiesObj ?? {})
+          )
+        ) {
+          this.error(
+            this.homey.__('app.outdoor_temperature.not_found', {
+              capabilityPath,
+            })
+          )
+          await this.cleanListeners()
+        }
+      }
+    )
   }
 
   async listenToThermostatModes(): Promise<void> {
@@ -480,16 +488,24 @@ export default class MELCloudExtensionApp extends App {
     )
   }
 
+  error(...args: any[]): void {
+    super.error(...args)
+    this.pushToLastLogs({ message: args.join(' '), error: true })
+  }
+
   log(...args: any[]): void {
     super.log(...args)
-    const newLog: string = args.join(' ')
-    const lastLogs: string[] = this.homey.settings.get('lastLogs') ?? []
+    this.pushToLastLogs({ message: args.join(' ') })
+  }
+
+  pushToLastLogs(newLog: Log): void {
+    const lastLogs: Log[] = this.homey.settings.get('lastLogs') ?? []
     lastLogs.unshift(newLog)
     if (lastLogs.length > maxLogs) {
       lastLogs.length = maxLogs
     }
     this.homey.settings.set('lastLogs', lastLogs)
-    this.homey.api.realtime('log', { message: newLog })
+    this.homey.api.realtime('log', newLog)
   }
 
   async onUninit(): Promise<void> {

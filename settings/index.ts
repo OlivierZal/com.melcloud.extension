@@ -158,28 +158,27 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
       async (error: Error): Promise<void> => {
         applyElement.classList.remove('is-disabled')
         if (error !== null) {
-          await getAutoAdjustmentSettings()
           // @ts-expect-error bug
           await Homey.alert(error.message)
-          return
         }
-        // @ts-expect-error bug
-        await Homey.alert(Homey.__('settings.success'))
       }
     )
   })
 
-  function addLog(log: string): void {
+  function addLog(log: Log): void {
     const rowElement: HTMLTableRowElement = logsElement.insertRow(0)
     const cellElement: HTMLTableCellElement = rowElement.insertCell()
-    cellElement.innerText = `${log}\n\n`
+    cellElement.innerText = `${log.message}\n\n`
+    if (log.error !== undefined && log.error) {
+      cellElement.style.color = 'red'
+    }
   }
 
-  homeySettings.lastLogs.reverse().forEach((log: string): void => {
+  homeySettings.lastLogs.reverse().forEach((log: Log): void => {
     addLog(log)
   })
 
   Homey.on('log', (log: Log): void => {
-    addLog(log.message)
+    addLog(log)
   })
 }

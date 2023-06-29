@@ -31,4 +31,5 @@ export interface MELCloudListener extends OutdoorTemperatureListener {
 
 export interface Log {
   message: string
+  error?: boolean
 }

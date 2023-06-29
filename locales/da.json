@@ -4,6 +4,9 @@
       "invalid": "Udendørstemperaturen __capabilityPath__ er ugyldig.",
       "missing": "Udendørstemperaturen mangler.",
       "not_found": "Udendørstemperaturen __capabilityPath__ kan ikke findes."
+    },
+    "device": {
+      "not_found": "Enheden __id__ kan ikke findes."
     }
   },
   "settings": {

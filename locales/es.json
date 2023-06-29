@@ -4,6 +4,9 @@
       "invalid": "La temperatura exterior __capabilityPath__ no es válida.",
       "missing": "Falta la temperatura exterior.",
       "not_found": "No se puede encontrar la temperatura exterior __capabilityPath__."
+    },
+    "device": {
+      "not_found": "No se puede encontrar el dispositivo __id__."
     }
   },
   "settings": {

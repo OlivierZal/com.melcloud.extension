@@ -4,6 +4,9 @@
       "invalid": "Buitentemperatuur __capabilityPath__ is ongeldig.",
       "missing": "Buitentemperatuur ontbreekt.",
       "not_found": "Buitentemperatuur __capabilityPath__ kan niet worden gevonden."
+    },
+    "device": {
+      "not_found": "Het apparaat __id__ kan niet worden gevonden."
     }
   },
   "settings": {

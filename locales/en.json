@@ -4,6 +4,9 @@
       "invalid": "Outdoor temperature __capabilityPath__ is invalid.",
       "missing": "Outdoor temperature is missing.",
       "not_found": "Outdoor temperature __capabilityPath__ cannot be found."
+    },
+    "device": {
+      "not_found": "Device __id__ cannot be found."
     }
   },
   "settings": {

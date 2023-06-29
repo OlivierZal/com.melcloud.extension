@@ -4,6 +4,9 @@
       "invalid": "Utetemperatur __capabilityPath__ er ugyldig.",
       "missing": "Utetemperatur mangler.",
       "not_found": "Utetemperatur __capabilityPath__ kan ikke bli funnet."
+    },
+    "device": {
+      "not_found": "Enheten __id__ kan ikke bli funnet."
     }
   },
   "settings": {

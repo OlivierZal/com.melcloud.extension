@@ -4,6 +4,9 @@
       "invalid": "La température extérieure __capabilityPath__ est invalide.",
       "missing": "La température extérieure est manquante.",
       "not_found": "La température extérieure __capabilityPath__ est introuvable."
+    },
+    "device": {
+      "not_found": "L'appareil __id__ est introuvable."
     }
   },
   "settings": {

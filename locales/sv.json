@@ -4,6 +4,9 @@
       "invalid": "Utomhustemperatur __capabilityPath__ är ogiltig.",
       "missing": "Utomhustemperatur saknas.",
       "not_found": "Utomhustemperatur __capabilityPath__ kan inte hittas."
+    },
+    "device": {
+      "not_found": "Enheten __id__ kan inte hittas."
     }
   },
   "settings": {
