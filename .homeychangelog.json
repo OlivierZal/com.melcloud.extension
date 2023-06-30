@@ -19,5 +19,8 @@
   },
   "7.0.0": {
     "en": "Added logs to app settings."
+  },
+  "8.0.0": {
+    "en": "Improve logs by formatting them."
   }
 }
