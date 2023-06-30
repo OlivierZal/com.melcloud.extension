@@ -168,10 +168,17 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   function addLog(log: Log): void {
     const rowElement: HTMLTableRowElement = logsElement.insertRow(0)
     const cellElement: HTMLTableCellElement = rowElement.insertCell()
-    cellElement.innerText = `${log.message}\n\n`
+    const timeElement = document.createElement('span')
+    timeElement.style.color = '#888'
+    timeElement.innerText = `[${log.time}] `
+    const messageElement = document.createElement('span')
+    messageElement.innerText = `${log.message}`
     if (log.error !== undefined && log.error) {
-      cellElement.style.color = 'red'
+      messageElement.style.color = 'red'
+      messageElement.innerHTML = `<strong>⚠️ ${messageElement.innerHTML}</strong>`
     }
+    cellElement.appendChild(timeElement)
+    cellElement.appendChild(messageElement)
   }
 
   homeySettings.lastLogs.reverse().forEach((log: Log): void => {

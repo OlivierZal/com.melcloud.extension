@@ -12,6 +12,7 @@ const maxLogs: number = 100
 const melcloudAtaDriverId: string = 'homey:app:com.mecloud:melcloud'
 
 export default class MELCloudExtensionApp extends App {
+  timeZone!: string
   api!: HomeyAPIV3Local
   melCloudDevices!: HomeyAPIV3Local.ManagerDevices.Device[]
   melCloudListeners!: MELCloudListener[]
@@ -20,6 +21,8 @@ export default class MELCloudExtensionApp extends App {
   outdoorTemperatureValue!: number
 
   async onInit(): Promise<void> {
+    this.timeZone = this.homey.clock.getTimezone()
+
     // @ts-expect-error bug
     this.api = await HomeyAPIV3Local.createAppAPI({ homey: this.homey })
     // @ts-expect-error bug
@@ -490,12 +493,25 @@ export default class MELCloudExtensionApp extends App {
 
   error(...args: any[]): void {
     super.error(...args)
-    this.pushToLastLogs({ message: args.join(' '), error: true })
+    this.pushToLastLogs({
+      time: this.getNow(),
+      message: args.join(' '),
+      error: true,
+    })
   }
 
   log(...args: any[]): void {
     super.log(...args)
-    this.pushToLastLogs({ message: args.join(' ') })
+    this.pushToLastLogs({
+      time: this.getNow(),
+      message: args.join(' '),
+    })
+  }
+
+  getNow(): string {
+    return new Date().toLocaleTimeString(this.homey.i18n.getLanguage(), {
+      timeZone: this.timeZone,
+    })
   }
 
   pushToLastLogs(newLog: Log): void {
