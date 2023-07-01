@@ -1,13 +1,19 @@
 {
-  "app": {
-    "outdoor_temperature": {
-      "invalid": "Outdoor temperature __capabilityPath__ is invalid.",
-      "missing": "Outdoor temperature is missing.",
-      "not_found": "Outdoor temperature __capabilityPath__ cannot be found."
+  "error": {
+    "invalid": "__name__ __id__ is invalid.",
+    "missing": "__name__ is missing.",
+    "not_found": "__name__ __id__ cannot be found."
+  },
+  "log": {
+    "calculate": "Calculating __device__ - target_temperature: __value__ (from threshold __threshold__ °C and outdoor temperature __outdoorTemperature__ °C).",
+    "listener": {
+      "cleaned": "Listener for __device__ - __capability__ has been cleaned.",
+      "cleaned_all": "All listeners have been cleaned.",
+      "created": "Listener has been created for __device__ - __capability__.",
+      "listened": "__value__ listened from __device__ - __capability__."
     },
-    "device": {
-      "not_found": "Device __id__ cannot be found."
-    }
+    "reverse": "Reverting __device__ - target_temperature: __value__ °C.",
+    "save": "Saving __device__ - target_temperature: __value__ °C."
   },
   "settings": {
     "apply": "Apply to all air-to-air devices",
