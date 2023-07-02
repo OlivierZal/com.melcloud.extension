@@ -20,13 +20,17 @@ export interface OutdoorTemperatureListenerData {
 // @ts-expect-error bug
 type DeviceCapability = HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability
 
-export interface OutdoorTemperatureListener {
+interface Listener {
   device: HomeyAPIV3Local.ManagerDevices.Device
+}
+
+export interface OutdoorTemperatureListener extends Listener {
   temperature?: DeviceCapability
 }
 
-export interface MELCloudListener extends OutdoorTemperatureListener {
-  thermostatMode?: DeviceCapability
+export interface MELCloudListener extends Listener {
+  target_temperature?: DeviceCapability
+  thermostat_mode?: DeviceCapability
 }
 
 export interface Log {

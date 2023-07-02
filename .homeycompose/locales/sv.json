@@ -1,13 +1,19 @@
 {
-  "app": {
-    "outdoor_temperature": {
-      "invalid": "Utomhustemperatur __capabilityPath__ är ogiltig.",
-      "missing": "Utomhustemperatur saknas.",
-      "not_found": "Utomhustemperatur __capabilityPath__ kan inte hittas."
+  "error": {
+    "invalid": "__name__ __id__ är ogiltig.",
+    "missing": "Utomhustemperatur saknas.",
+    "not_found": "__name__ __id__ kunde inte hittas."
+  },
+  "log": {
+    "calculate": "Beräknar __device__ - target_temperature: __value__ (från tröskel __threshold__ °C och utomhustemperatur __outdoorTemperature__ °C).",
+    "listener": {
+      "cleaned": "Lyssnare för __device__ - __capabilityId__ har rengjorts.",
+      "cleaned_all": "Alla lyssnare har rengjorts.",
+      "created": "En lyssnare har skapats för __device__ - __capabilityId__.",
+      "listened": "Lyssnade från __device__ - __capabilityId__: __value__."
     },
-    "device": {
-      "not_found": "Enheten __id__ kan inte hittas."
-    }
+    "revert": "Återställer __device__ - target_temperature: __value__.",
+    "save": "Sparar __device__ - target_temperature: __value__."
   },
   "settings": {
     "apply": "Tillämpa på alla luft-luft enheter",

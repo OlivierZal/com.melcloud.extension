@@ -1,13 +1,19 @@
 {
-  "app": {
-    "outdoor_temperature": {
-      "invalid": "La température extérieure __capabilityPath__ est invalide.",
-      "missing": "La température extérieure est manquante.",
-      "not_found": "La température extérieure __capabilityPath__ est introuvable."
+  "error": {
+    "invalid": "__name__ __id__ est invalide.",
+    "missing": "La température extérieure est manquante.",
+    "not_found": "__name__ __id__ est introuvable."
+  },
+  "log": {
+    "calculate": "Calcul de __device__ - target_temperature : __value__ (à partir du seuil __threshold__ °C et de la température extérieure __outdoorTemperature__ °C).",
+    "listener": {
+      "cleaned": "L'écouteur pour __device__ - __capabilityId__ a été nettoyé.",
+      "cleaned_all": "Tous les écouteurs ont été nettoyés.",
+      "created": "Un écouteur a été créé pour __device__ - __capabilityId__.",
+      "listened": "Écouté depuis __device__ - __capabilityId__ : __value__."
     },
-    "device": {
-      "not_found": "L'appareil __id__ est introuvable."
-    }
+    "revert": "Rétablissement de __device__ - target_temperature : __value__.",
+    "save": "Enregistrement de __device__ - target_temperature : __value__."
   },
   "settings": {
     "apply": "Appliquer à tous les appareils air-air",

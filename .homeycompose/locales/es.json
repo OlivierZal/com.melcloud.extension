@@ -1,13 +1,19 @@
 {
-  "app": {
-    "outdoor_temperature": {
-      "invalid": "La temperatura exterior __capabilityPath__ no es válida.",
-      "missing": "Falta la temperatura exterior.",
-      "not_found": "No se puede encontrar la temperatura exterior __capabilityPath__."
+  "error": {
+    "invalid": "__name__ __id__ es inválido.",
+    "missing": "Falta la temperatura exterior.",
+    "not_found": "No se puede encontrar __name__ __id__."
+  },
+  "log": {
+    "calculate": "Calculando __device__ - target_temperature: __value__ (desde el umbral __threshold__ °C y la temperatura exterior __outdoorTemperature__ °C).",
+    "listener": {
+      "cleaned": "El escuchador para __device__ - __capabilityId__ ha sido limpiado.",
+      "cleaned_all": "Todos los escuchadores han sido limpiados.",
+      "created": "Se ha creado un escuchador para __device__ - __capabilityId__.",
+      "listened": "Escuchado desde __device__ - __capabilityId__: __value__."
     },
-    "device": {
-      "not_found": "No se puede encontrar el dispositivo __id__."
-    }
+    "revert": "Restableciendo __device__ - target_temperature: __value__.",
+    "save": "Guardando __device__ - target_temperature: __value__."
   },
   "settings": {
     "apply": "Aplicar a todos los dispositivos aire-aire",

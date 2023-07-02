@@ -1,13 +1,19 @@
 {
-  "app": {
-    "outdoor_temperature": {
-      "invalid": "Utetemperatur __capabilityPath__ er ugyldig.",
-      "missing": "Utetemperatur mangler.",
-      "not_found": "Utetemperatur __capabilityPath__ kan ikke bli funnet."
+  "error": {
+    "invalid": "__name__ __id__ er ugyldig.",
+    "missing": "Utetemperatur mangler.",
+    "not_found": "__name__ __id__ ble ikke funnet."
+  },
+  "log": {
+    "calculate": "Beregner __device__ - target_temperature: __value__ (fra terskel __threshold__ °C og utetemperatur __outdoorTemperature__ °C).",
+    "listener": {
+      "cleaned": "Lytter for __device__ - __capabilityId__ har blitt ryddet.",
+      "cleaned_all": "Alle lyttere har blitt ryddet.",
+      "created": "Lytter er opprettet for __device__ - __capabilityId__.",
+      "listened": "Lyttet fra __device__ - __capabilityId__: __value__."
     },
-    "device": {
-      "not_found": "Enheten __id__ kan ikke bli funnet."
-    }
+    "revert": "Gjenoppretter __device__ - target_temperature: __value__.",
+    "save": "Lagrer __device__ - target_temperature: __value__."
   },
   "settings": {
     "apply": "Bruk på alle luft-luft enheter",

@@ -1,13 +1,19 @@
 {
-  "app": {
-    "outdoor_temperature": {
-      "invalid": "Buitentemperatuur __capabilityPath__ is ongeldig.",
-      "missing": "Buitentemperatuur ontbreekt.",
-      "not_found": "Buitentemperatuur __capabilityPath__ kan niet worden gevonden."
+  "error": {
+    "invalid": "__name__ __id__ is ongeldig.",
+    "missing": "Buitentemperatuur ontbreekt.",
+    "not_found": "__name__ __id__ kan niet worden gevonden."
+  },
+  "log": {
+    "calculate": "Berekenen __device__ - target_temperature: __value__ (van drempelwaarde __threshold__ °C en buitentemperatuur __outdoorTemperature__ °C).",
+    "listener": {
+      "cleaned": "Luisteraar voor __device__ - __capabilityId__ is opgeschoond.",
+      "cleaned_all": "Alle luisteraars zijn opgeschoond.",
+      "created": "Luisteraar is gemaakt voor __device__ - __capabilityId__.",
+      "listened": "Geluisterd van __device__ - __capabilityId__: __value__."
     },
-    "device": {
-      "not_found": "Het apparaat __id__ kan niet worden gevonden."
-    }
+    "revert": "Herstellen __device__ - target_temperature: __value__.",
+    "save": "Opslaan __device__ - target_temperature: __value__."
   },
   "settings": {
     "apply": "Toepassen op alle lucht-lucht apparaten",
