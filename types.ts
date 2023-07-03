@@ -24,13 +24,13 @@ interface Listener {
   device: HomeyAPIV3Local.ManagerDevices.Device
 }
 
-export interface OutdoorTemperatureListener extends Listener {
-  temperature?: DeviceCapability
-}
-
 export interface MELCloudListener extends Listener {
   target_temperature?: DeviceCapability
   thermostat_mode?: DeviceCapability
+}
+
+export interface OutdoorTemperatureListener extends Listener {
+  temperature?: DeviceCapability
 }
 
 export interface Log {

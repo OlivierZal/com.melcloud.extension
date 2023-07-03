@@ -5,7 +5,7 @@
     "not_found": "__name__ __id__ kan niet worden gevonden."
   },
   "log": {
-    "calculate": "Berekenen __device__ - target_temperature: __value__ (van drempelwaarde __threshold__ °C en buitentemperatuur __outdoorTemperature__ °C).",
+    "calculate": "Berekenen __device__ - target_temperature: __value__ (van drempelwaarde __threshold__ en buitentemperatuur __outdoorTemperature__).",
     "listener": {
       "cleaned": "Luisteraar voor __device__ - __capabilityId__ is opgeschoond.",
       "cleaned_all": "Alle luisteraars zijn opgeschoond.",

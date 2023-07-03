@@ -5,7 +5,7 @@
     "not_found": "__name__ __id__ cannot be found."
   },
   "log": {
-    "calculate": "Calculating __device__ - target_temperature: __value__ (from threshold __threshold__ °C and outdoor temperature __outdoorTemperature__ °C).",
+    "calculate": "Calculating __device__ - target_temperature: __value__ (from threshold __threshold__ and outdoor temperature __outdoorTemperature__).",
     "listener": {
       "cleaned": "Listener for __device__ - __capabilityId__ has been cleaned.",
       "cleaned_all": "All listeners have been cleaned.",

@@ -5,7 +5,7 @@
     "not_found": "__name__ __id__ ble ikke funnet."
   },
   "log": {
-    "calculate": "Beregner __device__ - target_temperature: __value__ (fra terskel __threshold__ °C og utetemperatur __outdoorTemperature__ °C).",
+    "calculate": "Beregner __device__ - target_temperature: __value__ (fra terskel __threshold__ og utetemperatur __outdoorTemperature__).",
     "listener": {
       "cleaned": "Lytter for __device__ - __capabilityId__ har blitt ryddet.",
       "cleaned_all": "Alle lyttere har blitt ryddet.",

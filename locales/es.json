@@ -5,7 +5,7 @@
     "not_found": "No se puede encontrar __name__ __id__."
   },
   "log": {
-    "calculate": "Calculando __device__ - target_temperature: __value__ (desde el umbral __threshold__ °C y la temperatura exterior __outdoorTemperature__ °C).",
+    "calculate": "Calculando __device__ - target_temperature: __value__ (desde el umbral __threshold__ y la temperatura exterior __outdoorTemperature__).",
     "listener": {
       "cleaned": "El escuchador para __device__ - __capabilityId__ ha sido limpiado.",
       "cleaned_all": "Todos los escuchadores han sido limpiados.",

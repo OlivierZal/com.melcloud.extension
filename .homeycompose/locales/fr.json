@@ -5,7 +5,7 @@
     "not_found": "__name__ __id__ est introuvable."
   },
   "log": {
-    "calculate": "Calcul de __device__ - target_temperature : __value__ (à partir du seuil __threshold__ °C et de la température extérieure __outdoorTemperature__ °C).",
+    "calculate": "Calcul de __device__ - target_temperature : __value__ (à partir du seuil __threshold__ et de la température extérieure __outdoorTemperature__).",
     "listener": {
       "cleaned": "L'écouteur pour __device__ - __capabilityId__ a été nettoyé.",
       "cleaned_all": "Tous les écouteurs ont été nettoyés.",
