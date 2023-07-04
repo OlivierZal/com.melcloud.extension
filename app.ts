@@ -512,8 +512,14 @@ export default class MELCloudExtensionApp extends App {
   }
 
   getNow(): string {
-    return new Date().toLocaleTimeString(this.homey.i18n.getLanguage(), {
+    return new Date().toLocaleString(this.homey.i18n.getLanguage(), {
       timeZone: this.timeZone,
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
     })
   }
 
