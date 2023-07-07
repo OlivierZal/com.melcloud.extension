@@ -537,7 +537,7 @@ export default class MELCloudExtensionApp extends App {
       threshold,
       outdoorTemperature,
     })
-    const message: string = `${icons[action]} ${actionLog})}`
+    const message: string = `${icons[action]} ${actionLog}`
       .replace(/a el/gi, 'al')
       .replace(/de le/gi, 'du')
     super.log(message)
