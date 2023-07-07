@@ -5,15 +5,21 @@
     "not_found": "__name__ __id__ est introuvable."
   },
   "log": {
-    "calculate": "Calcul de __device__ - target_temperature : __value__ (à partir du seuil __threshold__ et de la température extérieure __outdoorTemperature__).",
     "listener": {
-      "cleaned": "L'écouteur pour __device__ - __capabilityId__ a été nettoyé.",
-      "cleaned_all": "Tous les écouteurs ont été nettoyés.",
-      "created": "Un écouteur a été créé pour __device__ - __capabilityId__.",
-      "listened": "Écouté depuis __device__ - __capabilityId__ : __value__."
+      "capabilities": {
+        "temperature": "la température",
+        "thermostat_mode": "le mode"
+      },
+      "cleaned": "Nettoyage de l'écouteur pour __capability__ de __device__.",
+      "cleaned_all": "Nettoyage de tous les écouteurs.",
+      "created": "Création d'un écouteur pour __capability__ de __device__.",
+      "listened": "Écoute de __capability__ de __device__ : __value__."
     },
-    "revert": "Rétablissement de __device__ - target_temperature : __value__.",
-    "save": "Enregistrement de __device__ - target_temperature : __value__."
+    "target_temperature": {
+      "calculated": "Calcul de la température de __device__ : __value__ (à partir du seuil __threshold__ et de la température extérieure __outdoorTemperature__).",
+      "reverted": "Rétablissement de la température de __device__ : __value__.",
+      "saved": "Enregistrement de la température de __device__ : __value__."
+    }
   },
   "settings": {
     "apply": "Appliquer à tous les appareils air-air",

@@ -4,7 +4,7 @@ import type MELCloudExtensionApp from './app'
 import {
   type CapabilityObj,
   type MeasureTemperatureDevice,
-  type OutdoorTemperatureListenerData,
+  type TemperatureListenerData,
 } from './types'
 
 module.exports = {
@@ -56,7 +56,7 @@ module.exports = {
     body,
   }: {
     homey: Homey
-    body: OutdoorTemperatureListenerData
+    body: TemperatureListenerData
   }): Promise<void> {
     await (homey.app as MELCloudExtensionApp).autoAdjustCoolingAta(body)
   },

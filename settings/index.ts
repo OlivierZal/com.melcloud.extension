@@ -2,7 +2,7 @@ import type Homey from 'homey/lib/Homey'
 import {
   type Log,
   type MeasureTemperatureDevice,
-  type OutdoorTemperatureListenerData,
+  type TemperatureListenerData,
 } from '../types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -146,7 +146,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     applyElement.classList.add('is-disabled')
     const enabled: boolean = enabledElement.value === 'true'
     const capabilityPath: string = capabilityPathElement.value
-    const body: OutdoorTemperatureListenerData = {
+    const body: TemperatureListenerData = {
       capabilityPath,
       enabled,
     }

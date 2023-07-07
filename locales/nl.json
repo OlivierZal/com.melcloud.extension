@@ -5,15 +5,21 @@
     "not_found": "__name__ __id__ kan niet worden gevonden."
   },
   "log": {
-    "calculate": "Berekenen __device__ - target_temperature: __value__ (van drempelwaarde __threshold__ en buitentemperatuur __outdoorTemperature__).",
     "listener": {
-      "cleaned": "Luisteraar voor __device__ - __capabilityId__ is opgeschoond.",
-      "cleaned_all": "Alle luisteraars zijn opgeschoond.",
-      "created": "Luisteraar is gemaakt voor __device__ - __capabilityId__.",
-      "listened": "Geluisterd van __device__ - __capabilityId__: __value__."
+      "capabilities": {
+        "temperature": "de temperatuur",
+        "thermostat_mode": "de modus"
+      },
+      "cleaned": "Reinigen luisteraar voor __capability__ van __device__.",
+      "cleaned_all": "Reinigen alle luisteraars.",
+      "created": "Aanmaken van een luisteraar voor __capability__ van __device__.",
+      "listened": "Luisteren naar __capability__ van __device__ : __value__."
     },
-    "revert": "Herstellen __device__ - target_temperature: __value__.",
-    "save": "Opslaan __device__ - target_temperature: __value__."
+    "target_temperature": {
+      "calculated": "Berekenen de temperatuur van __device__ : __value__ (van de drempelwaarde __threshold__ en de buitentemperatuur __outdoorTemperature__).",
+      "reverted": "Herstellen de temperatuur van __device__ : __value__.",
+      "saved": "Opslaan de temperatuur van __device__ : __value__."
+    }
   },
   "settings": {
     "apply": "Toepassen op alle lucht-lucht apparaten",
