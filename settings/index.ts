@@ -175,7 +175,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     messageElement.innerText = `${log.message}`
     if (log.error !== undefined && log.error) {
       messageElement.style.color = 'red'
-      messageElement.innerHTML = `<strong>⚠️ ${messageElement.innerHTML}</strong>`
+      messageElement.innerHTML = `<strong>${messageElement.innerHTML}</strong>`
     }
     cellElement.appendChild(timeElement)
     cellElement.appendChild(messageElement)
