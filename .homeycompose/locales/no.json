@@ -1,5 +1,4 @@
 {
-  "device": "Enheten",
   "error": {
     "missing": "Utetemperaturen mangler.",
     "not_found": "__name__ __id__ ble ikke funnet."
@@ -17,9 +16,12 @@
       "saved": "Lagrer temperaturen til __device__ : __value__."
     }
   },
-  "outdoor_temperature": "Utetemperaturen",
-  "temperature": "temperaturen",
-  "thermostat_mode": "modus",
+  "names": {
+    "device": "Enheten",
+    "outdoor_temperature": "Utetemperaturen",
+    "temperature": "temperaturen",
+    "thermostat_mode": "modus"
+  },
   "settings": {
     "apply": "Bruk på alle luft-luft enheter",
     "boolean": {

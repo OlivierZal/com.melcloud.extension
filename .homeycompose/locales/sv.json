@@ -1,5 +1,4 @@
 {
-  "device": "Enheten",
   "error": {
     "missing": "Utomhustemperaturen saknas.",
     "not_found": "__name__ __id__ kunde inte hittas."
@@ -17,9 +16,12 @@
       "saved": "Sparar temperaturen av __device__ : __value__."
     }
   },
-  "outdoor_temperature": "Utomhustemperaturen",
-  "temperature": "temperaturen",
-  "thermostat_mode": "läget",
+  "names": {
+    "device": "Enheten",
+    "outdoor_temperature": "Utomhustemperaturen",
+    "temperature": "temperaturen",
+    "thermostat_mode": "läget"
+  },
   "settings": {
     "apply": "Tillämpa på alla luft-luft enheter",
     "boolean": {

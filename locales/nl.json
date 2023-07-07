@@ -1,5 +1,4 @@
 {
-  "device": "Het apparaat",
   "error": {
     "missing": "Buitentemperatuur ontbreekt.",
     "not_found": "__name__ __id__ kan niet worden gevonden."
@@ -17,9 +16,12 @@
       "saved": "Opslaan de temperatuur van __device__ : __value__."
     }
   },
-  "outdoor_temperature": "De buitentemperatuur",
-  "temperature": "de temperatuur",
-  "thermostat_mode": "de modus",
+  "names": {
+    "device": "Het apparaat",
+    "outdoor_temperature": "De buitentemperatuur",
+    "temperature": "de temperatuur",
+    "thermostat_mode": "de modus"
+  },
   "settings": {
     "apply": "Toepassen op alle lucht-lucht apparaten",
     "boolean": {

@@ -41,7 +41,7 @@ export default class MELCloudExtensionApp extends App {
       'temperature',
       'thermostat_mode',
     ].reduce<Record<string, string>>((names, name: string) => {
-      names[name] = this.homey.__(`${name}`)
+      names[name] = this.homey.__(`names.${name}`)
       return names
     }, {})
 
@@ -530,15 +530,16 @@ export default class MELCloudExtensionApp extends App {
     } = {}
   ): void {
     const { device, capability, value, threshold, outdoorTemperature } = params
-    const message: string = `${icons[action]} ${this.homey.__(`log.${action}`, {
+    const actionLog: string = this.homey.__(`log.${action}`, {
       device,
       capability,
       value,
       threshold,
       outdoorTemperature,
-    })}`
-      .replace(/a el/g, 'al')
-      .replace(/de le/g, 'du')
+    })
+    const message: string = `${icons[action]} ${actionLog})}`
+      .replace(/a el/gi, 'al')
+      .replace(/de le/gi, 'du')
     super.log(message)
     this.pushToLastLogs({
       time: this.getNow(),
