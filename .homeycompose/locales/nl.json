@@ -1,15 +1,11 @@
 {
+  "device": "Het apparaat",
   "error": {
-    "invalid": "__name__ __id__ is ongeldig.",
     "missing": "Buitentemperatuur ontbreekt.",
     "not_found": "__name__ __id__ kan niet worden gevonden."
   },
   "log": {
     "listener": {
-      "capabilities": {
-        "temperature": "de temperatuur",
-        "thermostat_mode": "de modus"
-      },
       "cleaned": "Reinigen luisteraar voor __capability__ van __device__.",
       "cleaned_all": "Reinigen alle luisteraars.",
       "created": "Aanmaken van een luisteraar voor __capability__ van __device__.",
@@ -21,6 +17,9 @@
       "saved": "Opslaan de temperatuur van __device__ : __value__."
     }
   },
+  "outdoor_temperature": "De buitentemperatuur",
+  "temperature": "de temperatuur",
+  "thermostat_mode": "de modus",
   "settings": {
     "apply": "Toepassen op alle lucht-lucht apparaten",
     "boolean": {

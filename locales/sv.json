@@ -1,15 +1,11 @@
 {
+  "device": "Enheten",
   "error": {
-    "invalid": "__name__ __id__ är ogiltig.",
-    "missing": "Utomhustemperatur saknas.",
+    "missing": "Utomhustemperaturen saknas.",
     "not_found": "__name__ __id__ kunde inte hittas."
   },
   "log": {
     "listener": {
-      "capabilities": {
-        "temperature": "temperaturen",
-        "thermostat_mode": "läget"
-      },
       "cleaned": "Rengör lyssnare för __capability__ av __device__.",
       "cleaned_all": "Rengör alla lyssnare.",
       "created": "Skapa en lyssnare för __capability__ av __device__.",
@@ -21,6 +17,9 @@
       "saved": "Sparar temperaturen av __device__ : __value__."
     }
   },
+  "outdoor_temperature": "Utomhustemperaturen",
+  "temperature": "temperaturen",
+  "thermostat_mode": "läget",
   "settings": {
     "apply": "Tillämpa på alla luft-luft enheter",
     "boolean": {

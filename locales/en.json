@@ -1,15 +1,11 @@
 {
+  "device": "Device",
   "error": {
-    "invalid": "__name__ __id__ is invalid.",
-    "missing": "Outdoor temperature is missing.",
+    "missing": "The outdoor temperature is missing.",
     "not_found": "__name__ __id__ cannot be found."
   },
   "log": {
     "listener": {
-      "capabilities": {
-        "temperature": "the temperature",
-        "thermostat_mode": "the mode"
-      },
       "cleaned": "Cleaning listener for __capability__ of __device__.",
       "cleaned_all": "Cleaning all listeners.",
       "created": "Creating a listener for __capability__ of __device__.",
@@ -21,6 +17,9 @@
       "saved": "Saving the temperature of __device__ : __value__."
     }
   },
+  "outdoor_temperature": "The outdoor temperature",
+  "temperature": "the temperature",
+  "thermostat_mode": "the mode",
   "settings": {
     "apply": "Apply to all air-to-air devices",
     "boolean": {

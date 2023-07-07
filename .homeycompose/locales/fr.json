@@ -1,15 +1,11 @@
 {
+  "device": "L'appareil",
   "error": {
-    "invalid": "__name__ __id__ est invalide.",
     "missing": "La température extérieure est manquante.",
     "not_found": "__name__ __id__ est introuvable."
   },
   "log": {
     "listener": {
-      "capabilities": {
-        "temperature": "la température",
-        "thermostat_mode": "le mode"
-      },
       "cleaned": "Nettoyage de l'écouteur pour __capability__ de __device__.",
       "cleaned_all": "Nettoyage de tous les écouteurs.",
       "created": "Création d'un écouteur pour __capability__ de __device__.",
@@ -21,6 +17,9 @@
       "saved": "Enregistrement de la température de __device__ : __value__."
     }
   },
+  "outdoor_temperature": "La température extérieure",
+  "temperature": "la température",
+  "thermostat_mode": "le mode",
   "settings": {
     "apply": "Appliquer à tous les appareils air-air",
     "boolean": {

@@ -1,15 +1,11 @@
 {
+  "device": "El dispositivo",
   "error": {
-    "invalid": "__name__ __id__ es inválido.",
     "missing": "Falta la temperatura exterior.",
     "not_found": "No se puede encontrar __name__ __id__."
   },
   "log": {
     "listener": {
-      "capabilities": {
-        "temperature": "la temperatura",
-        "thermostat_mode": "el modo"
-      },
       "cleaned": "Limpieza del oyente para __capability__ de __device__.",
       "cleaned_all": "Limpieza de todos los oyentes.",
       "created": "Creación de un oyente para __capability__ de __device__.",
@@ -21,6 +17,9 @@
       "saved": "Guardando la temperatura de __device__ : __value__."
     }
   },
+  "outdoor_temperature": "La temperatura exterior",
+  "temperature": "la temperatura",
+  "thermostat_mode": "el modo",
   "settings": {
     "apply": "Aplicar a todos los dispositivos aire-aire",
     "boolean": {
