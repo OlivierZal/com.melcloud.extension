@@ -1,7 +1,7 @@
 {
   "error": {
     "missing": "Udendørstemperaturen mangler.",
-    "not_found": "__name__ __id__ blev ikke fundet."
+    "not_found": "__name__ `__id__` blev ikke fundet."
   },
   "log": {
     "listener": {

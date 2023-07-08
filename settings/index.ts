@@ -9,6 +9,18 @@ import {
 async function onHomeyReady(Homey: Homey): Promise<void> {
   await Homey.ready()
 
+  const actions: Record<string, { icon: string; color?: string }> = {
+    error: { icon: '⚠️ ', color: 'red' },
+    'listener.cleaned': { icon: '🧽 ' },
+    'listener.cleaned_all': { icon: '💥 ' },
+    'listener.created': { icon: '📝 ' },
+    'listener.listened': { icon: '👂 ', color: 'blue' },
+    retry: { icon: '🔄 ' },
+    'target_temperature.calculated': { icon: '🧮 ', color: 'green' },
+    'target_temperature.reverted': { icon: '🔙 ' },
+    'target_temperature.saved': { icon: '💾 ' },
+  }
+
   await new Promise<string>((resolve, reject) => {
     // @ts-expect-error bug
     Homey.api(
@@ -172,12 +184,13 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     timeElement.style.color = '#888'
     timeElement.innerText = `[${log.time}] `
     const messageElement: HTMLSpanElement = document.createElement('span')
-    messageElement.innerText = log.message
-    if (log.bold !== undefined && log.bold) {
+    messageElement.innerText = `${actions[log.action]?.icon ?? ''}${
+      log.message
+    }`
+    const color = actions[log.action]?.color
+    if (color !== undefined) {
+      messageElement.style.color = color
       messageElement.innerHTML = `<strong>${messageElement.innerHTML}</strong>`
-    }
-    if (log.color !== undefined) {
-      messageElement.style.color = log.color
     }
     cellElement.appendChild(timeElement)
     cellElement.appendChild(messageElement)

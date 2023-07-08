@@ -35,6 +35,5 @@ export type TemperatureListener = Exclude<Listener, 'thermostat_mode'>
 export interface Log {
   time: string
   message: string
-  bold?: boolean
-  color?: string
+  action: string
 }

@@ -10,16 +10,6 @@ import {
   type Settings,
 } from './types'
 
-const icons: Record<string, string> = {
-  'listener.cleaned': '🧽',
-  'listener.cleaned_all': '💥',
-  'listener.created': '🛠️',
-  'listener.listened': '👂',
-  retry: '🔄',
-  'target_temperature.calculated': '🧮',
-  'target_temperature.reverted': '🔙',
-  'target_temperature.saved': '💾',
-}
 const maxLogs: number = 100
 const melcloudAtaDriverId: string = 'homey:app:com.mecloud:melcloud'
 
@@ -74,9 +64,10 @@ export default class MELCloudExtensionApp extends App {
     try {
       await this.autoAdjustCoolingAta()
     } catch (error: unknown) {
+      this.error(error instanceof Error ? error.message : String(error))
       this.log('retry')
       this.homey.setTimeout(async (): Promise<void> => {
-        await this.autoAdjustCoolingAta().catch()
+        await this.autoAdjustCoolingAta().catch(this.error)
       }, 60000)
     }
   }
@@ -217,10 +208,7 @@ export default class MELCloudExtensionApp extends App {
       this.handleOutdoorTemperatureDeviceUpdate(capabilityPath)
     } catch (error: unknown) {
       if (capabilityPath !== '') {
-        const errorMessage: string =
-          error instanceof Error ? error.message : String(error)
-        this.error(errorMessage)
-        throw new Error(errorMessage)
+        throw new Error(error instanceof Error ? error.message : String(error))
       }
     } finally {
       await this.cleanListeners()
@@ -506,13 +494,11 @@ export default class MELCloudExtensionApp extends App {
   }
 
   error(...args: any[]): void {
-    const message: string = `⚠️ ${args.join(' ')}`
-    super.error(message)
+    super.error(...args)
     this.pushToLastLogs({
       time: this.getNow(),
-      message,
-      bold: true,
-      color: 'red',
+      message: args.join(' '),
+      action: 'error',
     })
   }
 
@@ -527,21 +513,21 @@ export default class MELCloudExtensionApp extends App {
     } = {}
   ): void {
     const { device, capability, value, threshold, outdoorTemperature } = params
-    const actionLog: string = this.homey.__(`log.${action}`, {
-      device,
-      capability,
-      value,
-      threshold,
-      outdoorTemperature,
-    })
-    const message: string = `${icons[action]} ${actionLog}`
+    const message: string = this.homey
+      .__(`log.${action}`, {
+        device,
+        capability,
+        value,
+        threshold,
+        outdoorTemperature,
+      })
       .replace(/a el/gi, 'al')
       .replace(/de le/gi, 'du')
     super.log(message)
     this.pushToLastLogs({
       time: this.getNow(),
       message,
-      bold: !!action.endsWith('calculated'),
+      action,
     })
   }
 

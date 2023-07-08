@@ -1,7 +1,7 @@
 {
   "error": {
     "missing": "Falta la temperatura exterior.",
-    "not_found": "No se puede encontrar __name__ __id__."
+    "not_found": "No se puede encontrar __name__ `__id__`."
   },
   "log": {
     "listener": {
