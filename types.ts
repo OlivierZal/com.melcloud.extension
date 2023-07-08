@@ -24,16 +24,13 @@ type DeviceCapability = HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability
 
 export interface Listener {
   device: HomeyAPIV3Local.ManagerDevices.Device
-  [capability: string]: DeviceCapability
-}
-
-export interface TemperatureListener extends Listener {
   temperature?: DeviceCapability
-}
-
-export interface MELCloudListener extends TemperatureListener {
   thermostat_mode?: DeviceCapability
 }
+
+export interface MELCloudListener extends Listener {}
+
+export type TemperatureListener = Exclude<Listener, 'thermostat_mode'>
 
 export interface Log {
   time: string

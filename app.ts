@@ -89,7 +89,7 @@ export default class MELCloudExtensionApp extends App {
 
   async cleanListener<T extends Listener>(
     listener: T | null,
-    capability: string
+    capability: keyof Listener
   ): Promise<void> {
     if (listener !== null && capability in listener) {
       listener[capability].destroy()
