@@ -124,18 +124,6 @@ export default class MELCloudExtensionApp extends App {
       .catch(this.error)
   }
 
-  cleanOutdoorTemperatureListener(): void {
-    if (this.outdoorTemperatureListener?.temperature !== undefined) {
-      this.outdoorTemperatureListener.temperature.destroy()
-      this.log('listener.cleaned', {
-        device: this.getOutdoorTemperatureDeviceName(
-          this.outdoorTemperatureListener.device
-        ),
-        capability: this.names.temperature,
-      })
-    }
-  }
-
   getThreshold(listener: MELCloudListener): number {
     return this.homey.settings.get('thresholds')?.[listener.device.id]
   }
@@ -350,7 +338,7 @@ export default class MELCloudExtensionApp extends App {
         .filter(
           (listener: MELCloudListener): boolean =>
             listener.device.id !== excludedListener.device.id &&
-            'thermostatMode' in listener
+            'thermostat_mode' in listener
         )
         .map(async ({ device }): Promise<string> => {
           const thermostatMode: string =

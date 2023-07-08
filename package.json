@@ -1,6 +1,6 @@
 {
   "name": "com.melcloud.extension",
-  "version": "8.3.3",
+  "version": "8.3.4",
   "main": "app.ts",
   "scripts": {
     "build": "tsc"
