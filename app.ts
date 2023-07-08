@@ -15,6 +15,7 @@ const icons: Record<string, string> = {
   'listener.cleaned_all': '💥',
   'listener.created': '🛠️',
   'listener.listened': '👂',
+  retry: '🔄',
   'target_temperature.calculated': '🧮',
   'target_temperature.reverted': '🔙',
   'target_temperature.saved': '💾',
@@ -70,7 +71,14 @@ export default class MELCloudExtensionApp extends App {
 
   async initialize(): Promise<void> {
     await this.refreshDevices()
-    await this.autoAdjustCoolingAta().catch(this.error)
+    try {
+      await this.autoAdjustCoolingAta()
+    } catch (error: unknown) {
+      this.log('retry')
+      this.homey.setTimeout(async (): Promise<void> => {
+        await this.autoAdjustCoolingAta().catch()
+      }, 60000)
+    }
   }
 
   async cleanListeners(): Promise<void> {
@@ -93,6 +101,10 @@ export default class MELCloudExtensionApp extends App {
   ): Promise<void> {
     if (listener !== null && capability in listener) {
       listener[capability].destroy()
+      this.log('listener.cleaned', {
+        device: listener.device.name,
+        capability: this.names[capability],
+      })
       if (capability === 'thermostat_mode') {
         delete listener.thermostat_mode
       } else if (capability === 'temperature') {
@@ -101,10 +113,6 @@ export default class MELCloudExtensionApp extends App {
           await this.revertTemperature(listener, this.getThreshold(listener))
         }
       }
-      this.log('listener.cleaned', {
-        device: listener.device.name,
-        capability: this.names[capability],
-      })
     }
   }
 
@@ -209,7 +217,10 @@ export default class MELCloudExtensionApp extends App {
       this.handleOutdoorTemperatureDeviceUpdate(capabilityPath)
     } catch (error: unknown) {
       if (capabilityPath !== '') {
-        this.error(error instanceof Error ? error.message : error)
+        const errorMessage: string =
+          error instanceof Error ? error.message : String(error)
+        this.error(errorMessage)
+        throw new Error(errorMessage)
       }
     } finally {
       await this.cleanListeners()
@@ -461,10 +472,7 @@ export default class MELCloudExtensionApp extends App {
     listener: MELCloudListener,
     threshold: number
   ): Promise<void> {
-    if (
-      !('temperature' in listener) ||
-      this.outdoorTemperatureListener === null
-    ) {
+    if (!('temperature' in listener)) {
       return
     }
     const value: number = this.getTargetTemperature(threshold)
@@ -503,7 +511,8 @@ export default class MELCloudExtensionApp extends App {
     this.pushToLastLogs({
       time: this.getNow(),
       message,
-      error: true,
+      bold: true,
+      color: 'red',
     })
   }
 
@@ -532,7 +541,18 @@ export default class MELCloudExtensionApp extends App {
     this.pushToLastLogs({
       time: this.getNow(),
       message,
+      bold: !!action.endsWith('calculated'),
     })
+  }
+
+  pushToLastLogs(newLog: Log): void {
+    const lastLogs: Log[] = this.homey.settings.get('lastLogs') ?? []
+    lastLogs.unshift(newLog)
+    if (lastLogs.length > maxLogs) {
+      lastLogs.length = maxLogs
+    }
+    this.homey.settings.set('lastLogs', lastLogs)
+    this.homey.api.realtime('log', newLog)
   }
 
   getNow(): string {
@@ -545,16 +565,6 @@ export default class MELCloudExtensionApp extends App {
       hour: 'numeric',
       minute: 'numeric',
     })
-  }
-
-  pushToLastLogs(newLog: Log): void {
-    const lastLogs: Log[] = this.homey.settings.get('lastLogs') ?? []
-    lastLogs.unshift(newLog)
-    if (lastLogs.length > maxLogs) {
-      lastLogs.length = maxLogs
-    }
-    this.homey.settings.set('lastLogs', lastLogs)
-    this.homey.api.realtime('log', newLog)
   }
 
   async onUninit(): Promise<void> {

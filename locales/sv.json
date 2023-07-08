@@ -10,6 +10,7 @@
       "created": "Skapa en lyssnare för __capability__ av __device__.",
       "listened": "Lyssnar på __capability__ av __device__ : __value__."
     },
+    "retry": "Försöker igen om 1 minut...",
     "target_temperature": {
       "calculated": "Beräknar temperaturen av __device__ : __value__ (från tröskeln __threshold__ och utomhustemperaturen __outdoorTemperature__).",
       "reverted": "Återställer temperaturen av __device__ : __value__.",

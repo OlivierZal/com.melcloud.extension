@@ -10,6 +10,7 @@
       "created": "Creación de un oyente para __capability__ de __device__.",
       "listened": "Escuchando a __capability__ de __device__ : __value__."
     },
+    "retry": "Reintentando en 1 minuto...",
     "target_temperature": {
       "calculated": "Cálculo de la temperatura de __device__ : __value__ (a partir del umbral __threshold__ y la temperatura exterior __outdoorTemperature__).",
       "reverted": "Revertiendo la temperatura de __device__ : __value__.",

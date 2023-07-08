@@ -173,9 +173,11 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     timeElement.innerText = `[${log.time}] `
     const messageElement: HTMLSpanElement = document.createElement('span')
     messageElement.innerText = log.message
-    if (log.error !== undefined && log.error) {
-      messageElement.style.color = 'red'
+    if (log.bold !== undefined && log.bold) {
       messageElement.innerHTML = `<strong>${messageElement.innerHTML}</strong>`
+    }
+    if (log.color !== undefined) {
+      messageElement.style.color = log.color
     }
     cellElement.appendChild(timeElement)
     cellElement.appendChild(messageElement)
