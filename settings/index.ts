@@ -10,13 +10,13 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   await Homey.ready()
 
   const actions: Record<string, { icon: string; color?: string }> = {
-    error: { icon: '⚠️ ', color: 'red' },
+    error: { icon: '⚠️ ', color: '#E8000D' },
     'listener.cleaned': { icon: '🧽 ' },
     'listener.cleaned_all': { icon: '💥 ' },
     'listener.created': { icon: '📝 ' },
-    'listener.listened': { icon: '👂 ', color: 'blue' },
+    'listener.listened': { icon: '👂 ', color: '#0047AB' },
     retry: { icon: '🔄 ' },
-    'target_temperature.calculated': { icon: '🧮 ', color: 'green' },
+    'target_temperature.calculated': { icon: '🧮 ', color: '#008000' },
     'target_temperature.reverted': { icon: '🔙 ' },
     'target_temperature.saved': { icon: '💾 ' },
   }
@@ -178,22 +178,29 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   })
 
   function addLog(log: Log): void {
-    const rowElement: HTMLTableRowElement = logsElement.insertRow(0)
-    const cellElement: HTMLTableCellElement = rowElement.insertCell()
-    const timeElement = document.createElement('span')
+    const rowElement: HTMLDivElement = document.createElement('div')
+    logsElement.insertBefore(rowElement, logsElement.firstChild)
+    rowElement.style.display = 'flex'
+    rowElement.style.marginBottom = '1em'
+
+    const timeElement: HTMLDivElement = document.createElement('div')
     timeElement.style.color = '#888'
-    timeElement.innerText = `[${log.time}] `
-    const messageElement: HTMLSpanElement = document.createElement('span')
-    messageElement.innerText = `${actions[log.action]?.icon ?? ''}${
-      log.message
-    }`
-    const color = actions[log.action]?.color
+    timeElement.style.flexShrink = '0'
+    timeElement.style.marginRight = '1em'
+    timeElement.style.textAlign = 'center'
+    timeElement.style.whiteSpace = 'nowrap'
+    timeElement.innerHTML = `${log.time}<br>${actions[log.action]?.icon ?? ''}`
+    rowElement.appendChild(timeElement)
+
+    const messageElement: HTMLDivElement = document.createElement('div')
+    const color: string | undefined = actions[log.action]?.color
     if (color !== undefined) {
       messageElement.style.color = color
-      messageElement.innerHTML = `<strong>${messageElement.innerHTML}</strong>`
     }
-    cellElement.appendChild(timeElement)
-    cellElement.appendChild(messageElement)
+    messageElement.innerText = log.message
+      .replace(/ :/g, '\u00A0:')
+      .replace(/ °/g, '\u00A0°')
+    rowElement.appendChild(messageElement)
   }
 
   homeySettings.lastLogs.reverse().forEach((log: Log): void => {
