@@ -9,7 +9,7 @@ import {
 async function onHomeyReady(Homey: Homey): Promise<void> {
   await Homey.ready()
 
-  const actions: Record<string, { icon: string; color?: string }> = {
+  const actions: Record<string, { color?: string; icon: string }> = {
     error: { icon: '⚠️ ', color: '#E8000D' },
     'listener.cleaned': { icon: '🧽 ' },
     'listener.cleaned_all': { icon: '💥 ' },

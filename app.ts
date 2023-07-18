@@ -1,12 +1,12 @@
 import { HomeyAPIV3Local } from 'homey-api'
 import { App } from 'homey'
-import {
-  type CapabilityValue,
-  type Log,
-  type MELCloudListener,
-  type TemperatureListener,
-  type TemperatureListenerData,
-  type Settings,
+import type {
+  CapabilityValue,
+  Log,
+  MELCloudListener,
+  TemperatureListener,
+  TemperatureListenerData,
+  Settings,
 } from './types'
 
 const maxLogs: number = 100
@@ -512,11 +512,11 @@ export default class MELCloudExtensionApp extends App {
   log(
     action: string,
     params: {
-      device?: string
       capability?: string
-      value?: CapabilityValue
-      threshold?: string
+      device?: string
       outdoorTemperature?: string
+      threshold?: string
+      value?: CapabilityValue
     } = {}
   ): void {
     const { device, capability, value, threshold, outdoorTemperature } = params

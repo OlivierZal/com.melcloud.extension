@@ -35,7 +35,7 @@ export interface MELCloudListener extends TemperatureListener {
 }
 
 export interface Log {
-  time: string
-  message: string
   action: string
+  message: string
+  time: string
 }

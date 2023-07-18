@@ -1,10 +1,10 @@
 import { type HomeyAPIV3Local } from 'homey-api'
 import type Homey from 'homey/lib/Homey'
 import type MELCloudExtensionApp from './app'
-import {
-  type CapabilityObj,
-  type MeasureTemperatureDevice,
-  type TemperatureListenerData,
+import type {
+  CapabilityObj,
+  MeasureTemperatureDevice,
+  TemperatureListenerData,
 } from './types'
 
 module.exports = {
@@ -55,8 +55,8 @@ module.exports = {
     homey,
     body,
   }: {
-    homey: Homey
     body: TemperatureListenerData
+    homey: Homey
   }): Promise<void> {
     await (homey.app as MELCloudExtensionApp).autoAdjustCoolingAta(body)
   },
