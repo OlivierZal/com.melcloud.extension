@@ -140,8 +140,8 @@ export default class MELCloudExtensionApp extends App {
       .catch(this.error)
   }
 
-  getThreshold(id: string): number {
-    return this.homey.settings.get('thresholds')?.[id]
+  getThreshold(deviceId: string): number {
+    return this.homey.settings.get('thresholds')?.[deviceId]
   }
 
   updateThreshold(
@@ -432,7 +432,10 @@ export default class MELCloudExtensionApp extends App {
   }
 
   async listenToOutdoorTemperature(): Promise<void> {
-    if (this.outdoorTemperatureListener === null) {
+    if (
+      this.outdoorTemperatureListener === null ||
+      'temperature' in this.outdoorTemperatureListener
+    ) {
       return
     }
     const { device } = this.outdoorTemperatureListener
@@ -457,7 +460,7 @@ export default class MELCloudExtensionApp extends App {
         this.log('listener.listened', {
           name,
           capability,
-          value: `${this.outdoorTemperatureValue} °C`,
+          value: `${value} °C`,
         })
         await Promise.all(
           Object.values(this.melCloudListeners).map(
