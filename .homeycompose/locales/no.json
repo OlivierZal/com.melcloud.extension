@@ -5,16 +5,16 @@
   },
   "log": {
     "listener": {
-      "cleaned": "Rengjøring av lytter for __capability__ av __device__.",
+      "cleaned": "Rengjøring av lytter for __capability__ av __name__.",
       "cleaned_all": "Rengjøring av alle lyttere.",
-      "created": "Oppretter en lytter for __capability__ av __device__.",
-      "listened": "Lytt til __capability__ av __device__ : __value__."
+      "created": "Oppretter en lytter for __capability__ av __name__.",
+      "listened": "Lytt til __capability__ av __name__ : __value__."
     },
     "retry": "Prøver igjen om 1 minutt...",
     "target_temperature": {
-      "calculated": "Beregning av temperaturen til __device__ : __value__ (fra terskel __threshold__ og utetemperatur __outdoorTemperature__).",
-      "reverted": "Gjenoppretter temperaturen til __device__ : __value__.",
-      "saved": "Lagrer temperaturen til __device__ : __value__."
+      "calculated": "Beregning av temperaturen til __name__ : __value__ (fra terskel __threshold__ og utetemperatur __outdoorTemperature__).",
+      "reverted": "Gjenoppretter temperaturen til __name__ : __value__.",
+      "saved": "Lagrer temperaturen til __name__ : __value__."
     }
   },
   "names": {

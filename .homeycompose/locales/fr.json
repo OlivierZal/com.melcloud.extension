@@ -5,16 +5,16 @@
   },
   "log": {
     "listener": {
-      "cleaned": "Nettoyage de l'écouteur pour __capability__ de __device__.",
+      "cleaned": "Nettoyage de l'écouteur pour __capability__ de __name__.",
       "cleaned_all": "Nettoyage de tous les écouteurs.",
-      "created": "Création d'un écouteur pour __capability__ de __device__.",
-      "listened": "Écoute de __capability__ de __device__ : __value__."
+      "created": "Création d'un écouteur pour __capability__ de __name__.",
+      "listened": "Écoute de __capability__ de __name__ : __value__."
     },
     "retry": "Nouvelle tentative dans 1 minute...",
     "target_temperature": {
-      "calculated": "Calcul de la température de __device__ : __value__ (à partir du seuil __threshold__ et de la température extérieure __outdoorTemperature__).",
-      "reverted": "Rétablissement de la température de __device__ : __value__.",
-      "saved": "Enregistrement de la température de __device__ : __value__."
+      "calculated": "Calcul de la température de __name__ : __value__ (à partir du seuil __threshold__ et de la température extérieure __outdoorTemperature__).",
+      "reverted": "Rétablissement de la température de __name__ : __value__.",
+      "saved": "Enregistrement de la température de __name__ : __value__."
     }
   },
   "names": {
