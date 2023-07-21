@@ -225,7 +225,7 @@ export default class MELCloudExtensionApp extends App {
       })
       if (this.outdoorTemperatureListener === null) {
         this.outdoorTemperatureListener = { device }
-      } else if (device.id !== this.outdoorTemperatureListener?.device.id) {
+      } else if (device.id !== this.outdoorTemperatureListener.device.id) {
         this.outdoorTemperatureListener.device = device
       }
       this.outdoorTemperatureCapability = capability
