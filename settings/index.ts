@@ -5,20 +5,19 @@ import {
   type TemperatureListenerData,
 } from '../types'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function onHomeyReady(Homey: Homey): Promise<void> {
   await Homey.ready()
 
   const actions: Record<string, { color?: string; icon: string }> = {
-    error: { icon: '⚠️ ', color: '#E8000D' },
-    'listener.cleaned': { icon: '🧽 ' },
-    'listener.cleaned_all': { icon: '💥 ' },
-    'listener.created': { icon: '📝 ' },
-    'listener.listened': { icon: '👂 ', color: '#0047AB' },
-    retry: { icon: '🔄 ' },
-    'target_temperature.calculated': { icon: '🧮 ', color: '#008000' },
-    'target_temperature.reverted': { icon: '🔙 ' },
-    'target_temperature.saved': { icon: '💾 ' },
+    error: { icon: '⚠️', color: '#E8000D' },
+    'listener.cleaned': { icon: '🧽' },
+    'listener.cleaned_all': { icon: '💥' },
+    'listener.created': { icon: '📝' },
+    'listener.listened': { icon: '👂', color: '#0047AB' },
+    retry: { icon: '🔄' },
+    'target_temperature.calculated': { icon: '🧮', color: '#008000' },
+    'target_temperature.reverted': { icon: '🔙' },
+    'target_temperature.saved': { icon: '💾' },
   }
 
   await new Promise<string>((resolve, reject) => {
@@ -38,7 +37,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   })
 
   async function getHomeySettings(): Promise<Record<string, any>> {
-    return await new Promise<Record<string, any>>((resolve, reject) => {
+    return new Promise<Record<string, any>>((resolve, reject) => {
       // @ts-expect-error bug
       Homey.get(
         async (error: Error, settings: Record<string, any>): Promise<void> => {
@@ -79,9 +78,9 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   }
 
   async function handleGetMeasureTemperatureDevicesError(
-    error: Error
+    errorMessage: string
   ): Promise<void> {
-    if (error.message === 'no_device_ata') {
+    if (errorMessage === 'no_device_ata') {
       // @ts-expect-error bug
       await Homey.confirm(
         Homey.__('settings.no_device_ata'),
@@ -100,7 +99,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
       return
     }
     // @ts-expect-error bug
-    await Homey.alert(error.message)
+    await Homey.alert(errorMessage)
   }
 
   async function getMeasureTemperatureDevices(): Promise<void> {
@@ -113,7 +112,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
         devices: MeasureTemperatureDevice[]
       ): Promise<void> => {
         if (error !== null) {
-          await handleGetMeasureTemperatureDevicesError(error)
+          await handleGetMeasureTemperatureDevicesError(error.message)
           return
         }
         if (devices.length === 0) {
@@ -151,7 +150,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
 
   refreshElement.addEventListener('click', (): void => {
     refreshElement.classList.add('is-disabled')
-    void getAutoAdjustmentSettings()
+    getAutoAdjustmentSettings()
   })
 
   applyElement.addEventListener('click', (): void => {
