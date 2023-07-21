@@ -115,7 +115,7 @@ export default class MELCloudExtensionApp extends App {
       name,
       capability: this.names[capability],
     })
-    if (listener === this.outdoorTemperatureListener) {
+    if (deviceId === this.outdoorTemperatureListener?.device.id) {
       delete this.outdoorTemperatureListener.temperature
       return
     }
@@ -203,7 +203,7 @@ export default class MELCloudExtensionApp extends App {
       enabled,
     })
     if (
-      this.outdoorTemperatureListener?.device !== undefined &&
+      this.outdoorTemperatureListener !== null &&
       this.homey.settings.get('enabled') === true
     ) {
       await this.listenToThermostatModes()
@@ -223,7 +223,11 @@ export default class MELCloudExtensionApp extends App {
         capabilityPath,
         enabled,
       })
-      this.outdoorTemperatureListener = { device }
+      if (this.outdoorTemperatureListener === null) {
+        this.outdoorTemperatureListener = { device }
+      } else if (device.id !== this.outdoorTemperatureListener?.device.id) {
+        this.outdoorTemperatureListener.device = device
+      }
       this.outdoorTemperatureCapability = capability
       this.handleOutdoorTemperatureDeviceUpdate(capabilityPath)
     } catch (error: unknown) {
