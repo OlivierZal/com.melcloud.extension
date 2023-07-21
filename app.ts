@@ -108,10 +108,11 @@ export default class MELCloudExtensionApp extends App {
       return
     }
     const { device } = listener
+    const { name } = device
     const deviceId: string = device.id
     listener[capability].destroy()
     this.log('listener.cleaned', {
-      name: device.name,
+      name,
       capability: this.names[capability],
     })
     if (listener === this.outdoorTemperatureListener) {
