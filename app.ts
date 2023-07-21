@@ -465,9 +465,10 @@ export default class MELCloudExtensionApp extends App {
         await Promise.all(
           Object.values(this.melCloudListeners).map(
             async (listener: MELCloudListener): Promise<void> => {
+              const melCloudDeviceId: string = listener.device.id
               await this.handleTargetTemperature(
                 listener,
-                this.getThreshold(deviceId)
+                this.getThreshold(melCloudDeviceId)
               )
             }
           )
