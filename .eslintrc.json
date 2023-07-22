@@ -4,15 +4,26 @@
     "es2024": true,
     "node": true
   },
-  "extends": ["airbnb-base", "airbnb-typescript/base", "prettier"],
-  "overrides": [],
+  "extends": [
+    "airbnb-base",
+    "airbnb-typescript/base",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
     "project": "./tsconfig.json",
     "sourceType": "module"
   },
+  "plugins": ["@typescript-eslint", "import"],
+  "root": true,
   "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
     "import/no-import-module-exports": "off",
+    "import/no-unresolved": "error",
     "no-underscore-dangle": [
       "error",
       {
@@ -25,5 +36,16 @@
         "varsIgnorePattern": "onHomeyReady"
       }
     ]
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.json"
+      }
+    }
   }
 }

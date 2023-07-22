@@ -130,8 +130,11 @@ export default class MELCloudExtensionApp extends App {
     value: number
   ): Promise<void> {
     await device
-      // @ts-expect-error bug
-      .setCapabilityValue({ capabilityId: 'target_temperature', value })
+      .setCapabilityValue({
+        capabilityId: 'target_temperature',
+        value,
+        opts: { duration: 0 },
+      })
       .then((): void => {
         this.log('target_temperature.reverted', {
           name: device.name,
@@ -328,7 +331,6 @@ export default class MELCloudExtensionApp extends App {
           this.melCloudListeners[deviceId].thermostat_mode =
             device.makeCapabilityInstance(
               capabilityId,
-              // @ts-expect-error bug
               async (value: CapabilityValue): Promise<void> => {
                 this.log('listener.listened', {
                   name,
@@ -408,7 +410,6 @@ export default class MELCloudExtensionApp extends App {
     this.melCloudListeners[deviceId].temperature =
       device.makeCapabilityInstance(
         capabilityId,
-        // @ts-expect-error bug
         async (value: CapabilityValue): Promise<void> => {
           if (
             value === this.getTargetTemperature(this.getThreshold(deviceId))
@@ -459,7 +460,6 @@ export default class MELCloudExtensionApp extends App {
     }
     this.outdoorTemperatureListener.temperature = device.makeCapabilityInstance(
       capabilityId,
-      // @ts-expect-error bug
       async (value: CapabilityValue): Promise<void> => {
         this.outdoorTemperatureValue = value as number
         this.log('listener.listened', {
@@ -513,7 +513,7 @@ export default class MELCloudExtensionApp extends App {
     }
     const value: number = this.getTargetTemperature(threshold)
     await listener.temperature
-      .setValue(value, {})
+      .setValue(value)
       .then((): void => {
         this.log('target_temperature.calculated', {
           name: listener.device.name,
