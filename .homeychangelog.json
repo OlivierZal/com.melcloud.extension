@@ -22,5 +22,8 @@
   },
   "8.0.0": {
     "en": "Improve logs by formatting them."
+  },
+  "9.0.0": {
+    "en": "Updated modules."
   }
 }
