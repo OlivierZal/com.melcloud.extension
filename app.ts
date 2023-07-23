@@ -46,7 +46,6 @@ export default class MELCloudExtensionApp extends App {
 
     this.timeZone = this.homey.clock.getTimezone()
 
-    // @ts-expect-error bug
     this.api = await HomeyAPIV3Local.createAppAPI({ homey: this.homey })
     // @ts-expect-error bug
     await this.api.devices.connect()
@@ -133,7 +132,6 @@ export default class MELCloudExtensionApp extends App {
       .setCapabilityValue({
         capabilityId: 'target_temperature',
         value,
-        opts: { duration: 0 },
       })
       .then((): void => {
         this.log('target_temperature.reverted', {
