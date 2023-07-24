@@ -73,9 +73,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   async function getAutoAdjustmentSettings(): Promise<void> {
     capabilityPathElement.value =
       (homeySettings[capabilityPathElement.id] as string) ?? ''
-    enabledElement.value = String(
-      (homeySettings[enabledElement.id] as boolean) ?? false
-    )
+    enabledElement.value = String(homeySettings[enabledElement.id] ?? false)
     refreshElement.classList.remove('is-disabled')
   }
 
