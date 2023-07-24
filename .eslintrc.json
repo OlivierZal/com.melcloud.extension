@@ -21,7 +21,6 @@
   "plugins": ["@typescript-eslint", "import"],
   "root": true,
   "rules": {
-    "@typescript-eslint/no-explicit-any": "off",
     "import/no-import-module-exports": "off",
     "import/no-unresolved": "error",
     "no-underscore-dangle": [

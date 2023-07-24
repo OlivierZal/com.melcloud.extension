@@ -8,6 +8,8 @@ import type {
   TemperatureListener,
   TemperatureListenerData,
   Settings,
+  SettingValue,
+  Thresholds,
 } from './types'
 
 const maxLogs: number = 100
@@ -150,8 +152,7 @@ export default class MELCloudExtensionApp extends App {
     device: HomeyAPIV3Local.ManagerDevices.Device,
     value: number
   ): number {
-    const thresholds: Partial<Record<string, number>> =
-      this.homey.settings.get('thresholds') ?? {}
+    const thresholds: Thresholds = this.homey.settings.get('thresholds') ?? {}
     thresholds[device.id] = value
     this.setSettings({ thresholds })
     this.log('target_temperature.saved', {
@@ -525,7 +526,7 @@ export default class MELCloudExtensionApp extends App {
 
   setSettings(settings: Settings): void {
     Object.entries(settings).forEach(
-      ([setting, value]: [string, any]): void => {
+      ([setting, value]: [string, SettingValue]): void => {
         if (value !== this.homey.settings.get(setting)) {
           this.homey.settings.set(setting, value)
         }
@@ -533,11 +534,11 @@ export default class MELCloudExtensionApp extends App {
     )
   }
 
-  error(...args: any[]): void {
-    super.error(...args)
+  error(message: string): void {
+    super.error(message)
     this.pushToLastLogs({
       time: this.getNow(),
-      message: args.join(' '),
+      message,
       action: 'error',
     })
   }

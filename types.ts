@@ -1,6 +1,10 @@
 import { type HomeyAPIV3Local } from 'homey-api'
 
-export type Settings = Record<string, any>
+export type Thresholds = Partial<Record<string, number>>
+
+export type SettingValue = boolean | string | Log[] | Thresholds
+
+export type Settings = Record<string, SettingValue>
 
 export type CapabilityValue = boolean | number | string
 

@@ -1,8 +1,9 @@
 import type Homey from 'homey/lib/Homey'
-import {
-  type Log,
-  type MeasureTemperatureDevice,
-  type TemperatureListenerData,
+import type {
+  Log,
+  MeasureTemperatureDevice,
+  TemperatureListenerData,
+  Settings,
 } from '../types'
 
 async function onHomeyReady(Homey: Homey): Promise<void> {
@@ -36,24 +37,22 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     )
   })
 
-  async function getHomeySettings(): Promise<Record<string, any>> {
-    return new Promise<Record<string, any>>((resolve, reject) => {
+  async function getHomeySettings(): Promise<Settings> {
+    return new Promise<Settings>((resolve, reject) => {
       // @ts-expect-error bug
-      Homey.get(
-        async (error: Error, settings: Record<string, any>): Promise<void> => {
-          if (error !== null) {
-            // @ts-expect-error bug
-            await Homey.alert(error.message)
-            reject(error)
-            return
-          }
-          resolve(settings)
+      Homey.get(async (error: Error, settings: Settings): Promise<void> => {
+        if (error !== null) {
+          // @ts-expect-error bug
+          await Homey.alert(error.message)
+          reject(error)
+          return
         }
-      )
+        resolve(settings)
+      })
     })
   }
 
-  const homeySettings: Record<string, any> = await getHomeySettings()
+  const homeySettings: Settings = await getHomeySettings()
 
   const applyElement: HTMLButtonElement = document.getElementById(
     'apply'
@@ -72,8 +71,11 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   ) as HTMLTableSectionElement
 
   async function getAutoAdjustmentSettings(): Promise<void> {
-    capabilityPathElement.value = homeySettings[capabilityPathElement.id] ?? ''
-    enabledElement.value = String(homeySettings[enabledElement.id] ?? false)
+    capabilityPathElement.value =
+      (homeySettings[capabilityPathElement.id] as string) ?? ''
+    enabledElement.value = String(
+      (homeySettings[enabledElement.id] as boolean) ?? false
+    )
     refreshElement.classList.remove('is-disabled')
   }
 
@@ -202,7 +204,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     rowElement.appendChild(messageElement)
   }
 
-  homeySettings.lastLogs.reverse().forEach((log: Log): void => {
+  ;(homeySettings.lastLogs as Log[]).reverse().forEach((log: Log): void => {
     addLog(log)
   })
 
