@@ -76,7 +76,7 @@ export default class MELCloudExtensionApp extends App {
       this.error(error instanceof Error ? error.message : String(error))
       this.log('retry')
       this.homey.setTimeout(async (): Promise<void> => {
-        await this.autoAdjustCoolingAta().catch((err: Error) => {
+        await this.autoAdjustCoolingAta().catch((err: Error): void => {
           this.error(err.message)
         })
       }, 60000)
@@ -145,7 +145,7 @@ export default class MELCloudExtensionApp extends App {
           value: `${value} °C`,
         })
       })
-      .catch((err: Error) => {
+      .catch((err: Error): void => {
         this.error(err.message)
       })
   }
@@ -527,7 +527,7 @@ export default class MELCloudExtensionApp extends App {
           outdoorTemperature: `${this.outdoorTemperatureValue} °C`,
         })
       })
-      .catch((err: Error) => {
+      .catch((err: Error): void => {
         this.error(err.message)
       })
   }
