@@ -8,7 +8,7 @@ import type {
 } from './types'
 
 module.exports = {
-  async getLanguage({ homey }: { homey: Homey }): Promise<string> {
+  getLanguage({ homey }: { homey: Homey }): string {
     return homey.i18n.getLanguage()
   },
 

@@ -26,7 +26,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     Homey.api(
       'GET',
       '/language',
-      async (error: Error, language: string): Promise<void> => {
+      (error: Error | null, language: string): void => {
         if (error !== null) {
           reject(error)
           return
@@ -36,23 +36,6 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
       }
     )
   })
-
-  async function getHomeySettings(): Promise<Settings> {
-    return new Promise<Settings>((resolve, reject) => {
-      // @ts-expect-error bug
-      Homey.get(async (error: Error, settings: Settings): Promise<void> => {
-        if (error !== null) {
-          // @ts-expect-error bug
-          await Homey.alert(error.message)
-          reject(error)
-          return
-        }
-        resolve(settings)
-      })
-    })
-  }
-
-  const homeySettings: Settings = await getHomeySettings()
 
   const applyElement: HTMLButtonElement = document.getElementById(
     'apply'
@@ -70,10 +53,58 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     'logs'
   ) as HTMLTableSectionElement
 
-  async function getAutoAdjustmentSettings(): Promise<void> {
-    capabilityPathElement.value =
-      (homeySettings[capabilityPathElement.id] as string) ?? ''
-    enabledElement.value = String(homeySettings[enabledElement.id] ?? false)
+  function addLog(log: Log): void {
+    const rowElement: HTMLDivElement = document.createElement('div')
+    logsElement.insertBefore(rowElement, logsElement.firstChild)
+    rowElement.style.display = 'flex'
+    rowElement.style.marginBottom = '1em'
+
+    const timeElement: HTMLDivElement = document.createElement('div')
+    timeElement.style.color = '#888'
+    timeElement.style.flexShrink = '0'
+    timeElement.style.marginRight = '1em'
+    timeElement.style.textAlign = 'center'
+    timeElement.style.whiteSpace = 'nowrap'
+    timeElement.innerHTML = `${log.time}<br>${actions[log.action].icon}`
+    rowElement.appendChild(timeElement)
+
+    const messageElement: HTMLDivElement = document.createElement('div')
+    const { color } = actions[log.action]
+    if (color !== undefined) {
+      messageElement.style.color = color
+    }
+    messageElement.innerText = log.message
+      .replace(/ :/g, '\u00A0:')
+      .replace(/ °/g, '\u00A0°')
+    rowElement.appendChild(messageElement)
+  }
+
+  async function getHomeySettings(): Promise<void> {
+    const homeySettings: Settings = await new Promise<Settings>(
+      (resolve, reject) => {
+        // @ts-expect-error bug
+        Homey.get(
+          async (error: Error | null, settings: Settings): Promise<void> => {
+            if (error !== null) {
+              // @ts-expect-error bug
+              await Homey.alert(error.message)
+              reject(error)
+              return
+            }
+            resolve(settings)
+          }
+        )
+      }
+    )
+    if (logsElement.childElementCount === 0) {
+      ;(homeySettings.lastLogs as Log[]).reverse().forEach((log: Log): void => {
+        addLog(log)
+      })
+    }
+    capabilityPathElement.value = homeySettings[
+      capabilityPathElement.id
+    ] as string
+    enabledElement.value = String(homeySettings[enabledElement.id])
     refreshElement.classList.remove('is-disabled')
   }
 
@@ -85,7 +116,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
       await Homey.confirm(
         Homey.__('settings.no_device_ata'),
         null,
-        async (error: Error, ok: boolean): Promise<void> => {
+        async (error: Error | null, ok: boolean): Promise<void> => {
           if (error !== null) {
             // @ts-expect-error bug
             await Homey.alert(error.message)
@@ -102,13 +133,13 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     await Homey.alert(errorMessage)
   }
 
-  async function getMeasureTemperatureDevices(): Promise<void> {
+  function getMeasureTemperatureDevices(): void {
     // @ts-expect-error bug
     Homey.api(
       'GET',
       '/drivers/melcloud/available_temperatures',
       async (
-        error: Error,
+        error: Error | null,
         devices: MeasureTemperatureDevice[]
       ): Promise<void> => {
         if (error !== null) {
@@ -128,29 +159,29 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
           optionElement.innerText = capabilityName
           capabilityPathElement.appendChild(optionElement)
         })
-        await getAutoAdjustmentSettings()
+        await getHomeySettings()
       }
     )
   }
 
-  await getMeasureTemperatureDevices()
+  getMeasureTemperatureDevices()
 
   capabilityPathElement.addEventListener('change', (): void => {
     if (capabilityPathElement.value !== '') {
       if (enabledElement.value === 'false') {
         enabledElement.value = 'true'
       }
-    } else if (
-      capabilityPathElement.value === '' &&
-      enabledElement.value === 'true'
-    ) {
+    } else if (enabledElement.value === 'true') {
       enabledElement.value = 'false'
     }
   })
 
   refreshElement.addEventListener('click', (): void => {
     refreshElement.classList.add('is-disabled')
-    getAutoAdjustmentSettings()
+    getHomeySettings().catch(async (err: Error): Promise<void> => {
+      // @ts-expect-error bug
+      await Homey.alert(err.message)
+    })
   })
 
   applyElement.addEventListener('click', (): void => {
@@ -166,7 +197,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
       'POST',
       '/drivers/melcloud/cooling_auto_adjustment',
       body,
-      async (error: Error): Promise<void> => {
+      async (error: Error | null): Promise<void> => {
         applyElement.classList.remove('is-disabled')
         if (error !== null) {
           // @ts-expect-error bug
@@ -174,36 +205,6 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
         }
       }
     )
-  })
-
-  function addLog(log: Log): void {
-    const rowElement: HTMLDivElement = document.createElement('div')
-    logsElement.insertBefore(rowElement, logsElement.firstChild)
-    rowElement.style.display = 'flex'
-    rowElement.style.marginBottom = '1em'
-
-    const timeElement: HTMLDivElement = document.createElement('div')
-    timeElement.style.color = '#888'
-    timeElement.style.flexShrink = '0'
-    timeElement.style.marginRight = '1em'
-    timeElement.style.textAlign = 'center'
-    timeElement.style.whiteSpace = 'nowrap'
-    timeElement.innerHTML = `${log.time}<br>${actions[log.action]?.icon ?? ''}`
-    rowElement.appendChild(timeElement)
-
-    const messageElement: HTMLDivElement = document.createElement('div')
-    const color: string | undefined = actions[log.action]?.color
-    if (color !== undefined) {
-      messageElement.style.color = color
-    }
-    messageElement.innerText = log.message
-      .replace(/ :/g, '\u00A0:')
-      .replace(/ °/g, '\u00A0°')
-    rowElement.appendChild(messageElement)
-  }
-
-  ;(homeySettings.lastLogs as Log[]).reverse().forEach((log: Log): void => {
-    addLog(log)
   })
 
   Homey.on('log', (log: Log): void => {
