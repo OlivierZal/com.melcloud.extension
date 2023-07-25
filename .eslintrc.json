@@ -21,18 +21,18 @@
   "plugins": ["@typescript-eslint", "import"],
   "root": true,
   "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "varsIgnorePattern": "onHomeyReady"
+      }
+    ],
     "import/no-import-module-exports": "off",
     "import/no-unresolved": "error",
     "no-underscore-dangle": [
       "error",
       {
         "allow": ["__"]
-      }
-    ],
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        "varsIgnorePattern": "onHomeyReady"
       }
     ]
   },
