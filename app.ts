@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { App } from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
 import type {
@@ -22,13 +21,13 @@ export default class MELCloudExtensionApp extends App {
 
   api!: HomeyAPIV3Local
 
-  melCloudDevices!: HomeyAPIV3Local.ManagerDevices.Device[]
+  melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
-  melCloudListeners!: Record<string, MELCloudListener>
+  melCloudListeners: Record<string, MELCloudListener> = {}
 
-  outdoorTemperatureListener!: TemperatureListener | null
+  outdoorTemperatureListener: TemperatureListener | null = null
 
-  outdoorTemperatureCapability!: string
+  outdoorTemperatureCapability = ''
 
   outdoorTemperatureValue!: number
 
@@ -45,17 +44,10 @@ export default class MELCloudExtensionApp extends App {
       }),
       {}
     )
-
     this.timeZone = this.homey.clock.getTimezone()
-
     this.api = await HomeyAPIV3Local.createAppAPI({ homey: this.homey })
     // @ts-expect-error bug
     await this.api.devices.connect()
-
-    this.melCloudDevices = []
-    this.melCloudListeners = {}
-    this.outdoorTemperatureListener = null
-    this.outdoorTemperatureCapability = ''
     await this.initialize()
 
     // @ts-expect-error bug
