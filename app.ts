@@ -58,6 +58,11 @@ export default class MELCloudExtensionApp extends App {
     this.api.devices.on('device.delete', async (): Promise<void> => {
       await this.initialize()
     })
+    this.homey.on('unload', (): void => {
+      this.cleanListeners().catch((err: Error): void => {
+        this.error(err.message)
+      })
+    })
   }
 
   async initialize(): Promise<void> {
@@ -210,10 +215,7 @@ export default class MELCloudExtensionApp extends App {
       capabilityPath,
       enabled,
     })
-    if (
-      this.outdoorTemperatureListener !== undefined &&
-      this.homey.settings.get('enabled') === true
-    ) {
+    if (enabled) {
       await this.listenToThermostatModes()
     }
   }
@@ -239,9 +241,7 @@ export default class MELCloudExtensionApp extends App {
       this.outdoorTemperatureCapability = capability
       this.handleOutdoorTemperatureDeviceUpdate(capabilityPath)
     } catch (error: unknown) {
-      if (capabilityPath !== '') {
-        throw new Error(error instanceof Error ? error.message : String(error))
-      }
+      throw new Error(error instanceof Error ? error.message : String(error))
     } finally {
       await this.cleanListeners()
     }
