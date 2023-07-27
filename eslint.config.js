@@ -35,7 +35,6 @@ export default [
         'error',
         { varsIgnorePattern: 'onHomeyReady' },
       ],
-      'no-underscore-dangle': ['error', { allow: ['__'] }],
     },
     settings: {
       'import/parsers': {

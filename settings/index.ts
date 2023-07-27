@@ -97,14 +97,17 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
       }
     )
     if (logsElement.childElementCount === 0) {
-      ;(homeySettings.lastLogs as Log[]).reverse().forEach((log: Log): void => {
-        addLog(log)
-      })
+      ;((homeySettings.lastLogs as Log[] | undefined) ?? [])
+        .reverse()
+        .forEach((log: Log): void => {
+          addLog(log)
+        })
     }
-    capabilityPathElement.value = homeySettings[
-      capabilityPathElement.id
-    ] as string
-    enabledElement.value = String(homeySettings[enabledElement.id])
+    capabilityPathElement.value =
+      (homeySettings[capabilityPathElement.id] as string | undefined) ?? ''
+    enabledElement.value = String(
+      (homeySettings[enabledElement.id] as boolean | undefined) ?? false
+    )
     refreshElement.classList.remove('is-disabled')
   }
 

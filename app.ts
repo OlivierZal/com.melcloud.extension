@@ -25,7 +25,7 @@ export default class MELCloudExtensionApp extends App {
 
   melCloudListeners: Record<string, MELCloudListener> = {}
 
-  outdoorTemperatureListener: TemperatureListener | null = null
+  outdoorTemperatureListener!: TemperatureListener
 
   outdoorTemperatureCapability = ''
 
@@ -85,7 +85,7 @@ export default class MELCloudExtensionApp extends App {
       )
     )
     this.melCloudListeners = {}
-    if (this.outdoorTemperatureListener !== null) {
+    if (this.outdoorTemperatureListener !== undefined) {
       await this.cleanListener(this.outdoorTemperatureListener, 'temperature')
     }
     this.log('listener.cleaned_all')
@@ -211,7 +211,7 @@ export default class MELCloudExtensionApp extends App {
       enabled,
     })
     if (
-      this.outdoorTemperatureListener !== null &&
+      this.outdoorTemperatureListener !== undefined &&
       this.homey.settings.get('enabled') === true
     ) {
       await this.listenToThermostatModes()
@@ -231,7 +231,7 @@ export default class MELCloudExtensionApp extends App {
         capabilityPath,
         enabled,
       })
-      if (this.outdoorTemperatureListener === null) {
+      if (this.outdoorTemperatureListener === undefined) {
         this.outdoorTemperatureListener = { device }
       } else if (device.id !== this.outdoorTemperatureListener.device.id) {
         this.outdoorTemperatureListener.device = device
@@ -346,7 +346,7 @@ export default class MELCloudExtensionApp extends App {
                     (mode: string): boolean => mode !== 'cool'
                   )
                 ) {
-                  if (this.outdoorTemperatureListener !== null) {
+                  if (this.outdoorTemperatureListener !== undefined) {
                     await this.cleanListener(
                       this.outdoorTemperatureListener,
                       'temperature'
@@ -436,7 +436,7 @@ export default class MELCloudExtensionApp extends App {
 
   async listenToOutdoorTemperature(): Promise<void> {
     if (
-      this.outdoorTemperatureListener === null ||
+      this.outdoorTemperatureListener === undefined ||
       'temperature' in this.outdoorTemperatureListener
     ) {
       return
