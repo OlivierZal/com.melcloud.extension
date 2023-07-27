@@ -19,6 +19,6 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "homey-api": "^3.0.8"
+    "homey-api": "^3.0.9"
   }
 }
