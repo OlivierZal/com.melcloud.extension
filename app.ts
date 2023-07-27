@@ -25,7 +25,7 @@ export default class MELCloudExtensionApp extends App {
 
   melCloudListeners: Record<string, MELCloudListener> = {}
 
-  outdoorTemperatureListener!: TemperatureListener
+  outdoorTemperatureListener!: TemperatureListener | undefined
 
   outdoorTemperatureCapability = ''
 

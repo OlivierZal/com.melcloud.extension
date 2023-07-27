@@ -1,10 +1,12 @@
-import js from '@eslint/js'
-import typescriptEslintParser from '@typescript-eslint/parser'
-import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin'
-import importPlugin from 'eslint-plugin-import'
-import prettier from 'eslint-config-prettier'
+/* eslint-disable @typescript-eslint/no-var-requires */
+const js = require('@eslint/js')
+const typescriptEslintParser = require('@typescript-eslint/parser')
+const typescriptEslintPlugin = require('@typescript-eslint/eslint-plugin')
+const importPlugin = require('eslint-plugin-import')
+const prettier = require('eslint-config-prettier')
+/* eslint-enable @typescript-eslint/no-var-requires */
 
-export default [
+module.exports = [
   {
     ...js.configs.recommended,
     files: ['**/*.js', '**/*.ts'],

@@ -18,10 +18,8 @@
     "no": "Juster automatisk temperaturen på din aircondition",
     "es": "Ajuste automático de la temperatura de su aire acondicionado"
   },
-  "category": [
-    "climate"
-  ],
-  "version": "10.0.0",
+  "category": ["climate"],
+  "version": "10.0.1",
   "compatibility": ">=5.0.0",
   "tags": {
     "en": [
@@ -118,10 +116,6 @@
       "path": "/drivers/melcloud/available_temperatures"
     }
   },
-  "platforms": [
-    "local"
-  ],
-  "permissions": [
-    "homey:manager:api"
-  ]
+  "platforms": ["local"],
+  "permissions": ["homey:manager:api"]
 }
