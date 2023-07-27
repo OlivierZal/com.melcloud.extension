@@ -25,5 +25,8 @@
   },
   "9.0.0": {
     "en": "Updated modules."
+  },
+  "10.0.0": {
+    "en": "Used new eslint config."
   }
 }
