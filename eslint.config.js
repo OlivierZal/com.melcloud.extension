@@ -1,16 +1,14 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const js = require('@eslint/js')
 const typescriptEslintParser = require('@typescript-eslint/parser')
 const typescriptEslintPlugin = require('@typescript-eslint/eslint-plugin')
 const globals = require('globals')
 const importPlugin = require('eslint-plugin-import')
 const prettier = require('eslint-config-prettier')
-/* eslint-enable @typescript-eslint/no-var-requires */
 
 module.exports = [
+  js.configs.recommended,
   {
-    ...js.configs.recommended,
-    files: ['**/*.ts', '**/*.tsx', 'eslint.config.js'],
+    files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       ecmaVersion: 'latest',
       globals: {
@@ -55,6 +53,28 @@ module.exports = [
           alwaysTryTypes: true,
         },
       },
+    },
+  },
+  {
+    files: ['eslint.config.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      globals: {
+        ...globals.browser,
+        ...globals.es2024,
+        ...globals.node,
+      },
+      sourceType: 'module',
+    },
+    linterOptions: {
+      reportUnusedDisableDirectives: true,
+    },
+    plugins: {
+      import: importPlugin,
+    },
+    rules: {
+      ...importPlugin.configs.recommended.rules,
+      ...prettier.rules,
     },
   },
 ]
