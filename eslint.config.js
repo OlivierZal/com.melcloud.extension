@@ -8,7 +8,6 @@ const prettier = require('eslint-config-prettier')
 module.exports = [
   js.configs.recommended,
   {
-    files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       ecmaVersion: 'latest',
       globals: {
@@ -16,24 +15,32 @@ module.exports = [
         ...globals.es2024,
         ...globals.node,
       },
-      parser: typescriptEslintParser,
-      parserOptions: {
-        project: './tsconfig.json',
-      },
       sourceType: 'module',
     },
     linterOptions: {
       reportUnusedDisableDirectives: true,
     },
     plugins: {
-      '@typescript-eslint': typescriptEslintPlugin,
       import: importPlugin,
     },
+  },
+  {
+    ...importPlugin.configs.typescript,
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parser: typescriptEslintParser,
+      parserOptions: {
+        project: './tsconfig.json',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescriptEslintPlugin,
+    },
     rules: {
+      ...typescriptEslintPlugin.configs['eslint-recommended'].rules,
       ...typescriptEslintPlugin.configs['strict-type-checked'].rules,
       ...typescriptEslintPlugin.configs['stylistic-type-checked'].rules,
       ...importPlugin.configs.typescript.rules,
-      ...prettier.rules,
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
@@ -45,10 +52,9 @@ module.exports = [
       ],
     },
     settings: {
-      'import/parsers': {
-        '@typescript-eslint/parser': ['.ts', '.tsx'],
-      },
+      ...importPlugin.configs.typescript.settings,
       'import/resolver': {
+        ...importPlugin.configs.typescript.settings['import/resolver'],
         typescript: {
           alwaysTryTypes: true,
         },
@@ -56,25 +62,8 @@ module.exports = [
     },
   },
   {
+    ...importPlugin.configs.recommended,
     files: ['eslint.config.js'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      globals: {
-        ...globals.browser,
-        ...globals.es2024,
-        ...globals.node,
-      },
-      sourceType: 'module',
-    },
-    linterOptions: {
-      reportUnusedDisableDirectives: true,
-    },
-    plugins: {
-      import: importPlugin,
-    },
-    rules: {
-      ...importPlugin.configs.recommended.rules,
-      ...prettier.rules,
-    },
   },
+  prettier,
 ]
