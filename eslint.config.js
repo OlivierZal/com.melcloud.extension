@@ -25,8 +25,7 @@ module.exports = [
     },
   },
   {
-    ...importPlugin.configs.typescript,
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
     languageOptions: {
       parser: typescriptEslintParser,
       parserOptions: {
@@ -37,7 +36,8 @@ module.exports = [
       '@typescript-eslint': typescriptEslintPlugin,
     },
     rules: {
-      ...typescriptEslintPlugin.configs['eslint-recommended'].rules,
+      ...typescriptEslintPlugin.configs['eslint-recommended'].overrides[0]
+        .rules,
       ...typescriptEslintPlugin.configs['strict-type-checked'].rules,
       ...typescriptEslintPlugin.configs['stylistic-type-checked'].rules,
       ...importPlugin.configs.typescript.rules,
@@ -48,7 +48,9 @@ module.exports = [
       '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
-        { varsIgnorePattern: 'onHomeyReady' },
+        {
+          varsIgnorePattern: 'onHomeyReady',
+        },
       ],
     },
     settings: {
@@ -62,7 +64,6 @@ module.exports = [
     },
   },
   {
-    ...importPlugin.configs.recommended,
     files: ['eslint.config.js'],
   },
   prettier,
