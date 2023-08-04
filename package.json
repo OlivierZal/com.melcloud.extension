@@ -3,7 +3,9 @@
   "version": "10.0.2",
   "main": "app.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "type": "module",
   "devDependencies": {

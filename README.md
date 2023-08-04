@@ -1,5 +1,7 @@
 # Extension for MELCloud Homey App
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=OlivierZal_com.melcloud.extension&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=OlivierZal_com.melcloud.extension)
+
 ## Introduction
 
 This app extends the MELCloud Homey app by automatically keeping your air-to-air heat pumps' cooling temperature within 8°C of the outdoor temperature.
