@@ -6,8 +6,8 @@ import type {
   Settings,
 } from '../types'
 
-async function onHomeyReady(Homey: Homey): Promise<void> {
-  await Homey.ready()
+async function onHomeyReady(homey: Homey): Promise<void> {
+  await homey.ready()
 
   const actions: Record<string, { color?: string; icon: string }> = {
     error: { icon: '⚠️', color: '#E8000D' },
@@ -23,7 +23,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
 
   await new Promise<string>((resolve, reject) => {
     // @ts-expect-error bug
-    Homey.api(
+    homey.api(
       'GET',
       '/language',
       (error: Error | null, language: string): void => {
@@ -79,15 +79,15 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
     rowElement.appendChild(messageElement)
   }
 
-  async function getHomeySettings(): Promise<void> {
+  async function gethomeySettings(): Promise<void> {
     const homeySettings: Settings = await new Promise<Settings>(
       (resolve, reject) => {
         // @ts-expect-error bug
-        Homey.get(
+        homey.get(
           async (error: Error | null, settings: Settings): Promise<void> => {
             if (error !== null) {
               // @ts-expect-error bug
-              await Homey.alert(error.message)
+              await homey.alert(error.message)
               reject(error)
               return
             }
@@ -116,29 +116,29 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
   ): Promise<void> {
     if (errorMessage === 'no_device_ata') {
       // @ts-expect-error bug
-      await Homey.confirm(
-        Homey.__('settings.no_device_ata'),
+      await homey.confirm(
+        homey.__('settings.no_device_ata'),
         null,
         async (error: Error | null, ok: boolean): Promise<void> => {
           if (error !== null) {
             // @ts-expect-error bug
-            await Homey.alert(error.message)
+            await homey.alert(error.message)
           }
           if (ok) {
             // @ts-expect-error bug
-            await Homey.openURL('https://homey.app/a/com.mecloud')
+            await homey.openURL('https://homey.app/a/com.mecloud')
           }
         }
       )
       return
     }
     // @ts-expect-error bug
-    await Homey.alert(errorMessage)
+    await homey.alert(errorMessage)
   }
 
   function getMeasureTemperatureDevices(): void {
     // @ts-expect-error bug
-    Homey.api(
+    homey.api(
       'GET',
       '/drivers/melcloud/available_temperatures',
       async (
@@ -151,7 +151,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
         }
         if (devices.length === 0) {
           // @ts-expect-error bug
-          await Homey.alert(Homey.__('settings.no_device_measure'))
+          await homey.alert(homey.__('settings.no_device_measure'))
           return
         }
         devices.forEach((device: MeasureTemperatureDevice): void => {
@@ -162,7 +162,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
           optionElement.innerText = capabilityName
           capabilityPathElement.appendChild(optionElement)
         })
-        await getHomeySettings()
+        await gethomeySettings()
       }
     )
   }
@@ -181,9 +181,9 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
 
   refreshElement.addEventListener('click', (): void => {
     refreshElement.classList.add('is-disabled')
-    getHomeySettings().catch(async (err: Error): Promise<void> => {
+    gethomeySettings().catch(async (err: Error): Promise<void> => {
       // @ts-expect-error bug
-      await Homey.alert(err.message)
+      await homey.alert(err.message)
     })
   })
 
@@ -196,7 +196,7 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
       enabled,
     }
     // @ts-expect-error bug
-    Homey.api(
+    homey.api(
       'POST',
       '/drivers/melcloud/cooling_auto_adjustment',
       body,
@@ -204,13 +204,13 @@ async function onHomeyReady(Homey: Homey): Promise<void> {
         applyElement.classList.remove('is-disabled')
         if (error !== null) {
           // @ts-expect-error bug
-          await Homey.alert(error.message)
+          await homey.alert(error.message)
         }
       }
     )
   })
 
-  Homey.on('log', (log: Log): void => {
+  homey.on('log', (log: Log): void => {
     addLog(log)
   })
 }
