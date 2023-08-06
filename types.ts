@@ -1,4 +1,4 @@
-import { type HomeyAPIV3Local } from 'homey-api'
+import type { HomeyAPIV3Local } from 'homey-api'
 
 export interface Log {
   action: string

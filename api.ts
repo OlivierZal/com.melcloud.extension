@@ -1,4 +1,4 @@
-import { type HomeyAPIV3Local } from 'homey-api'
+import type { HomeyAPIV3Local } from 'homey-api'
 import type Homey from 'homey/lib/Homey'
 import type MELCloudExtensionApp from './app'
 import type {
