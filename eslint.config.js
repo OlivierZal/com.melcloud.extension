@@ -14,19 +14,23 @@ import importPlugin from 'eslint-plugin-import'
 airbnbES6.languageOptions = {
   parserOptions: airbnbES6.parserOptions,
 }
+delete airbnbES6.env
+delete airbnbES6.parserOptions
+
 airbnbImports.languageOptions = {
   parserOptions: airbnbImports.parserOptions,
 }
-delete airbnbES6.env
-delete airbnbES6.parserOptions
-delete airbnbNode.env
 delete airbnbImports.env
 delete airbnbImports.parserOptions
 delete airbnbImports.plugins
+
+delete airbnbNode.env
+
 delete importPlugin.configs.recommended.parserOptions
 delete importPlugin.configs.recommended.plugins
 
 const tsDisabledRules = {
+  'no-bitwise': 'off',
   'no-underscore-dangle': [
     'error',
     {
@@ -50,6 +54,39 @@ export default [
   {
     ignores: ['.homeybuild/'],
   },
+  airbnbBestPractices,
+  airbnbErrors,
+  airbnbNode,
+  airbnbStyle,
+  airbnbVariables,
+  airbnbES6,
+  {
+    ...airbnbImports,
+    files: ['**/*.js'],
+  },
+  {
+    files: ['eslint.config.js'],
+    rules: {
+      'import/no-extraneous-dependencies': [
+        'error',
+        {
+          devDependencies: true,
+        },
+      ],
+    },
+  },
+  airbnbStrict,
+  {
+    files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
+    rules: {
+      ...tsPlugin.configs['eslint-recommended'].overrides[0].rules,
+      ...tsPlugin.configs['strict-type-checked'].rules,
+      ...tsPlugin.configs['stylistic-type-checked'].rules,
+      ...tsDisabledRules,
+    },
+  },
+  // importPlugin.configs.recommended,
+  importPlugin.configs.typescript,
   {
     languageOptions: {
       ecmaVersion: 'latest',
@@ -74,35 +111,5 @@ export default [
       },
     },
   },
-  airbnbBestPractices,
-  airbnbErrors,
-  airbnbNode,
-  airbnbStyle,
-  airbnbVariables,
-  airbnbES6,
-  airbnbImports,
-  airbnbStrict,
-  {
-    files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
-    rules: {
-      ...tsPlugin.configs['eslint-recommended'].overrides[0].rules,
-      ...tsPlugin.configs['strict-type-checked'].rules,
-      ...tsPlugin.configs['stylistic-type-checked'].rules,
-      ...tsDisabledRules,
-    },
-  },
-  {
-    files: ['eslint.config.js'],
-    rules: {
-      'import/no-extraneous-dependencies': [
-        'error',
-        {
-          devDependencies: true,
-        },
-      ],
-    },
-  },
-  importPlugin.configs.recommended,
-  importPlugin.configs.typescript,
   prettier,
 ]

@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { App } from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
 import type {
