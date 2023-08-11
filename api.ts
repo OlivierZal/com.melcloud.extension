@@ -7,7 +7,7 @@ import type {
   TemperatureListenerData,
 } from './types'
 
-export default {
+module.exports = {
   getLanguage({ homey }: { homey: Homey }): string {
     return homey.i18n.getLanguage()
   },

@@ -596,3 +596,5 @@ export default class MELCloudExtensionApp extends App {
     await this.cleanListeners()
   }
 }
+
+module.exports = MELCloudExtensionApp
