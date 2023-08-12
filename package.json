@@ -22,6 +22,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "homey-api": "^3.0.9"
+    "homey-api": "^3.0.9",
+    "source-map-support": "^0.5.21"
   }
 }
