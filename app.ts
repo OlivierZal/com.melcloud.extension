@@ -16,7 +16,7 @@ import type {
 const maxLogs = 100
 const melcloudAtaDriverId = 'homey:app:com.mecloud:melcloud'
 
-export default class MELCloudExtensionApp extends App {
+export = class MELCloudExtensionApp extends App {
   names!: Record<string, string>
 
   timeZone!: string
@@ -597,5 +597,3 @@ export default class MELCloudExtensionApp extends App {
     await this.cleanListeners()
   }
 }
-
-module.exports = MELCloudExtensionApp
