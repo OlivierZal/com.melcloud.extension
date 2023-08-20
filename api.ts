@@ -11,7 +11,6 @@ export = {
   getLanguage({ homey }: { homey: Homey }): string {
     return homey.i18n.getLanguage()
   },
-
   async getMeasureTemperatureDevicesAta({
     homey,
   }: {
@@ -50,7 +49,6 @@ export = {
           device1.capabilityName.localeCompare(device2.capabilityName)
       )
   },
-
   async autoAdjustCoolingAta({
     homey,
     body,
