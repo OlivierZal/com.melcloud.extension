@@ -132,20 +132,18 @@ export = class MELCloudExtensionApp extends App {
     device: HomeyAPIV3Local.ManagerDevices.Device,
     value: number
   ): Promise<void> {
-    await device
-      .setCapabilityValue({
+    try {
+      await device.setCapabilityValue({
         capabilityId: 'target_temperature',
         value,
       })
-      .then((): void => {
-        this.log('target_temperature.reverted', {
-          name: device.name,
-          value: `${value} °C`,
-        })
+      this.log('target_temperature.reverted', {
+        name: device.name,
+        value: `${value} °C`,
       })
-      .catch((error: Error): void => {
-        this.error(error.message)
-      })
+    } catch (error: unknown) {
+      this.error(error instanceof Error ? error.message : String(error))
+    }
   }
 
   getThreshold(deviceId: string): number {
@@ -510,19 +508,17 @@ export = class MELCloudExtensionApp extends App {
       return
     }
     const value: number = this.getTargetTemperature(threshold)
-    await listener.temperature
-      .setValue(value)
-      .then((): void => {
-        this.log('target_temperature.calculated', {
-          name: listener.device.name,
-          value: `${value} °C`,
-          threshold: `${threshold} °C`,
-          outdoorTemperature: `${this.outdoorTemperatureValue} °C`,
-        })
+    try {
+      await listener.temperature.setValue(value)
+      this.log('target_temperature.calculated', {
+        name: listener.device.name,
+        value: `${value} °C`,
+        threshold: `${threshold} °C`,
+        outdoorTemperature: `${this.outdoorTemperatureValue} °C`,
       })
-      .catch((error: Error): void => {
-        this.error(error.message)
-      })
+    } catch (error: unknown) {
+      this.error(error instanceof Error ? error.message : String(error))
+    }
   }
 
   setSettings(settings: Settings): void {
