@@ -61,8 +61,8 @@ export = class MELCloudExtensionApp extends App {
       await this.initialize()
     })
     this.homey.on('unload', (): void => {
-      this.cleanListeners().catch((err: Error): void => {
-        this.error(err.message)
+      this.cleanListeners().catch((error: Error): void => {
+        this.error(error.message)
       })
     })
   }
@@ -144,8 +144,8 @@ export = class MELCloudExtensionApp extends App {
           value: `${value} °C`,
         })
       })
-      .catch((err: Error): void => {
-        this.error(err.message)
+      .catch((error: Error): void => {
+        this.error(error.message)
       })
   }
 
@@ -521,8 +521,8 @@ export = class MELCloudExtensionApp extends App {
           outdoorTemperature: `${this.outdoorTemperatureValue} °C`,
         })
       })
-      .catch((err: Error): void => {
-        this.error(err.message)
+      .catch((error: Error): void => {
+        this.error(error.message)
       })
   }
 

@@ -181,9 +181,9 @@ async function onHomeyReady(homey: Homey): Promise<void> {
 
   refreshElement.addEventListener('click', (): void => {
     refreshElement.classList.add('is-disabled')
-    gethomeySettings().catch(async (err: Error): Promise<void> => {
+    gethomeySettings().catch(async (error: Error): Promise<void> => {
       // @ts-expect-error bug
-      await homey.alert(err.message)
+      await homey.alert(error.message)
     })
   })
 
