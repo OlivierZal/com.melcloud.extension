@@ -1,6 +1,5 @@
 import 'source-map-support/register'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { App } from 'homey'
+import { App } from 'homey' // eslint-disable-line import/no-extraneous-dependencies
 import { HomeyAPIV3Local } from 'homey-api'
 import type {
   CapabilityValue,
