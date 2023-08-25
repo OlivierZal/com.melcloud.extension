@@ -51,7 +51,6 @@ const tsCustomRules = {
       ignoreRestArgs: true,
     },
   ],
-  '@typescript-eslint/no-import-type-side-effects': 'error',
   '@typescript-eslint/no-unsafe-argument': 'off',
   '@typescript-eslint/no-unsafe-assignment': 'off',
   '@typescript-eslint/no-unsafe-call': 'off',
@@ -63,7 +62,6 @@ const tsCustomRules = {
       varsIgnorePattern: 'onHomeyReady',
     },
   ],
-  'import/consistent-type-specifier-style': ['error', 'prefer-top-level'],
   'import/extensions': [
     'error',
     'ignorePackages',
