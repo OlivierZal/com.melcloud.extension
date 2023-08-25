@@ -2,7 +2,6 @@ import type { HomeyAPIV3Local } from 'homey-api'
 import type Homey from 'homey/lib/Homey'
 import type MELCloudExtensionApp from './app'
 import type {
-  CapabilityObj,
   MeasureTemperatureDevice,
   TemperatureListenerData,
 } from './types'
@@ -31,11 +30,11 @@ export = {
           Object.values(device.capabilitiesObj ?? {}).reduce<
             MeasureTemperatureDevice[]
             // @ts-expect-error bug
-          >((devices, capabilityObj: CapabilityObj) => {
-            if (capabilityObj.id.startsWith('measure_temperature')) {
+          >((devices, { id, title }) => {
+            if (id.startsWith('measure_temperature')) {
               devices.push({
-                capabilityPath: `${device.id}:${capabilityObj.id}`,
-                capabilityName: `${device.name} - ${capabilityObj.title}`,
+                capabilityPath: `${device.id}:${id}`,
+                capabilityName: `${device.name} - ${title}`,
               })
             }
             return devices

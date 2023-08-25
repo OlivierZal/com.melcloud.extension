@@ -99,9 +99,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     if (logsElement.childElementCount === 0) {
       ;((homeySettings.lastLogs as Log[] | undefined) ?? [])
         .reverse()
-        .forEach((log: Log): void => {
-          addLog(log)
-        })
+        .forEach(addLog)
     }
     capabilityPathElement.value =
       (homeySettings[capabilityPathElement.id] as string | undefined) ?? ''

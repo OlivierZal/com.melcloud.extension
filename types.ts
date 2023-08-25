@@ -14,11 +14,6 @@ export type Settings = Record<string, SettingValue>
 
 export type CapabilityValue = boolean | number | string
 
-export interface CapabilityObj {
-  id: string
-  title: string
-}
-
 export interface MeasureTemperatureDevice {
   readonly capabilityName: string
   readonly capabilityPath: string
