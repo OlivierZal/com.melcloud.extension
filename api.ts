@@ -54,7 +54,4 @@ export = {
           device1.capabilityName.localeCompare(device2.capabilityName)
       )
   },
-  getTimezone({ homey }: { homey: Homey }): string {
-    return homey.clock.getTimezone()
-  },
 }

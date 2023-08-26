@@ -33,21 +33,6 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     })
   })
 
-  const timeZone: string = await new Promise<string>((resolve, reject) => {
-    // @ts-expect-error bug
-    homey.api(
-      'GET',
-      '/timezone',
-      (error: Error | null, timezone: string): void => {
-        if (error !== null) {
-          reject(error)
-          return
-        }
-        resolve(timezone)
-      }
-    )
-  })
-
   const applyElement: HTMLButtonElement = document.getElementById(
     'apply'
   ) as HTMLButtonElement
@@ -66,7 +51,6 @@ async function onHomeyReady(homey: Homey): Promise<void> {
 
   function displayTime(time: number): string {
     return new Date(time).toLocaleString(language, {
-      timeZone,
       weekday: 'short',
       hour: 'numeric',
       minute: 'numeric',
@@ -122,15 +106,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     if (logsElement.childElementCount === 0) {
       ;((homeySettings.lastLogs as TimestampedLog[] | undefined) ?? [])
         .reverse()
-        .forEach((log: TimestampedLog): void => {
-          const date = new Date(log.time)
-          const oldestDate: Date = new Date()
-          oldestDate.setDate(oldestDate.getDate() - 6)
-          oldestDate.setHours(0, 0, 0, 0)
-          if (date >= oldestDate) {
-            displayLog(log)
-          }
-        })
+        .forEach(displayLog)
     }
     capabilityPathElement.value =
       (homeySettings[capabilityPathElement.id] as string | undefined) ?? ''
@@ -239,7 +215,5 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     )
   })
 
-  homey.on('log', (log: TimestampedLog): void => {
-    displayLog(log)
-  })
+  homey.on('log', displayLog)
 }

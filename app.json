@@ -117,10 +117,6 @@
     "getMeasureTemperatureDevicesAta": {
       "method": "GET",
       "path": "/drivers/melcloud/available_temperatures"
-    },
-    "getTimezone": {
-      "method": "GET",
-      "path": "/timezone"
     }
   },
   "platforms": [
