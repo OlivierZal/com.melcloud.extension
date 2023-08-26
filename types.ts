@@ -1,14 +1,17 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 
 export interface Log {
-  action: string
-  message: string
-  time: string
+  readonly action: string
+  readonly message: string
+}
+
+export interface TimestampedLog extends Log {
+  readonly time: number
 }
 
 export type Thresholds = Partial<Record<string, number>>
 
-export type SettingValue = boolean | string | Log[] | Thresholds
+export type SettingValue = boolean | string | TimestampedLog[] | Thresholds
 
 export type Settings = Record<string, SettingValue>
 

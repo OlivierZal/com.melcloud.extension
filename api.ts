@@ -1,12 +1,18 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 import type Homey from 'homey/lib/Homey'
 import type MELCloudExtensionApp from './app'
-import type {
-  MeasureTemperatureDevice,
-  TemperatureListenerData,
-} from './types'
+import type { MeasureTemperatureDevice, TemperatureListenerData } from './types'
 
 export = {
+  async autoAdjustCoolingAta({
+    homey,
+    body,
+  }: {
+    body: TemperatureListenerData
+    homey: Homey
+  }): Promise<void> {
+    await (homey.app as MELCloudExtensionApp).autoAdjustCoolingAta(body)
+  },
   getLanguage({ homey }: { homey: Homey }): string {
     return homey.i18n.getLanguage()
   },
@@ -48,13 +54,7 @@ export = {
           device1.capabilityName.localeCompare(device2.capabilityName)
       )
   },
-  async autoAdjustCoolingAta({
-    homey,
-    body,
-  }: {
-    body: TemperatureListenerData
-    homey: Homey
-  }): Promise<void> {
-    await (homey.app as MELCloudExtensionApp).autoAdjustCoolingAta(body)
+  getTimezone({ homey }: { homey: Homey }): string {
+    return homey.clock.getTimezone()
   },
 }

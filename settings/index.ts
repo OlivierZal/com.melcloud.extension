@@ -1,8 +1,8 @@
 import type Homey from 'homey/lib/Homey'
 import type {
-  Log,
   MeasureTemperatureDevice,
   TemperatureListenerData,
+  TimestampedLog,
   Settings,
 } from '../types'
 
@@ -21,18 +21,29 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     'target_temperature.saved': { icon: '💾' },
   }
 
-  await new Promise<string>((resolve, reject) => {
+  const language: string = await new Promise<string>((resolve, reject) => {
+    // @ts-expect-error bug
+    homey.api('GET', '/language', (error: Error | null, lang: string): void => {
+      if (error !== null) {
+        reject(error)
+        return
+      }
+      document.documentElement.lang = lang
+      resolve(lang)
+    })
+  })
+
+  const timeZone: string = await new Promise<string>((resolve, reject) => {
     // @ts-expect-error bug
     homey.api(
       'GET',
-      '/language',
-      (error: Error | null, language: string): void => {
+      '/timezone',
+      (error: Error | null, timezone: string): void => {
         if (error !== null) {
           reject(error)
           return
         }
-        document.documentElement.lang = language
-        resolve(language)
+        resolve(timezone)
       }
     )
   })
@@ -53,9 +64,17 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     'logs'
   ) as HTMLTableSectionElement
 
-  function addLog(log: Log): void {
+  function displayTime(time: number): string {
+    return new Date(time).toLocaleString(language, {
+      timeZone,
+      weekday: 'short',
+      hour: 'numeric',
+      minute: 'numeric',
+    })
+  }
+
+  function displayLog(log: TimestampedLog): void {
     const rowElement: HTMLDivElement = document.createElement('div')
-    logsElement.insertBefore(rowElement, logsElement.firstChild)
     rowElement.style.display = 'flex'
     rowElement.style.marginBottom = '1em'
 
@@ -65,8 +84,9 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     timeElement.style.marginRight = '1em'
     timeElement.style.textAlign = 'center'
     timeElement.style.whiteSpace = 'nowrap'
-    timeElement.innerHTML = `${log.time}<br>${actions[log.action].icon}`
-    rowElement.appendChild(timeElement)
+    timeElement.innerHTML = `${displayTime(log.time)}<br>${
+      actions[log.action].icon
+    }`
 
     const messageElement: HTMLDivElement = document.createElement('div')
     const { color } = actions[log.action]
@@ -76,7 +96,10 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     messageElement.innerText = log.message
       .replace(/ :/g, '\u00A0:')
       .replace(/ °/g, '\u00A0°')
+
+    rowElement.appendChild(timeElement)
     rowElement.appendChild(messageElement)
+    logsElement.insertBefore(rowElement, logsElement.firstChild)
   }
 
   async function gethomeySettings(): Promise<void> {
@@ -97,9 +120,22 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       }
     )
     if (logsElement.childElementCount === 0) {
-      ;((homeySettings.lastLogs as Log[] | undefined) ?? [])
+      ;((homeySettings.lastLogs as TimestampedLog[] | undefined) ?? [])
+        .filter(({ time }: TimestampedLog): boolean => {
+          let date: Date = new Date(time)
+          const localDateString: string = date.toLocaleString('en-US', {
+            timeZone,
+          })
+          date = new Date(localDateString)
+
+          let oldestDate: Date = new Date(date)
+          oldestDate.setDate(date.getDate() - 6)
+          oldestDate = new Date(oldestDate)
+          oldestDate.setHours(0, 0, 0, 0)
+          return date >= oldestDate
+        })
         .reverse()
-        .forEach(addLog)
+        .forEach(displayLog)
     }
     capabilityPathElement.value =
       (homeySettings[capabilityPathElement.id] as string | undefined) ?? ''
@@ -208,7 +244,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     )
   })
 
-  homey.on('log', (log: Log): void => {
-    addLog(log)
+  homey.on('log', (log: TimestampedLog): void => {
+    displayLog(log)
   })
 }

@@ -7,6 +7,7 @@ import type {
   MELCloudListener,
   TemperatureListener,
   TemperatureListenerData,
+  TimestampedLog,
   Settings,
   SettingValue,
   Thresholds,
@@ -17,8 +18,6 @@ const melcloudAtaDriverId = 'homey:app:com.mecloud:melcloud'
 
 export = class MELCloudExtensionApp extends App {
   names!: Record<string, string>
-
-  timeZone!: string
 
   api!: HomeyAPIV3Local
 
@@ -45,7 +44,6 @@ export = class MELCloudExtensionApp extends App {
       }),
       {}
     )
-    this.timeZone = this.homey.clock.getTimezone()
     this.api = await HomeyAPIV3Local.createAppAPI({ homey: this.homey })
     // @ts-expect-error bug
     await this.api.devices.connect()
@@ -533,8 +531,7 @@ export = class MELCloudExtensionApp extends App {
 
   error(message: string): void {
     super.error(message)
-    this.pushToLastLogs({
-      time: this.getNow(),
+    this.pushToUI({
       message,
       action: 'error',
     })
@@ -562,30 +559,21 @@ export = class MELCloudExtensionApp extends App {
       .replace(/a el/gi, 'al')
       .replace(/de le/gi, 'du')
     super.log(message)
-    this.pushToLastLogs({
-      time: this.getNow(),
+    this.pushToUI({
       message,
       action,
     })
   }
 
-  pushToLastLogs(newLog: Log): void {
+  pushToUI(log: Log): void {
     const lastLogs: Log[] = this.homey.settings.get('lastLogs') ?? []
+    const newLog: TimestampedLog = { ...log, time: Date.now() }
     lastLogs.unshift(newLog)
     if (lastLogs.length > maxLogs) {
       lastLogs.length = maxLogs
     }
     this.homey.settings.set('lastLogs', lastLogs)
     this.homey.api.realtime('log', newLog)
-  }
-
-  getNow(): string {
-    return new Date().toLocaleString(this.homey.i18n.getLanguage(), {
-      timeZone: this.timeZone,
-      weekday: 'short',
-      hour: 'numeric',
-      minute: 'numeric',
-    })
   }
 
   async onUninit(): Promise<void> {
