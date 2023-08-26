@@ -121,21 +121,16 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     )
     if (logsElement.childElementCount === 0) {
       ;((homeySettings.lastLogs as TimestampedLog[] | undefined) ?? [])
-        .filter(({ time }: TimestampedLog): boolean => {
-          let date: Date = new Date(time)
-          const localDateString: string = date.toLocaleString('en-US', {
-            timeZone,
-          })
-          date = new Date(localDateString)
-
-          let oldestDate: Date = new Date(date)
-          oldestDate.setDate(date.getDate() - 6)
-          oldestDate = new Date(oldestDate)
-          oldestDate.setHours(0, 0, 0, 0)
-          return date >= oldestDate
-        })
         .reverse()
-        .forEach(displayLog)
+        .forEach((log: TimestampedLog): void => {
+          const date = new Date(log.time)
+          const oldestDate: Date = new Date()
+          oldestDate.setDate(oldestDate.getDate() - 6)
+          oldestDate.setHours(0, 0, 0, 0)
+          if (date >= oldestDate) {
+            displayLog(log)
+          }
+        })
     }
     capabilityPathElement.value =
       (homeySettings[capabilityPathElement.id] as string | undefined) ?? ''
