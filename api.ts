@@ -32,7 +32,7 @@ export = {
         (
           device: HomeyAPIV3Local.ManagerDevices.Device
         ): MeasureTemperatureDevice[] =>
-          // @ts-expect-error bug
+          // @ts-expect-error: homey-api is partially typed
           Object.values(device.capabilitiesObj ?? {})
             .filter(
               (capability): capability is { id: string; title: string } =>
