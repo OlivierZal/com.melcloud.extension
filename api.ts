@@ -33,25 +33,24 @@ export = {
           device: HomeyAPIV3Local.ManagerDevices.Device
         ): MeasureTemperatureDevice[] =>
           // @ts-expect-error bug
-          Object.values(device.capabilitiesObj ?? {}).reduce<
-            MeasureTemperatureDevice[]
-            // @ts-expect-error bug
-          >((devices, { id, title }) => {
-            if (id.startsWith('measure_temperature')) {
-              devices.push({
+          Object.values(device.capabilitiesObj ?? {})
+            .filter(
+              (capability): capability is { id: string; title: string } =>
+                capability !== null
+            )
+            .filter(({ id }) => id.startsWith('measure_temperature'))
+            .map(
+              ({ id, title }): MeasureTemperatureDevice => ({
                 capabilityPath: `${device.id}:${id}`,
                 capabilityName: `${device.name} - ${title}`,
               })
-            }
-            return devices
-          }, [])
+            )
       )
       .sort(
         (
           device1: MeasureTemperatureDevice,
           device2: MeasureTemperatureDevice
-        ): number =>
-          device1.capabilityName.localeCompare(device2.capabilityName)
+        ) => device1.capabilityName.localeCompare(device2.capabilityName)
       )
   },
 }

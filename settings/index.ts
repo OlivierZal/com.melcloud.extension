@@ -172,8 +172,6 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     )
   }
 
-  getMeasureTemperatureDevices()
-
   capabilityPathElement.addEventListener('change', (): void => {
     if (capabilityPathElement.value !== '') {
       if (enabledElement.value === 'false') {
@@ -216,4 +214,6 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   })
 
   homey.on('log', displayLog)
+
+  getMeasureTemperatureDevices()
 }
