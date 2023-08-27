@@ -36,7 +36,12 @@ export = {
           Object.values(device.capabilitiesObj ?? {})
             .filter(
               (capability): capability is { id: string; title: string } =>
-                capability !== null
+                capability !== null &&
+                typeof capability === 'object' &&
+                'id' in capability &&
+                typeof capability.id === 'string' &&
+                'title' in capability &&
+                typeof capability.title === 'string'
             )
             .filter(({ id }) => id.startsWith('measure_temperature'))
             .map(
