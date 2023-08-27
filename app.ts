@@ -165,26 +165,20 @@ export = class MELCloudExtensionApp extends App {
       await this.api.devices.getDevices()
     return Object.values(devices).reduce<
       HomeyAPIV3Local.ManagerDevices.Device[]
-    >(
-      (
-        measureTemperatureDevices,
-        device: HomeyAPIV3Local.ManagerDevices.Device
-      ) => {
+    >((acc, device: HomeyAPIV3Local.ManagerDevices.Device) => {
+      // @ts-expect-error: homey-api is partially typed
+      if (device.driverId === melcloudAtaDriverId) {
+        this.melCloudDevices.push(device)
+      } else if (
         // @ts-expect-error: homey-api is partially typed
-        if (device.driverId === melcloudAtaDriverId) {
-          this.melCloudDevices.push(device)
-        } else if (
-          // @ts-expect-error: homey-api is partially typed
-          device.capabilities.some((capability: string) =>
-            capability.startsWith('measure_temperature')
-          )
-        ) {
-          measureTemperatureDevices.push(device)
-        }
-        return measureTemperatureDevices
-      },
-      []
-    )
+        device.capabilities.some((capability: string) =>
+          capability.startsWith('measure_temperature')
+        )
+      ) {
+        acc.push(device)
+      }
+      return acc
+    }, [])
   }
 
   async autoAdjustCoolingAta(
