@@ -1,0 +1,44 @@
+{
+  "error": {
+    "missing": "The outdoor temperature is missing.",
+    "not_found": "__name__ `__id__` cannot be found."
+  },
+  "log": {
+    "listener": {
+      "cleaned": "Cleaning listener for __capability__ of __name__.",
+      "cleaned_all": "Cleaning all listeners.",
+      "created": "Creating a listener for __capability__ of __name__.",
+      "listened": "Listening to __capability__ of __name__ : __value__."
+    },
+    "retry": "Retrying in 1 minute...",
+    "target_temperature": {
+      "calculated": "Calculating the temperature of __name__ : __value__ (from the threshold __threshold__ and outdoor temperature __outdoorTemperature__).",
+      "reverted": "Reverting the temperature of __name__ : __value__.",
+      "saved": "Saving the temperature of __name__ : __value__."
+    }
+  },
+  "names": {
+    "device": "Device",
+    "outdoor_temperature": "The outdoor temperature",
+    "temperature": "the temperature",
+    "thermostat_mode": "the mode"
+  },
+  "settings": {
+    "apply": "Apply to all air-to-air devices",
+    "boolean": {
+      "false": "No",
+      "true": "Yes"
+    },
+    "capabilities": "Outdoor temperature",
+    "enabled": "Keep within 8°C of the outdoor temperature",
+    "legends": {
+      "autoadjust": "Auto-Adjust Air Conditioning Temperature",
+      "log": "Log"
+    },
+    "no_device_ata": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
+    "no_device_measure": "You do not have a temperature measurement app in Homey.",
+    "refresh": "Refresh",
+    "success": "Update succeeded.",
+    "title": "MELCloud Extension Settings"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "error": {
+    "missing": "Buitentemperatuur ontbreekt.",
+    "not_found": "__name__ `__id__` kan niet worden gevonden."
+  },
+  "log": {
+    "listener": {
+      "cleaned": "Reinigen luisteraar voor __capability__ van __name__.",
+      "cleaned_all": "Reinigen alle luisteraars.",
+      "created": "Aanmaken van een luisteraar voor __capability__ van __name__.",
+      "listened": "Luisteren naar __capability__ van __name__ : __value__."
+    },
+    "retry": "Opnieuw proberen over 1 minuut...",
+    "target_temperature": {
+      "calculated": "Berekenen de temperatuur van __name__ : __value__ (van de drempelwaarde __threshold__ en de buitentemperatuur __outdoorTemperature__).",
+      "reverted": "Herstellen de temperatuur van __name__ : __value__.",
+      "saved": "Opslaan de temperatuur van __name__ : __value__."
+    }
+  },
+  "names": {
+    "device": "Het apparaat",
+    "outdoor_temperature": "De buitentemperatuur",
+    "temperature": "de temperatuur",
+    "thermostat_mode": "de modus"
+  },
+  "settings": {
+    "apply": "Toepassen op alle lucht-lucht apparaten",
+    "boolean": {
+      "false": "Nee",
+      "true": "Ja"
+    },
+    "capabilities": "Buitentemperatuur",
+    "enabled": "Blijf binnen 8°C van de buitentemperatuur",
+    "legends": {
+      "autoadjust": "Auto-afstellen airco-temperatuur",
+      "log": "Logboek"
+    },
+    "no_device_ata": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
+    "no_device_measure": "Je hebt geen temperatuur meet app in Homey.",
+    "refresh": "Herladen",
+    "success": "Update geslaagd.",
+    "title": "Instellingen van de MELCloud-extensie"
+  }
+}
