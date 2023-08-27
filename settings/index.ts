@@ -22,7 +22,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   }
 
   const language: string = await new Promise<string>((resolve, reject) => {
-    // @ts-expect-error: homey-api is partially typed
+    // @ts-expect-error: homey is partially typed
     homey.api('GET', '/language', (error: Error | null, lang: string): void => {
       if (error !== null) {
         reject(error)
@@ -89,11 +89,11 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   async function gethomeySettings(): Promise<void> {
     const homeySettings: Settings = await new Promise<Settings>(
       (resolve, reject) => {
-        // @ts-expect-error: homey-api is partially typed
+        // @ts-expect-error: homey is partially typed
         homey.get(
           async (error: Error | null, settings: Settings): Promise<void> => {
             if (error !== null) {
-              // @ts-expect-error: homey-api is partially typed
+              // @ts-expect-error: homey is partially typed
               await homey.alert(error.message)
               reject(error)
               return
@@ -120,29 +120,29 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     errorMessage: string
   ): Promise<void> {
     if (errorMessage === 'no_device_ata') {
-      // @ts-expect-error: homey-api is partially typed
+      // @ts-expect-error: homey is partially typed
       await homey.confirm(
         homey.__('settings.no_device_ata'),
         null,
         async (error: Error | null, ok: boolean): Promise<void> => {
           if (error !== null) {
-            // @ts-expect-error: homey-api is partially typed
+            // @ts-expect-error: homey is partially typed
             await homey.alert(error.message)
           }
           if (ok) {
-            // @ts-expect-error: homey-api is partially typed
+            // @ts-expect-error: homey is partially typed
             await homey.openURL('https://homey.app/a/com.mecloud')
           }
         }
       )
       return
     }
-    // @ts-expect-error: homey-api is partially typed
+    // @ts-expect-error: homey is partially typed
     await homey.alert(errorMessage)
   }
 
   function getMeasureTemperatureDevices(): void {
-    // @ts-expect-error: homey-api is partially typed
+    // @ts-expect-error: homey is partially typed
     homey.api(
       'GET',
       '/drivers/melcloud/available_temperatures',
@@ -155,7 +155,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
           return
         }
         if (devices.length === 0) {
-          // @ts-expect-error: homey-api is partially typed
+          // @ts-expect-error: homey is partially typed
           await homey.alert(homey.__('settings.no_device_measure'))
           return
         }
@@ -185,7 +185,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   refreshElement.addEventListener('click', (): void => {
     refreshElement.classList.add('is-disabled')
     gethomeySettings().catch(async (error: Error): Promise<void> => {
-      // @ts-expect-error: homey-api is partially typed
+      // @ts-expect-error: homey is partially typed
       await homey.alert(error.message)
     })
   })
@@ -198,7 +198,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       capabilityPath,
       enabled,
     }
-    // @ts-expect-error: homey-api is partially typed
+    // @ts-expect-error: homey is partially typed
     homey.api(
       'POST',
       '/drivers/melcloud/cooling_auto_adjustment',
@@ -206,7 +206,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       async (error: Error | null): Promise<void> => {
         applyElement.classList.remove('is-disabled')
         if (error !== null) {
-          // @ts-expect-error: homey-api is partially typed
+          // @ts-expect-error: homey is partially typed
           await homey.alert(error.message)
         }
       }
