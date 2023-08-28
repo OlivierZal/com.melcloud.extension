@@ -113,6 +113,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     enabledElement.value = String(
       (homeySettings[enabledElement.id] as boolean | undefined) ?? false
     )
+    applyElement.classList.remove('is-disabled')
     refreshElement.classList.remove('is-disabled')
   }
 
@@ -183,6 +184,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   })
 
   refreshElement.addEventListener('click', (): void => {
+    applyElement.classList.add('is-disabled')
     refreshElement.classList.add('is-disabled')
     getHomeySettings().catch(async (error: Error): Promise<void> => {
       // @ts-expect-error: homey is partially typed
@@ -192,6 +194,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
 
   applyElement.addEventListener('click', (): void => {
     applyElement.classList.add('is-disabled')
+    refreshElement.classList.add('is-disabled')
     const enabled: boolean = enabledElement.value === 'true'
     const capabilityPath: string = capabilityPathElement.value
     const body: TemperatureListenerData = {
@@ -205,6 +208,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       body,
       async (error: Error | null): Promise<void> => {
         applyElement.classList.remove('is-disabled')
+        refreshElement.classList.remove('is-disabled')
         if (error !== null) {
           // @ts-expect-error: homey is partially typed
           await homey.alert(error.message)
