@@ -86,7 +86,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     logsElement.insertBefore(rowElement, logsElement.firstChild)
   }
 
-  async function gethomeySettings(): Promise<void> {
+  async function getHomeySettings(): Promise<void> {
     const homeySettings: Settings = await new Promise<Settings>(
       (resolve, reject) => {
         // @ts-expect-error: homey is partially typed
@@ -167,7 +167,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
           optionElement.innerText = capabilityName
           capabilityPathElement.appendChild(optionElement)
         })
-        await gethomeySettings()
+        await getHomeySettings()
       }
     )
   }
@@ -184,7 +184,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
 
   refreshElement.addEventListener('click', (): void => {
     refreshElement.classList.add('is-disabled')
-    gethomeySettings().catch(async (error: Error): Promise<void> => {
+    getHomeySettings().catch(async (error: Error): Promise<void> => {
       // @ts-expect-error: homey is partially typed
       await homey.alert(error.message)
     })
