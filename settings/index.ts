@@ -86,6 +86,22 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     logsElement.insertBefore(rowElement, logsElement.firstChild)
   }
 
+  function disableButtons(value = true): void {
+    ;[applyElement, refreshElement].forEach(
+      (element: HTMLButtonElement): void => {
+        if (value) {
+          element.classList.add('is-disabled')
+        } else {
+          element.classList.remove('is-disabled')
+        }
+      }
+    )
+  }
+
+  function enableButtons(value = true): void {
+    disableButtons(!value)
+  }
+
   async function getHomeySettings(): Promise<void> {
     const homeySettings: Settings = await new Promise<Settings>(
       (resolve, reject) => {
@@ -113,8 +129,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     enabledElement.value = String(
       (homeySettings[enabledElement.id] as boolean | undefined) ?? false
     )
-    applyElement.classList.remove('is-disabled')
-    refreshElement.classList.remove('is-disabled')
+    enableButtons()
   }
 
   async function handleGetMeasureTemperatureDevicesError(
@@ -184,17 +199,17 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   })
 
   refreshElement.addEventListener('click', (): void => {
-    applyElement.classList.add('is-disabled')
-    refreshElement.classList.add('is-disabled')
-    getHomeySettings().catch(async (error: Error): Promise<void> => {
-      // @ts-expect-error: homey is partially typed
-      await homey.alert(error.message)
-    })
+    disableButtons()
+    getHomeySettings()
+      .catch(async (error: Error): Promise<void> => {
+        // @ts-expect-error: homey is partially typed
+        await homey.alert(error.message)
+      })
+      .finally(enableButtons)
   })
 
   applyElement.addEventListener('click', (): void => {
-    applyElement.classList.add('is-disabled')
-    refreshElement.classList.add('is-disabled')
+    disableButtons()
     const enabled: boolean = enabledElement.value === 'true'
     const capabilityPath: string = capabilityPathElement.value
     const body: TemperatureListenerData = {
@@ -207,8 +222,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       '/drivers/melcloud/cooling_auto_adjustment',
       body,
       async (error: Error | null): Promise<void> => {
-        applyElement.classList.remove('is-disabled')
-        refreshElement.classList.remove('is-disabled')
+        enableButtons()
         if (error !== null) {
           // @ts-expect-error: homey is partially typed
           await homey.alert(error.message)
