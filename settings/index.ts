@@ -121,6 +121,13 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     )
     if (logsElement.childElementCount === 0) {
       ;((homeySettings.lastLogs as TimestampedLog[] | undefined) ?? [])
+        .filter(({ time }): boolean => {
+          const date: Date = new Date(time)
+          const oldestDate: Date = new Date()
+          oldestDate.setDate(oldestDate.getDate() - 6)
+          oldestDate.setHours(0, 0, 0, 0)
+          return date >= oldestDate
+        })
         .reverse()
         .forEach(displayLog)
     }
