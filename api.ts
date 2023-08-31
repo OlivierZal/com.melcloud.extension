@@ -32,17 +32,13 @@ export = {
         (
           device: HomeyAPIV3Local.ManagerDevices.Device
         ): MeasureTemperatureDevice[] =>
-          // @ts-expect-error: homey-api is partially typed
-          Object.values(device.capabilitiesObj ?? {})
-            .filter(
-              (capability): capability is { id: string; title: string } =>
-                capability !== null &&
-                typeof capability === 'object' &&
-                'id' in capability &&
-                typeof capability.id === 'string' &&
-                'title' in capability &&
-                typeof capability.title === 'string'
-            )
+          Object.values(
+            // @ts-expect-error: homey-api is partially typed
+            (device.capabilitiesObj as Record<
+              string,
+              { id: string; title: string }
+            > | null) ?? {}
+          )
             .filter(({ id }) => id.startsWith('measure_temperature'))
             .map(
               ({ id, title }): MeasureTemperatureDevice => ({
