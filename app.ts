@@ -364,7 +364,7 @@ export = class MELCloudExtensionApp extends App {
             this.api.devices.getCapabilityValue({
               deviceId: device.id,
               capabilityId,
-            })
+            }) as string
         )
     )
   }
