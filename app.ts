@@ -41,6 +41,7 @@ export = class MELCloudExtensionApp extends App {
         ]
       )
     )
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.api = await HomeyAPIV3Local.createAppAPI({ homey: this.homey })
     // @ts-expect-error: homey-api is partially typed
     await this.api.devices.connect()
@@ -149,7 +150,8 @@ export = class MELCloudExtensionApp extends App {
     device: HomeyAPIV3Local.ManagerDevices.Device,
     value: number
   ): number {
-    const thresholds: Thresholds = this.homey.settings.get('thresholds') ?? {}
+    const thresholds: Thresholds =
+      (this.homey.settings.get('thresholds') as Thresholds | null) ?? {}
     thresholds[device.id] = value
     this.setSettings({ thresholds })
     this.log('target_temperature.saved', {
@@ -163,7 +165,7 @@ export = class MELCloudExtensionApp extends App {
     this.melCloudDevices = []
     const devices: HomeyAPIV3Local.ManagerDevices.Device[] =
       // @ts-expect-error: homey-api is partially typed
-      await this.api.devices.getDevices()
+      (await this.api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
     return Object.values(devices).reduce<
       HomeyAPIV3Local.ManagerDevices.Device[]
     >((acc, device: HomeyAPIV3Local.ManagerDevices.Device) => {
@@ -184,8 +186,9 @@ export = class MELCloudExtensionApp extends App {
 
   async autoAdjustCoolingAta(
     { capabilityPath, enabled }: TemperatureListenerData = {
-      capabilityPath: this.homey.settings.get('capabilityPath') ?? '',
-      enabled: this.homey.settings.get('enabled') ?? false,
+      capabilityPath:
+        (this.homey.settings.get('capabilityPath') as string | null) ?? '',
+      enabled: (this.homey.settings.get('enabled') as boolean | null) ?? false,
     }
   ): Promise<void> {
     if (capabilityPath === '') {
@@ -242,9 +245,9 @@ export = class MELCloudExtensionApp extends App {
     let device: HomeyAPIV3Local.ManagerDevices.Device | null = null
     try {
       // @ts-expect-error: homey-api is partially typed
-      device = await this.api.devices.getDevice({
+      device = (await this.api.devices.getDevice({
         id: deviceId,
-      })
+      })) as HomeyAPIV3Local.ManagerDevices.Device | null
     } catch (error: unknown) {
       throw new Error(
         this.homey.__('error.not_found', {
@@ -310,10 +313,10 @@ export = class MELCloudExtensionApp extends App {
           const deviceId: string = device.id
           const currentThermostatMode: string =
             // @ts-expect-error: homey-api is partially typed
-            await this.api.devices.getCapabilityValue({
+            (await this.api.devices.getCapabilityValue({
               deviceId,
               capabilityId,
-            })
+            })) as string
           this.melCloudListeners[deviceId].thermostat_mode =
             device.makeCapabilityInstance(
               capabilityId,
@@ -382,10 +385,10 @@ export = class MELCloudExtensionApp extends App {
     await this.listenToOutdoorTemperature()
     const currentTargetTemperature: number =
       // @ts-expect-error: homey-api is partially typed
-      await this.api.devices.getCapabilityValue({
+      (await this.api.devices.getCapabilityValue({
         deviceId,
         capabilityId,
-      })
+      })) as number
     this.melCloudListeners[deviceId].temperature =
       device.makeCapabilityInstance(
         capabilityId,
@@ -430,10 +433,10 @@ export = class MELCloudExtensionApp extends App {
     const capability: string = this.names.temperature
     this.outdoorTemperatureValue =
       // @ts-expect-error: homey-api is partially typed
-      await this.api.devices.getCapabilityValue({
+      (await this.api.devices.getCapabilityValue({
         deviceId,
         capabilityId,
-      })
+      })) as number
     if ('temperature' in this.outdoorTemperatureListener) {
       return
     }
@@ -550,7 +553,8 @@ export = class MELCloudExtensionApp extends App {
   }
 
   pushToUI(log: Log): void {
-    const lastLogs: Log[] = this.homey.settings.get('lastLogs') ?? []
+    const lastLogs: Log[] =
+      (this.homey.settings.get('lastLogs') as Log[] | null) ?? []
     const newLog: TimestampedLog = { ...log, time: Date.now() }
     lastLogs.unshift(newLog)
     if (lastLogs.length > maxLogs) {
