@@ -41,8 +41,10 @@ export = class MELCloudExtensionApp extends App {
         ]
       )
     )
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    this.api = await HomeyAPIV3Local.createAppAPI({ homey: this.homey })
+
+    this.api = (await HomeyAPIV3Local.createAppAPI({
+      homey: this.homey,
+    })) as HomeyAPIV3Local
     // @ts-expect-error: homey-api is partially typed
     await this.api.devices.connect()
     await this.initialize()
