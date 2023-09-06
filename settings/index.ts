@@ -12,14 +12,14 @@ async function onHomeyReady(homey: Homey): Promise<void> {
 
   const actions: Record<string, { color?: string; icon: string }> = {
     error: { icon: '⚠️', color: '#E8000D' },
-    'listener.cleaned': { icon: '🧽' },
-    'listener.cleaned_all': { icon: '💥' },
-    'listener.created': { icon: '📝' },
+    'listener.cleaned': { icon: '🗑️' },
+    'listener.cleaned_all': { icon: '🛑' },
+    'listener.created': { icon: '🔊' },
     'listener.listened': { icon: '👂', color: '#0047AB' },
     retry: { icon: '🔄' },
-    'target_temperature.calculated': { icon: '🧮', color: '#008000' },
-    'target_temperature.reverted': { icon: '🔙' },
-    'target_temperature.saved': { icon: '💾' },
+    'target_temperature.calculated': { icon: '🔢', color: '#008000' },
+    'target_temperature.reverted': { icon: '↩️' },
+    'target_temperature.saved': { icon: '☁️' },
   }
 
   const language: string = await new Promise<string>((resolve, reject) => {
