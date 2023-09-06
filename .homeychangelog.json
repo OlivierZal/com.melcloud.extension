@@ -28,5 +28,8 @@
   },
   "10.0.0": {
     "en": "Use new eslint config."
+  },
+  "11.0.0": {
+    "en": "Reshaped code."
   }
 }
