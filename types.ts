@@ -11,11 +11,22 @@ export interface TimestampedLog extends Log {
 
 export type Thresholds = Partial<Record<string, number>>
 
-export type SettingValue = boolean | string | TimestampedLog[] | Thresholds
-
-export type Settings = Record<string, SettingValue>
-
 export type CapabilityValue = boolean | number | string
+
+export type SettingValue =
+  | boolean
+  | string
+  | TimestampedLog[]
+  | Thresholds
+  | null
+  | undefined
+
+export interface HomeySettings extends Record<string, SettingValue> {
+  readonly enabled?: boolean | null
+  readonly capabilityPath?: string | null
+  readonly threshold?: Thresholds | null
+  readonly log?: TimestampedLog[] | null
+}
 
 export interface MeasureTemperatureDevice {
   readonly capabilityName: string

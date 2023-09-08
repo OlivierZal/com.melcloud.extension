@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import type Homey from 'homey/lib/Homey'
 import type {
+  HomeySettings,
   MeasureTemperatureDevice,
   TemperatureListenerData,
   TimestampedLog,
-  Settings,
 } from '../types'
 
 async function onHomeyReady(homey: Homey): Promise<void> {
@@ -104,11 +104,14 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   }
 
   async function getHomeySettings(): Promise<void> {
-    const homeySettings: Settings = await new Promise<Settings>(
+    const homeySettings: HomeySettings = await new Promise<HomeySettings>(
       (resolve, reject) => {
         // @ts-expect-error: homey is partially typed
         homey.get(
-          async (error: Error | null, settings: Settings): Promise<void> => {
+          async (
+            error: Error | null,
+            settings: HomeySettings
+          ): Promise<void> => {
             if (error !== null) {
               // @ts-expect-error: homey is partially typed
               await homey.alert(error.message)

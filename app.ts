@@ -4,12 +4,12 @@ import { App } from 'homey' // eslint-disable-line import/no-extraneous-dependen
 import { HomeyAPIV3Local } from 'homey-api'
 import type {
   CapabilityValue,
+  HomeySettings,
   Log,
   MELCloudListener,
   TemperatureListener,
   TemperatureListenerData,
   TimestampedLog,
-  Settings,
   SettingValue,
   Thresholds,
 } from './types'
@@ -507,7 +507,7 @@ export = class MELCloudExtensionApp extends App {
     }
   }
 
-  setSettings(settings: Settings): void {
+  setSettings(settings: HomeySettings): void {
     Object.entries(settings)
       .filter(
         ([setting, value]: [string, SettingValue]) =>
