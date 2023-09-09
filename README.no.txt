@@ -1,4 +1,4 @@
-Denne appen utvider MELCloud Homey-appen ved å automatisk holde kjølingstemperaturen til dine luft-luft varmepumper innenfor 8\u00A0°C fra utetemperaturen.
+Denne appen utvider MELCloud Homey-appen ved å automatisk holde kjølingstemperaturen til dine luft-luft varmepumper innenfor 8 °C fra utetemperaturen.
 
 Hvorfor?
 
