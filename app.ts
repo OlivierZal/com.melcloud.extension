@@ -5,12 +5,12 @@ import { HomeyAPIV3Local } from 'homey-api'
 import type {
   CapabilityValue,
   HomeySettings,
+  HomeySettingValue,
   Log,
   MELCloudListener,
   TemperatureListener,
   TemperatureListenerData,
   TimestampedLog,
-  SettingValue,
   Thresholds,
 } from './types'
 
@@ -510,10 +510,10 @@ export = class MELCloudExtensionApp extends App {
   setSettings(settings: HomeySettings): void {
     Object.entries(settings)
       .filter(
-        ([setting, value]: [string, SettingValue]) =>
+        ([setting, value]: [string, HomeySettingValue]) =>
           value !== this.homey.settings.get(setting)
       )
-      .forEach(([setting, value]: [string, SettingValue]): void => {
+      .forEach(([setting, value]: [string, HomeySettingValue]): void => {
         this.homey.settings.set(setting, value)
       })
   }
