@@ -89,7 +89,7 @@ export = class MELCloudExtensionApp extends App {
       )
     )
     this.melCloudListeners = {}
-    if (this.outdoorTemperatureListener !== undefined) {
+    if (this.outdoorTemperatureListener) {
       await this.cleanListener(this.outdoorTemperatureListener, 'temperature')
     }
     this.log('listener.cleaned_all')
@@ -193,7 +193,7 @@ export = class MELCloudExtensionApp extends App {
       enabled: (this.homey.settings.get('enabled') as boolean | null) ?? false,
     }
   ): Promise<void> {
-    if (capabilityPath === '') {
+    if (!capabilityPath) {
       if (enabled) {
         throw new Error(this.homey.__('error.missing'))
       }
@@ -226,7 +226,7 @@ export = class MELCloudExtensionApp extends App {
         capabilityPath,
         enabled,
       })
-      if (this.outdoorTemperatureListener === undefined) {
+      if (!this.outdoorTemperatureListener) {
         this.outdoorTemperatureListener = { device }
       } else if (device.id !== this.outdoorTemperatureListener.device.id) {
         this.outdoorTemperatureListener.device = device
@@ -259,7 +259,7 @@ export = class MELCloudExtensionApp extends App {
       )
     }
     // @ts-expect-error: homey-api is partially typed
-    if (device === null || !(capability in (device.capabilitiesObj ?? {}))) {
+    if (!device || !(capability in (device.capabilitiesObj ?? {}))) {
       throw new Error(
         this.homey.__('error.not_found', {
           name: this.names.outdoor_temperature,
@@ -336,7 +336,7 @@ export = class MELCloudExtensionApp extends App {
                 const thermostatModes: string[] =
                   await this.getOtherThermostatModes(listener)
                 if (thermostatModes.every((mode: string) => mode !== 'cool')) {
-                  if (this.outdoorTemperatureListener !== undefined) {
+                  if (this.outdoorTemperatureListener) {
                     await this.cleanListener(
                       this.outdoorTemperatureListener,
                       'temperature'
@@ -423,7 +423,7 @@ export = class MELCloudExtensionApp extends App {
 
   async listenToOutdoorTemperature(): Promise<void> {
     if (
-      this.outdoorTemperatureListener === undefined ||
+      !this.outdoorTemperatureListener ||
       'temperature' in this.outdoorTemperatureListener
     ) {
       return

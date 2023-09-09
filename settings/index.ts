@@ -25,7 +25,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   const language: string = await new Promise<string>((resolve, reject) => {
     // @ts-expect-error: homey is partially typed
     homey.api('GET', '/language', (error: Error | null, lang: string): void => {
-      if (error !== null) {
+      if (error) {
         reject(error)
         return
       }
@@ -75,7 +75,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
 
     const messageElement: HTMLDivElement = document.createElement('div')
     const { color } = actions[log.action]
-    if (color !== undefined) {
+    if (color) {
       messageElement.style.color = color
     }
     messageElement.innerText = log.message
@@ -113,7 +113,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
           error: Error | null,
           settings: Partial<HomeySettings>
         ): Promise<void> => {
-          if (error !== null) {
+          if (error) {
             // @ts-expect-error: homey is partially typed
             await homey.alert(error.message)
             reject(error)
@@ -152,7 +152,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
         homey.__('settings.no_device_ata'),
         null,
         async (error: Error | null, ok: boolean): Promise<void> => {
-          if (error !== null) {
+          if (error) {
             // @ts-expect-error: homey is partially typed
             await homey.alert(error.message)
           }
@@ -177,7 +177,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
         error: Error | null,
         devices: MeasureTemperatureDevice[]
       ): Promise<void> => {
-        if (error !== null) {
+        if (error) {
           await handleGetMeasureTemperatureDevicesError(error.message)
           return
         }
@@ -200,7 +200,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   }
 
   capabilityPathElement.addEventListener('change', (): void => {
-    if (capabilityPathElement.value !== '') {
+    if (capabilityPathElement.value) {
       if (enabledElement.value === 'false') {
         enabledElement.value = 'true'
       }
@@ -234,7 +234,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       body,
       async (error: Error | null): Promise<void> => {
         enableButtons()
-        if (error !== null) {
+        if (error) {
           // @ts-expect-error: homey is partially typed
           await homey.alert(error.message)
         }
