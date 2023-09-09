@@ -22,7 +22,7 @@ export interface HomeySettings {
   readonly lastLogs?: TimestampedLog[] | null
 }
 
-export type HomeySettingValue = ValueOf<HomeySettings> | null | undefined
+export type HomeySettingValue = ValueOf<HomeySettings>
 
 export interface MeasureTemperatureDevice {
   readonly capabilityName: string
