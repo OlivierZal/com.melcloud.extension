@@ -507,7 +507,7 @@ export = class MELCloudExtensionApp extends App {
     }
   }
 
-  setSettings(settings: HomeySettings): void {
+  setSettings(settings: Partial<HomeySettings>): void {
     Object.entries(settings)
       .filter(
         ([setting, value]: [string, HomeySettingValue]) =>

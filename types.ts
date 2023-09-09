@@ -16,10 +16,10 @@ export type CapabilityValue = boolean | number | string
 type ValueOf<T> = T[keyof T]
 
 export interface HomeySettings {
-  readonly enabled?: boolean | null
-  readonly capabilityPath?: string | null
-  readonly thresholds?: Thresholds | null
-  readonly lastLogs?: TimestampedLog[] | null
+  readonly enabled: boolean | null
+  readonly capabilityPath: string | null
+  readonly thresholds: Thresholds | null
+  readonly lastLogs: TimestampedLog[] | null
 }
 
 export type HomeySettingValue = ValueOf<HomeySettings>
