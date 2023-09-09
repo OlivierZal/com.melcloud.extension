@@ -123,7 +123,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
         }
       )
     })
-    if (logsElement.childElementCount === 0) {
+    if (!logsElement.childElementCount) {
       ;((homeySettings.lastLogs as TimestampedLog[] | undefined) ?? [])
         .filter(({ time }): boolean => {
           const date: Date = new Date(time)
@@ -181,7 +181,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
           await handleGetMeasureTemperatureDevicesError(error.message)
           return
         }
-        if (devices.length === 0) {
+        if (!devices.length) {
           // @ts-expect-error: homey is partially typed
           await homey.alert(homey.__('settings.no_device_measure'))
           return
