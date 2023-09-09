@@ -16,6 +16,6 @@ Why?
 
 1. You must have a Homey Pro.
 2. Install the [MELCloud Homey app](https://homey.app/a/com.mecloud) from the Homey App Store.
-3. Pair your devices!
+3. Pair your devices.
 4. Install the [MELCloud Homey app extension](https://homey.app/a/com.mecloud.extension) from the Homey App Store.
 5. Configure your outdoor temperature source in the settings of the MELCloud Homey app extension.
