@@ -1,4 +1,4 @@
-Esta aplicación amplía la aplicación Homey MELCloud al mantener automáticamente la temperatura de enfriamiento de sus bombas de calor aire-aire dentro de los 8°C de la temperatura exterior.
+Esta aplicación amplía la aplicación Homey MELCloud al mantener automáticamente la temperatura de enfriamiento de sus bombas de calor aire-aire dentro de los 8\u00A0°C de la temperatura exterior.
 
 ¿Por qué?
 

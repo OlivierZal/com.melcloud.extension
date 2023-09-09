@@ -79,9 +79,6 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       messageElement.style.color = color
     }
     messageElement.innerText = log.message
-      .replace(/ :/g, '\u00A0:')
-      .replace(/ °/g, '\u00A0°')
-
     rowElement.appendChild(timeElement)
     rowElement.appendChild(messageElement)
     logsElement.insertBefore(rowElement, logsElement.firstChild)

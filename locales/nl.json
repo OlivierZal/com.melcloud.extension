@@ -8,13 +8,13 @@
       "cleaned": "Reinigen luisteraar voor __capability__ van __name__.",
       "cleaned_all": "Reinigen alle luisteraars.",
       "created": "Aanmaken van een luisteraar voor __capability__ van __name__.",
-      "listened": "Luisteren naar __capability__ van __name__ : __value__."
+      "listened": "Luisteren naar __capability__ van __name__: __value__."
     },
     "retry": "Opnieuw proberen over 1 minuut...",
     "target_temperature": {
-      "calculated": "Berekenen de temperatuur van __name__ : __value__ (van de drempelwaarde __threshold__ en de buitentemperatuur __outdoorTemperature__).",
-      "reverted": "Herstellen de temperatuur van __name__ : __value__.",
-      "saved": "Opslaan de temperatuur van __name__ : __value__."
+      "calculated": "Berekenen de temperatuur van __name__: __value__ (van de drempelwaarde __threshold__ en de buitentemperatuur __outdoorTemperature__).",
+      "reverted": "Herstellen de temperatuur van __name__: __value__.",
+      "saved": "Opslaan de temperatuur van __name__: __value__."
     }
   },
   "names": {
@@ -30,7 +30,7 @@
       "true": "Ja"
     },
     "capabilities": "Buitentemperatuur",
-    "enabled": "Blijf binnen 8°C van de buitentemperatuur",
+    "enabled": "Blijf binnen 8 °C van de buitentemperatuur",
     "legends": {
       "autoadjust": "Auto-afstellen airco-temperatuur",
       "log": "Logboek"

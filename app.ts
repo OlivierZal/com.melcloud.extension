@@ -137,7 +137,7 @@ export = class MELCloudExtensionApp extends App {
       })
       this.log('target_temperature.reverted', {
         name: device.name,
-        value: `${value} °C`,
+        value: `${value}\u00A0°C`,
       })
     } catch (error: unknown) {
       this.error(error instanceof Error ? error.message : String(error))
@@ -158,7 +158,7 @@ export = class MELCloudExtensionApp extends App {
     this.setSettings({ thresholds })
     this.log('target_temperature.saved', {
       name: device.name,
-      value: `${value} °C`,
+      value: `${value}\u00A0°C`,
     })
     return value
   }
@@ -403,7 +403,7 @@ export = class MELCloudExtensionApp extends App {
           this.log('listener.listened', {
             name,
             capability,
-            value: `${value as number} °C`,
+            value: `${value as number}\u00A0°C`,
           })
           await this.handleTargetTemperature(
             listener,
@@ -449,7 +449,7 @@ export = class MELCloudExtensionApp extends App {
         this.log('listener.listened', {
           name,
           capability,
-          value: `${value} °C`,
+          value: `${value}\u00A0°C`,
         })
         await Promise.all(
           Object.values(this.melCloudListeners).map(
@@ -498,9 +498,9 @@ export = class MELCloudExtensionApp extends App {
       await listener.temperature.setValue(value)
       this.log('target_temperature.calculated', {
         name: listener.device.name,
-        value: `${value} °C`,
-        threshold: `${threshold} °C`,
-        outdoorTemperature: `${this.outdoorTemperatureValue} °C`,
+        value: `${value}\u00A0°C`,
+        threshold: `${threshold}\u00A0°C`,
+        outdoorTemperature: `${this.outdoorTemperatureValue}\u00A0°C`,
       })
     } catch (error: unknown) {
       this.error(error instanceof Error ? error.message : String(error))

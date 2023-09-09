@@ -1,4 +1,4 @@
-This app extends the MELCloud Homey app by automatically keeping your air-to-air heat pumps' cooling temperature within 8°C of the outdoor temperature.
+This app extends the MELCloud Homey app by automatically keeping your air-to-air heat pumps' cooling temperature within 8\u00A0°C of the outdoor temperature.
 
 Why?
 

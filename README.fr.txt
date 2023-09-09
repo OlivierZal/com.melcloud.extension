@@ -1,4 +1,4 @@
-Cette appli étend l'appli Homey MELCloud en maintenant automatiquement la température de refroidissement de vos pompes à chaleur air-air à moins de 8°C de l'extérieur.
+Cette appli étend l'appli Homey MELCloud en maintenant automatiquement la température de refroidissement de vos pompes à chaleur air-air à moins de 8\u00A0°C de l'extérieur.
 
 Pourquoi ?
 
@@ -6,7 +6,7 @@ Pourquoi ?
 - Parce que c'est mieux pour votre santé.
 - Parce que c'est mieux pour l'environnement.
 
-Conditions préalables :
+Conditions préalables\u00A0:
 
 - Vous devez disposer d'un Homey Pro.
 - L'appli Homey MELCloud doit être installée.
