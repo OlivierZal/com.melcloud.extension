@@ -21,11 +21,11 @@ export type SettingValue =
   | null
   | undefined
 
-export interface HomeySettings extends Record<string, SettingValue> {
+export interface HomeySettings {
   readonly enabled?: boolean | null
   readonly capabilityPath?: string | null
-  readonly threshold?: Thresholds | null
-  readonly log?: TimestampedLog[] | null
+  readonly thresholds?: Thresholds | null
+  readonly lastLogs?: TimestampedLog[] | null
 }
 
 export interface MeasureTemperatureDevice {

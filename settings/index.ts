@@ -136,9 +136,9 @@ async function onHomeyReady(homey: Homey): Promise<void> {
         .forEach(displayLog)
     }
     capabilityPathElement.value =
-      (homeySettings[capabilityPathElement.id] as string | undefined) ?? ''
+      (homeySettings.capabilityPath as string | undefined) ?? ''
     enabledElement.value = String(
-      (homeySettings[enabledElement.id] as boolean | undefined) ?? false
+      (homeySettings.enabled as boolean | undefined) ?? false
     )
     enableButtons()
   }
