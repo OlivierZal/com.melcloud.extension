@@ -1,6 +1,6 @@
 {
   "name": "com.melcloud.extension",
-  "version": "11.2.0",
+  "version": "11.3.0",
   "main": "app.ts",
   "scripts": {
     "build": "tsc",
@@ -22,7 +22,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "homey-api": "^3.0.13",
+    "homey-api": "^3.0.15",
     "source-map-support": "^0.5.21"
   }
 }
