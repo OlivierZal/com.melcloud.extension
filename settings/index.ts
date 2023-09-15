@@ -35,19 +35,19 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   })
 
   const applyElement: HTMLButtonElement = document.getElementById(
-    'apply'
+    'apply',
   ) as HTMLButtonElement
   const refreshElement: HTMLButtonElement = document.getElementById(
-    'refresh'
+    'refresh',
   ) as HTMLButtonElement
   const capabilityPathElement: HTMLSelectElement = document.getElementById(
-    'capabilityPath'
+    'capabilityPath',
   ) as HTMLSelectElement
   const enabledElement: HTMLSelectElement = document.getElementById(
-    'enabled'
+    'enabled',
   ) as HTMLSelectElement
   const logsElement: HTMLTableSectionElement = document.getElementById(
-    'logs'
+    'logs',
   ) as HTMLTableSectionElement
 
   function displayTime(time: number): string {
@@ -92,7 +92,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
         } else {
           element.classList.remove('is-disabled')
         }
-      }
+      },
     )
   }
 
@@ -108,7 +108,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       homey.get(
         async (
           error: Error | null,
-          settings: Partial<HomeySettings>
+          settings: Partial<HomeySettings>,
         ): Promise<void> => {
           if (error) {
             // @ts-expect-error: homey is partially typed
@@ -117,7 +117,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
             return
           }
           resolve(settings)
-        }
+        },
       )
     })
     if (!logsElement.childElementCount) {
@@ -135,13 +135,13 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     capabilityPathElement.value =
       (homeySettings.capabilityPath as string | undefined) ?? ''
     enabledElement.value = String(
-      (homeySettings.enabled as boolean | undefined) ?? false
+      (homeySettings.enabled as boolean | undefined) ?? false,
     )
     enableButtons()
   }
 
   async function handleGetMeasureTemperatureDevicesError(
-    errorMessage: string
+    errorMessage: string,
   ): Promise<void> {
     if (errorMessage === 'no_device_ata') {
       // @ts-expect-error: homey is partially typed
@@ -157,7 +157,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
             // @ts-expect-error: homey is partially typed
             await homey.openURL('https://homey.app/a/com.mecloud')
           }
-        }
+        },
       )
       return
     }
@@ -172,7 +172,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       '/drivers/melcloud/available_temperatures',
       async (
         error: Error | null,
-        devices: MeasureTemperatureDevice[]
+        devices: MeasureTemperatureDevice[],
       ): Promise<void> => {
         if (error) {
           await handleGetMeasureTemperatureDevicesError(error.message)
@@ -192,7 +192,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
           capabilityPathElement.appendChild(optionElement)
         })
         await getHomeySettings()
-      }
+      },
     )
   }
 
@@ -235,7 +235,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
           // @ts-expect-error: homey is partially typed
           await homey.alert(error.message)
         }
-      }
+      },
     )
   })
 

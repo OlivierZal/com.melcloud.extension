@@ -30,28 +30,28 @@ export = {
     return measureTemperatureDevices
       .flatMap(
         (
-          device: HomeyAPIV3Local.ManagerDevices.Device
+          device: HomeyAPIV3Local.ManagerDevices.Device,
         ): MeasureTemperatureDevice[] =>
           Object.values(
             // @ts-expect-error: homey-api is partially typed
             (device.capabilitiesObj as Record<
               string,
               { id: string; title: string }
-            > | null) ?? {}
+            > | null) ?? {},
           )
             .filter(({ id }) => id.startsWith('measure_temperature'))
             .map(
               ({ id, title }): MeasureTemperatureDevice => ({
                 capabilityPath: `${device.id}:${id}`,
                 capabilityName: `${device.name} - ${title}`,
-              })
-            )
+              }),
+            ),
       )
       .sort(
         (
           device1: MeasureTemperatureDevice,
-          device2: MeasureTemperatureDevice
-        ) => device1.capabilityName.localeCompare(device2.capabilityName)
+          device2: MeasureTemperatureDevice,
+        ) => device1.capabilityName.localeCompare(device2.capabilityName),
       )
   },
 }
