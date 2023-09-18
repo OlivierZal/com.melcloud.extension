@@ -1,5 +1,17 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 
+export type CapabilityValue = boolean | number | string
+
+export interface LogParams {
+  capability?: string
+  id?: string
+  message?: string
+  name?: string
+  outdoorTemperature?: string
+  threshold?: string
+  value?: CapabilityValue
+}
+
 export interface Log {
   readonly action: string
   readonly message: string
@@ -11,15 +23,13 @@ export interface TimestampedLog extends Log {
 
 export type Thresholds = Partial<Record<string, number>>
 
-export type CapabilityValue = boolean | number | string
-
 type ValueOf<T> = T[keyof T]
 
 export interface HomeySettings {
   readonly enabled: boolean | null
   readonly capabilityPath: string | null
   readonly thresholds: Thresholds | null
-  readonly lastLogs: TimestampedLog[] | null
+  readonly lastLogs: Log[] | null
 }
 
 export type HomeySettingValue = ValueOf<HomeySettings>

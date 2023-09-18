@@ -2,19 +2,19 @@
 import 'source-map-support/register'
 import { App } from 'homey' // eslint-disable-line import/no-extraneous-dependencies
 import { HomeyAPIV3Local } from 'homey-api'
+import pushToUI from './decorators'
 import type {
   CapabilityValue,
   HomeySettings,
   HomeySettingValue,
   Log,
+  LogParams,
   MELCloudListener,
   TemperatureListener,
   TemperatureListenerData,
-  TimestampedLog,
   Thresholds,
 } from './types'
 
-const maxLogs = 100
 const melcloudAtaDriverId = 'homey:app:com.mecloud:melcloud'
 
 export = class MELCloudExtensionApp extends App {
@@ -557,59 +557,23 @@ export = class MELCloudExtensionApp extends App {
       })
   }
 
-  error(
-    params: {
-      capability?: string
-      id?: string
-      message?: string
-      name?: string
-      outdoorTemperature?: string
-      threshold?: string
-      value?: CapabilityValue
-    },
-    action?: string,
-  ): Log {
+  @pushToUI
+  error(params: LogParams, action?: string): Log {
     const message: string = this.formatMessage('error', params, action)
     super.error(message)
-    this.pushToUI({
-      message,
-      action: 'error',
-    })
     return { message, action: 'error' }
   }
 
-  log(
-    params: {
-      capability?: string
-      id?: string
-      message?: string
-      name?: string
-      outdoorTemperature?: string
-      threshold?: string
-      value?: CapabilityValue
-    },
-    action: string,
-  ): Log {
+  @pushToUI
+  log(params: LogParams, action: string): Log {
     const message: string = this.formatMessage('log', params, action)
     super.log(message)
-    this.pushToUI({
-      message,
-      action,
-    })
     return { message, action }
   }
 
   formatMessage(
     type: 'error' | 'log',
-    params: {
-      capability?: string
-      id?: string
-      message?: string
-      name?: string
-      outdoorTemperature?: string
-      threshold?: string
-      value?: CapabilityValue
-    },
+    params: LogParams,
     action?: string,
   ): string {
     return action
@@ -618,18 +582,6 @@ export = class MELCloudExtensionApp extends App {
           .replace(/a el/gi, 'al')
           .replace(/de le/gi, 'du')
       : params.message ?? ''
-  }
-
-  pushToUI(log: Log): void {
-    const lastLogs: Log[] =
-      (this.homey.settings.get('lastLogs') as Log[] | null) ?? []
-    const newLog: TimestampedLog = { ...log, time: Date.now() }
-    lastLogs.unshift(newLog)
-    if (lastLogs.length > maxLogs) {
-      lastLogs.length = maxLogs
-    }
-    this.homey.settings.set('lastLogs', lastLogs)
-    this.homey.api.realtime('log', newLog)
   }
 
   async onUninit(): Promise<void> {
