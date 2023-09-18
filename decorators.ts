@@ -16,7 +16,7 @@ const maxLogs = 100
 
 export default function pushToUI<T extends HomeyClass>(
   originalMethod: (params: LogParams, action: string) => Log,
-  _context: unknown, // eslint-disable-line @typescript-eslint/no-unused-vars
+  _context: ClassMethodDecoratorContext, // eslint-disable-line @typescript-eslint/no-unused-vars
 ) {
   function replacementMethod(this: T, params: LogParams, action: string) {
     const result = originalMethod.call(this, params, action)
