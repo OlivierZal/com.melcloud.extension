@@ -15,7 +15,7 @@ interface HomeyClass {
 const maxLogs = 100
 
 export default function pushToUI<T extends HomeyClass>(
-  originalMethod: (this: T, params: LogParams, action: string) => Log,
+  originalMethod: (params: LogParams, action: string) => Log,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _context: unknown,
 ) {
