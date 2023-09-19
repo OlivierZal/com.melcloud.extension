@@ -47,7 +47,7 @@ export = class MELCloudExtensionApp extends App {
     })) as HomeyAPIV3Local
     // @ts-expect-error: homey-api is partially typed
     await this.api.devices.connect()
-    await this.initialize()
+    await this.initialize(true)
 
     // @ts-expect-error: homey-api is partially typed
     this.api.devices.on('device.create', async (): Promise<void> => {
@@ -64,7 +64,7 @@ export = class MELCloudExtensionApp extends App {
     })
   }
 
-  async initialize(): Promise<void> {
+  async initialize(retry = false): Promise<void> {
     await this.refreshDevices()
     try {
       await this.autoAdjustCoolingAta()
@@ -72,14 +72,12 @@ export = class MELCloudExtensionApp extends App {
       this.error({
         message: error instanceof Error ? error.message : String(error),
       })
-      this.log({}, 'retry')
-      this.homey.setTimeout(async (): Promise<void> => {
-        await this.autoAdjustCoolingAta().catch((err: Error): void => {
-          this.error({
-            message: err.message,
-          })
-        })
-      }, 60000)
+      if (retry) {
+        this.log({}, 'retry')
+        this.homey.setTimeout(async (): Promise<void> => {
+          await this.initialize()
+        }, 60000)
+      }
     }
   }
 
