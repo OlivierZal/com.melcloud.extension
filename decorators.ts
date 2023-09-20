@@ -18,7 +18,11 @@ export default function pushToUI<T extends HomeyClass>(
   originalMethod: (params: LogParams, action: string) => Log,
   _context: ClassMethodDecoratorContext, // eslint-disable-line @typescript-eslint/no-unused-vars
 ) {
-  function replacementMethod(this: T, params: LogParams, action: string) {
+  return function replacementMethod(
+    this: T,
+    params: LogParams,
+    action: string,
+  ) {
     const result = originalMethod.call(this, params, action)
     const newLog: TimestampedLog = {
       ...result,
@@ -34,5 +38,4 @@ export default function pushToUI<T extends HomeyClass>(
     this.homey.api.realtime('log', newLog)
     return result
   }
-  return replacementMethod
 }
