@@ -2,7 +2,6 @@
 import 'source-map-support/register'
 import { App } from 'homey' // eslint-disable-line import/no-extraneous-dependencies
 import { HomeyAPIV3Local } from 'homey-api'
-import pushToUI from './decorators'
 import type {
   CapabilityValue,
   HomeySettings,
@@ -13,8 +12,10 @@ import type {
   TemperatureListener,
   TemperatureListenerData,
   Thresholds,
+  TimestampedLog,
 } from './types'
 
+const maxLogs = 100
 const melcloudAtaDriverId = 'homey:app:com.mecloud:melcloud'
 
 export = class MELCloudExtensionApp extends App {
@@ -555,31 +556,51 @@ export = class MELCloudExtensionApp extends App {
       })
   }
 
-  @pushToUI
-  error(params: LogParams, action?: string): Log {
-    const message: string = this.formatMessage('error', params, action)
-    super.error(message)
-    return { message, action: 'error' }
+  error(params: LogParams, action?: string): void {
+    this.commonLog('error', params, action)
   }
 
-  @pushToUI
-  log(params: LogParams, action: string): Log {
-    const message: string = this.formatMessage('log', params, action)
-    super.log(message)
-    return { message, action }
+  log(params: LogParams, action: string): void {
+    this.commonLog('log', params, action)
+  }
+
+  commonLog(
+    logType: 'error' | 'log',
+    params: LogParams,
+    action?: string,
+  ): void {
+    const message: string = this.formatMessage(logType, params, action)
+    super[logType](message)
+    this.pushToUI(message, logType === 'error' ? 'error' : action)
   }
 
   formatMessage(
-    type: 'error' | 'log',
+    logType: 'error' | 'log',
     params: LogParams,
     action?: string,
   ): string {
     return action
       ? this.homey
-          .__(`${type}.${action}`, params)
+          .__(`${logType}.${action}`, params)
           .replace(/a el/gi, 'al')
           .replace(/de le/gi, 'du')
       : params.message ?? ''
+  }
+
+  pushToUI(message: string, action?: string): void {
+    const newLog: TimestampedLog = {
+      message,
+      action,
+      time: Date.now(),
+    }
+    const lastLogs: Log[] =
+      (this.homey.settings.get('lastLogs') as Log[] | null) ?? []
+    lastLogs.unshift(newLog)
+    if (lastLogs.length > maxLogs) {
+      lastLogs.length = maxLogs
+    }
+    this.homey.settings.set('lastLogs', lastLogs)
+    this.homey.api.realtime('log', newLog)
   }
 
   async onUninit(): Promise<void> {

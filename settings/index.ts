@@ -59,6 +59,8 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   }
 
   function displayLog(log: TimestampedLog): void {
+    const { color, icon } = actions[log.action ?? 'error']
+
     const rowElement: HTMLDivElement = document.createElement('div')
     rowElement.style.display = 'flex'
     rowElement.style.marginBottom = '1em'
@@ -69,12 +71,9 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     timeElement.style.marginRight = '1em'
     timeElement.style.textAlign = 'center'
     timeElement.style.whiteSpace = 'nowrap'
-    timeElement.innerHTML = `${displayTime(log.time)}<br>${
-      actions[log.action].icon
-    }`
+    timeElement.innerHTML = `${displayTime(log.time)}<br>${icon}`
 
     const messageElement: HTMLDivElement = document.createElement('div')
-    const { color } = actions[log.action]
     if (color) {
       messageElement.style.color = color
     }

@@ -13,7 +13,7 @@ export interface LogParams {
 }
 
 export interface Log {
-  readonly action: string
+  readonly action?: string
   readonly message: string
 }
 
