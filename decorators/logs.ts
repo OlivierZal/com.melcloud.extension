@@ -21,7 +21,7 @@ export default function pushLogsToUI<T extends LogClass>(
   BaseClass: T,
   _context: ClassDecoratorContext, // eslint-disable-line @typescript-eslint/no-unused-vars
 ) {
-  return class extends BaseClass {
+  return class MELCloudExtensionApp extends BaseClass {
     error(...args: any[]): void {
       this.commonLog('error', ...args)
     }
@@ -32,9 +32,12 @@ export default function pushLogsToUI<T extends LogClass>(
 
     commonLog(logType: 'error' | 'log', ...args: any[]): void {
       const newArgs: string[] = args.map(String)
-      const lastArg: string | undefined = newArgs[newArgs.length - 1]
-      const action: string | undefined =
-        lastArg && lastArg.startsWith('#') ? newArgs.pop()?.slice(1) : undefined
+      const lastArg: string | undefined = newArgs[newArgs.length - 1] as
+        | string
+        | undefined
+      const action: string | undefined = lastArg?.startsWith('#')
+        ? newArgs.pop()?.slice(1)
+        : undefined
       super[logType](...args)
       this.pushLogToUI({ message: newArgs.join(' - '), action })
     }
