@@ -19,9 +19,9 @@ const maxLogs = 100
 
 export default function pushLogsToUI<T extends LogClass>(
   Base: T,
-  _context: ClassDecoratorContext, // eslint-disable-line @typescript-eslint/no-unused-vars
+  context: ClassDecoratorContext,
 ) {
-  return class MELCloudExtensionLogsDecorator extends Base {
+  class LogsDecorator extends Base {
     error(...args: any[]): void {
       this.commonLog('error', ...args)
     }
@@ -65,4 +65,8 @@ export default function pushLogsToUI<T extends LogClass>(
       })
     }
   }
+  Object.defineProperty(LogsDecorator, 'name', {
+    value: context.name,
+  })
+  return LogsDecorator
 }
