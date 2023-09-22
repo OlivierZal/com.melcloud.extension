@@ -59,7 +59,7 @@ class MELCloudExtensionApp extends App {
     })
     this.homey.on('unload', (): void => {
       this.cleanListeners().catch((error: Error): void => {
-        this.formatLog('error', { message: error.message })
+        this.formatLog('error', error)
       })
     })
   }
@@ -69,9 +69,10 @@ class MELCloudExtensionApp extends App {
     try {
       await this.autoAdjustCoolingAta()
     } catch (error: unknown) {
-      this.formatLog('error', {
-        message: error instanceof Error ? error.message : String(error),
-      })
+      this.formatLog(
+        'error',
+        error instanceof Error ? error.message : String(error),
+      )
       if (retry) {
         this.formatLog('log', {}, 'retry')
         this.homey.setTimeout(async (): Promise<void> => {
@@ -150,9 +151,10 @@ class MELCloudExtensionApp extends App {
         'target_temperature.reverted',
       )
     } catch (error: unknown) {
-      this.formatLog('error', {
-        message: error instanceof Error ? error.message : String(error),
-      })
+      this.formatLog(
+        'error',
+        error instanceof Error ? error.message : String(error),
+      )
     }
   }
 
@@ -549,9 +551,10 @@ class MELCloudExtensionApp extends App {
         'target_temperature.calculated',
       )
     } catch (error: unknown) {
-      this.formatLog('error', {
-        message: error instanceof Error ? error.message : String(error),
-      })
+      this.formatLog(
+        'error',
+        error instanceof Error ? error.message : String(error),
+      )
     }
   }
 
@@ -568,16 +571,16 @@ class MELCloudExtensionApp extends App {
 
   formatLog(
     logType: 'error' | 'log',
-    params: LogParams,
+    message: string | LogParams,
     action?: string,
   ): void {
     this[logType](
-      action
+      typeof message === 'object'
         ? this.homey
-            .__(`${logType}.${action}`, params)
+            .__(`${logType}.${action}`, message)
             .replace(/a el/gi, 'al')
             .replace(/de le/gi, 'du')
-        : params.message,
+        : message,
       logType === 'error' ? '#error' : `#${action}`,
     )
   }

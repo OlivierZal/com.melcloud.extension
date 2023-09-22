@@ -5,7 +5,6 @@ export type CapabilityValue = boolean | number | string
 export interface LogParams {
   capability?: string
   id?: string
-  message?: string
   name?: string
   outdoorTemperature?: string
   threshold?: string
