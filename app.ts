@@ -2,23 +2,22 @@
 import 'source-map-support/register'
 import { App } from 'homey' // eslint-disable-line import/no-extraneous-dependencies
 import { HomeyAPIV3Local } from 'homey-api'
+import pushLogsToUI from './decorators/logs'
 import type {
   CapabilityValue,
   HomeySettings,
   HomeySettingValue,
-  Log,
   LogParams,
   MELCloudListener,
   TemperatureListener,
   TemperatureListenerData,
   Thresholds,
-  TimestampedLog,
 } from './types'
 
-const maxLogs = 100
 const melcloudAtaDriverId = 'homey:app:com.mecloud:melcloud'
 
-export = class MELCloudExtensionApp extends App {
+@pushLogsToUI
+class MELCloudExtensionApp extends App {
   names!: Record<string, string>
 
   api!: HomeyAPIV3Local
@@ -60,7 +59,7 @@ export = class MELCloudExtensionApp extends App {
     })
     this.homey.on('unload', (): void => {
       this.cleanListeners().catch((error: Error): void => {
-        this.error({ message: error.message })
+        this.formatLog('error', { message: error.message })
       })
     })
   }
@@ -70,11 +69,11 @@ export = class MELCloudExtensionApp extends App {
     try {
       await this.autoAdjustCoolingAta()
     } catch (error: unknown) {
-      this.error({
+      this.formatLog('error', {
         message: error instanceof Error ? error.message : String(error),
       })
       if (retry) {
-        this.log({}, 'retry')
+        this.formatLog('log', {}, 'retry')
         this.homey.setTimeout(async (): Promise<void> => {
           await this.initialize()
         }, 60000)
@@ -95,7 +94,7 @@ export = class MELCloudExtensionApp extends App {
     if (this.outdoorTemperatureListener) {
       await this.cleanListener(this.outdoorTemperatureListener, 'temperature')
     }
-    this.log({}, 'listener.cleaned_all')
+    this.formatLog('log', {}, 'listener.cleaned_all')
   }
 
   async cleanListener<T extends TemperatureListener>(
@@ -113,7 +112,8 @@ export = class MELCloudExtensionApp extends App {
     const { name } = device
     const deviceId: string = device.id
     listener[capability].destroy()
-    this.log(
+    this.formatLog(
+      'log',
       {
         name,
         capability: this.names[capability],
@@ -141,7 +141,8 @@ export = class MELCloudExtensionApp extends App {
         capabilityId: 'target_temperature',
         value,
       })
-      this.log(
+      this.formatLog(
+        'log',
         {
           name: device.name,
           value: `${value}\u00A0°C`,
@@ -149,7 +150,7 @@ export = class MELCloudExtensionApp extends App {
         'target_temperature.reverted',
       )
     } catch (error: unknown) {
-      this.error({
+      this.formatLog('error', {
         message: error instanceof Error ? error.message : String(error),
       })
     }
@@ -167,7 +168,8 @@ export = class MELCloudExtensionApp extends App {
       (this.homey.settings.get('thresholds') as Thresholds | null) ?? {}
     thresholds[device.id] = value
     this.setSettings({ thresholds })
-    this.log(
+    this.formatLog(
+      'log',
       {
         name: device.name,
         value: `${value}\u00A0°C`,
@@ -296,7 +298,8 @@ export = class MELCloudExtensionApp extends App {
             (this.outdoorTemperatureListener.device.capabilitiesObj ?? {})
           )
         ) {
-          this.error(
+          this.formatLog(
+            'error',
             {
               name: this.names.outdoor_temperature,
               id: capabilityPath,
@@ -338,7 +341,8 @@ export = class MELCloudExtensionApp extends App {
             device.makeCapabilityInstance(
               capabilityId,
               async (value: CapabilityValue): Promise<void> => {
-                this.log(
+                this.formatLog(
+                  'log',
                   {
                     name,
                     capability,
@@ -363,7 +367,8 @@ export = class MELCloudExtensionApp extends App {
                 }
               },
             )
-          this.log(
+          this.formatLog(
+            'log',
             {
               name,
               capability,
@@ -421,7 +426,8 @@ export = class MELCloudExtensionApp extends App {
           ) {
             return
           }
-          this.log(
+          this.formatLog(
+            'log',
             {
               name,
               capability,
@@ -435,7 +441,8 @@ export = class MELCloudExtensionApp extends App {
           )
         },
       )
-    this.log(
+    this.formatLog(
+      'log',
       {
         name,
         capability,
@@ -473,7 +480,8 @@ export = class MELCloudExtensionApp extends App {
       capabilityId,
       async (value: CapabilityValue): Promise<void> => {
         this.outdoorTemperatureValue = value as number
-        this.log(
+        this.formatLog(
+          'log',
           {
             name,
             capability,
@@ -492,7 +500,8 @@ export = class MELCloudExtensionApp extends App {
         )
       },
     )
-    this.log(
+    this.formatLog(
+      'log',
       {
         name,
         capability,
@@ -529,7 +538,8 @@ export = class MELCloudExtensionApp extends App {
     const value: number = this.getTargetTemperature(threshold)
     try {
       await listener.temperature.setValue(value)
-      this.log(
+      this.formatLog(
+        'log',
         {
           name: listener.device.name,
           value: `${value}\u00A0°C`,
@@ -539,7 +549,7 @@ export = class MELCloudExtensionApp extends App {
         'target_temperature.calculated',
       )
     } catch (error: unknown) {
-      this.error({
+      this.formatLog('error', {
         message: error instanceof Error ? error.message : String(error),
       })
     }
@@ -556,54 +566,25 @@ export = class MELCloudExtensionApp extends App {
       })
   }
 
-  error(params: LogParams, action?: string): void {
-    this.commonLog('error', params, action)
-  }
-
-  log(params: LogParams, action: string): void {
-    this.commonLog('log', params, action)
-  }
-
-  commonLog(
+  formatLog(
     logType: 'error' | 'log',
     params: LogParams,
     action?: string,
   ): void {
-    const message: string = this.formatMessage(logType, params, action)
-    super[logType](message)
-    this.pushToUI(message, logType === 'error' ? 'error' : action)
-  }
-
-  formatMessage(
-    logType: 'error' | 'log',
-    params: LogParams,
-    action?: string,
-  ): string {
-    return action
-      ? this.homey
-          .__(`${logType}.${action}`, params)
-          .replace(/a el/gi, 'al')
-          .replace(/de le/gi, 'du')
-      : params.message ?? ''
-  }
-
-  pushToUI(message: string, action?: string): void {
-    const newLog: TimestampedLog = {
-      message,
-      action,
-      time: Date.now(),
-    }
-    const lastLogs: Log[] =
-      (this.homey.settings.get('lastLogs') as Log[] | null) ?? []
-    lastLogs.unshift(newLog)
-    if (lastLogs.length > maxLogs) {
-      lastLogs.length = maxLogs
-    }
-    this.homey.settings.set('lastLogs', lastLogs)
-    this.homey.api.realtime('log', newLog)
+    this[logType](
+      action
+        ? this.homey
+            .__(`${logType}.${action}`, params)
+            .replace(/a el/gi, 'al')
+            .replace(/de le/gi, 'du')
+        : params.message,
+      logType === 'error' ? '#error' : `#${action}`,
+    )
   }
 
   async onUninit(): Promise<void> {
     await this.cleanListeners()
   }
 }
+
+export = MELCloudExtensionApp
