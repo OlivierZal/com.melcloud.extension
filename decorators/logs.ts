@@ -18,10 +18,10 @@ type LogClass = new (...args: any[]) => {
 const maxLogs = 100
 
 export default function pushLogsToUI<T extends LogClass>(
-  BaseClass: T,
+  Base: T,
   _context: ClassDecoratorContext, // eslint-disable-line @typescript-eslint/no-unused-vars
 ) {
-  return class MELCloudExtensionLogsDecorator extends BaseClass {
+  return class MELCloudExtensionLogsDecorator extends Base {
     error(...args: any[]): void {
       this.commonLog('error', ...args)
     }
