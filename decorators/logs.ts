@@ -1,6 +1,4 @@
-/* eslint-disable
-  @typescript-eslint/no-unsafe-argument
-*/
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { Log, TimestampedLog } from '../types'
 
 type LogClass = new (...args: any[]) => {
@@ -33,16 +31,21 @@ export default function pushLogsToUI<T extends LogClass>(
     }
 
     commonLog(logType: 'error' | 'log', ...args: any[]): void {
-      let action = ''
       const newArgs: string[] = args.map(String)
-      if (newArgs[newArgs.length - 1]?.startsWith('#')) {
-        action = (newArgs.pop() ?? '').slice(1)
-      }
-      super[logType](...newArgs)
-      this.pushToUI(newArgs.join(' - '), action)
+      const lastArg: string | undefined = newArgs[newArgs.length - 1]
+      const action: string | undefined =
+        lastArg && lastArg.startsWith('#') ? newArgs.pop()?.slice(1) : undefined
+      super[logType](...args)
+      this.pushLogToUI({ message: newArgs.join(' - '), action })
     }
 
-    pushToUI(message: string, action?: string): void {
+    pushLogToUI({
+      message,
+      action,
+    }: {
+      message: string
+      action?: string
+    }): void {
       const newLog: TimestampedLog = {
         message,
         action,

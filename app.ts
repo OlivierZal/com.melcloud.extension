@@ -574,6 +574,10 @@ class MELCloudExtensionApp extends App {
     message: string | LogParams,
     action?: string,
   ): void {
+    let actionTag: string | undefined = '#error'
+    if (logType !== 'error') {
+      actionTag = action ? `#${action}` : undefined
+    }
     this[logType](
       typeof message === 'object'
         ? this.homey
@@ -581,7 +585,7 @@ class MELCloudExtensionApp extends App {
             .replace(/a el/gi, 'al')
             .replace(/de le/gi, 'du')
         : message,
-      logType === 'error' ? '#error' : `#${action}`,
+      actionTag,
     )
   }
 
