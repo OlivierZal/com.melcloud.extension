@@ -162,7 +162,7 @@ class MELCloudExtensionApp extends App {
     return this.homey.settings.get('thresholds')[deviceId] as number
   }
 
-  updateThreshold(
+  setThreshold(
     device: HomeyAPIV3Local.ManagerDevices.Device,
     value: number,
   ): number {
@@ -439,7 +439,7 @@ class MELCloudExtensionApp extends App {
           )
           await this.handleTargetTemperature(
             listener,
-            this.updateThreshold(device, value as number),
+            this.setThreshold(device, value as number),
           )
         },
       )
@@ -453,7 +453,7 @@ class MELCloudExtensionApp extends App {
     )
     await this.handleTargetTemperature(
       listener,
-      this.updateThreshold(device, currentTargetTemperature),
+      this.setThreshold(device, currentTargetTemperature),
     )
   }
 
@@ -527,10 +527,10 @@ class MELCloudExtensionApp extends App {
     if (!('temperature' in listener)) {
       return
     }
-    await this.updateTargetTemperature(listener, threshold)
+    await this.setTargetTemperature(listener, threshold)
   }
 
-  async updateTargetTemperature(
+  async setTargetTemperature(
     listener: MELCloudListener,
     threshold: number,
   ): Promise<void> {
