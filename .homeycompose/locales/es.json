@@ -1,9 +1,9 @@
 {
-  "error": {
-    "missing": "Falta la temperatura exterior.",
-    "not_found": "No se puede encontrar __name__ `__id__`."
-  },
   "log": {
+    "error": {
+      "missing": "Falta la temperatura exterior.",
+      "not_found": "No se puede encontrar __name__ `__id__`."
+    },
     "listener": {
       "cleaned": "Limpieza del oyente para __capability__ de __name__.",
       "cleaned_all": "Limpieza de todos los oyentes.",

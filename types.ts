@@ -11,12 +11,9 @@ export interface LogParams {
   value?: CapabilityValue
 }
 
-export interface Log {
+export interface TimestampedLog {
   readonly action?: string
   readonly message: string
-}
-
-export interface TimestampedLog extends Log {
   readonly time: number
 }
 
@@ -28,7 +25,7 @@ export interface HomeySettings {
   readonly enabled: boolean | null
   readonly capabilityPath: string | null
   readonly thresholds: Thresholds | null
-  readonly lastLogs: Log[] | null
+  readonly lastLogs: TimestampedLog[] | null
 }
 
 export type HomeySettingValue = ValueOf<HomeySettings>

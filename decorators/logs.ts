@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type { Log, TimestampedLog } from '../types'
+import Log from '../lib/log'
+import type { TimestampedLog } from '../types'
 
 type LogClass = new (...args: any[]) => {
   error(...errorArgs: any[]): void
@@ -9,8 +10,8 @@ type LogClass = new (...args: any[]) => {
       realtime(event: 'log', data: TimestampedLog): Promise<void>
     }
     settings: {
-      get(key: 'lastLogs'): Log[] | null
-      set(key: 'lastLogs', value: Log[]): void
+      get(key: 'lastLogs'): TimestampedLog[] | null
+      set(key: 'lastLogs', value: TimestampedLog[]): void
     }
   }
 }
@@ -31,15 +32,17 @@ export default function pushLogsToUI<T extends LogClass>(
     }
 
     commonLog(logType: 'error' | 'log', ...args: any[]): void {
-      const newArgs: string[] = args.map(String)
-      const lastArg: string | undefined = newArgs[newArgs.length - 1] as
-        | string
-        | undefined
-      const action: string | undefined = lastArg?.startsWith('#')
-        ? newArgs.pop()?.slice(1)
-        : undefined
-      super[logType](...args)
-      this.pushLogToUI({ message: newArgs.join(' - '), action })
+      if (args.length === 1 && args[0] instanceof Log) {
+        const action = logType === 'error' ? 'error' : args[0].action
+        const message = String(args[0])
+        this.pushLogToUI({
+          message,
+          action,
+        })
+        super[logType](message, `[#${action}]`)
+      } else {
+        super[logType](...args)
+      }
     }
 
     pushLogToUI({
@@ -50,11 +53,12 @@ export default function pushLogsToUI<T extends LogClass>(
       action?: string
     }): void {
       const newLog: TimestampedLog = {
-        message,
         action,
+        message,
         time: Date.now(),
       }
-      const lastLogs: Log[] = this.homey.settings.get('lastLogs') ?? []
+      const lastLogs: TimestampedLog[] =
+        this.homey.settings.get('lastLogs') ?? []
       lastLogs.unshift(newLog)
       if (lastLogs.length > maxLogs) {
         lastLogs.length = maxLogs

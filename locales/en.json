@@ -1,9 +1,9 @@
 {
-  "error": {
-    "missing": "The outdoor temperature is missing.",
-    "not_found": "__name__ `__id__` cannot be found."
-  },
   "log": {
+    "error": {
+      "missing": "The outdoor temperature is missing.",
+      "not_found": "__name__ `__id__` cannot be found."
+    },
     "listener": {
       "cleaned": "Cleaning listener for __capability__ of __name__.",
       "cleaned_all": "Cleaning all listeners.",

@@ -1,9 +1,9 @@
 {
-  "error": {
-    "missing": "Udendørstemperaturen mangler.",
-    "not_found": "__name__ `__id__` blev ikke fundet."
-  },
   "log": {
+    "error": {
+      "missing": "Udendørstemperaturen mangler.",
+      "not_found": "__name__ `__id__` blev ikke fundet."
+    },
     "listener": {
       "cleaned": "Rengøring af lytter for __capability__ af __name__.",
       "cleaned_all": "Rengøring af alle lyttere.",

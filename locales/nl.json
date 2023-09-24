@@ -1,9 +1,9 @@
 {
-  "error": {
-    "missing": "Buitentemperatuur ontbreekt.",
-    "not_found": "__name__ `__id__` kan niet worden gevonden."
-  },
   "log": {
+    "error": {
+      "missing": "Buitentemperatuur ontbreekt.",
+      "not_found": "__name__ `__id__` kan niet worden gevonden."
+    },
     "listener": {
       "cleaned": "Reinigen luisteraar voor __capability__ van __name__.",
       "cleaned_all": "Reinigen alle luisteraars.",

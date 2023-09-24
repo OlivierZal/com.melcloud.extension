@@ -1,9 +1,9 @@
 {
-  "error": {
-    "missing": "La température extérieure est manquante.",
-    "not_found": "__name__ `__id__` est introuvable."
-  },
   "log": {
+    "error": {
+      "missing": "La température extérieure est manquante.",
+      "not_found": "__name__ `__id__` est introuvable."
+    },
     "listener": {
       "cleaned": "Nettoyage de l'écouteur pour __capability__ de __name__.",
       "cleaned_all": "Nettoyage de tous les écouteurs.",
