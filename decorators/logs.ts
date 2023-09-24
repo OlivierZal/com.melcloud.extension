@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type Homey from 'homey/lib/Homey'
-import Log from '../lib/log'
 import type { HomeySettings, TimestampedLog } from '../types'
+import Log from '../lib/log'
 
 type LogClass = new (...args: any[]) => {
   error(...errorArgs: any[]): void
@@ -62,7 +62,7 @@ export default function pushLogsToUI<T extends LogClass>(
         @typescript-eslint/no-unsafe-member-access
       */
       this.homey.api.realtime('log', newLog).catch((error: Error) => {
-        this.error(new Log(this.homey, error.message))
+        this.error(new Log(error.message))
       })
     }
   }
