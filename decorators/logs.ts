@@ -1,19 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
+import type Homey from 'homey/lib/Homey'
 import Log from '../lib/log'
-import type { TimestampedLog } from '../types'
+import type { HomeySettings, TimestampedLog } from '../types'
 
 type LogClass = new (...args: any[]) => {
   error(...errorArgs: any[]): void
   log(...logArgs: any[]): void
-  homey: {
-    api: {
-      realtime(event: 'log', data: TimestampedLog): Promise<void>
-    }
-    settings: {
-      get(key: 'lastLogs'): TimestampedLog[] | null
-      set(key: 'lastLogs', value: TimestampedLog[]): void
-    }
-  }
+  homey: Homey
 }
 
 const maxLogs = 100
@@ -58,14 +51,18 @@ export default function pushLogsToUI<T extends LogClass>(
         time: Date.now(),
       }
       const lastLogs: TimestampedLog[] =
-        this.homey.settings.get('lastLogs') ?? []
+        (this.homey.settings.get('lastLogs') as HomeySettings['lastLogs']) ?? []
       lastLogs.unshift(newLog)
       if (lastLogs.length > maxLogs) {
         lastLogs.length = maxLogs
       }
       this.homey.settings.set('lastLogs', lastLogs)
+      /* eslint-disable-next-line
+        @typescript-eslint/no-unsafe-call,
+        @typescript-eslint/no-unsafe-member-access
+      */
       this.homey.api.realtime('log', newLog).catch((error: Error) => {
-        this.error(error.message)
+        this.error(new Log(this.homey, error.message))
       })
     }
   }
