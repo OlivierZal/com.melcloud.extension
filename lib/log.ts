@@ -1,26 +1,12 @@
-import type { Homey } from 'homey/lib/Device'
 import type { LogParams } from '../types'
 
 export default class Log {
-  message: string | LogParams
+  messageOrParams: string | LogParams
 
-  action?: string
+  event?: string
 
-  homey?: Homey
-
-  constructor(message: string | LogParams, action?: string, homey?: Homey) {
-    this.message = message
-    this.action = action
-    this.homey = homey
-  }
-
-  // Utilisation du getter pour obtenir le message de log formaté
-  toString(): string {
-    return this.homey && typeof this.message === 'object'
-      ? this.homey
-          .__(`log.${this.action}`, this.message)
-          .replace(/a el/gi, 'al')
-          .replace(/de le/gi, 'du')
-      : String(this.message)
+  constructor(messageOrParams: string | LogParams, event?: string) {
+    this.messageOrParams = messageOrParams
+    this.event = event
   }
 }

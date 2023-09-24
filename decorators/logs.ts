@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type Homey from 'homey/lib/Homey'
-import type { HomeySettings, TimestampedLog } from '../types'
+import type { HomeySettings, LogParams, TimestampedLog } from '../types'
 import Log from '../lib/log'
 
 type LogClass = new (...args: any[]) => {
@@ -26,25 +26,22 @@ export default function pushLogsToUI<T extends LogClass>(
 
     commonLog(logType: 'error' | 'log', ...args: any[]): void {
       if (args.length === 1 && args[0] instanceof Log) {
-        const action = logType === 'error' ? 'error' : args[0].action
-        const message = String(args[0])
-        this.pushLogToUI({
-          message,
-          action,
-        })
-        super[logType](message, `[#${action}]`)
+        let { messageOrParams } = args[0]
+        const { event } = args[0]
+        if (typeof messageOrParams === 'object' && event) {
+          messageOrParams = this.getMessage(messageOrParams, event)
+        }
+        this.pushLogToUI(
+          String(messageOrParams),
+          logType === 'error' ? 'error' : event,
+        )
+        super[logType](messageOrParams, `[#${event}]`)
       } else {
         super[logType](...args)
       }
     }
 
-    pushLogToUI({
-      message,
-      action,
-    }: {
-      message: string
-      action?: string
-    }): void {
+    pushLogToUI(message: string, action?: string): void {
       const newLog: TimestampedLog = {
         action,
         message,
@@ -64,6 +61,13 @@ export default function pushLogsToUI<T extends LogClass>(
       this.homey.api.realtime('log', newLog).catch((error: Error) => {
         this.error(new Log(error.message))
       })
+    }
+
+    getMessage(params: LogParams, event: string): string {
+      return this.homey
+        .__(`log.${event}`, params)
+        .replace(/a el/gi, 'al')
+        .replace(/de le/gi, 'du')
     }
   }
   Object.defineProperty(LogsDecorator, 'name', {

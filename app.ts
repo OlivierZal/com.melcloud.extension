@@ -73,7 +73,7 @@ class MELCloudExtensionApp extends App {
         new Log(error instanceof Error ? error.message : String(error)),
       )
       if (retry) {
-        this.log(new Log({}, 'retry', this.homey))
+        this.log(new Log({}, 'retry'))
         this.homey.setTimeout(async (): Promise<void> => {
           await this.initialize()
         }, 60000)
@@ -94,7 +94,7 @@ class MELCloudExtensionApp extends App {
     if (this.outdoorTemperatureListener) {
       await this.cleanListener(this.outdoorTemperatureListener, 'temperature')
     }
-    this.log(new Log({}, 'listener.cleaned_all'), this.homey)
+    this.log(new Log({}, 'listener.cleaned_all'))
   }
 
   async cleanListener<T extends TemperatureListener>(
@@ -119,7 +119,6 @@ class MELCloudExtensionApp extends App {
           capability: this.names[capability],
         },
         'listener.cleaned',
-        this.homey,
       ),
     )
     if (deviceId === this.outdoorTemperatureListener?.device.id) {
@@ -150,7 +149,6 @@ class MELCloudExtensionApp extends App {
             value: `${value}\u00A0°C`,
           },
           'target_temperature.reverted',
-          this.homey,
         ),
       )
     } catch (error: unknown) {
@@ -180,7 +178,6 @@ class MELCloudExtensionApp extends App {
           value: `${value}\u00A0°C`,
         },
         'target_temperature.saved',
-        this.homey,
       ),
     )
     return value
@@ -316,7 +313,6 @@ class MELCloudExtensionApp extends App {
                 id: capabilityPath,
               },
               'error.not_found',
-              this.homey,
             ),
           )
           await this.cleanListeners()
@@ -362,7 +358,6 @@ class MELCloudExtensionApp extends App {
                       value,
                     },
                     'listener.listened',
-                    this.homey,
                   ),
                 )
                 if (value === 'cool') {
@@ -389,7 +384,6 @@ class MELCloudExtensionApp extends App {
                 capability,
               },
               'listener.created',
-              this.homey,
             ),
           )
           if (currentThermostatMode === 'cool') {
@@ -451,7 +445,6 @@ class MELCloudExtensionApp extends App {
                 value: `${value as number}\u00A0°C`,
               },
               'listener.listened',
-              this.homey,
             ),
           )
           await this.handleTargetTemperature(
@@ -467,7 +460,6 @@ class MELCloudExtensionApp extends App {
           capability,
         },
         'listener.created',
-        this.homey,
       ),
     )
     await this.handleTargetTemperature(
@@ -509,7 +501,6 @@ class MELCloudExtensionApp extends App {
               value: `${value}\u00A0°C`,
             },
             'listener.listened',
-            this.homey,
           ),
         )
         await Promise.all(
@@ -530,7 +521,6 @@ class MELCloudExtensionApp extends App {
           capability,
         },
         'listener.created',
-        this.homey,
       ),
     )
   }
@@ -572,7 +562,6 @@ class MELCloudExtensionApp extends App {
             outdoorTemperature: `${this.outdoorTemperatureValue}\u00A0°C`,
           },
           'target_temperature.calculated',
-          this.homey,
         ),
       )
     } catch (error: unknown) {
