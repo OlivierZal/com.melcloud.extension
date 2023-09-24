@@ -169,7 +169,8 @@ class MELCloudExtensionApp extends App {
     value: number,
   ): number {
     const thresholds: Thresholds =
-      (this.homey.settings.get('thresholds') as Thresholds | null) ?? {}
+      (this.homey.settings.get('thresholds') as HomeySettings['thresholds']) ??
+      {}
     thresholds[device.id] = value
     this.setSettings({ thresholds })
     this.log(
@@ -211,8 +212,12 @@ class MELCloudExtensionApp extends App {
   async autoAdjustCoolingAta(
     { capabilityPath, enabled }: TemperatureListenerData = {
       capabilityPath:
-        (this.homey.settings.get('capabilityPath') as string | null) ?? '',
-      enabled: (this.homey.settings.get('enabled') as boolean | null) ?? false,
+        (this.homey.settings.get(
+          'capabilityPath',
+        ) as HomeySettings['capabilityPath']) ?? '',
+      enabled:
+        (this.homey.settings.get('enabled') as HomeySettings['enabled']) ??
+        false,
     },
   ): Promise<void> {
     if (!capabilityPath) {
