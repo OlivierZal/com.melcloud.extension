@@ -9,9 +9,9 @@ export default class Log {
   homey?: Homey
 
   constructor(message: string | LogParams, action?: string, homey?: Homey) {
-    this.homey = homey
     this.message = message
     this.action = action
+    this.homey = homey
   }
 
   // Utilisation du getter pour obtenir le message de log formaté
