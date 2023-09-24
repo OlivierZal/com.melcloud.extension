@@ -35,7 +35,7 @@ export default function pushLogsToUI<T extends LogClass>(
           String(messageOrParams),
           logType === 'error' ? 'error' : event,
         )
-        super[logType](messageOrParams, `[#${event}]`)
+        super[logType](`[#${event}]`, '\t', messageOrParams)
       } else {
         super[logType](...args)
       }
