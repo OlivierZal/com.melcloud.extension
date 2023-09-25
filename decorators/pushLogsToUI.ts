@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type Homey from 'homey/lib/Homey'
+import Log from '../lib/Log'
 import type { HomeySettings, LogParams, TimestampedLog } from '../types'
-import Log from '../lib/log'
 
 type LogClass = new (...args: any[]) => {
   error(...errorArgs: any[]): void

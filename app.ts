@@ -2,7 +2,8 @@
 import 'source-map-support/register'
 import { App } from 'homey' // eslint-disable-line import/no-extraneous-dependencies
 import { HomeyAPIV3Local } from 'homey-api'
-import pushLogsToUI from './decorators/logs'
+import pushLogsToUI from './decorators/pushLogsToUI'
+import Log from './lib/Log'
 import type {
   CapabilityValue,
   HomeySettings,
@@ -12,7 +13,6 @@ import type {
   TemperatureListenerData,
   Thresholds,
 } from './types'
-import Log from './lib/log'
 
 const melcloudAtaDriverId = 'homey:app:com.mecloud:melcloud'
 
