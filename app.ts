@@ -109,8 +109,8 @@ class MELCloudExtensionApp extends App {
       return
     }
     const { device } = listener
-    const { name } = device
     const deviceId: string = device.id
+    const { name } = device
     listener[capability].destroy()
     this.log(
       new Log(
@@ -338,8 +338,8 @@ class MELCloudExtensionApp extends App {
       Object.values(this.melCloudListeners).map(
         async (listener: MELCloudListener): Promise<void> => {
           const { device } = listener
-          const { name } = device
           const deviceId: string = device.id
+          const { name } = device
           const currentThermostatMode: string =
             // @ts-expect-error: homey-api is partially typed
             (await this.api.devices.getCapabilityValue({
@@ -416,11 +416,11 @@ class MELCloudExtensionApp extends App {
     if ('temperature' in listener) {
       return
     }
-    const { device } = listener
-    const { name } = device
-    const deviceId: string = device.id
-    const capabilityId = 'target_temperature'
     const capability: string = this.names.temperature
+    const capabilityId = 'target_temperature'
+    const { device } = listener
+    const deviceId: string = device.id
+    const { name } = device
     await this.listenToOutdoorTemperature()
     const currentTargetTemperature: number =
       // @ts-expect-error: homey-api is partially typed
@@ -475,11 +475,11 @@ class MELCloudExtensionApp extends App {
     ) {
       return
     }
-    const { capabilityId } = this.outdoorTemperature
     const capability: string = this.names.temperature
+    const { capabilityId } = this.outdoorTemperature
     const { device } = this.outdoorTemperature.listener
-    const { name } = device
     const deviceId: string = device.id
+    const { name } = device
     this.outdoorTemperature.value =
       // @ts-expect-error: homey-api is partially typed
       (await this.api.devices.getCapabilityValue({
