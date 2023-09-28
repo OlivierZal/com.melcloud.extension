@@ -24,13 +24,13 @@ class MELCloudExtensionApp extends App {
 
   #melCloudListeners: Record<string, MELCloudListener> = {}
 
-  #outdoorTemperature: {
+  readonly #outdoorTemperature: {
     capabilityId: string
     value: number
     listener?: TemperatureListener
   } = { capabilityId: '', value: 0 }
 
-  melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
+  melCloudDevices!: HomeyAPIV3Local.ManagerDevices.Device[]
 
   async onInit(): Promise<void> {
     this.#names = Object.fromEntries(
