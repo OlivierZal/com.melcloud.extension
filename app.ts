@@ -30,7 +30,7 @@ class MELCloudExtensionApp extends App {
     listener?: TemperatureListener
   } = { capabilityId: '', value: 0 }
 
-  melCloudDevices!: HomeyAPIV3Local.ManagerDevices.Device[]
+  melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
   async onInit(): Promise<void> {
     this.#names = Object.fromEntries(
