@@ -65,7 +65,7 @@ class MELCloudExtensionApp extends App {
   }
 
   private async initialize(retry = false): Promise<void> {
-    await this.refreshDevices()
+    await this.loadDevices()
     try {
       await this.autoAdjustCoolingAta()
     } catch (error: unknown) {
@@ -183,7 +183,7 @@ class MELCloudExtensionApp extends App {
     return value
   }
 
-  async refreshDevices(): Promise<HomeyAPIV3Local.ManagerDevices.Device[]> {
+  async loadDevices(): Promise<HomeyAPIV3Local.ManagerDevices.Device[]> {
     this.melCloudDevices = []
     const devices: HomeyAPIV3Local.ManagerDevices.Device[] =
       // @ts-expect-error: homey-api is partially typed

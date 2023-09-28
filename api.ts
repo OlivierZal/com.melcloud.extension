@@ -23,7 +23,7 @@ export = {
   }): Promise<MeasureTemperatureDevice[]> {
     const app: MELCloudExtensionApp = homey.app as MELCloudExtensionApp
     const measureTemperatureDevices: HomeyAPIV3Local.ManagerDevices.Device[] =
-      await app.refreshDevices()
+      await app.loadDevices()
     if (!app.melCloudDevices.length) {
       throw new Error('no_device_ata')
     }
