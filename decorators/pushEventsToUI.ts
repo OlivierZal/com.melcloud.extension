@@ -24,7 +24,7 @@ export default function pushEventsToUI<T extends LogClass>(
       this.commonLog('log', ...args)
     }
 
-    commonLog(logType: 'error' | 'log', ...args: any[]): void {
+    private commonLog(logType: 'error' | 'log', ...args: any[]): void {
       if (args.length === 1 && args[0] instanceof Event) {
         let { messageOrParams } = args[0]
         const { name } = args[0]
@@ -41,14 +41,14 @@ export default function pushEventsToUI<T extends LogClass>(
       }
     }
 
-    getMessage(eventName: string, eventParams: EventParams): string {
+    private getMessage(eventName: string, eventParams: EventParams): string {
       return this.homey
         .__(`log.${eventName}`, eventParams)
         .replace(/a el/gi, 'al')
         .replace(/de le/gi, 'du')
     }
 
-    pushEventToUI(message: string, category?: string): void {
+    private pushEventToUI(message: string, category?: string): void {
       const newLog: TimestampedLog = {
         category,
         message,
