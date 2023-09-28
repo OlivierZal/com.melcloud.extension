@@ -332,8 +332,8 @@ class MELCloudExtensionApp extends App {
         ],
       ),
     )
-    const capabilityId = 'thermostat_mode'
     const capability: string = this.names.thermostat_mode
+    const capabilityId = 'thermostat_mode'
     await Promise.all(
       Object.values(this.melCloudListeners).map(
         async (listener: MELCloudListener): Promise<void> => {
