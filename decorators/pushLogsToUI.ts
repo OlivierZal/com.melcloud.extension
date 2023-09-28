@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type Homey from 'homey/lib/Homey'
-import Log from '../lib/Log'
-import type { HomeySettings, LogParams, TimestampedLog } from '../types'
+import Event from '../lib/Event'
+import type { EventParams, HomeySettings, TimestampedLog } from '../types'
 
 type LogClass = new (...args: any[]) => {
   error(...errorArgs: any[]): void
@@ -15,7 +15,7 @@ export default function pushLogsToUI<T extends LogClass>(
   Base: T,
   context: ClassDecoratorContext,
 ) {
-  class LogsDecorator extends Base {
+  class LogDecorator extends Base {
     error(...args: any[]): void {
       this.commonLog('error', ...args)
     }
@@ -25,17 +25,17 @@ export default function pushLogsToUI<T extends LogClass>(
     }
 
     commonLog(logType: 'error' | 'log', ...args: any[]): void {
-      if (args.length === 1 && args[0] instanceof Log) {
+      if (args.length === 1 && args[0] instanceof Event) {
         let { messageOrParams } = args[0]
-        const { event } = args[0]
-        if (typeof messageOrParams === 'object' && event) {
-          messageOrParams = this.getMessage(messageOrParams, event)
+        const { name } = args[0]
+        if (typeof messageOrParams === 'object' && name) {
+          messageOrParams = this.getMessage(messageOrParams, name)
         }
         this.pushLogToUI(
           String(messageOrParams),
-          logType === 'error' ? 'error' : event,
+          logType === 'error' ? 'error' : name,
         )
-        super[logType](`[#${event}]`, '\t', messageOrParams)
+        super[logType](`[#${name}]`, '\t', messageOrParams)
       } else {
         super[logType](...args)
       }
@@ -59,19 +59,19 @@ export default function pushLogsToUI<T extends LogClass>(
         @typescript-eslint/no-unsafe-member-access
       */
       this.homey.api.realtime('log', newLog).catch((error: Error) => {
-        this.error(new Log(error.message))
+        this.error(new Event(error.message))
       })
     }
 
-    getMessage(params: LogParams, event: string): string {
+    getMessage(params: EventParams, event: string): string {
       return this.homey
         .__(`log.${event}`, params)
         .replace(/a el/gi, 'al')
         .replace(/de le/gi, 'du')
     }
   }
-  Object.defineProperty(LogsDecorator, 'name', {
+  Object.defineProperty(LogDecorator, 'name', {
     value: context.name,
   })
-  return LogsDecorator
+  return LogDecorator
 }

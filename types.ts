@@ -2,7 +2,7 @@ import type { HomeyAPIV3Local } from 'homey-api'
 
 export type CapabilityValue = boolean | number | string
 
-export interface LogParams {
+export interface EventParams {
   capability?: string
   id?: string
   name?: string

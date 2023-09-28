@@ -3,7 +3,7 @@ import 'source-map-support/register'
 import { App } from 'homey' // eslint-disable-line import/no-extraneous-dependencies
 import { HomeyAPIV3Local } from 'homey-api'
 import pushLogsToUI from './decorators/pushLogsToUI'
-import Log from './lib/Log'
+import Event from './lib/Event'
 import type {
   CapabilityValue,
   HomeySettings,
@@ -59,7 +59,7 @@ class MELCloudExtensionApp extends App {
     })
     this.homey.on('unload', (): void => {
       this.cleanListeners().catch((error: Error): void => {
-        this.error(new Log(error.message))
+        this.error(new Event(error.message))
       })
     })
   }
@@ -70,10 +70,10 @@ class MELCloudExtensionApp extends App {
       await this.autoAdjustCoolingAta()
     } catch (error: unknown) {
       this.error(
-        new Log(error instanceof Error ? error.message : String(error)),
+        new Event(error instanceof Error ? error.message : String(error)),
       )
       if (retry) {
-        this.log(new Log({}, 'retry'))
+        this.log(new Event({}, 'retry'))
         this.homey.setTimeout(async (): Promise<void> => {
           await this.initialize()
         }, 60000)
@@ -94,7 +94,7 @@ class MELCloudExtensionApp extends App {
     if (this.outdoorTemperature.listener) {
       await this.cleanListener(this.outdoorTemperature.listener, 'temperature')
     }
-    this.log(new Log({}, 'listener.cleaned_all'))
+    this.log(new Event({}, 'listener.cleaned_all'))
   }
 
   async cleanListener<T extends TemperatureListener>(
@@ -113,7 +113,7 @@ class MELCloudExtensionApp extends App {
     const { name } = device
     listener[capability].destroy()
     this.log(
-      new Log(
+      new Event(
         {
           name,
           capability: this.names[capability],
@@ -143,7 +143,7 @@ class MELCloudExtensionApp extends App {
         value,
       })
       this.log(
-        new Log(
+        new Event(
           {
             name: device.name,
             value: `${value}\u00A0°C`,
@@ -153,7 +153,7 @@ class MELCloudExtensionApp extends App {
       )
     } catch (error: unknown) {
       this.error(
-        new Log(error instanceof Error ? error.message : String(error)),
+        new Event(error instanceof Error ? error.message : String(error)),
       )
     }
   }
@@ -172,7 +172,7 @@ class MELCloudExtensionApp extends App {
     thresholds[device.id] = value
     this.setSettings({ thresholds })
     this.log(
-      new Log(
+      new Event(
         {
           name: device.name,
           value: `${value}\u00A0°C`,
@@ -307,7 +307,7 @@ class MELCloudExtensionApp extends App {
           )
         ) {
           this.error(
-            new Log(
+            new Event(
               {
                 name: this.names.outdoor_temperature,
                 id: capabilityPath,
@@ -351,7 +351,7 @@ class MELCloudExtensionApp extends App {
               capabilityId,
               async (value: CapabilityValue): Promise<void> => {
                 this.log(
-                  new Log(
+                  new Event(
                     {
                       name,
                       capability,
@@ -378,7 +378,7 @@ class MELCloudExtensionApp extends App {
               },
             )
           this.log(
-            new Log(
+            new Event(
               {
                 name,
                 capability,
@@ -438,7 +438,7 @@ class MELCloudExtensionApp extends App {
             return
           }
           this.log(
-            new Log(
+            new Event(
               {
                 name,
                 capability,
@@ -454,7 +454,7 @@ class MELCloudExtensionApp extends App {
         },
       )
     this.log(
-      new Log(
+      new Event(
         {
           name,
           capability,
@@ -495,7 +495,7 @@ class MELCloudExtensionApp extends App {
         async (value: CapabilityValue): Promise<void> => {
           this.outdoorTemperature.value = value as number
           this.log(
-            new Log(
+            new Event(
               {
                 name,
                 capability,
@@ -516,7 +516,7 @@ class MELCloudExtensionApp extends App {
         },
       )
     this.log(
-      new Log(
+      new Event(
         {
           name,
           capability,
@@ -555,7 +555,7 @@ class MELCloudExtensionApp extends App {
     try {
       await listener.temperature.setValue(value)
       this.log(
-        new Log(
+        new Event(
           {
             name: listener.device.name,
             value: `${value}\u00A0°C`,
@@ -567,7 +567,7 @@ class MELCloudExtensionApp extends App {
       )
     } catch (error: unknown) {
       this.error(
-        new Log(error instanceof Error ? error.message : String(error)),
+        new Event(error instanceof Error ? error.message : String(error)),
       )
     }
   }
