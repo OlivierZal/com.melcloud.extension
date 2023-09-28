@@ -41,9 +41,9 @@ export default function pushLogsToUI<T extends LogClass>(
       }
     }
 
-    pushLogToUI(message: string, action?: string): void {
+    pushLogToUI(message: string, category?: string): void {
       const newLog: TimestampedLog = {
-        action,
+        category,
         message,
         time: Date.now(),
       }

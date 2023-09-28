@@ -12,7 +12,7 @@ export interface LogParams {
 }
 
 export interface TimestampedLog {
-  readonly action?: string
+  readonly category?: string
   readonly message: string
   readonly time: number
 }

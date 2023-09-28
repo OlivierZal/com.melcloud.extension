@@ -10,7 +10,7 @@ import type {
 async function onHomeyReady(homey: Homey): Promise<void> {
   await homey.ready()
 
-  const actions: Record<string, { color?: string; icon: string }> = {
+  const categories: Record<string, { color?: string; icon: string }> = {
     error: { icon: '⚠️', color: '#E8000D' },
     'listener.cleaned': { icon: '🗑️' },
     'listener.cleaned_all': { icon: '🛑' },
@@ -59,7 +59,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   }
 
   function displayLog(log: TimestampedLog): void {
-    const { color, icon } = actions[log.action ?? 'error']
+    const { color, icon } = categories[log.category ?? 'error']
 
     const rowElement: HTMLDivElement = document.createElement('div')
     rowElement.style.display = 'flex'
