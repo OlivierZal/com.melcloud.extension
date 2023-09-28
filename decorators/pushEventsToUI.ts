@@ -11,7 +11,7 @@ type LogClass = new (...args: any[]) => {
 
 const maxLogs = 100
 
-export default function pushLogsToUI<T extends LogClass>(
+export default function pushEventsToUI<T extends LogClass>(
   Base: T,
   context: ClassDecoratorContext,
 ) {
@@ -29,9 +29,9 @@ export default function pushLogsToUI<T extends LogClass>(
         let { messageOrParams } = args[0]
         const { name } = args[0]
         if (typeof messageOrParams === 'object' && name) {
-          messageOrParams = this.getMessage(messageOrParams, name)
+          messageOrParams = this.getMessage(name, messageOrParams)
         }
-        this.pushLogToUI(
+        this.pushEventToUI(
           String(messageOrParams),
           logType === 'error' ? 'error' : name,
         )
@@ -41,7 +41,14 @@ export default function pushLogsToUI<T extends LogClass>(
       }
     }
 
-    pushLogToUI(message: string, category?: string): void {
+    getMessage(eventName: string, eventParams: EventParams): string {
+      return this.homey
+        .__(`log.${eventName}`, eventParams)
+        .replace(/a el/gi, 'al')
+        .replace(/de le/gi, 'du')
+    }
+
+    pushEventToUI(message: string, category?: string): void {
       const newLog: TimestampedLog = {
         category,
         message,
@@ -61,13 +68,6 @@ export default function pushLogsToUI<T extends LogClass>(
       this.homey.api.realtime('log', newLog).catch((error: Error) => {
         this.error(new Event(error.message))
       })
-    }
-
-    getMessage(params: EventParams, event: string): string {
-      return this.homey
-        .__(`log.${event}`, params)
-        .replace(/a el/gi, 'al')
-        .replace(/de le/gi, 'du')
     }
   }
   Object.defineProperty(LogDecorator, 'name', {

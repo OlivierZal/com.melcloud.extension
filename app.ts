@@ -2,7 +2,7 @@
 import 'source-map-support/register'
 import { App } from 'homey' // eslint-disable-line import/no-extraneous-dependencies
 import { HomeyAPIV3Local } from 'homey-api'
-import pushLogsToUI from './decorators/pushLogsToUI'
+import pushEventsToUI from './decorators/pushEventsToUI'
 import Event from './lib/Event'
 import type {
   CapabilityValue,
@@ -16,7 +16,7 @@ import type {
 
 const melcloudAtaDriverId = 'homey:app:com.mecloud:melcloud'
 
-@pushLogsToUI
+@pushEventsToUI
 class MELCloudExtensionApp extends App {
   names!: Record<string, string>
 
