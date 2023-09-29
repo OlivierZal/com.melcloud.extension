@@ -67,19 +67,19 @@ class MELCloudExtensionApp extends App {
   }
 
   private async initialize(retry = false): Promise<void> {
-      await this.loadDevices()
-      try {
-                await this.autoAdjustCoolingAta()
-      } catch (error: unknown) {
-        this.error(
-          new Event(error instanceof Error ? error.message : String(error)),
-        )
-        if (retry) {
-          this.log(new Event({}, 'retry'))
-          this.homey.setTimeout(async (): Promise<void> => {
+    await this.loadDevices()
+    try {
+      await this.autoAdjustCoolingAta()
+    } catch (error: unknown) {
+      this.error(
+        new Event(error instanceof Error ? error.message : String(error)),
+      )
+      if (retry) {
+        this.log(new Event({}, 'retry'))
+        this.homey.setTimeout(async (): Promise<void> => {
           await this.initialize()
         }, 60000)
-              }
+      }
     }
   }
 
