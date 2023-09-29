@@ -10,7 +10,6 @@
       "created": "Oppretter en lytter for __capability__ av __name__.",
       "listened": "Lytt til __capability__ av __name__: __value__."
     },
-    "retry": "Prøver igjen om 1 minutt...",
     "target_temperature": {
       "calculated": "Beregning av temperaturen til __name__: __value__ (fra terskel __threshold__ og utetemperatur __outdoorTemperature__).",
       "reverted": "Gjenoppretter temperaturen til __name__: __value__.",

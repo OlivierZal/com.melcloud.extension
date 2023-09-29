@@ -30,7 +30,7 @@ class MELCloudExtensionApp extends App {
     listener?: TemperatureListener
   } = { capabilityId: '', value: 0 }
 
-  #initTimeout: NodeJS.Timeout | null = null
+  #initTimeout!: NodeJS.Timeout
 
   melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
@@ -52,18 +52,18 @@ class MELCloudExtensionApp extends App {
     // @ts-expect-error: homey-api is partially typed
     await this.#api.devices.connect()
 
-    await this.init(true)
+    this.init()
     // @ts-expect-error: homey-api is partially typed
     this.#api.devices.on('device.create', (): void => {
-      this.reinit()
+      this.init()
     })
     // @ts-expect-error: homey-api is partially typed
     this.#api.devices.on('device.update', (): void => {
-      this.reinit()
+      this.init()
     })
     // @ts-expect-error: homey-api is partially typed
     this.#api.devices.on('device.delete', (): void => {
-      this.reinit()
+      this.init()
     })
     this.homey.on('unload', (): void => {
       this.cleanListeners().catch((error: Error): void => {
@@ -72,31 +72,18 @@ class MELCloudExtensionApp extends App {
     })
   }
 
-  private reinit(): void {
-    if (this.#initTimeout) {
-      return
-    }
+  private init(): void {
+    this.homey.clearTimeout(this.#initTimeout)
     this.#initTimeout = this.homey.setTimeout(async (): Promise<void> => {
-      await this.init()
-      this.#initTimeout = null
-    }, 1000)
-  }
-
-  private async init(retry = false): Promise<void> {
-    await this.loadDevices()
-    try {
-      await this.autoAdjustCoolingAta()
-    } catch (error: unknown) {
-      this.error(
-        new Event(error instanceof Error ? error.message : String(error)),
-      )
-      if (retry) {
-        this.log(new Event({}, 'retry'))
-        this.homey.setTimeout(async (): Promise<void> => {
-          await this.init()
-        }, 60000)
+      try {
+        await this.loadDevices()
+        await this.autoAdjustCoolingAta()
+      } catch (error: unknown) {
+        this.error(
+          new Event(error instanceof Error ? error.message : String(error)),
+        )
       }
-    }
+    }, 1000)
   }
 
   private async cleanListeners(): Promise<void> {

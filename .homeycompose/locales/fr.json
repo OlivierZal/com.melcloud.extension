@@ -10,7 +10,6 @@
       "created": "Création d'un écouteur pour __capability__ de __name__.",
       "listened": "Écoute de __capability__ de __name__\u00A0: __value__."
     },
-    "retry": "Nouvelle tentative dans 1 minute...",
     "target_temperature": {
       "calculated": "Calcul de la température de __name__\u00A0: __value__ (à partir du seuil __threshold__ et de la température extérieure __outdoorTemperature__).",
       "reverted": "Rétablissement de la température de __name__\u00A0: __value__.",
