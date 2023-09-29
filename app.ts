@@ -30,6 +30,8 @@ class MELCloudExtensionApp extends App {
     listener?: TemperatureListener
   } = { capabilityId: '', value: 0 }
 
+  #initTimeout: NodeJS.Timeout | null = null
+
   melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
   measureTemperatureDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
@@ -49,15 +51,19 @@ class MELCloudExtensionApp extends App {
     })) as HomeyAPIV3Local
     // @ts-expect-error: homey-api is partially typed
     await this.#api.devices.connect()
-    await this.initialize(true)
 
+    await this.init(true)
     // @ts-expect-error: homey-api is partially typed
-    this.#api.devices.on('device.create', async (): Promise<void> => {
-      await this.initialize()
+    this.#api.devices.on('device.create', (): void => {
+      this.reinit()
     })
     // @ts-expect-error: homey-api is partially typed
-    this.#api.devices.on('device.delete', async (): Promise<void> => {
-      await this.initialize()
+    this.#api.devices.on('device.update', (): void => {
+      this.reinit()
+    })
+    // @ts-expect-error: homey-api is partially typed
+    this.#api.devices.on('device.delete', (): void => {
+      this.reinit()
     })
     this.homey.on('unload', (): void => {
       this.cleanListeners().catch((error: Error): void => {
@@ -66,7 +72,17 @@ class MELCloudExtensionApp extends App {
     })
   }
 
-  private async initialize(retry = false): Promise<void> {
+  private reinit(): void {
+    if (this.#initTimeout) {
+      return
+    }
+    this.#initTimeout = this.homey.setTimeout(async (): Promise<void> => {
+      await this.init()
+      this.#initTimeout = null
+    }, 1000)
+  }
+
+  private async init(retry = false): Promise<void> {
     await this.loadDevices()
     try {
       await this.autoAdjustCoolingAta()
@@ -77,7 +93,7 @@ class MELCloudExtensionApp extends App {
       if (retry) {
         this.log(new Event({}, 'retry'))
         this.homey.setTimeout(async (): Promise<void> => {
-          await this.initialize()
+          await this.init()
         }, 60000)
       }
     }
@@ -218,6 +234,7 @@ class MELCloudExtensionApp extends App {
         false,
     },
   ): Promise<void> {
+    await this.cleanListeners()
     if (!capabilityPath) {
       if (enabled) {
         throw new Error(this.homey.__('log.error.missing'))
@@ -226,7 +243,6 @@ class MELCloudExtensionApp extends App {
         capabilityPath,
         enabled,
       })
-      await this.cleanListeners()
       return
     }
     await this.handleTemperatureListenerData({
@@ -259,8 +275,6 @@ class MELCloudExtensionApp extends App {
       this.#outdoorTemperature.capabilityId = capabilityId
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : String(error))
-    } finally {
-      await this.cleanListeners()
     }
   }
 
