@@ -32,6 +32,8 @@ class MELCloudExtensionApp extends App {
 
   melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
+  measureTemperatureDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
+
   async onInit(): Promise<void> {
     this.#names = Object.fromEntries(
       ['device', 'outdoor_temperature', 'temperature', 'thermostat_mode'].map(
@@ -65,19 +67,19 @@ class MELCloudExtensionApp extends App {
   }
 
   private async initialize(retry = false): Promise<void> {
-    await this.loadDevices()
-    try {
-      await this.autoAdjustCoolingAta()
-    } catch (error: unknown) {
-      this.error(
-        new Event(error instanceof Error ? error.message : String(error)),
-      )
-      if (retry) {
-        this.log(new Event({}, 'retry'))
-        this.homey.setTimeout(async (): Promise<void> => {
+      await this.loadDevices()
+      try {
+                await this.autoAdjustCoolingAta()
+      } catch (error: unknown) {
+        this.error(
+          new Event(error instanceof Error ? error.message : String(error)),
+        )
+        if (retry) {
+          this.log(new Event({}, 'retry'))
+          this.homey.setTimeout(async (): Promise<void> => {
           await this.initialize()
         }, 60000)
-      }
+              }
     }
   }
 
@@ -183,27 +185,26 @@ class MELCloudExtensionApp extends App {
     return value
   }
 
-  async loadDevices(): Promise<HomeyAPIV3Local.ManagerDevices.Device[]> {
+  async loadDevices(): Promise<void> {
     this.melCloudDevices = []
+    this.measureTemperatureDevices = []
     const devices: HomeyAPIV3Local.ManagerDevices.Device[] =
       // @ts-expect-error: homey-api is partially typed
       (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
-    return Object.values(devices).reduce<
-      HomeyAPIV3Local.ManagerDevices.Device[]
-    >((acc, device: HomeyAPIV3Local.ManagerDevices.Device) => {
-      // @ts-expect-error: homey-api is partially typed
-      if (device.driverId === melcloudAtaDriverId) {
-        this.melCloudDevices.push(device)
-      } else if (
+    Object.values(devices).forEach(
+      (device: HomeyAPIV3Local.ManagerDevices.Device): void => {
         // @ts-expect-error: homey-api is partially typed
-        device.capabilities.some((capability: string) =>
-          capability.startsWith('measure_temperature'),
+        if (device.driverId === melcloudAtaDriverId) {
+          this.melCloudDevices.push(device)
+        } else if (
+          // @ts-expect-error: homey-api is partially typed
+          device.capabilities.some((capability: string) =>
+            capability.startsWith('measure_temperature'),
+          )
         )
-      ) {
-        acc.push(device)
-      }
-      return acc
-    }, [])
+          this.measureTemperatureDevices.push(device)
+      },
+    )
   }
 
   async autoAdjustCoolingAta(
@@ -256,7 +257,6 @@ class MELCloudExtensionApp extends App {
         this.#outdoorTemperature.listener.device = device
       }
       this.#outdoorTemperature.capabilityId = capabilityId
-      this.handleOutdoorTemperatureDeviceUpdate(capabilityPath)
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : String(error))
     } finally {
@@ -292,33 +292,6 @@ class MELCloudExtensionApp extends App {
       )
     }
     return [device, capabilityId]
-  }
-
-  private handleOutdoorTemperatureDeviceUpdate(capabilityPath: string): void {
-    // @ts-expect-error: homey-api is partially typed
-    this.#outdoorTemperature.listener.device.on(
-      'update',
-      async (): Promise<void> => {
-        if (
-          !(
-            this.#outdoorTemperature.capabilityId in
-            // @ts-expect-error: homey-api is partially typed
-            (this.#outdoorTemperature.listener.device.capabilitiesObj ?? {})
-          )
-        ) {
-          this.error(
-            new Event(
-              {
-                name: this.#names.outdoor_temperature,
-                id: capabilityPath,
-              },
-              'error.not_found',
-            ),
-          )
-          await this.cleanListeners()
-        }
-      },
-    )
   }
 
   private async listenToThermostatModes(): Promise<void> {

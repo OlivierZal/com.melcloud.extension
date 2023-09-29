@@ -16,18 +16,16 @@ export = {
   getLanguage({ homey }: { homey: Homey }): string {
     return homey.i18n.getLanguage()
   },
-  async getMeasureTemperatureDevicesAta({
+  getMeasureTemperatureDevicesAta({
     homey,
   }: {
     homey: Homey
-  }): Promise<MeasureTemperatureDevice[]> {
+  }): MeasureTemperatureDevice[] {
     const app: MELCloudExtensionApp = homey.app as MELCloudExtensionApp
-    const measureTemperatureDevices: HomeyAPIV3Local.ManagerDevices.Device[] =
-      await app.loadDevices()
     if (!app.melCloudDevices.length) {
       throw new Error('no_device_ata')
     }
-    return measureTemperatureDevices
+    return app.measureTemperatureDevices
       .flatMap(
         (
           device: HomeyAPIV3Local.ManagerDevices.Device,
