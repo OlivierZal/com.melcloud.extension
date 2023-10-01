@@ -269,7 +269,6 @@ class MELCloudExtensionApp extends App {
   private async getOtherThermostatModes(
     excludedListener: MELCloudListener,
   ): Promise<string[]> {
-    const capabilityId = 'thermostat_mode'
     return Promise.all(
       Object.values(this.#melCloudListeners)
         .filter(({ device }) => device.id !== excludedListener.device.id)
@@ -278,7 +277,7 @@ class MELCloudExtensionApp extends App {
             // @ts-expect-error: homey-api is partially typed
             this.#api.devices.getCapabilityValue({
               deviceId: device.id,
-              capabilityId,
+              capabilityId: 'thermostat_mode',
             }) as string,
         ),
     )
