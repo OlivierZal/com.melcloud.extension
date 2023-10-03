@@ -4,23 +4,29 @@ import Event from '../lib/Event'
 import type { EventParams, HomeySettings, TimestampedLog } from '../types'
 
 type LogClass = new (...args: any[]) => {
+  homey: Homey
+  /* eslint-disable @typescript-eslint/method-signature-style */
   error(...errorArgs: any[]): void
   log(...logArgs: any[]): void
-  homey: Homey
+  /* eslint-enable @typescript-eslint/method-signature-style */
 }
 
 const maxLogs = 100
 
+/* eslint-disable-next-line
+  @typescript-eslint/explicit-function-return-type,
+  @typescript-eslint/explicit-module-boundary-types
+*/
 export default function pushEventsToUI<T extends LogClass>(
-  Base: T,
+  target: T,
   context: ClassDecoratorContext,
 ) {
-  class LogDecorator extends Base {
-    error(...args: any[]): void {
+  class LogDecorator extends target {
+    public error(...args: any[]): void {
       this.commonLog('error', ...args)
     }
 
-    log(...args: any[]): void {
+    public log(...args: any[]): void {
       this.commonLog('log', ...args)
     }
 
@@ -28,7 +34,7 @@ export default function pushEventsToUI<T extends LogClass>(
       if (args.length === 1 && args[0] instanceof Event) {
         let { messageOrParams } = args[0]
         const { name } = args[0]
-        if (typeof messageOrParams === 'object' && name) {
+        if (typeof messageOrParams === 'object' && name !== undefined) {
           messageOrParams = this.getMessage(name, messageOrParams)
         }
         this.pushEventToUI(

@@ -11,6 +11,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   await homey.ready()
 
   const categories: Record<string, { color?: string; icon: string }> = {
+    /* eslint-disable @typescript-eslint/naming-convention */
     error: { icon: '⚠️', color: '#E8000D' },
     'listener.cleaned': { icon: '🗑️' },
     'listener.cleaned_all': { icon: '🛑' },
@@ -20,6 +21,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     'target_temperature.calculated': { icon: '🔢', color: '#008000' },
     'target_temperature.reverted': { icon: '↩️' },
     'target_temperature.saved': { icon: '☁️' },
+    /* eslint-enable @typescript-eslint/naming-convention */
   }
 
   const language: string = await new Promise<string>((resolve, reject) => {
@@ -74,7 +76,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     timeElement.innerHTML = `${displayTime(log.time)}<br>${icon}`
 
     const messageElement: HTMLDivElement = document.createElement('div')
-    if (color) {
+    if (color !== undefined) {
       messageElement.style.color = color
     }
     messageElement.innerText = log.message

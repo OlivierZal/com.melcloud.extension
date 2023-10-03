@@ -21,6 +21,10 @@ const melcloudAtaDriverId = 'homey:app:com.mecloud:melcloud'
 
 @pushEventsToUI
 class MELCloudExtensionApp extends App {
+  public melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
+
+  public measureTemperatureDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
+
   #names!: Record<string, string>
 
   #api!: HomeyAPIV3Local
@@ -35,11 +39,7 @@ class MELCloudExtensionApp extends App {
 
   #initTimeout!: NodeJS.Timeout
 
-  melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
-
-  measureTemperatureDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
-
-  async onInit(): Promise<void> {
+  public async onInit(): Promise<void> {
     this.#names = Object.fromEntries(
       ['device', 'outdoor_temperature', 'temperature', 'thermostat_mode'].map(
         (name: string): [string, string] => [
@@ -75,43 +75,7 @@ class MELCloudExtensionApp extends App {
     })
   }
 
-  private init(): void {
-    this.homey.clearTimeout(this.#initTimeout)
-    this.#initTimeout = this.homey.setTimeout(async (): Promise<void> => {
-      try {
-        await this.loadDevices()
-        await this.autoAdjustCoolingAta()
-      } catch (error: unknown) {
-        this.error(
-          new Event(error instanceof Error ? error.message : String(error)),
-        )
-      }
-    }, 1000)
-  }
-
-  private async loadDevices(): Promise<void> {
-    this.melCloudDevices = []
-    this.measureTemperatureDevices = []
-    const devices: HomeyAPIV3Local.ManagerDevices.Device[] =
-      // @ts-expect-error: homey-api is partially typed
-      (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
-    Object.values(devices).forEach(
-      (device: HomeyAPIV3Local.ManagerDevices.Device): void => {
-        // @ts-expect-error: homey-api is partially typed
-        if (device.driverId === melcloudAtaDriverId) {
-          this.melCloudDevices.push(device)
-        } else if (
-          // @ts-expect-error: homey-api is partially typed
-          device.capabilities.some((capability: string) =>
-            capability.startsWith('measure_temperature'),
-          )
-        )
-          this.measureTemperatureDevices.push(device)
-      },
-    )
-  }
-
-  async autoAdjustCoolingAta(
+  public async autoAdjustCoolingAta(
     { capabilityPath, enabled }: TemperatureListenerData = {
       capabilityPath:
         (this.homey.settings.get(
@@ -140,6 +104,46 @@ class MELCloudExtensionApp extends App {
     if (enabled) {
       await this.listenToThermostatModes()
     }
+  }
+
+  public async onUninit(): Promise<void> {
+    await this.cleanListeners()
+  }
+
+  private init(): void {
+    this.homey.clearTimeout(this.#initTimeout)
+    this.#initTimeout = this.homey.setTimeout(async (): Promise<void> => {
+      try {
+        await this.loadDevices()
+        await this.autoAdjustCoolingAta()
+      } catch (error: unknown) {
+        this.error(
+          new Event(error instanceof Error ? error.message : String(error)),
+        )
+      }
+    }, 1000)
+  }
+
+  private async loadDevices(): Promise<void> {
+    this.melCloudDevices = []
+    this.measureTemperatureDevices = []
+    const devices: HomeyAPIV3Local.ManagerDevices.Device[] =
+      // @ts-expect-error: homey-api is partially typed
+      (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
+    Object.values(devices).forEach(
+      (device: HomeyAPIV3Local.ManagerDevices.Device): void => {
+        // @ts-expect-error: homey-api is partially typed
+        if (device.driverId === melcloudAtaDriverId) {
+          this.melCloudDevices.push(device)
+        } else if (
+          // @ts-expect-error: homey-api is partially typed
+          (device.capabilities as string[]).some((capability: string) =>
+            capability.startsWith('measure_temperature'),
+          )
+        )
+          this.measureTemperatureDevices.push(device)
+      },
+    )
   }
 
   private async handleTemperatureListenerData({
@@ -276,12 +280,12 @@ class MELCloudExtensionApp extends App {
       Object.values(this.#melCloudListeners)
         .filter(({ device }) => device.id !== excludedListener.device.id)
         .map(
-          ({ device }): Promise<string> =>
+          async ({ device }): Promise<string> =>
             // @ts-expect-error: homey-api is partially typed
-            this.#api.devices.getCapabilityValue({
+            (await this.#api.devices.getCapabilityValue({
               deviceId: device.id,
               capabilityId: 'thermostat_mode',
-            }) as string,
+            })) as string,
         ),
     )
   }
@@ -382,7 +386,7 @@ class MELCloudExtensionApp extends App {
           )
           await Promise.all(
             Object.values(this.#melCloudListeners).map(
-              (listener: MELCloudListener): Promise<void> =>
+              async (listener: MELCloudListener): Promise<void> =>
                 this.handleTargetTemperature(
                   listener,
                   this.getThreshold(listener.device.id),
@@ -559,10 +563,6 @@ class MELCloudExtensionApp extends App {
       .forEach(([setting, value]: [string, HomeySettingValue]): void => {
         this.homey.settings.set(setting, value)
       })
-  }
-
-  async onUninit(): Promise<void> {
-    await this.cleanListeners()
   }
 }
 

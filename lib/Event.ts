@@ -1,11 +1,14 @@
 import type { EventParams } from '../types'
 
 export default class Event {
-  readonly messageOrParams: string | EventParams
+  public readonly messageOrParams: EventParams | string
 
-  readonly name?: string
+  public readonly name?: string
 
-  constructor(eventMessageOrParams: string | EventParams, eventName?: string) {
+  public constructor(
+    eventMessageOrParams: EventParams | string,
+    eventName?: string,
+  ) {
     this.messageOrParams = eventMessageOrParams
     this.name = eventName
   }
