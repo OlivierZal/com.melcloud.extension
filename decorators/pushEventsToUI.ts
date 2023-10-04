@@ -1,18 +1,10 @@
-/* eslint-disable
-  @typescript-eslint/no-explicit-any,
-  @typescript-eslint/no-unsafe-argument
-*/
-import type Homey from 'homey/lib/Homey'
 import Event from '../lib/Event'
-import type { EventParams, HomeySettings, TimestampedLog } from '../types'
-
-/* eslint-disable @typescript-eslint/method-signature-style */
-type LogClass = new (...args: any[]) => {
-  homey: Homey
-  error(...errorArgs: any[]): void
-  log(...logArgs: any[]): void
-}
-/* eslint-enable @typescript-eslint/method-signature-style */
+import type {
+  EventParams,
+  HomeyClass,
+  HomeySettings,
+  TimestampedLog,
+} from '../types'
 
 const maxLogs = 100
 
@@ -20,19 +12,24 @@ const maxLogs = 100
   @typescript-eslint/explicit-function-return-type,
   @typescript-eslint/explicit-module-boundary-types
 */
-export default function pushEventsToUI<T extends LogClass>(
+export default function pushEventsToUI<T extends HomeyClass>(
   target: T,
   context: ClassDecoratorContext,
 ) {
   class LogDecorator extends target {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public error(...args: any[]): void {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this.commonLog('error', ...args)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public log(...args: any[]): void {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this.commonLog('log', ...args)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private commonLog(logType: 'error' | 'log', ...args: any[]): void {
       if (args.length === 1 && args[0] instanceof Event) {
         let { messageOrParams } = args[0]
@@ -46,6 +43,7 @@ export default function pushEventsToUI<T extends LogClass>(
         )
         super[logType](`[#${name}]`, messageOrParams)
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         super[logType](...args)
       }
     }
