@@ -1,15 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable
+  @typescript-eslint/no-explicit-any,
+  @typescript-eslint/no-unsafe-argument
+*/
 import type Homey from 'homey/lib/Homey'
 import Event from '../lib/Event'
 import type { EventParams, HomeySettings, TimestampedLog } from '../types'
 
+/* eslint-disable @typescript-eslint/method-signature-style */
 type LogClass = new (...args: any[]) => {
   homey: Homey
-  /* eslint-disable @typescript-eslint/method-signature-style */
   error(...errorArgs: any[]): void
   log(...logArgs: any[]): void
-  /* eslint-enable @typescript-eslint/method-signature-style */
 }
+/* eslint-enable @typescript-eslint/method-signature-style */
 
 const maxLogs = 100
 
