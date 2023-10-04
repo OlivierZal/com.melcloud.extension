@@ -77,6 +77,7 @@ export default function pushEventsToUI<T extends HomeyClass>(
       })
     }
   }
+
   Object.defineProperty(LogDecorator, 'name', {
     value: context.name,
   })
