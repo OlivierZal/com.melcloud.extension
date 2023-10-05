@@ -21,11 +21,11 @@ export default function pushEventsToUI<T extends HomeyClass>(
   context: ClassDecoratorContext,
 ) {
   class LogDecorator extends target {
-    public error = (...args: any[]): void => {
+    public error(...args: any[]): void {
       this.commonLog('error', ...args)
     }
 
-    public log = (...args: any[]): void => {
+    public log(...args: any[]): void {
       this.commonLog('log', ...args)
     }
 
