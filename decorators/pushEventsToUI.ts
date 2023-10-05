@@ -1,3 +1,7 @@
+/* eslint-disable
+  @typescript-eslint/no-explicit-any,
+  @typescript-eslint/no-unsafe-argument
+*/
 import Event from '../lib/Event'
 import type {
   EventParams,
@@ -17,19 +21,14 @@ export default function pushEventsToUI<T extends HomeyClass>(
   context: ClassDecoratorContext,
 ) {
   class LogDecorator extends target {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public error(...args: any[]): void {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    public error = (...args: any[]): void => {
       this.commonLog('error', ...args)
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public log(...args: any[]): void {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    public log = (...args: any[]): void => {
       this.commonLog('log', ...args)
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private commonLog(logType: 'error' | 'log', ...args: any[]): void {
       if (args.length === 1 && args[0] instanceof Event) {
         let { messageOrParams } = args[0]
@@ -43,7 +42,6 @@ export default function pushEventsToUI<T extends HomeyClass>(
         )
         super[logType](`[#${name}]`, messageOrParams)
       } else {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         super[logType](...args)
       }
     }
