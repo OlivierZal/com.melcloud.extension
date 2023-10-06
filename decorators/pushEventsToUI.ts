@@ -12,14 +12,10 @@ import type {
 
 const maxLogs = 100
 
-/* eslint-disable-next-line
-  @typescript-eslint/explicit-function-return-type,
-  @typescript-eslint/explicit-module-boundary-types
-*/
 export default function pushEventsToUI<T extends HomeyClass>(
   target: T,
   context: ClassDecoratorContext,
-) {
+): T {
   class LogDecorator extends target {
     public error(...args: any[]): void {
       this.commonLog('error', ...args)
