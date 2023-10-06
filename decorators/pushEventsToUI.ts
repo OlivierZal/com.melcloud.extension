@@ -14,7 +14,7 @@ const maxLogs = 100
 
 export default function pushEventsToUI<T extends HomeyClass>(
   target: T,
-  context: ClassDecoratorContext,
+  context: ClassDecoratorContext<T>,
 ): T {
   class LogDecorator extends target {
     public error(...args: any[]): void {
