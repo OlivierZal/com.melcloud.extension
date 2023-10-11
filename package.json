@@ -1,6 +1,6 @@
 {
   "name": "com.melcloud.extension",
-  "version": "12.2.0",
+  "version": "13.0.0",
   "main": "app.ts",
   "prettier": {
     "semi": false,
@@ -16,9 +16,9 @@
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",
     "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.5",
-    "@types/node": "^20.8.2",
-    "@typescript-eslint/eslint-plugin": "^6.7.4",
-    "@typescript-eslint/parser": "^6.7.4",
+    "@types/node": "^20.8.4",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
+    "@typescript-eslint/parser": "^6.7.5",
     "eslint": "^8.51.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.0.0",
