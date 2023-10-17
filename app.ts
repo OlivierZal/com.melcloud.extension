@@ -278,12 +278,12 @@ class MELCloudExtensionApp extends App {
   ): Promise<string[]> {
     return Promise.all(
       Object.values(this.#melCloudListeners)
-        .filter(({ device }) => device.id !== excludedListener.device.id)
+        .filter(({ device: { id } }) => id !== excludedListener.device.id)
         .map(
-          async ({ device }): Promise<string> =>
+          async ({ device: { id } }): Promise<string> =>
             // @ts-expect-error: homey-api is partially typed
             (await this.#api.devices.getCapabilityValue({
-              deviceId: device.id,
+              deviceId: id,
               capabilityId: 'thermostat_mode',
             })) as string,
         ),
