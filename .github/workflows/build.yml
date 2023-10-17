@@ -72,7 +72,8 @@ jobs:
               BRANCH_NAME="maintenance-$(date +'%Y%m%d')"
               git checkout -b $BRANCH_NAME
               git push origin $BRANCH_NAME
-              gh pr create --base main --head $BRANCH_NAME --title "Maintenance PR" --body "Automatic code maintenance: bump version, update dependencies, lint and format."
+              PR_URL=$(gh pr create --base main --head $BRANCH_NAME --title "Maintenance PR" --body "Automatic code maintenance: bump version, update dependencies, lint and format." --json url --jq .url)
+              gh pr merge --auto --merge "$PR_URL"
             else
               git pull origin ${{ github.head_ref }} --rebase
               git push origin HEAD:${{ github.head_ref }}
