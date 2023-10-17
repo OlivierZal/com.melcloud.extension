@@ -11,26 +11,6 @@ permissions:
   pull-requests: write
 
 jobs:
-  homey:
-    name: Homey
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-      - name: Install Dependencies
-        run: npm ci
-      - name: Build App # Compile TypeScript
-        run: |
-          echo '{}' > app.json
-          mkdir locales
-          npm run build
-
   npm-scripts:
     name: npm Scripts
     runs-on: ubuntu-latest
@@ -82,8 +62,30 @@ jobs:
             echo "No changes to commit."
           fi
 
+  homey:
+    name: Homey
+    needs: npm-scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build App # Compile TypeScript
+        run: |
+          echo '{}' > app.json
+          mkdir locales
+          npm run build
+
   sonarcloud:
     name: SonarCloud
+    needs: homey
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -106,7 +108,7 @@ jobs:
 
   dependabot:
     name: Dependabot
-    needs: [homey, npm-scripts, sonarcloud]
+    needs: sonarcloud
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
