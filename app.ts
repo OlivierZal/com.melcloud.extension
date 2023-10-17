@@ -384,7 +384,7 @@ class MELCloudExtensionApp extends App {
               'listener.listened',
             ),
           )
-          await  Promise.all(
+          await Promise.all(
             Object.values(this.#melCloudListeners).map(
               async (listener: MELCloudListener): Promise<void> =>
                 this.handleTargetTemperature(
