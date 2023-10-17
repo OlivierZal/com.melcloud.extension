@@ -28,8 +28,7 @@ jobs:
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
+          restore-keys: ${{ runner.os }}-node-modules-
       - name: Install Dependencies
         run: npm ci
       - name: Lint and Fix Errors
@@ -69,8 +68,7 @@ jobs:
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
+          restore-keys: ${{ runner.os }}-node-modules-
       - name: Install Dependencies
         run: npm ci
       - name: Build App # Compile TypeScript
@@ -92,8 +90,7 @@ jobs:
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
+          restore-keys: ${{ runner.os }}-node-modules-
       - name: Install Dependencies
         run: npm ci
       - name: Scan Code
