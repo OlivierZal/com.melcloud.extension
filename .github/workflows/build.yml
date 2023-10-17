@@ -18,14 +18,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
-      - name: Install jq
-        run: |
-          sudo apt-get update
-          sudo apt-get install jq
       - name: Bump Version
         run: |
           APP_VERSION=$(jq -r .version .homeycompose/app.json)
-          jq ".version=\"$APP_VERSION\"" package.json > package.json.tmp
+          jq '.version=\'$APP_VERSION\'' package.json > package.json.tmp
           mv package.json.tmp package.json
       - name: Cache node_modules
         uses: actions/cache@v3
@@ -46,21 +42,20 @@ jobs:
           git config --local user.email 'actions@github.com'
           git add -A
           if ! git diff --cached --exit-code; then
-            git commit -m "Code maintenance: bump version, update dependencies, lint & format"
-            if [[ "${{ github.ref }}" == 'refs/heads/main' ]]; then
-              sudo apt install gh
-              echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
-              BRANCH_NAME="maintenance-$(date +'%Y%m%d%H%M%S')"
+            git commit -m 'Code maintenance: bump version, update dependencies, lint & format'
+            if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
+              echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+              BRANCH_NAME='maintenance-$(date +'%Y%m%d%H%M%S')'
               git checkout -b $BRANCH_NAME
               git push origin $BRANCH_NAME
-              PR_URL=$(gh pr create --base main --head $BRANCH_NAME --title "Maintenance PR" --body "Automatic code maintenance: bump version, update dependencies, lint and format." --json url --jq .url)
-              gh pr merge --auto --merge "$PR_URL"
+              gh pr create --base main --head $BRANCH_NAME --title 'Maintenance PR' --body 'Automatic code maintenance: bump version, update dependencies, lint and format.'
+              gh pr merge --auto --squash $BRANCH_NAME
             else
               git pull origin ${{ github.head_ref }} --rebase
               git push origin HEAD:${{ github.head_ref }}
             fi
           else
-            echo "No changes to commit."
+            echo 'No changes to commit.'
           fi
 
   homey:
@@ -86,7 +81,6 @@ jobs:
 
   sonarcloud:
     name: SonarCloud
-    needs: homey
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -109,7 +103,7 @@ jobs:
 
   dependabot:
     name: Dependabot
-    needs: sonarcloud
+    needs: [homey, sonarcloud]
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
@@ -117,9 +111,9 @@ jobs:
         id: metadata
         uses: dependabot/fetch-metadata@v1
         with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Auto-Merge
-        run: gh pr merge --auto --merge "$PR_URL"
+        run: gh pr merge --auto --squash $PR_URL
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
