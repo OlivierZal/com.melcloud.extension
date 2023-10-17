@@ -21,7 +21,7 @@ jobs:
       - name: Bump Version
         run: |
           APP_VERSION=$(jq -r .version .homeycompose/app.json)
-          jq '.version=\'$APP_VERSION\'' package.json > package.json.tmp
+          jq ".version=\"$APP_VERSION\"" package.json > package.json.tmp
           mv package.json.tmp package.json
       - name: Cache node_modules
         uses: actions/cache@v3
@@ -38,24 +38,24 @@ jobs:
         run: npm run format:fix
       - name: Commit Changes
         run: |
-          git config --local user.name 'GitHub Actions'
-          git config --local user.email 'actions@github.com'
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
           git add -A
           if ! git diff --cached --exit-code; then
-            git commit -m 'Code maintenance: bump version, update dependencies, lint & format'
-            if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
+            git commit -m "Code maintenance: bump version, update dependencies, lint & format"
+            if [[ ${{ github.ref }} == "refs/heads/main" ]]; then
               echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
-              BRANCH_NAME='maintenance-$(date +'%Y%m%d%H%M%S')'
+              BRANCH_NAME="maintenance-$(date + '%Y%m%d%H%M%S')"
               git checkout -b $BRANCH_NAME
               git push origin $BRANCH_NAME
-              gh pr create --base main --head $BRANCH_NAME --title 'Maintenance PR' --body 'Automatic code maintenance: bump version, update dependencies, lint and format.'
+              gh pr create --base main --head $BRANCH_NAME --title "Maintenance PR" --body "Automatic code maintenance: bump version, update dependencies, lint and format."
               gh pr merge --auto --squash $BRANCH_NAME
             else
               git pull origin ${{ github.head_ref }} --rebase
               git push origin HEAD:${{ github.head_ref }}
             fi
           else
-            echo 'No changes to commit.'
+            echo "No changes to commit."
           fi
 
   homey:
@@ -75,7 +75,7 @@ jobs:
         run: npm ci
       - name: Build App # Compile TypeScript
         run: |
-          echo '{}' > app.json
+          echo "{}" > app.json
           mkdir locales
           npm run build
 
