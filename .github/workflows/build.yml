@@ -11,22 +11,6 @@ permissions:
   pull-requests: write
 
 jobs:
-  dependabot:
-    name: Dependabot
-    runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
-    steps:
-      - name: Dependabot Metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v1
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
-      - name: Enable Auto-Merge for Dependabot PRs
-        run: gh pr merge --auto --merge "$PR_URL"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   homey:
     name: Homey
     runs-on: ubuntu-latest
@@ -118,3 +102,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  dependabot:
+    name: Dependabot
+    needs: [homey, npm-scripts, sonarcloud]
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Fetch Metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1
+        with:
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+      - name: Auto-Merge
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
