@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import type Homey from 'homey/lib/Homey'
 import type {
-  HomeySettings,
+  HomeySettingsUI,
   MeasureTemperatureDevice,
   TemperatureListenerData,
   TimestampedLog,
@@ -100,27 +100,27 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   }
 
   async function getHomeySettings(): Promise<void> {
-    const homeySettings: Partial<HomeySettings> = await new Promise<
-      Partial<HomeySettings>
-    >((resolve, reject) => {
-      // @ts-expect-error: homey is partially typed
-      homey.get(
-        async (
-          error: Error | null,
-          settings: Partial<HomeySettings>,
-        ): Promise<void> => {
-          if (error) {
-            // @ts-expect-error: homey is partially typed
-            await homey.alert(error.message)
-            reject(error)
-            return
-          }
-          resolve(settings)
-        },
-      )
-    })
+    const homeySettings: HomeySettingsUI = await new Promise<HomeySettingsUI>(
+      (resolve, reject) => {
+        // @ts-expect-error: homey is partially typed
+        homey.get(
+          async (
+            error: Error | null,
+            settings: HomeySettingsUI,
+          ): Promise<void> => {
+            if (error) {
+              // @ts-expect-error: homey is partially typed
+              await homey.alert(error.message)
+              reject(error)
+              return
+            }
+            resolve(settings)
+          },
+        )
+      },
+    )
     if (!logsElement.childElementCount) {
-      ;((homeySettings.lastLogs as TimestampedLog[] | undefined) ?? [])
+      ;(homeySettings.lastLogs ?? [])
         .filter(({ time }): boolean => {
           const date: Date = new Date(time)
           const oldestDate: Date = new Date()
@@ -131,11 +131,8 @@ async function onHomeyReady(homey: Homey): Promise<void> {
         .reverse()
         .forEach(displayLog)
     }
-    capabilityPathElement.value =
-      (homeySettings.capabilityPath as string | undefined) ?? ''
-    enabledElement.value = String(
-      (homeySettings.enabled as boolean | undefined) ?? false,
-    )
+    capabilityPathElement.value = homeySettings.capabilityPath ?? ''
+    enabledElement.value = String(homeySettings.enabled ?? false)
     enableButtons()
   }
 
