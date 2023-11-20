@@ -31,13 +31,13 @@ class MELCloudExtensionApp extends App {
 
   #melCloudListeners: Record<string, MELCloudListener> = {}
 
+  #initTimeout!: NodeJS.Timeout
+
   readonly #outdoorTemperature: {
     capabilityId: string
     value: number
     listener?: TemperatureListener
   } = { capabilityId: '', value: 0 }
-
-  #initTimeout!: NodeJS.Timeout
 
   public async onInit(): Promise<void> {
     this.#names = Object.fromEntries(
