@@ -52,19 +52,19 @@ class MELCloudExtensionApp extends App {
     this.#api = (await HomeyAPIV3Local.createAppAPI({
       homey: this.homey,
     })) as HomeyAPIV3Local
-    // @ts-expect-error: homey-api is partially typed
+    // @ts-expect-error: `homey-api` is partially typed
     await this.#api.devices.connect()
 
     this.init()
-    // @ts-expect-error: homey-api is partially typed
+    // @ts-expect-error: `homey-api` is partially typed
     this.#api.devices.on('device.create', (): void => {
       this.init()
     })
-    // @ts-expect-error: homey-api is partially typed
+    // @ts-expect-error: `homey-api` is partially typed
     this.#api.devices.on('device.update', (): void => {
       this.init()
     })
-    // @ts-expect-error: homey-api is partially typed
+    // @ts-expect-error: `homey-api` is partially typed
     this.#api.devices.on('device.delete', (): void => {
       this.init()
     })
@@ -128,15 +128,15 @@ class MELCloudExtensionApp extends App {
     this.melCloudDevices = []
     this.measureTemperatureDevices = []
     const devices: HomeyAPIV3Local.ManagerDevices.Device[] =
-      // @ts-expect-error: homey-api is partially typed
+      // @ts-expect-error: `homey-api` is partially typed
       (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
     Object.values(devices).forEach(
       (device: HomeyAPIV3Local.ManagerDevices.Device): void => {
-        // @ts-expect-error: homey-api is partially typed
+        // @ts-expect-error: `homey-api` is partially typed
         if (device.driverId === melcloudAtaDriverId) {
           this.melCloudDevices.push(device)
         } else if (
-          // @ts-expect-error: homey-api is partially typed
+          // @ts-expect-error: `homey-api` is partially typed
           (device.capabilities as string[]).some((capability: string) =>
             capability.startsWith('measure_temperature'),
           )
@@ -176,7 +176,7 @@ class MELCloudExtensionApp extends App {
     const [deviceId, capabilityId]: string[] = capabilityPath.split(':')
     let device: HomeyAPIV3Local.ManagerDevices.Device | null = null
     try {
-      // @ts-expect-error: homey-api is partially typed
+      // @ts-expect-error: `homey-api` is partially typed
       device = (await this.#api.devices.getDevice({
         id: deviceId,
       })) as HomeyAPIV3Local.ManagerDevices.Device | null
@@ -188,7 +188,7 @@ class MELCloudExtensionApp extends App {
         }),
       )
     }
-    // @ts-expect-error: homey-api is partially typed
+    // @ts-expect-error: `homey-api` is partially typed
     if (!device || !(capabilityId in (device.capabilitiesObj ?? {}))) {
       throw new Error(
         this.homey.__('log.error.not_found', {
@@ -220,7 +220,7 @@ class MELCloudExtensionApp extends App {
           const deviceId: string = device.id
           const { name } = device
           const currentThermostatMode: string =
-            // @ts-expect-error: homey-api is partially typed
+            // @ts-expect-error: `homey-api` is partially typed
             (await this.#api.devices.getCapabilityValue({
               deviceId,
               capabilityId,
@@ -281,7 +281,7 @@ class MELCloudExtensionApp extends App {
         .filter(({ device: { id } }) => id !== excludedListener.device.id)
         .map(
           async ({ device: { id } }): Promise<string> =>
-            // @ts-expect-error: homey-api is partially typed
+            // @ts-expect-error: `homey-api` is partially typed
             (await this.#api.devices.getCapabilityValue({
               deviceId: id,
               capabilityId: 'thermostat_mode',
@@ -303,7 +303,7 @@ class MELCloudExtensionApp extends App {
     const { name } = device
     await this.listenToOutdoorTemperature()
     const currentTargetTemperature: number =
-      // @ts-expect-error: homey-api is partially typed
+      // @ts-expect-error: `homey-api` is partially typed
       (await this.#api.devices.getCapabilityValue({
         deviceId,
         capabilityId,
@@ -361,7 +361,7 @@ class MELCloudExtensionApp extends App {
     const deviceId: string = device.id
     const { name } = device
     this.#outdoorTemperature.value =
-      // @ts-expect-error: homey-api is partially typed
+      // @ts-expect-error: `homey-api` is partially typed
       (await this.#api.devices.getCapabilityValue({
         deviceId,
         capabilityId,

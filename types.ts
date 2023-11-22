@@ -65,7 +65,7 @@ export interface TemperatureListenerData {
   readonly enabled: boolean
 }
 
-// @ts-expect-error: homey-api is partially typed
+// @ts-expect-error: `homey-api` is partially typed
 type DeviceCapability = HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability
 
 interface BaseListener {

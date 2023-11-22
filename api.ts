@@ -31,7 +31,7 @@ export = {
           device: HomeyAPIV3Local.ManagerDevices.Device,
         ): MeasureTemperatureDevice[] =>
           Object.values(
-            // @ts-expect-error: homey-api is partially typed
+            // @ts-expect-error: `homey-api` is partially typed
             (device.capabilitiesObj as Record<
               string,
               { id: string; title: string }
