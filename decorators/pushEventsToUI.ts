@@ -3,16 +3,9 @@
   @typescript-eslint/no-unsafe-argument
 */
 import Event from '../lib/Event'
-import type {
-  EventParams,
-  HomeyClass,
-  HomeySettings,
-  TimestampedLog,
-} from '../types'
+import type { LogClass } from '../types'
 
-const maxLogs = 100
-
-export default function pushEventsToUI<T extends HomeyClass>(
+export default function pushEventsToUI<T extends LogClass>(
   target: T,
   context: ClassDecoratorContext<T>,
 ): T {
@@ -27,49 +20,9 @@ export default function pushEventsToUI<T extends HomeyClass>(
 
     private commonLog(logType: 'error' | 'log', ...args: any[]): void {
       if (args.length === 1 && args[0] instanceof Event) {
-        const [event]: [Event] = args as [Event]
-        const { name } = event
-        let { messageOrParams } = event
-        if (typeof messageOrParams === 'object' && name !== undefined) {
-          messageOrParams = this.getMessage(name, messageOrParams)
-        }
-        this.pushEventToUI(
-          String(messageOrParams),
-          logType === 'error' ? 'error' : name,
-        )
-        super[logType](`[#${name}]`, messageOrParams)
-      } else {
-        super[logType](...args)
+        args[0].pushEventToUI(logType === 'error')
       }
-    }
-
-    private getMessage(eventName: string, eventParams: EventParams): string {
-      return this.homey
-        .__(`log.${eventName}`, eventParams)
-        .replace(/a el/gi, 'al')
-        .replace(/de le/gi, 'du')
-    }
-
-    private pushEventToUI(message: string, category?: string): void {
-      const newLog: TimestampedLog = {
-        category,
-        message,
-        time: Date.now(),
-      }
-      const lastLogs: TimestampedLog[] =
-        (this.homey.settings.get('lastLogs') as HomeySettings['lastLogs']) ?? []
-      lastLogs.unshift(newLog)
-      if (lastLogs.length > maxLogs) {
-        lastLogs.length = maxLogs
-      }
-      this.homey.settings.set('lastLogs', lastLogs)
-      /* eslint-disable-next-line
-        @typescript-eslint/no-unsafe-call,
-        @typescript-eslint/no-unsafe-member-access
-      */
-      this.homey.api.realtime('log', newLog).catch((error: Error) => {
-        this.error(new Event(error.message))
-      })
+      super[logType](...args.map((arg) => String(arg)))
     }
   }
 

@@ -17,8 +17,6 @@ import type {
   Thresholds,
 } from './types'
 
-const melcloudAtaDriverId = 'homey:app:com.mecloud:melcloud'
-
 @pushEventsToUI
 class MELCloudExtensionApp extends App {
   public melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
@@ -70,7 +68,7 @@ class MELCloudExtensionApp extends App {
     })
     this.homey.on('unload', (): void => {
       this.cleanListeners().catch((error: Error): void => {
-        this.error(new Event(error.message))
+        this.error(error.message)
       })
     })
   }
@@ -89,7 +87,8 @@ class MELCloudExtensionApp extends App {
     await this.cleanListeners()
     if (!capabilityPath) {
       if (enabled) {
-        throw new Error(this.homey.__('log.error.missing'))
+        const name = 'log.error.missing'
+        throw new Error(this.homey.__(name), { name } as ErrorOptions)
       }
       this.setSettings({
         capabilityPath,
@@ -118,7 +117,15 @@ class MELCloudExtensionApp extends App {
         await this.autoAdjustCoolingAta()
       } catch (error: unknown) {
         this.error(
-          new Event(error instanceof Error ? error.message : String(error)),
+          new Event(
+            this.homey,
+            error instanceof Error
+              ? // @ts-expect-error: `homey-api` is partially typed
+                ((error.options as ErrorOptions | undefined)?.name as
+                  | string
+                  | undefined) ?? error.message
+              : String(error),
+          ),
         )
       }
     }, 1000)
@@ -133,7 +140,7 @@ class MELCloudExtensionApp extends App {
     Object.values(devices).forEach(
       (device: HomeyAPIV3Local.ManagerDevices.Device): void => {
         // @ts-expect-error: `homey-api` is partially typed
-        if (device.driverId === melcloudAtaDriverId) {
+        if (device.driverId === 'homey:app:com.mecloud:melcloud') {
           this.melCloudDevices.push(device)
         } else if (
           // @ts-expect-error: `homey-api` is partially typed
@@ -181,20 +188,24 @@ class MELCloudExtensionApp extends App {
         id: deviceId,
       })) as HomeyAPIV3Local.ManagerDevices.Device | null
     } catch (error: unknown) {
+      const name = 'log.error.not_found'
       throw new Error(
-        this.homey.__('log.error.not_found', {
+        this.homey.__(name, {
           name: this.#names.device,
           id: deviceId,
         }),
+        { name } as ErrorOptions,
       )
     }
     // @ts-expect-error: `homey-api` is partially typed
     if (!device || !(capabilityId in (device.capabilitiesObj ?? {}))) {
+      const name = 'log.error.not_found'
       throw new Error(
-        this.homey.__('log.error.not_found', {
+        this.homey.__(name, {
           name: this.#names.outdoor_temperature,
           id: capabilityId,
         }),
+        { name } as ErrorOptions,
       )
     }
     return [device, capabilityId]
@@ -230,14 +241,11 @@ class MELCloudExtensionApp extends App {
               capabilityId,
               async (value: CapabilityValue): Promise<void> => {
                 this.log(
-                  new Event(
-                    {
-                      name,
-                      capability,
-                      value,
-                    },
-                    'listener.listened',
-                  ),
+                  new Event(this.homey, 'listener.listened', {
+                    name,
+                    capability,
+                    value,
+                  }),
                 )
                 if (value === 'cool') {
                   await this.listenToTargetTemperature(listener)
@@ -257,13 +265,10 @@ class MELCloudExtensionApp extends App {
               },
             )
           this.log(
-            new Event(
-              {
-                name,
-                capability,
-              },
-              'listener.created',
-            ),
+            new Event(this.homey, 'listener.created', {
+              name,
+              capability,
+            }),
           )
           if (currentThermostatMode === 'cool') {
             await this.listenToTargetTemperature(listener)
@@ -318,14 +323,11 @@ class MELCloudExtensionApp extends App {
             return
           }
           this.log(
-            new Event(
-              {
-                name,
-                capability,
-                value: `${value as number}\u00A0°C`,
-              },
-              'listener.listened',
-            ),
+            new Event(this.homey, 'listener.listened', {
+              name,
+              capability,
+              value: `${value as number}\u00A0°C`,
+            }),
           )
           await this.handleTargetTemperature(
             listener,
@@ -334,13 +336,10 @@ class MELCloudExtensionApp extends App {
         },
       )
     this.log(
-      new Event(
-        {
-          name,
-          capability,
-        },
-        'listener.created',
-      ),
+      new Event(this.homey, 'listener.created', {
+        name,
+        capability,
+      }),
     )
     await this.handleTargetTemperature(
       listener,
@@ -375,14 +374,11 @@ class MELCloudExtensionApp extends App {
         async (value: CapabilityValue): Promise<void> => {
           this.#outdoorTemperature.value = value as number
           this.log(
-            new Event(
-              {
-                name,
-                capability,
-                value: `${value}\u00A0°C`,
-              },
-              'listener.listened',
-            ),
+            new Event(this.homey, 'listener.listened', {
+              name,
+              capability,
+              value: `${value}\u00A0°C`,
+            }),
           )
           await Promise.all(
             Object.values(this.#melCloudListeners).map(
@@ -396,13 +392,10 @@ class MELCloudExtensionApp extends App {
         },
       )
     this.log(
-      new Event(
-        {
-          name,
-          capability,
-        },
-        'listener.created',
-      ),
+      new Event(this.homey, 'listener.created', {
+        name,
+        capability,
+      }),
     )
   }
 
@@ -435,19 +428,24 @@ class MELCloudExtensionApp extends App {
     try {
       await listener.temperature.setValue(value)
       this.log(
-        new Event(
-          {
-            name: listener.device.name,
-            value: `${value}\u00A0°C`,
-            threshold: `${threshold}\u00A0°C`,
-            outdoorTemperature: `${this.#outdoorTemperature.value}\u00A0°C`,
-          },
-          'target_temperature.calculated',
-        ),
+        new Event(this.homey, 'target_temperature.calculated', {
+          name: listener.device.name,
+          value: `${value}\u00A0°C`,
+          threshold: `${threshold}\u00A0°C`,
+          outdoorTemperature: `${this.#outdoorTemperature.value}\u00A0°C`,
+        }),
       )
     } catch (error: unknown) {
       this.error(
-        new Event(error instanceof Error ? error.message : String(error)),
+        new Event(
+          this.homey,
+          error instanceof Error
+            ? // @ts-expect-error: `homey-api` is partially typed
+              ((error.options as ErrorOptions | undefined)?.name as
+                | string
+                | undefined) ?? error.message
+            : String(error),
+        ),
       )
     }
   }
@@ -466,13 +464,10 @@ class MELCloudExtensionApp extends App {
     thresholds[device.id] = value
     this.setSettings({ thresholds })
     this.log(
-      new Event(
-        {
-          name: device.name,
-          value: `${value}\u00A0°C`,
-        },
-        'target_temperature.saved',
-      ),
+      new Event(this.homey, 'target_temperature.saved', {
+        name: device.name,
+        value: `${value}\u00A0°C`,
+      }),
     )
     return value
   }
@@ -490,7 +485,7 @@ class MELCloudExtensionApp extends App {
     if (this.#outdoorTemperature.listener) {
       await this.cleanListener(this.#outdoorTemperature.listener, 'temperature')
     }
-    this.log(new Event({}, 'listener.cleaned_all'))
+    this.log(new Event(this.homey, 'listener.cleaned_all'))
   }
 
   private async cleanListener<T extends TemperatureListener>(
@@ -509,13 +504,10 @@ class MELCloudExtensionApp extends App {
     const { name } = device
     listener[capability].destroy()
     this.log(
-      new Event(
-        {
-          name,
-          capability: this.#names[capability],
-        },
-        'listener.cleaned',
-      ),
+      new Event(this.homey, 'listener.cleaned', {
+        name,
+        capability: this.#names[capability],
+      }),
     )
     if (deviceId === this.#outdoorTemperature.listener?.device.id) {
       delete this.#outdoorTemperature.listener.temperature
@@ -539,17 +531,22 @@ class MELCloudExtensionApp extends App {
         value,
       })
       this.log(
-        new Event(
-          {
-            name: device.name,
-            value: `${value}\u00A0°C`,
-          },
-          'target_temperature.reverted',
-        ),
+        new Event(this.homey, 'target_temperature.reverted', {
+          name: device.name,
+          value: `${value}\u00A0°C`,
+        }),
       )
     } catch (error: unknown) {
       this.error(
-        new Event(error instanceof Error ? error.message : String(error)),
+        new Event(
+          this.homey,
+          error instanceof Error
+            ? // @ts-expect-error: `homey-api` is partially typed
+              ((error.options as ErrorOptions | undefined)?.name as
+                | string
+                | undefined) ?? error.message
+            : String(error),
+        ),
       )
     }
   }
