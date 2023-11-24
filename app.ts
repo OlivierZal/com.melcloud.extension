@@ -7,6 +7,7 @@ import { App } from 'homey' // eslint-disable-line import/no-extraneous-dependen
 import { HomeyAPIV3Local } from 'homey-api'
 import pushEventsToUI from './decorators/pushEventsToUI'
 import Event from './lib/Event'
+import EventError from './lib/EventError'
 import type {
   CapabilityValue,
   HomeySettings,
@@ -87,8 +88,7 @@ class MELCloudExtensionApp extends App {
     await this.cleanListeners()
     if (!capabilityPath) {
       if (enabled) {
-        const name = 'log.error.missing'
-        throw new Error(this.homey.__(name), { name } as ErrorOptions)
+        throw new EventError(this.homey, 'error.missing')
       }
       this.setSettings({
         capabilityPath,
@@ -116,17 +116,7 @@ class MELCloudExtensionApp extends App {
         await this.loadDevices()
         await this.autoAdjustCoolingAta()
       } catch (error: unknown) {
-        this.error(
-          new Event(
-            this.homey,
-            error instanceof Error
-              ? // @ts-expect-error: `homey-api` is partially typed
-                ((error.options as ErrorOptions | undefined)?.name as
-                  | string
-                  | undefined) ?? error.message
-              : String(error),
-          ),
-        )
+        this.error(this.getErrorMessage(error))
       }
     }, 1000)
   }
@@ -173,6 +163,9 @@ class MELCloudExtensionApp extends App {
       }
       this.#outdoorTemperature.capabilityId = capabilityId
     } catch (error: unknown) {
+      if (error instanceof EventError) {
+        throw new EventError(this.homey, error.name, error.params)
+      }
       throw new Error(error instanceof Error ? error.message : String(error))
     }
   }
@@ -188,25 +181,17 @@ class MELCloudExtensionApp extends App {
         id: deviceId,
       })) as HomeyAPIV3Local.ManagerDevices.Device | null
     } catch (error: unknown) {
-      const name = 'log.error.not_found'
-      throw new Error(
-        this.homey.__(name, {
-          name: this.#names.device,
-          id: deviceId,
-        }),
-        { name } as ErrorOptions,
-      )
+      throw new EventError(this.homey, 'error.not_found', {
+        name: this.#names.device,
+        id: deviceId,
+      })
     }
     // @ts-expect-error: `homey-api` is partially typed
     if (!device || !(capabilityId in (device.capabilitiesObj ?? {}))) {
-      const name = 'log.error.not_found'
-      throw new Error(
-        this.homey.__(name, {
-          name: this.#names.outdoor_temperature,
-          id: capabilityId,
-        }),
-        { name } as ErrorOptions,
-      )
+      throw new EventError(this.homey, 'error.not_found', {
+        name: this.#names.outdoor_temperature,
+        id: capabilityId,
+      })
     }
     return [device, capabilityId]
   }
@@ -436,17 +421,7 @@ class MELCloudExtensionApp extends App {
         }),
       )
     } catch (error: unknown) {
-      this.error(
-        new Event(
-          this.homey,
-          error instanceof Error
-            ? // @ts-expect-error: `homey-api` is partially typed
-              ((error.options as ErrorOptions | undefined)?.name as
-                | string
-                | undefined) ?? error.message
-            : String(error),
-        ),
-      )
+      this.error(this.getErrorMessage(error))
     }
   }
 
@@ -537,17 +512,7 @@ class MELCloudExtensionApp extends App {
         }),
       )
     } catch (error: unknown) {
-      this.error(
-        new Event(
-          this.homey,
-          error instanceof Error
-            ? // @ts-expect-error: `homey-api` is partially typed
-              ((error.options as ErrorOptions | undefined)?.name as
-                | string
-                | undefined) ?? error.message
-            : String(error),
-        ),
-      )
+      this.error(this.getErrorMessage(error))
     }
   }
 
@@ -560,6 +525,16 @@ class MELCloudExtensionApp extends App {
       .forEach(([setting, value]: [string, HomeySettingValue]): void => {
         this.homey.settings.set(setting, value)
       })
+  }
+
+  private getErrorMessage(error: unknown): Event | string {
+    if (error instanceof EventError) {
+      return new Event(this.homey, error.name, error.params)
+    }
+    if (error instanceof Error) {
+      return error.message
+    }
+    return String(error)
   }
 }
 
