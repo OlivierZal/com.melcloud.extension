@@ -27,8 +27,9 @@ export default function pushEventsToUI<T extends HomeyClass>(
 
     private commonLog(logType: 'error' | 'log', ...args: any[]): void {
       if (args.length === 1 && args[0] instanceof Event) {
-        let [{ messageOrParams }]: [Event] = args as [Event]
-        const [{ name }]: [Event] = args as [Event]
+        const [event]: [Event] = args as [Event]
+        const { name } = event
+        let { messageOrParams } = event
         if (typeof messageOrParams === 'object' && name !== undefined) {
           messageOrParams = this.getMessage(name, messageOrParams)
         }
