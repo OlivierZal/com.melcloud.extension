@@ -1,14 +1,5 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export type LogClass = new (...args: any[]) => {
-  /* eslint-disable @typescript-eslint/method-signature-style */
-  error(...errorArgs: any[]): void
-  log(...logArgs: any[]): void
-  /* eslint-enable @typescript-eslint/method-signature-style */
-}
-/* eslint-enable @typescript-eslint/no-explicit-any */
-
 export type CapabilityValue = boolean | number | string
 
 export interface EventParams {

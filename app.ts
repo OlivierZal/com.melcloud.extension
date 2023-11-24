@@ -5,7 +5,6 @@
 import 'source-map-support/register'
 import { App } from 'homey' // eslint-disable-line import/no-extraneous-dependencies
 import { HomeyAPIV3Local } from 'homey-api'
-import pushEventsToUI from './decorators/pushEventsToUI'
 import Event from './lib/Event'
 import EventError from './lib/EventError'
 import type {
@@ -18,7 +17,6 @@ import type {
   Thresholds,
 } from './types'
 
-@pushEventsToUI
 class MELCloudExtensionApp extends App {
   public melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
