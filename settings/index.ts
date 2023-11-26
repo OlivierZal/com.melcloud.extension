@@ -50,15 +50,14 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     'logs',
   ) as HTMLTableSectionElement
 
-  function displayTime(time: number): string {
-    return new Date(time).toLocaleString(language, {
+  const displayTime = (time: number): string =>
+    new Date(time).toLocaleString(language, {
       weekday: 'short',
       hour: 'numeric',
       minute: 'numeric',
     })
-  }
 
-  function displayLog(log: TimestampedLog): void {
+  const displayLog = (log: TimestampedLog): void => {
     const { color, icon } = categories[log.category ?? 'error']
 
     const rowElement: HTMLDivElement = document.createElement('div')
@@ -83,7 +82,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     logsElement.insertBefore(rowElement, logsElement.firstChild)
   }
 
-  function disableButtons(value = true): void {
+  const disableButtons = (value = true): void => {
     ;[applyElement, refreshElement].forEach(
       (element: HTMLButtonElement): void => {
         if (value) {
@@ -95,11 +94,11 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     )
   }
 
-  function enableButtons(value = true): void {
+  const enableButtons = (value = true): void => {
     disableButtons(!value)
   }
 
-  async function getHomeySettings(): Promise<void> {
+  const getHomeySettings = async (): Promise<void> => {
     const homeySettings: HomeySettingsUI = await new Promise<HomeySettingsUI>(
       (resolve, reject) => {
         // @ts-expect-error: `homey` is partially typed
@@ -136,9 +135,9 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     enableButtons()
   }
 
-  async function handleGetMeasureTemperatureDevicesError(
+  const handleGetMeasureTemperatureDevicesError = async (
     errorMessage: string,
-  ): Promise<void> {
+  ): Promise<void> => {
     if (errorMessage === 'no_device_ata') {
       // @ts-expect-error: `homey` is partially typed
       await homey.confirm(
@@ -161,7 +160,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     await homey.alert(errorMessage)
   }
 
-  function getMeasureTemperatureDevices(): void {
+  const getMeasureTemperatureDevices = (): void => {
     // @ts-expect-error: `homey` is partially typed
     homey.api(
       'GET',
