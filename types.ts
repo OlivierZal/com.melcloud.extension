@@ -3,12 +3,12 @@ import type { HomeyAPIV3Local } from 'homey-api'
 export type CapabilityValue = boolean | number | string
 
 export interface EventParams {
-  capability?: string
-  id?: string
-  name?: string
-  outdoorTemperature?: string
-  threshold?: string
-  value?: CapabilityValue
+  readonly capability?: string
+  readonly id?: string
+  readonly name?: string
+  readonly outdoorTemperature?: string
+  readonly threshold?: string
+  readonly value?: CapabilityValue
 }
 
 export interface TimestampedLog {
