@@ -1,6 +1,5 @@
 /* eslint-disable
-  @typescript-eslint/no-unsafe-call,
-  @typescript-eslint/no-unsafe-member-access
+  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 */
 import 'source-map-support/register'
 import { App } from 'homey' // eslint-disable-line import/no-extraneous-dependencies
@@ -88,16 +87,10 @@ class MELCloudExtensionApp extends App {
       if (enabled) {
         throw new EventError(this.homey, 'error.missing')
       }
-      this.setSettings({
-        capabilityPath,
-        enabled,
-      })
+      this.setSettings({ capabilityPath, enabled })
       return
     }
-    await this.handleTemperatureListenerData({
-      capabilityPath,
-      enabled,
-    })
+    await this.handleTemperatureListenerData({ capabilityPath, enabled })
     if (enabled) {
       await this.listenToThermostatModes()
     }
@@ -150,10 +143,7 @@ class MELCloudExtensionApp extends App {
         HomeyAPIV3Local.ManagerDevices.Device,
         string,
       ] = await this.validateCapabilityPath(capabilityPath)
-      this.setSettings({
-        capabilityPath,
-        enabled,
-      })
+      this.setSettings({ capabilityPath, enabled })
       if (!this.#outdoorTemperature.listener) {
         this.#outdoorTemperature.listener = { device }
       } else if (device.id !== this.#outdoorTemperature.listener.device.id) {
@@ -248,10 +238,7 @@ class MELCloudExtensionApp extends App {
               },
             )
           this.log(
-            new Event(this.homey, 'listener.created', {
-              name,
-              capability,
-            }),
+            new Event(this.homey, 'listener.created', { name, capability }),
           )
           if (currentThermostatMode === 'cool') {
             await this.listenToTargetTemperature(listener)
@@ -318,12 +305,7 @@ class MELCloudExtensionApp extends App {
           )
         },
       )
-    this.log(
-      new Event(this.homey, 'listener.created', {
-        name,
-        capability,
-      }),
-    )
+    this.log(new Event(this.homey, 'listener.created', { name, capability }))
     await this.handleTargetTemperature(
       listener,
       this.setThreshold(device, currentTargetTemperature),
@@ -374,12 +356,7 @@ class MELCloudExtensionApp extends App {
           )
         },
       )
-    this.log(
-      new Event(this.homey, 'listener.created', {
-        name,
-        capability,
-      }),
-    )
+    this.log(new Event(this.homey, 'listener.created', { name, capability }))
   }
 
   private async handleTargetTemperature(
