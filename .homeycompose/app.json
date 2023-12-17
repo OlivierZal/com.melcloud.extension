@@ -4,11 +4,12 @@
   "brandColor": "#40e0d0",
   "name": {
     "en": "MELCloud extension",
-    "fr": "MELCloud extension",
-    "nl": "MELCloud extension",
-    "sv": "MELCloud extension",
-    "no": "MELCloud extension",
-    "es": "MELCloud extension"
+    "fr": "Extension de MELCloud",
+    "nl": "MELCloud-extensie",
+    "sv": "MELCloud-tillägg",
+    "no": "MELCloud-utvidelse",
+    "da": "MELCloud-udvidelse",
+    "es": "Extensión de MELCloud"
   },
   "description": {
     "en": "Automatically adjust the temperature of your air conditioning",
@@ -16,6 +17,7 @@
     "nl": "Stel automatisch de temperatuur van uw airco af",
     "sv": "Justera automatiskt temperaturen på din luftkonditionering",
     "no": "Juster automatisk temperaturen på din aircondition",
+    "da": "Juster automatisk temperaturen på din aircondition",
     "es": "Ajuste automático de la temperatura de su aire acondicionado"
   },
   "category": ["climate"],
