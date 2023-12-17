@@ -3,12 +3,12 @@
   "sdk": 3,
   "brandColor": "#40e0d0",
   "name": {
-    "en": "MELCloud Extension",
-    "fr": "MELCloud Extension",
-    "nl": "MELCloud Extension",
-    "sv": "MELCloud Extension",
-    "no": "MELCloud Extension",
-    "es": "MELCloud Extension"
+    "en": "MELCloud extension",
+    "fr": "MELCloud extension",
+    "nl": "MELCloud extension",
+    "sv": "MELCloud extension",
+    "no": "MELCloud extension",
+    "es": "MELCloud extension"
   },
   "description": {
     "en": "Automatically adjust the temperature of your air conditioning",
