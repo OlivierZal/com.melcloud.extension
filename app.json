@@ -5,12 +5,12 @@
   "brandColor": "#40e0d0",
   "name": {
     "en": "MELCloud extension",
-    "fr": "Extension de MELCloud",
+    "fr": "Extension pour MELCloud",
     "nl": "MELCloud-extensie",
     "sv": "MELCloud-tillägg",
     "no": "MELCloud-utvidelse",
     "da": "MELCloud-udvidelse",
-    "es": "Extensión de MELCloud"
+    "es": "Extensión para MELCloud"
   },
   "description": {
     "en": "Automatically adjust the temperature of your air conditioning",

@@ -38,6 +38,6 @@
     "no_device_measure": "Vous ne disposez pas d'appli de mesure de la température dans Homey.",
     "refresh": "Rafraîchir",
     "success": "La mise à jour a réussi.",
-    "title": "Paramètres de l'extension de MELCloud"
+    "title": "Paramètres de l'extension pour MELCloud"
   }
 }
