@@ -1,4 +1,4 @@
-Deze app breidt de MELCloud Homey-app uit door automatisch de koeltemperatuur van uw lucht-lucht warmtepompen binnen 8 °C van de buitentemperatuur blijft.
+Deze app breidt de MELCloud Homey-app uit door automatisch uw lucht-lucht apparaten aan te passen om een koeltemperatuur binnen 8 °C van de buitentemperatuur te behouden.
 
 Waarom?
 
