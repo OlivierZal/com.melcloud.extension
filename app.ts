@@ -16,6 +16,9 @@ import type {
   Thresholds,
 } from './types'
 
+const maxTemperature = 38
+const maxTemperatureDifference = 8
+
 class MELCloudExtensionApp extends App {
   public melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
@@ -372,8 +375,11 @@ class MELCloudExtensionApp extends App {
 
   private getTargetTemperature(threshold: number): number {
     return Math.min(
-      Math.max(threshold, Math.ceil(this.#outdoorTemperature.value) - 8),
-      38,
+      Math.max(
+        threshold,
+        Math.ceil(this.#outdoorTemperature.value) - maxTemperatureDifference,
+      ),
+      maxTemperature,
     )
   }
 

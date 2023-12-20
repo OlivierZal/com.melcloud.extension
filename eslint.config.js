@@ -31,7 +31,6 @@ const convertIntoEslintFlatConfig = (config) => {
 }
 
 const customRules = {
-  'no-bitwise': 'off',
   'no-underscore-dangle': ['error', { allow: ['__'] }],
 }
 const tsCustomRules = {
