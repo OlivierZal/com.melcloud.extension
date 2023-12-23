@@ -7,10 +7,13 @@ import type {
   TimestampedLog,
 } from '../types'
 
+const SIX_DAYS = 6
+
 async function onHomeyReady(homey: Homey): Promise<void> {
   await homey.ready()
 
   const categories: Record<string, { color?: string; icon: string }> = {
+    /* eslint-disable @typescript-eslint/naming-convention */
     error: { icon: '⚠️', color: '#E8000D' },
     'listener.cleaned': { icon: '🗑️' },
     'listener.cleaned_all': { icon: '🛑' },
@@ -20,6 +23,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     'target_temperature.calculated': { icon: '🔢', color: '#008000' },
     'target_temperature.reverted': { icon: '↩️' },
     'target_temperature.saved': { icon: '☁️' },
+    /* eslint-enable @typescript-eslint/naming-convention */
   }
 
   const language: string = await new Promise<string>((resolve, reject) => {
@@ -123,7 +127,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
         .filter(({ time }): boolean => {
           const date: Date = new Date(time)
           const oldestDate: Date = new Date()
-          oldestDate.setDate(oldestDate.getDate() - 6)
+          oldestDate.setDate(oldestDate.getDate() - SIX_DAYS)
           oldestDate.setHours(0, 0, 0, 0)
           return date >= oldestDate
         })

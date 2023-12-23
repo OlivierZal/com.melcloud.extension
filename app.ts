@@ -16,8 +16,9 @@ import type {
   Thresholds,
 } from './types'
 
-const maxTemperature = 38
-const maxTemperatureDifference = 8
+const MAX_TEMPERATURE = 38
+const MAX_TEMPERATURE_GAP = 8
+const ONE_SECOND = 1000
 
 class MELCloudExtensionApp extends App {
   public melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
@@ -112,7 +113,7 @@ class MELCloudExtensionApp extends App {
       } catch (error: unknown) {
         this.error(this.getErrorMessage(error))
       }
-    }, 1000)
+    }, ONE_SECOND)
   }
 
   private async loadDevices(): Promise<void> {
@@ -377,9 +378,9 @@ class MELCloudExtensionApp extends App {
     return Math.min(
       Math.max(
         threshold,
-        Math.ceil(this.#outdoorTemperature.value) - maxTemperatureDifference,
+        Math.ceil(this.#outdoorTemperature.value) - MAX_TEMPERATURE_GAP,
       ),
-      maxTemperature,
+      MAX_TEMPERATURE,
     )
   }
 
