@@ -35,7 +35,6 @@ const customRules = {
   'no-underscore-dangle': ['error', { allow: ['__'] }],
 }
 const tsCustomRules = {
-  '@typescript-eslint/naming-convention': 'off',
   '@typescript-eslint/no-magic-numbers': [
     'error',
     {
