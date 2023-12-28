@@ -1,7 +1,7 @@
 import type Homey from 'homey/lib/Homey'
 import type { EventParams, HomeySettings, TimestampedLog } from '../types'
 
-const maxLogs = 100
+const MAX_LOGS = 100
 
 export default class Event {
   protected readonly name: string
@@ -30,8 +30,8 @@ export default class Event {
     const lastLogs: TimestampedLog[] =
       (this.#homey.settings.get('lastLogs') as HomeySettings['lastLogs']) ?? []
     lastLogs.unshift(newLog)
-    if (lastLogs.length > maxLogs) {
-      lastLogs.length = maxLogs
+    if (lastLogs.length > MAX_LOGS) {
+      lastLogs.length = MAX_LOGS
     }
     this.#homey.settings.set('lastLogs', lastLogs)
     this.#homey.api.realtime('log', newLog)
