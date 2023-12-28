@@ -13,13 +13,13 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   await homey.ready()
 
   const categories: Record<string, { color?: string; icon: string }> = {
-    /* eslint-disable @typescript-eslint/naming-convention */
     error: { icon: '⚠️', color: '#E8000D' },
+    retry: { icon: '🔄' },
+    /* eslint-disable @typescript-eslint/naming-convention */
     'listener.cleaned': { icon: '🗑️' },
     'listener.cleaned_all': { icon: '🛑' },
     'listener.created': { icon: '🔊' },
     'listener.listened': { icon: '👂', color: '#0047AB' },
-    retry: { icon: '🔄' },
     'target_temperature.calculated': { icon: '🔢', color: '#008000' },
     'target_temperature.reverted': { icon: '↩️' },
     'target_temperature.saved': { icon: '☁️' },
