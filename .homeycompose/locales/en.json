@@ -18,9 +18,9 @@
   },
   "names": {
     "device": "Device",
-    "outdoor_temperature": "The outdoor temperature",
+    "outdoorTemperature": "The outdoor temperature",
     "temperature": "the temperature",
-    "thermostat_mode": "the mode"
+    "thermostatMode": "the mode"
   },
   "settings": {
     "apply": "Apply to all air-to-air devices",

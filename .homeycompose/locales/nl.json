@@ -18,9 +18,9 @@
   },
   "names": {
     "device": "Het apparaat",
-    "outdoor_temperature": "De buitentemperatuur",
+    "outdoorTemperature": "De buitentemperatuur",
     "temperature": "de temperatuur",
-    "thermostat_mode": "de modus"
+    "thermostatMode": "de modus"
   },
   "settings": {
     "apply": "Toepassen op alle lucht-lucht apparaten",

@@ -18,9 +18,9 @@
   },
   "names": {
     "device": "L'appareil",
-    "outdoor_temperature": "La température extérieure",
+    "outdoorTemperature": "La température extérieure",
     "temperature": "la température",
-    "thermostat_mode": "le mode"
+    "thermostatMode": "le mode"
   },
   "settings": {
     "apply": "Appliquer à tous les appareils air-air",

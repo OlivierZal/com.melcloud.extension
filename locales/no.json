@@ -18,9 +18,9 @@
   },
   "names": {
     "device": "Enheten",
-    "outdoor_temperature": "Utetemperaturen",
+    "outdoorTemperature": "Utetemperaturen",
     "temperature": "temperaturen",
-    "thermostat_mode": "modus"
+    "thermostatMode": "modus"
   },
   "settings": {
     "apply": "Bruk på alle luft-luft enheter",

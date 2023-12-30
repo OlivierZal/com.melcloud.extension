@@ -66,6 +66,5 @@ export interface TemperatureListener extends BaseListener {
 }
 
 export interface MELCloudListener extends TemperatureListener {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  thermostat_mode?: DeviceCapability
+  thermostatMode?: DeviceCapability
 }

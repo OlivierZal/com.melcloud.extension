@@ -42,7 +42,7 @@ class MELCloudExtensionApp extends App {
 
   public async onInit(): Promise<void> {
     this.#names = Object.fromEntries(
-      ['device', 'outdoor_temperature', 'temperature', 'thermostat_mode'].map(
+      ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
         (name: string): [string, string] => [
           name,
           this.homey.__(`names.${name}`),
@@ -59,10 +59,6 @@ class MELCloudExtensionApp extends App {
     this.init()
     // @ts-expect-error: `homey-api` is partially typed
     this.#api.devices.on('device.create', (): void => {
-      this.init()
-    })
-    // @ts-expect-error: `homey-api` is partially typed
-    this.#api.devices.on('device.update', (): void => {
       this.init()
     })
     // @ts-expect-error: `homey-api` is partially typed
@@ -182,7 +178,7 @@ class MELCloudExtensionApp extends App {
     // @ts-expect-error: `homey-api` is partially typed
     if (!device || !(capabilityId in (device.capabilitiesObj ?? {}))) {
       throw new EventError(this.homey, 'error.not_found', {
-        name: this.#names.outdoor_temperature,
+        name: this.#names.outdoorTemperature,
         id: capabilityId,
       })
     }
@@ -200,7 +196,7 @@ class MELCloudExtensionApp extends App {
         ],
       ),
     )
-    const capability: string = this.#names.thermostat_mode
+    const capability: string = this.#names.thermostatMode
     const capabilityId = 'thermostat_mode'
     await Promise.all(
       Object.values(this.#melCloudListeners).map(
@@ -214,7 +210,7 @@ class MELCloudExtensionApp extends App {
               deviceId,
               capabilityId,
             })) as string
-          this.#melCloudListeners[deviceId].thermostat_mode =
+          this.#melCloudListeners[deviceId].thermostatMode =
             device.makeCapabilityInstance(
               capabilityId,
               async (value: CapabilityValue): Promise<void> => {
@@ -434,7 +430,7 @@ class MELCloudExtensionApp extends App {
     await Promise.all(
       Object.values(this.#melCloudListeners).map(
         async (listener: MELCloudListener): Promise<void> => {
-          await this.cleanListener(listener, 'thermostat_mode')
+          await this.cleanListener(listener, 'thermostatMode')
           await this.cleanListener(listener, 'temperature')
         },
       ),
@@ -451,8 +447,8 @@ class MELCloudExtensionApp extends App {
       ? MELCloudListener
       : TemperatureListener,
     capability: T extends MELCloudListener
-      ? keyof MELCloudListener
-      : keyof TemperatureListener,
+      ? 'temperature' | 'thermostatMode'
+      : 'temperature',
   ): Promise<void> {
     if (!(capability in listener)) {
       return
@@ -471,8 +467,8 @@ class MELCloudExtensionApp extends App {
       delete this.#outdoorTemperature.listener.temperature
       return
     }
-    if (capability === 'thermostat_mode') {
-      delete this.#melCloudListeners[deviceId].thermostat_mode
+    if (capability === 'thermostatMode') {
+      delete this.#melCloudListeners[deviceId].thermostatMode
     } else if (capability === 'temperature') {
       delete this.#melCloudListeners[deviceId].temperature
       await this.revertTemperature(device, this.getThreshold(deviceId))
