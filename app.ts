@@ -74,13 +74,8 @@ class MELCloudExtensionApp extends App {
 
   public async autoAdjustCoolingAta(
     { capabilityPath, enabled }: TemperatureListenerData = {
-      capabilityPath:
-        (this.homey.settings.get(
-          'capabilityPath',
-        ) as HomeySettings['capabilityPath']) ?? '',
-      enabled:
-        (this.homey.settings.get('enabled') as HomeySettings['enabled']) ??
-        false,
+      capabilityPath: this.getHomeySetting('capabilityPath') ?? '',
+      enabled: this.getHomeySetting('enabled') ?? false,
     },
   ): Promise<void> {
     await this.cleanListeners()
@@ -405,16 +400,14 @@ class MELCloudExtensionApp extends App {
   }
 
   private getThreshold(deviceId: string): number {
-    return this.homey.settings.get('thresholds')[deviceId] as number
+    return this.getHomeySetting('thresholds')?.[deviceId] ?? 0
   }
 
   private setThreshold(
     device: HomeyAPIV3Local.ManagerDevices.Device,
     value: number,
   ): number {
-    const thresholds: Thresholds =
-      (this.homey.settings.get('thresholds') as HomeySettings['thresholds']) ??
-      {}
+    const thresholds: Thresholds = this.getHomeySetting('thresholds') ?? {}
     thresholds[device.id] = value
     this.setSettings({ thresholds })
     this.log(
@@ -499,7 +492,7 @@ class MELCloudExtensionApp extends App {
     Object.entries(settings)
       .filter(
         ([setting, value]: [string, HomeySettingValue]) =>
-          value !== this.homey.settings.get(setting),
+          value !== this.getHomeySetting(setting as keyof HomeySettings),
       )
       .forEach(([setting, value]: [string, HomeySettingValue]): void => {
         this.homey.settings.set(setting, value)
@@ -514,6 +507,12 @@ class MELCloudExtensionApp extends App {
       return error.message
     }
     return String(error)
+  }
+
+  private getHomeySetting<K extends keyof HomeySettings>(
+    setting: K,
+  ): HomeySettings[K] {
+    return this.homey.settings.get(setting as string) as HomeySettings[K]
   }
 }
 
