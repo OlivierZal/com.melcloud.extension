@@ -20,7 +20,8 @@ import type {
 
 const MAX_TEMPERATURE = 38
 const MAX_TEMPERATURE_GAP = 8
-const ONE_SECOND = 1000
+const SECOND = 1000 // ms
+const THERMOSTAT_MODE_COOL = 'cool'
 
 class MELCloudExtensionApp extends App {
   public melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
@@ -106,7 +107,7 @@ class MELCloudExtensionApp extends App {
       } catch (error: unknown) {
         this.error(this.getErrorMessage(error))
       }
-    }, ONE_SECOND)
+    }, SECOND)
   }
 
   private async loadDevices(): Promise<void> {
@@ -217,14 +218,18 @@ class MELCloudExtensionApp extends App {
                     value,
                   }),
                 )
-                if (value === 'cool') {
+                if (value === THERMOSTAT_MODE_COOL) {
                   await this.listenToTargetTemperature(listener)
                   return
                 }
                 await this.cleanListener(listener, 'temperature')
                 const thermostatModes: string[] =
                   await this.getOtherThermostatModes(listener)
-                if (thermostatModes.every((mode: string) => mode !== 'cool')) {
+                if (
+                  thermostatModes.every(
+                    (mode: string) => mode !== THERMOSTAT_MODE_COOL,
+                  )
+                ) {
                   if (this.#outdoorTemperature.listener) {
                     await this.cleanListener(
                       this.#outdoorTemperature.listener,
@@ -237,7 +242,7 @@ class MELCloudExtensionApp extends App {
           this.log(
             new Event(this.homey, 'listener.created', { name, capability }),
           )
-          if (currentThermostatMode === 'cool') {
+          if (currentThermostatMode === THERMOSTAT_MODE_COOL) {
             await this.listenToTargetTemperature(listener)
           }
         },
