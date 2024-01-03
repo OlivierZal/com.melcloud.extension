@@ -34,5 +34,8 @@
   },
   "12.0.0": {
     "en": "Use decorator."
+  },
+  "15.0.0": {
+    "en": "Improved types."
   }
 }
