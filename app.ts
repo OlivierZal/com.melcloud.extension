@@ -9,6 +9,7 @@ import Event from './lib/Event'
 import EventError from './lib/EventError'
 import type {
   CapabilityValue,
+  HomeySettingKey,
   HomeySettings,
   HomeySettingValue,
   MELCloudListener,
@@ -492,7 +493,7 @@ class MELCloudExtensionApp extends App {
     Object.entries(settings)
       .filter(
         ([setting, value]: [string, HomeySettingValue]) =>
-          value !== this.getHomeySetting(setting as keyof HomeySettings),
+          value !== this.getHomeySetting(setting as HomeySettingKey),
       )
       .forEach(([setting, value]: [string, HomeySettingValue]): void => {
         this.homey.settings.set(setting, value)
@@ -509,7 +510,7 @@ class MELCloudExtensionApp extends App {
     return String(error)
   }
 
-  private getHomeySetting<K extends keyof HomeySettings>(
+  private getHomeySetting<K extends HomeySettingKey>(
     setting: K,
   ): HomeySettings[K] {
     return this.homey.settings.get(setting as string) as HomeySettings[K]

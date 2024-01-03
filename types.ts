@@ -42,6 +42,8 @@ export type HomeySettingsUI = BaseHomeySettingsValue<
   TimestampedLog[] | undefined
 >
 
+export type HomeySettingKey = keyof HomeySettings
+
 export type HomeySettingValue = ValueOf<HomeySettings>
 
 export interface MeasureTemperatureDevice {
