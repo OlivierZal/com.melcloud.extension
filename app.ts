@@ -85,7 +85,7 @@ class MELCloudExtensionApp extends App {
       if (enabled) {
         throw new EventError(this.homey, 'error.missing')
       }
-      this.setSettings({ capabilityPath, enabled })
+      this.setHomeySettings({ capabilityPath, enabled })
       return
     }
     await this.handleTemperatureListenerData({ capabilityPath, enabled })
@@ -141,7 +141,7 @@ class MELCloudExtensionApp extends App {
         HomeyAPIV3Local.ManagerDevices.Device,
         string,
       ] = await this.validateCapabilityPath(capabilityPath)
-      this.setSettings({ capabilityPath, enabled })
+      this.setHomeySettings({ capabilityPath, enabled })
       if (!this.#outdoorTemperature.listener) {
         this.#outdoorTemperature.listener = { device }
       } else if (device.id !== this.#outdoorTemperature.listener.device.id) {
@@ -415,7 +415,7 @@ class MELCloudExtensionApp extends App {
   ): number {
     const thresholds: Thresholds = this.getHomeySetting('thresholds') ?? {}
     thresholds[device.id] = value
-    this.setSettings({ thresholds })
+    this.setHomeySettings({ thresholds })
     this.log(
       new Event(this.homey, 'target_temperature.saved', {
         name: device.name,
@@ -494,7 +494,13 @@ class MELCloudExtensionApp extends App {
     }
   }
 
-  private setSettings(settings: Partial<HomeySettings>): void {
+  private getHomeySetting<K extends HomeySettingKey>(
+    setting: K,
+  ): HomeySettings[K] {
+    return this.homey.settings.get(setting as string) as HomeySettings[K]
+  }
+
+  private setHomeySettings(settings: Partial<HomeySettings>): void {
     Object.entries(settings)
       .filter(
         ([setting, value]: [string, HomeySettingValue]) =>
@@ -513,12 +519,6 @@ class MELCloudExtensionApp extends App {
       return error.message
     }
     return String(error)
-  }
-
-  private getHomeySetting<K extends HomeySettingKey>(
-    setting: K,
-  ): HomeySettings[K] {
-    return this.homey.settings.get(setting as string) as HomeySettings[K]
   }
 }
 
