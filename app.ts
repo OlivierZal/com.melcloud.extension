@@ -29,11 +29,18 @@ class MELCloudExtensionApp extends App {
 
   public measureTemperatureDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
-  #names!: Record<string, string>
-
-  #api!: HomeyAPIV3Local
+  readonly #names: Record<string, string> = Object.fromEntries(
+    ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
+      (name: string): [string, string] => [
+        name,
+        this.homey.__(`names.${name}`),
+      ],
+    ),
+  )
 
   #melCloudListeners: Record<string, MELCloudListener> = {}
+
+  #api!: HomeyAPIV3Local
 
   #initTimeout!: NodeJS.Timeout
 
@@ -44,21 +51,11 @@ class MELCloudExtensionApp extends App {
   } = { capabilityId: '', value: 0 }
 
   public async onInit(): Promise<void> {
-    this.#names = Object.fromEntries(
-      ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
-        (name: string): [string, string] => [
-          name,
-          this.homey.__(`names.${name}`),
-        ],
-      ),
-    )
-
     this.#api = (await HomeyAPIV3Local.createAppAPI({
       homey: this.homey,
     })) as HomeyAPIV3Local
     // @ts-expect-error: `homey-api` is partially typed
     await this.#api.devices.connect()
-
     this.init()
     // @ts-expect-error: `homey-api` is partially typed
     this.#api.devices.on('device.create', (): void => {

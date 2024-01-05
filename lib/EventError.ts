@@ -2,8 +2,6 @@ import type Homey from 'homey/lib/Homey'
 import type { EventParams } from '../types'
 
 export default class EventError extends Error {
-  public readonly name: string
-
   public readonly params?: EventParams
 
   public constructor(
@@ -12,7 +10,6 @@ export default class EventError extends Error {
     eventParams?: EventParams,
   ) {
     super(homey.__(`log.${eventName}`, eventParams))
-    this.name = eventName
     this.params = eventParams
   }
 }
