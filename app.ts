@@ -9,6 +9,7 @@ import Event from './lib/Event'
 import EventError from './lib/EventError'
 import type {
   CapabilityValue,
+  DeviceCapability,
   HomeySettingKey,
   HomeySettings,
   HomeySettingValue,
@@ -441,13 +442,9 @@ class MELCloudExtensionApp extends App {
     this.log(new Event(this.homey, 'listener.cleaned_all'))
   }
 
-  private async cleanListener<T extends TemperatureListener>(
-    listener: T extends MELCloudListener
-      ? MELCloudListener
-      : TemperatureListener,
-    capability: T extends MELCloudListener
-      ? 'temperature' | 'thermostatMode'
-      : 'temperature',
+  private async cleanListener<L extends TemperatureListener>(
+    listener: L,
+    capability: Exclude<keyof L, 'device'>,
   ): Promise<void> {
     if (!(capability in listener)) {
       return
@@ -455,11 +452,11 @@ class MELCloudExtensionApp extends App {
     const { device } = listener
     const deviceId: string = device.id
     const { name } = device
-    listener[capability].destroy()
+    ;(listener[capability] as DeviceCapability).destroy()
     this.log(
       new Event(this.homey, 'listener.cleaned', {
         name,
-        capability: this.#names[capability],
+        capability: this.#names[capability as string],
       }),
     )
     if (deviceId === this.#outdoorTemperature.listener?.device.id) {
