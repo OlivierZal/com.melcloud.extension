@@ -10,13 +10,12 @@ import EventError from './lib/EventError'
 import type {
   CapabilityValue,
   DeviceCapability,
-  HomeySettingKey,
   HomeySettings,
-  HomeySettingValue,
   MELCloudListener,
   TemperatureListener,
   TemperatureListenerData,
   Thresholds,
+  ValueOf,
 } from './types'
 
 const MAX_TEMPERATURE = 38
@@ -488,7 +487,7 @@ class MELCloudExtensionApp extends App {
     }
   }
 
-  private getHomeySetting<K extends HomeySettingKey>(
+  private getHomeySetting<K extends keyof HomeySettings>(
     setting: K,
   ): HomeySettings[K] {
     return this.homey.settings.get(setting as string) as HomeySettings[K]
@@ -497,10 +496,10 @@ class MELCloudExtensionApp extends App {
   private setHomeySettings(settings: Partial<HomeySettings>): void {
     Object.entries(settings)
       .filter(
-        ([setting, value]: [string, HomeySettingValue]) =>
-          value !== this.getHomeySetting(setting as HomeySettingKey),
+        ([setting, value]: [string, ValueOf<HomeySettings>]) =>
+          value !== this.getHomeySetting(setting as keyof HomeySettings),
       )
-      .forEach(([setting, value]: [string, HomeySettingValue]): void => {
+      .forEach(([setting, value]: [string, ValueOf<HomeySettings>]): void => {
         this.homey.settings.set(setting, value)
       })
   }

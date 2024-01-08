@@ -124,7 +124,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     )
     if (!logsElement.childElementCount) {
       ;(homeySettings.lastLogs ?? [])
-        .filter(({ time }): boolean => {
+        .filter(({ time }) => {
           const date: Date = new Date(time)
           const oldestDate: Date = new Date()
           oldestDate.setDate(oldestDate.getDate() - SIX_DAYS)

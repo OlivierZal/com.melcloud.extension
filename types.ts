@@ -19,7 +19,7 @@ export interface TimestampedLog {
 
 export type Thresholds = Partial<Record<string, number>>
 
-type ValueOf<T> = T[keyof T]
+export type ValueOf<T> = T[keyof T]
 
 interface BaseHomeySettingsValue<T1, T2, T3, T4> {
   readonly enabled: T1
@@ -41,10 +41,6 @@ export type HomeySettingsUI = BaseHomeySettingsValue<
   Thresholds | undefined,
   TimestampedLog[] | undefined
 >
-
-export type HomeySettingKey = keyof HomeySettings
-
-export type HomeySettingValue = ValueOf<HomeySettings>
 
 export interface MeasureTemperatureDevice {
   readonly capabilityName: string
