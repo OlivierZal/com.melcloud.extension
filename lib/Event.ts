@@ -4,9 +4,9 @@ import type { EventParams, HomeySettings, TimestampedLog } from '../types'
 const MAX_LOGS = 100
 
 export default class Event {
-  readonly #name: string
+  public readonly name: string
 
-  readonly #message: string
+  public readonly message: string
 
   readonly #homey: Homey
 
@@ -16,15 +16,15 @@ export default class Event {
     eventParams?: EventParams,
   ) {
     this.#homey = homey
-    this.#name = eventName
-    this.#message = homey.__(`log.${eventName}`, eventParams)
+    this.name = eventName
+    this.message = homey.__(`log.${eventName}`, eventParams)
     this.pushEventToUI()
   }
 
   private pushEventToUI(): void {
     const newLog: TimestampedLog = {
-      category: this.#name.startsWith('error.') ? 'error' : this.#name,
-      message: this.#message,
+      category: this.name.startsWith('error.') ? 'error' : this.name,
+      message: this.message,
       time: Date.now(),
     }
     const lastLogs: TimestampedLog[] =
