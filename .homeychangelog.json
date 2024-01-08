@@ -37,5 +37,8 @@
   },
   "15.0.0": {
     "en": "Improved types."
+  },
+  "16.0.0": {
+    "en": "Improved performances."
   }
 }
