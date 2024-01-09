@@ -108,17 +108,17 @@
     }
   },
   "api": {
+    "getMeasureTemperatureDevicesAta": {
+      "method": "GET",
+      "path": "/devices/temperature_sensors"
+    },
     "autoAdjustCoolingAta": {
-      "method": "POST",
-      "path": "/drivers/melcloud/cooling_auto_adjustment"
+      "method": "PUT",
+      "path": "/drivers/melcloud/cooling/auto_adjustment"
     },
     "getLanguage": {
       "method": "GET",
       "path": "/language"
-    },
-    "getMeasureTemperatureDevicesAta": {
-      "method": "GET",
-      "path": "/drivers/melcloud/available_temperatures"
     }
   },
   "platforms": [

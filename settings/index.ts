@@ -222,8 +222,8 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     const body: TemperatureListenerData = { capabilityPath, enabled }
     // @ts-expect-error: `homey` is partially typed
     homey.api(
-      'POST',
-      '/drivers/melcloud/cooling_auto_adjustment',
+      'PUT',
+      '/drivers/melcloud/cooling/auto_adjustment',
       body,
       async (error: Error | null): Promise<void> => {
         enableButtons()
