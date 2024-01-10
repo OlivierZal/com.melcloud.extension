@@ -25,7 +25,7 @@ const SECOND = 1000 // ms
 class MELCloudExtensionApp extends App {
   public melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
-  public measureTemperatureDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
+  public temperatureSensors: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
   readonly #names: Record<string, string> = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
@@ -70,7 +70,7 @@ class MELCloudExtensionApp extends App {
     })
   }
 
-  public async autoAdjustCoolingAta(
+  public async autoAdjustCooling(
     { capabilityPath, enabled }: TemperatureListenerData = {
       capabilityPath: this.getHomeySetting('capabilityPath') ?? '',
       enabled: this.getHomeySetting('enabled') ?? false,
@@ -99,7 +99,7 @@ class MELCloudExtensionApp extends App {
     this.#initTimeout = this.homey.setTimeout(async (): Promise<void> => {
       try {
         await this.loadDevices()
-        await this.autoAdjustCoolingAta()
+        await this.autoAdjustCooling()
       } catch (error: unknown) {
         this.error(this.getErrorMessage(error))
       }
@@ -108,7 +108,7 @@ class MELCloudExtensionApp extends App {
 
   private async loadDevices(): Promise<void> {
     this.melCloudDevices = []
-    this.measureTemperatureDevices = []
+    this.temperatureSensors = []
     const devices: HomeyAPIV3Local.ManagerDevices.Device[] =
       // @ts-expect-error: `homey-api` is partially typed
       (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
@@ -123,7 +123,7 @@ class MELCloudExtensionApp extends App {
             capability.startsWith('measure_temperature'),
           )
         )
-          this.measureTemperatureDevices.push(device)
+          this.temperatureSensors.push(device)
       },
     )
   }

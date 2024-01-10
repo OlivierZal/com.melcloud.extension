@@ -1,35 +1,29 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 import type Homey from 'homey/lib/Homey'
 import type MELCloudExtensionApp from './app'
-import type { MeasureTemperatureDevice, TemperatureListenerData } from './types'
+import type { TemperatureListenerData, TemperatureSensor } from './types'
 
 export = {
-  async autoAdjustCoolingAta({
+  async autoAdjustCooling({
     homey,
     body,
   }: {
     body: TemperatureListenerData
     homey: Homey
   }): Promise<void> {
-    await (homey.app as MELCloudExtensionApp).autoAdjustCoolingAta(body)
+    await (homey.app as MELCloudExtensionApp).autoAdjustCooling(body)
   },
   getLanguage({ homey }: { homey: Homey }): string {
     return homey.i18n.getLanguage()
   },
-  getMeasureTemperatureDevicesAta({
-    homey,
-  }: {
-    homey: Homey
-  }): MeasureTemperatureDevice[] {
+  getTemperatureSensors({ homey }: { homey: Homey }): TemperatureSensor[] {
     const app: MELCloudExtensionApp = homey.app as MELCloudExtensionApp
     if (!app.melCloudDevices.length) {
       throw new Error('no_device_ata')
     }
-    return app.measureTemperatureDevices
+    return app.temperatureSensors
       .flatMap(
-        (
-          device: HomeyAPIV3Local.ManagerDevices.Device,
-        ): MeasureTemperatureDevice[] =>
+        (device: HomeyAPIV3Local.ManagerDevices.Device): TemperatureSensor[] =>
           Object.values(
             // @ts-expect-error: `homey-api` is partially typed
             (device.capabilitiesObj as Record<
@@ -39,17 +33,14 @@ export = {
           )
             .filter(({ id }) => id.startsWith('measure_temperature'))
             .map(
-              ({ id, title }): MeasureTemperatureDevice => ({
+              ({ id, title }): TemperatureSensor => ({
                 capabilityPath: `${device.id}:${id}`,
                 capabilityName: `${device.name} - ${title}`,
               }),
             ),
       )
-      .sort(
-        (
-          device1: MeasureTemperatureDevice,
-          device2: MeasureTemperatureDevice,
-        ) => device1.capabilityName.localeCompare(device2.capabilityName),
+      .sort((device1: TemperatureSensor, device2: TemperatureSensor) =>
+        device1.capabilityName.localeCompare(device2.capabilityName),
       )
   },
 }

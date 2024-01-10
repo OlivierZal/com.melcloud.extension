@@ -2,8 +2,8 @@
 import type Homey from 'homey/lib/Homey'
 import type {
   HomeySettingsUI,
-  MeasureTemperatureDevice,
   TemperatureListenerData,
+  TemperatureSensor,
   TimestampedLog,
 } from '../types'
 
@@ -139,7 +139,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     enableButtons()
   }
 
-  const handleGetMeasureTemperatureDevicesError = async (
+  const handleTemperatureSensorsError = async (
     errorMessage: string,
   ): Promise<void> => {
     if (errorMessage === 'no_device_ata') {
@@ -164,17 +164,17 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     await homey.alert(errorMessage)
   }
 
-  const getMeasureTemperatureDevices = (): void => {
+  const getTemperatureSensors = (): void => {
     // @ts-expect-error: `homey` is partially typed
     homey.api(
       'GET',
-      '/drivers/melcloud/available_temperatures',
+      '/devices/sensors/temperature',
       async (
         error: Error | null,
-        devices: MeasureTemperatureDevice[],
+        devices: TemperatureSensor[],
       ): Promise<void> => {
         if (error) {
-          await handleGetMeasureTemperatureDevicesError(error.message)
+          await handleTemperatureSensorsError(error.message)
           return
         }
         if (!devices.length) {
@@ -182,7 +182,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
           await homey.alert(homey.__('settings.no_device_measure'))
           return
         }
-        devices.forEach((device: MeasureTemperatureDevice): void => {
+        devices.forEach((device: TemperatureSensor): void => {
           const { capabilityPath, capabilityName } = device
           const optionElement: HTMLOptionElement =
             document.createElement('option')
@@ -223,7 +223,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     // @ts-expect-error: `homey` is partially typed
     homey.api(
       'PUT',
-      '/drivers/melcloud/cooling/auto_adjustment',
+      '/melcloud/cooling/auto_adjustment',
       body,
       async (error: Error | null): Promise<void> => {
         enableButtons()
@@ -237,5 +237,5 @@ async function onHomeyReady(homey: Homey): Promise<void> {
 
   homey.on('log', displayLog)
 
-  getMeasureTemperatureDevices()
+  getTemperatureSensors()
 }
