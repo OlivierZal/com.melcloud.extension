@@ -21,7 +21,7 @@
     "es": "Ajuste automático de la temperatura de su aire acondicionado"
   },
   "category": ["climate"],
-  "version": "16.1.0",
+  "version": "16.1.1",
   "compatibility": ">=5.0.0",
   "tags": {
     "en": [
