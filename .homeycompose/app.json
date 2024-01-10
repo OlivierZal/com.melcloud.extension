@@ -113,7 +113,7 @@
       "method": "GET",
       "path": "/language"
     },
-      "autoAdjustCooling": {
+    "autoAdjustCooling": {
       "method": "PUT",
       "path": "/melcloud/cooling/auto_adjustment"
     }
