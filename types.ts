@@ -42,7 +42,7 @@ export type HomeySettingsUI = BaseHomeySettingsValue<
   TimestampedLog[] | undefined
 >
 
-export interface MeasureTemperatureDevice {
+export interface TemperatureSensor {
   readonly capabilityName: string
   readonly capabilityPath: string
 }
