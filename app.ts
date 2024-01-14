@@ -435,7 +435,7 @@ class MELCloudExtensionApp extends App {
 
   private async cleanListener<L extends TemperatureListener>(
     listener: L,
-    capability: Exclude<keyof L, 'device'>,
+    capability: Exclude<keyof L, 'device'> & string,
   ): Promise<void> {
     if (!(capability in listener)) {
       return
@@ -447,7 +447,7 @@ class MELCloudExtensionApp extends App {
     this.log(
       new Event(this.homey, 'listener.cleaned', {
         name,
-        capability: this.#names[capability as string],
+        capability: this.#names[capability],
       }),
     )
     if (deviceId === this.#outdoorTemperature.listener?.device.id) {
@@ -483,9 +483,9 @@ class MELCloudExtensionApp extends App {
   }
 
   private getHomeySetting<K extends keyof HomeySettings>(
-    setting: K,
+    setting: K & string,
   ): HomeySettings[K] {
-    return this.homey.settings.get(setting as string) as HomeySettings[K]
+    return this.homey.settings.get(setting) as HomeySettings[K]
   }
 
   private setHomeySettings(settings: Partial<HomeySettings>): void {
