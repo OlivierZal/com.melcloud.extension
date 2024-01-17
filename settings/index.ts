@@ -87,15 +87,13 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   }
 
   const disableButtons = (value = true): void => {
-    ;[applyElement, refreshElement].forEach(
-      (element: HTMLButtonElement): void => {
-        if (value) {
-          element.classList.add('is-disabled')
-        } else {
-          element.classList.remove('is-disabled')
-        }
-      },
-    )
+    ;[applyElement, refreshElement].forEach((element: HTMLButtonElement) => {
+      if (value) {
+        element.classList.add('is-disabled')
+      } else {
+        element.classList.remove('is-disabled')
+      }
+    })
   }
 
   const enableButtons = (value = true): void => {
@@ -182,7 +180,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
           await homey.alert(homey.__('settings.no_device_measure'))
           return
         }
-        devices.forEach((device: TemperatureSensor): void => {
+        devices.forEach((device: TemperatureSensor) => {
           const { capabilityPath, capabilityName } = device
           const optionElement: HTMLOptionElement =
             document.createElement('option')

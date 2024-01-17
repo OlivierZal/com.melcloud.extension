@@ -113,7 +113,7 @@ class MELCloudExtensionApp extends App {
       // @ts-expect-error: `homey-api` is partially typed
       (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
     Object.values(devices).forEach(
-      (device: HomeyAPIV3Local.ManagerDevices.Device): void => {
+      (device: HomeyAPIV3Local.ManagerDevices.Device) => {
         // @ts-expect-error: `homey-api` is partially typed
         if (device.driverId === 'homey:app:com.mecloud:melcloud') {
           this.melCloudDevices.push(device)
@@ -494,7 +494,7 @@ class MELCloudExtensionApp extends App {
         ([setting, value]: [string, ValueOf<HomeySettings>]) =>
           value !== this.getHomeySetting(setting as keyof HomeySettings),
       )
-      .forEach(([setting, value]: [string, ValueOf<HomeySettings>]): void => {
+      .forEach(([setting, value]: [string, ValueOf<HomeySettings>]) => {
         this.homey.settings.set(setting, value)
       })
   }
