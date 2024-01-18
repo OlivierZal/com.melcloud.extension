@@ -1,5 +1,7 @@
 # Extension for MELCloud Homey App
 
+[![Build](https://github.com/OlivierZal/com.melcloud.extension/actions/workflows/build.yml/badge.svg)](https://github.com/OlivierZal/com.melcloud.extension/actions/workflows/build.yml)
+[![CodeQL](https://github.com/OlivierZal/com.melcloud.extension/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/OlivierZal/com.melcloud.extension/actions/workflows/github-code-scanning/codeql)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=OlivierZal_com.melcloud.extension&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=OlivierZal_com.melcloud.extension)
 
 ## Introduction
