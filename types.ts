@@ -39,7 +39,7 @@ export type HomeySettingsUI = BaseHomeySettings<
   boolean | undefined,
   string | undefined,
   Thresholds | undefined,
-  TimestampedLog[] | undefined
+  readonly TimestampedLog[] | undefined
 >
 
 export interface TemperatureSensor {
