@@ -7,25 +7,99 @@ import type {
 } from '../types'
 import type Homey from 'homey/lib/Homey'
 
+const CATEGORIES: Record<string, { color?: string; icon: string }> = {
+  /* eslint-disable @typescript-eslint/naming-convention */
+  error: { color: '#E8000D', icon: '⚠️' },
+  'listener.cleaned': { icon: '🗑️' },
+  'listener.cleaned_all': { icon: '🛑' },
+  'listener.created': { icon: '🔊' },
+  'listener.listened': { color: '#0047AB', icon: '👂' },
+  retry: { icon: '🔄' },
+  'target_temperature.calculated': { color: '#008000', icon: '🔢' },
+  'target_temperature.reverted': { icon: '↩️' },
+  'target_temperature.saved': { icon: '☁️' },
+  /* eslint-enable @typescript-eslint/naming-convention */
+}
+
 const SIX_DAYS = 6
 
-// eslint-disable-next-line func-style, max-lines-per-function, max-statements
+const applyElement: HTMLButtonElement = document.getElementById(
+  'apply',
+) as HTMLButtonElement
+const refreshElement: HTMLButtonElement = document.getElementById(
+  'refresh',
+) as HTMLButtonElement
+const capabilityPathElement: HTMLSelectElement = document.getElementById(
+  'capabilityPath',
+) as HTMLSelectElement
+const enabledElement: HTMLSelectElement = document.getElementById(
+  'enabled',
+) as HTMLSelectElement
+const logsElement: HTMLTableSectionElement = document.getElementById(
+  'logs',
+) as HTMLTableSectionElement
+
+const disableButtons = (value = true): void => {
+  ;[applyElement, refreshElement].forEach((element: HTMLButtonElement) => {
+    if (value) {
+      element.classList.add('is-disabled')
+    } else {
+      element.classList.remove('is-disabled')
+    }
+  })
+}
+
+const enableButtons = (value = true): void => {
+  disableButtons(!value)
+}
+
+const displayTime = (time: number, language: string): string =>
+  new Date(time).toLocaleString(language, {
+    hour: 'numeric',
+    minute: 'numeric',
+    weekday: 'short',
+  })
+
+const createTimeElement = (
+  time: number,
+  icon: string,
+  language: string,
+): HTMLDivElement => {
+  const timeElement: HTMLDivElement = document.createElement('div')
+  timeElement.style.color = '#888'
+  timeElement.style.flexShrink = '0'
+  timeElement.style.marginRight = '1em'
+  timeElement.style.textAlign = 'center'
+  timeElement.style.whiteSpace = 'nowrap'
+  timeElement.innerHTML = `${displayTime(time, language)}<br>${icon}`
+  return timeElement
+}
+
+const createMessageElement = (
+  message: string,
+  color?: string,
+): HTMLDivElement => {
+  const messageElement: HTMLDivElement = document.createElement('div')
+  if (typeof color !== 'undefined') {
+    messageElement.style.color = color
+  }
+  messageElement.innerText = message
+  return messageElement
+}
+
+capabilityPathElement.addEventListener('change', (): void => {
+  if (capabilityPathElement.value) {
+    if (enabledElement.value === 'false') {
+      enabledElement.value = 'true'
+    }
+  } else if (enabledElement.value === 'true') {
+    enabledElement.value = 'false'
+  }
+})
+
+// eslint-disable-next-line func-style, max-lines-per-function
 async function onHomeyReady(homey: Homey): Promise<void> {
   await homey.ready()
-
-  const categories: Record<string, { color?: string; icon: string }> = {
-    /* eslint-disable @typescript-eslint/naming-convention */
-    error: { color: '#E8000D', icon: '⚠️' },
-    'listener.cleaned': { icon: '🗑️' },
-    'listener.cleaned_all': { icon: '🛑' },
-    'listener.created': { icon: '🔊' },
-    'listener.listened': { color: '#0047AB', icon: '👂' },
-    retry: { icon: '🔄' },
-    'target_temperature.calculated': { color: '#008000', icon: '🔢' },
-    'target_temperature.reverted': { icon: '↩️' },
-    'target_temperature.saved': { icon: '☁️' },
-    /* eslint-enable @typescript-eslint/naming-convention */
-  }
 
   const language: string = await new Promise<string>((resolve, reject) => {
     // @ts-expect-error: `homey` is partially typed
@@ -39,83 +113,23 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     })
   })
 
-  const applyElement: HTMLButtonElement = document.getElementById(
-    'apply',
-  ) as HTMLButtonElement
-  const refreshElement: HTMLButtonElement = document.getElementById(
-    'refresh',
-  ) as HTMLButtonElement
-  const capabilityPathElement: HTMLSelectElement = document.getElementById(
-    'capabilityPath',
-  ) as HTMLSelectElement
-  const enabledElement: HTMLSelectElement = document.getElementById(
-    'enabled',
-  ) as HTMLSelectElement
-  const logsElement: HTMLTableSectionElement = document.getElementById(
-    'logs',
-  ) as HTMLTableSectionElement
-
-  const displayTime = (time: number): string =>
-    new Date(time).toLocaleString(language, {
-      hour: 'numeric',
-      minute: 'numeric',
-      weekday: 'short',
-    })
-
-  const createTimeElement = (time: number, icon: string): HTMLDivElement => {
-    const timeElement: HTMLDivElement = document.createElement('div')
-    timeElement.style.color = '#888'
-    timeElement.style.flexShrink = '0'
-    timeElement.style.marginRight = '1em'
-    timeElement.style.textAlign = 'center'
-    timeElement.style.whiteSpace = 'nowrap'
-    timeElement.innerHTML = `${displayTime(time)}<br>${icon}`
-    return timeElement
-  }
-
-  const createMessageElement = (
-    message: string,
-    color?: string,
-  ): HTMLDivElement => {
-    const messageElement: HTMLDivElement = document.createElement('div')
-    if (typeof color !== 'undefined') {
-      messageElement.style.color = color
-    }
-    messageElement.innerText = message
-    return messageElement
-  }
-
   const displayLog = (log: TimestampedLog): void => {
-    const { color, icon } = categories[log.category ?? 'error']
-
-    const rowElement: HTMLDivElement = document.createElement('div')
-    rowElement.style.display = 'flex'
-    rowElement.style.marginBottom = '1em'
-
-    const timeElement: HTMLDivElement = createTimeElement(log.time, icon)
-
+    const { color, icon } = CATEGORIES[log.category ?? 'error']
+    const timeElement: HTMLDivElement = createTimeElement(
+      log.time,
+      icon,
+      language,
+    )
     const messageElement: HTMLDivElement = createMessageElement(
       log.message,
       color,
     )
-
+    const rowElement: HTMLDivElement = document.createElement('div')
+    rowElement.style.display = 'flex'
+    rowElement.style.marginBottom = '1em'
     rowElement.appendChild(timeElement)
     rowElement.appendChild(messageElement)
     logsElement.insertBefore(rowElement, logsElement.firstChild)
-  }
-
-  const disableButtons = (value = true): void => {
-    ;[applyElement, refreshElement].forEach((element: HTMLButtonElement) => {
-      if (value) {
-        element.classList.add('is-disabled')
-      } else {
-        element.classList.remove('is-disabled')
-      }
-    })
-  }
-
-  const enableButtons = (value = true): void => {
-    disableButtons(!value)
   }
 
   const getHomeySettings = async (): Promise<void> => {
@@ -210,16 +224,6 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       },
     )
   }
-
-  capabilityPathElement.addEventListener('change', (): void => {
-    if (capabilityPathElement.value) {
-      if (enabledElement.value === 'false') {
-        enabledElement.value = 'true'
-      }
-    } else if (enabledElement.value === 'true') {
-      enabledElement.value = 'false'
-    }
-  })
 
   refreshElement.addEventListener('click', (): void => {
     disableButtons()
