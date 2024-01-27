@@ -37,7 +37,6 @@ module.exports = [
       'import/no-duplicates': ['error', { 'prefer-inline': true }],
     },
   },
-  importPlugin.configs.typescript,
   {
     languageOptions: {
       ecmaVersion: 'latest',
