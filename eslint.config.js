@@ -12,6 +12,7 @@ module.exports = [
       ...js.configs.all.rules,
       ...importPlugin.configs.recommended.rules,
       'max-lines': 'off',
+      'no-magic-numbers': ['error', { ignore: [0] }],
       'no-ternary': 'off',
       'no-underscore-dangle': ['error', { allow: ['__'] }],
       'one-var': 'off',
@@ -22,11 +23,10 @@ module.exports = [
     files: ['**/*.ts'],
     plugins: { '@typescript-eslint': tsPlugin },
     rules: {
-      // eslint-disable-next-line no-magic-numbers
       ...tsPlugin.configs['eslint-recommended'].overrides[0].rules,
       ...tsPlugin.configs.all.rules,
       ...importPlugin.configs.typescript.rules,
-      // eslint-disable-next-line no-magic-numbers
+
       '@typescript-eslint/no-magic-numbers': ['error', { ignore: [0] }],
       '@typescript-eslint/no-unused-vars': [
         'error',
