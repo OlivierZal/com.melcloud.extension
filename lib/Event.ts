@@ -1,5 +1,5 @@
-import type Homey from 'homey/lib/Homey'
 import type { EventParams, HomeySettings, TimestampedLog } from '../types'
+import type Homey from 'homey/lib/Homey'
 
 const MAX_LOGS = 100
 

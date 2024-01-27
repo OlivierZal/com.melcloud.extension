@@ -1,37 +1,18 @@
-/* eslint-disable import/no-extraneous-dependencies */
+const js = require('@eslint/js')
+const prettier = require('eslint-config-prettier')
 const tsParser = require('@typescript-eslint/parser')
 const tsPlugin = require('@typescript-eslint/eslint-plugin')
-const {
-  extends: airbnbRules,
-  ...airbnbConfig
-} = require('eslint-config-airbnb-base')
-const prettier = require('eslint-config-prettier')
 const importPlugin = require('eslint-plugin-import')
-const envs = require('globals')
+const globals = require('globals')
 
-const envMapping = { es6: 'es2015', node: 'node' }
-
-const convertIntoEslintFlatConfig = (config) => {
-  const { env, globals, plugins, parserOptions, ...oldConfig } = config
-  return {
-    ...oldConfig,
-    languageOptions: {
-      ...('env' in config && {
-        globals: Object.fromEntries(
-          Object.keys(env)
-            .filter(
-              (key) => env[key] && key in envMapping && envMapping[key] in envs,
-            )
-            .flatMap((key) => Object.entries(envs[envMapping[key]])),
-        ),
-        ...('parserOptions' in config && { parserOptions }),
-      }),
-    },
-  }
+const customRules = {
+  'max-lines': 'off',
+  'no-ternary': 'off',
+  'no-underscore-dangle': ['error', { allow: ['__'] }],
+  'one-var': 'off',
 }
-
-const customRules = { 'no-underscore-dangle': ['error', { allow: ['__'] }] }
 const tsCustomRules = {
+  // eslint-disable-next-line no-magic-numbers
   '@typescript-eslint/no-magic-numbers': ['error', { ignore: [0] }],
   '@typescript-eslint/no-unused-vars': [
     'error',
@@ -44,29 +25,34 @@ const tsCustomRules = {
 
 module.exports = [
   { ignores: ['.homeybuild/'] },
-  // eslint-disable-next-line global-require, import/no-dynamic-require
-  ...airbnbRules.map((rule) => convertIntoEslintFlatConfig(require(rule))),
-  convertIntoEslintFlatConfig(airbnbConfig),
-  { rules: customRules },
+  {
+    rules: {
+      ...js.configs.all.rules,
+      ...importPlugin.configs.recommended.rules,
+      ...customRules,
+    },
+  },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
     plugins: { '@typescript-eslint': tsPlugin },
     rules: {
+      // eslint-disable-next-line no-magic-numbers
       ...tsPlugin.configs['eslint-recommended'].overrides[0].rules,
       ...tsPlugin.configs.all.rules,
       ...tsCustomRules,
     },
   },
-  { plugins: { import: importPlugin } },
   importPlugin.configs.typescript,
   {
     languageOptions: {
       ecmaVersion: 'latest',
+      globals: globals.node,
       parser: tsParser,
       parserOptions: { project: './tsconfig.json' },
       sourceType: 'module',
     },
     linterOptions: { reportUnusedDisableDirectives: true },
+    plugins: { import: importPlugin },
     settings: { 'import/resolver': { typescript: { alwaysTryTypes: true } } },
   },
   prettier,

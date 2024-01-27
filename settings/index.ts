@@ -1,26 +1,27 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import type Homey from 'homey/lib/Homey'
 import type {
   HomeySettingsUI,
   TemperatureListenerData,
   TemperatureSensor,
   TimestampedLog,
 } from '../types'
+import type Homey from 'homey/lib/Homey'
 
 const SIX_DAYS = 6
 
+// eslint-disable-next-line func-style, max-lines-per-function, max-statements
 async function onHomeyReady(homey: Homey): Promise<void> {
   await homey.ready()
 
   const categories: Record<string, { color?: string; icon: string }> = {
-    error: { icon: '⚠️', color: '#E8000D' },
-    retry: { icon: '🔄' },
     /* eslint-disable @typescript-eslint/naming-convention */
+    error: { color: '#E8000D', icon: '⚠️' },
     'listener.cleaned': { icon: '🗑️' },
     'listener.cleaned_all': { icon: '🛑' },
     'listener.created': { icon: '🔊' },
-    'listener.listened': { icon: '👂', color: '#0047AB' },
-    'target_temperature.calculated': { icon: '🔢', color: '#008000' },
+    'listener.listened': { color: '#0047AB', icon: '👂' },
+    retry: { icon: '🔄' },
+    'target_temperature.calculated': { color: '#008000', icon: '🔢' },
     'target_temperature.reverted': { icon: '↩️' },
     'target_temperature.saved': { icon: '☁️' },
     /* eslint-enable @typescript-eslint/naming-convention */
@@ -56,10 +57,33 @@ async function onHomeyReady(homey: Homey): Promise<void> {
 
   const displayTime = (time: number): string =>
     new Date(time).toLocaleString(language, {
-      weekday: 'short',
       hour: 'numeric',
       minute: 'numeric',
+      weekday: 'short',
     })
+
+  const createTimeElement = (time: number, icon: string): HTMLDivElement => {
+    const timeElement: HTMLDivElement = document.createElement('div')
+    timeElement.style.color = '#888'
+    timeElement.style.flexShrink = '0'
+    timeElement.style.marginRight = '1em'
+    timeElement.style.textAlign = 'center'
+    timeElement.style.whiteSpace = 'nowrap'
+    timeElement.innerHTML = `${displayTime(time)}<br>${icon}`
+    return timeElement
+  }
+
+  const createMessageElement = (
+    message: string,
+    color?: string,
+  ): HTMLDivElement => {
+    const messageElement: HTMLDivElement = document.createElement('div')
+    if (typeof color !== 'undefined') {
+      messageElement.style.color = color
+    }
+    messageElement.innerText = message
+    return messageElement
+  }
 
   const displayLog = (log: TimestampedLog): void => {
     const { color, icon } = categories[log.category ?? 'error']
@@ -68,19 +92,13 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     rowElement.style.display = 'flex'
     rowElement.style.marginBottom = '1em'
 
-    const timeElement: HTMLDivElement = document.createElement('div')
-    timeElement.style.color = '#888'
-    timeElement.style.flexShrink = '0'
-    timeElement.style.marginRight = '1em'
-    timeElement.style.textAlign = 'center'
-    timeElement.style.whiteSpace = 'nowrap'
-    timeElement.innerHTML = `${displayTime(log.time)}<br>${icon}`
+    const timeElement: HTMLDivElement = createTimeElement(log.time, icon)
 
-    const messageElement: HTMLDivElement = document.createElement('div')
-    if (color !== undefined) {
-      messageElement.style.color = color
-    }
-    messageElement.innerText = log.message
+    const messageElement: HTMLDivElement = createMessageElement(
+      log.message,
+      color,
+    )
+
     rowElement.appendChild(timeElement)
     rowElement.appendChild(messageElement)
     logsElement.insertBefore(rowElement, logsElement.firstChild)

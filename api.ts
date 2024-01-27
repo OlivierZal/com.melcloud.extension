@@ -1,7 +1,7 @@
-import type { HomeyAPIV3Local } from 'homey-api'
-import type Homey from 'homey/lib/Homey'
-import type MELCloudExtensionApp from './app'
 import type { TemperatureListenerData, TemperatureSensor } from './types'
+import type Homey from 'homey/lib/Homey'
+import type { HomeyAPIV3Local } from 'homey-api'
+import type MELCloudExtensionApp from './app'
 
 export = {
   async autoAdjustCooling({
@@ -34,8 +34,8 @@ export = {
             .filter(({ id }) => id.startsWith('measure_temperature'))
             .map(
               ({ id, title }): TemperatureSensor => ({
-                capabilityPath: `${device.id}:${id}`,
                 capabilityName: `${device.name} - ${title}`,
+                capabilityPath: `${device.id}:${id}`,
               }),
             ),
       )
