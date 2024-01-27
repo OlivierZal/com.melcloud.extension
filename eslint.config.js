@@ -1,9 +1,9 @@
+const globals = require('globals')
+const importPlugin = require('eslint-plugin-import')
 const js = require('@eslint/js')
 const prettier = require('eslint-config-prettier')
 const tsParser = require('@typescript-eslint/parser')
 const tsPlugin = require('@typescript-eslint/eslint-plugin')
-const importPlugin = require('eslint-plugin-import')
-const globals = require('globals')
 
 module.exports = [
   { ignores: ['.homeybuild/'] },
