@@ -10,6 +10,8 @@ module.exports = [
   {
     languageOptions: {
       ecmaVersion: 'latest',
+      parser: tsParser,
+      parserOptions: { project: './tsconfig.json' },
       sourceType: 'module',
     },
     linterOptions: { reportUnusedDisableDirectives: true },
@@ -30,10 +32,6 @@ module.exports = [
   },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: { project: './tsconfig.json' },
-    },
     plugins: { '@typescript-eslint': tsPlugin },
     rules: {
       // eslint-disable-next-line no-magic-numbers
