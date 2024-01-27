@@ -26,7 +26,6 @@ module.exports = [
       ...tsPlugin.configs['eslint-recommended'].overrides[0].rules,
       ...tsPlugin.configs.all.rules,
       ...importPlugin.configs.typescript.rules,
-
       '@typescript-eslint/no-magic-numbers': ['error', { ignore: [0] }],
       '@typescript-eslint/no-unused-vars': [
         'error',
