@@ -8,14 +8,6 @@ const globals = require('globals')
 module.exports = [
   { ignores: ['.homeybuild/'] },
   {
-    languageOptions: {
-      ecmaVersion: 'latest',
-      parser: tsParser,
-      parserOptions: { project: './tsconfig.json' },
-      sourceType: 'module',
-    },
-    linterOptions: { reportUnusedDisableDirectives: true },
-    plugins: { import: importPlugin },
     rules: {
       ...js.configs.all.rules,
       ...importPlugin.configs.recommended.rules,
@@ -24,12 +16,8 @@ module.exports = [
       'no-underscore-dangle': ['error', { allow: ['__'] }],
       'one-var': 'off',
     },
-    settings: { 'import/resolver': { typescript: { alwaysTryTypes: true } } },
   },
-  {
-    files: ['**/*.js'],
-    languageOptions: { globals: globals.node },
-  },
+  { files: ['**/*.js'], languageOptions: { globals: globals.node } },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
     plugins: { '@typescript-eslint': tsPlugin },
@@ -37,6 +25,7 @@ module.exports = [
       // eslint-disable-next-line no-magic-numbers
       ...tsPlugin.configs['eslint-recommended'].overrides[0].rules,
       ...tsPlugin.configs.all.rules,
+      ...importPlugin.configs.typescript.rules,
       // eslint-disable-next-line no-magic-numbers
       '@typescript-eslint/no-magic-numbers': ['error', { ignore: [0] }],
       '@typescript-eslint/no-unused-vars': [
@@ -49,5 +38,22 @@ module.exports = [
     },
   },
   importPlugin.configs.typescript,
+  {
+    languageOptions: {
+      ecmaVersion: 'latest',
+      parser: tsParser,
+      parserOptions: { project: './tsconfig.json' },
+      sourceType: 'module',
+    },
+    linterOptions: { reportUnusedDisableDirectives: true },
+    plugins: { import: importPlugin },
+    settings: {
+      ...importPlugin.configs.typescript.settings,
+      'import/resolver': {
+        ...importPlugin.configs.typescript.settings['import/resolver'],
+        typescript: { alwaysTryTypes: true },
+      },
+    },
+  },
   prettier,
 ]
