@@ -19,7 +19,7 @@ module.exports = [
   },
   { files: ['**/*.js'], languageOptions: { globals: globals.node } },
   {
-    files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
+    files: ['**/*.ts'],
     plugins: { '@typescript-eslint': tsPlugin },
     rules: {
       // eslint-disable-next-line no-magic-numbers
