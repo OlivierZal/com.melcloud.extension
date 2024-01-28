@@ -20,8 +20,20 @@ const CATEGORIES: Record<string, { color?: string; icon: string }> = {
   'target_temperature.saved': { icon: '☁️' },
   /* eslint-enable @typescript-eslint/naming-convention */
 }
-
 const SIX_DAYS = 6
+
+const getLanguage = async (homey: Homey): Promise<string> =>
+  new Promise<string>((resolve, reject) => {
+    // @ts-expect-error: `homey` is partially typed
+    homey.api('GET', '/language', (error: Error | null, lang: string): void => {
+      if (error) {
+        reject(error)
+        return
+      }
+      document.documentElement.lang = lang
+      resolve(lang)
+    })
+  })
 
 const applyElement: HTMLButtonElement = document.getElementById(
   'apply',
@@ -38,6 +50,16 @@ const enabledElement: HTMLSelectElement = document.getElementById(
 const logsElement: HTMLTableSectionElement = document.getElementById(
   'logs',
 ) as HTMLTableSectionElement
+
+capabilityPathElement.addEventListener('change', (): void => {
+  if (capabilityPathElement.value) {
+    if (enabledElement.value === 'false') {
+      enabledElement.value = 'true'
+    }
+  } else if (enabledElement.value === 'true') {
+    enabledElement.value = 'false'
+  }
+})
 
 const disableButtons = (value = true): void => {
   ;[applyElement, refreshElement].forEach((element: HTMLButtonElement) => {
@@ -87,147 +109,133 @@ const createMessageElement = (
   return messageElement
 }
 
-capabilityPathElement.addEventListener('change', (): void => {
-  if (capabilityPathElement.value) {
-    if (enabledElement.value === 'false') {
-      enabledElement.value = 'true'
-    }
-  } else if (enabledElement.value === 'true') {
-    enabledElement.value = 'false'
-  }
-})
+const displayLog = (log: TimestampedLog, language: string): void => {
+  const { color, icon } = CATEGORIES[log.category ?? 'error']
+  const timeElement: HTMLDivElement = createTimeElement(
+    log.time,
+    icon,
+    language,
+  )
+  const messageElement: HTMLDivElement = createMessageElement(
+    log.message,
+    color,
+  )
+  const rowElement: HTMLDivElement = document.createElement('div')
+  rowElement.style.display = 'flex'
+  rowElement.style.marginBottom = '1em'
+  rowElement.appendChild(timeElement)
+  rowElement.appendChild(messageElement)
+  logsElement.insertBefore(rowElement, logsElement.firstChild)
+}
 
-// eslint-disable-next-line func-style, max-lines-per-function
-async function onHomeyReady(homey: Homey): Promise<void> {
-  await homey.ready()
-
-  const language: string = await new Promise<string>((resolve, reject) => {
+const handleTemperatureSensorsError = async (
+  homey: Homey,
+  errorMessage: string,
+): Promise<void> => {
+  if (errorMessage === 'no_device_ata') {
     // @ts-expect-error: `homey` is partially typed
-    homey.api('GET', '/language', (error: Error | null, lang: string): void => {
-      if (error) {
-        reject(error)
-        return
-      }
-      document.documentElement.lang = lang
-      resolve(lang)
-    })
-  })
-
-  const displayLog = (log: TimestampedLog): void => {
-    const { color, icon } = CATEGORIES[log.category ?? 'error']
-    const timeElement: HTMLDivElement = createTimeElement(
-      log.time,
-      icon,
-      language,
-    )
-    const messageElement: HTMLDivElement = createMessageElement(
-      log.message,
-      color,
-    )
-    const rowElement: HTMLDivElement = document.createElement('div')
-    rowElement.style.display = 'flex'
-    rowElement.style.marginBottom = '1em'
-    rowElement.appendChild(timeElement)
-    rowElement.appendChild(messageElement)
-    logsElement.insertBefore(rowElement, logsElement.firstChild)
-  }
-
-  const getHomeySettings = async (): Promise<void> => {
-    const homeySettings: HomeySettingsUI = await new Promise<HomeySettingsUI>(
-      (resolve, reject) => {
-        // @ts-expect-error: `homey` is partially typed
-        homey.get(
-          async (
-            error: Error | null,
-            settings: HomeySettingsUI,
-          ): Promise<void> => {
-            if (error) {
-              // @ts-expect-error: `homey` is partially typed
-              await homey.alert(error.message)
-              reject(error)
-              return
-            }
-            resolve(settings)
-          },
-        )
+    await homey.confirm(
+      homey.__('settings.no_device_ata'),
+      null,
+      async (error: Error | null, ok: boolean): Promise<void> => {
+        if (error) {
+          // @ts-expect-error: `homey` is partially typed
+          await homey.alert(error.message)
+        }
+        if (ok) {
+          // @ts-expect-error: `homey` is partially typed
+          await homey.openURL('https://homey.app/a/com.mecloud')
+        }
       },
     )
-    if (!logsElement.childElementCount) {
-      ;(homeySettings.lastLogs ?? [])
-        .filter(({ time }) => {
-          const date: Date = new Date(time)
-          const oldestDate: Date = new Date()
-          oldestDate.setDate(oldestDate.getDate() - SIX_DAYS)
-          oldestDate.setHours(0, 0, 0, 0)
-          return date >= oldestDate
-        })
-        .reverse()
-        .forEach(displayLog)
-    }
-    capabilityPathElement.value = homeySettings.capabilityPath ?? ''
-    enabledElement.value = String(homeySettings.enabled ?? false)
-    enableButtons()
+    return
   }
+  // @ts-expect-error: `homey` is partially typed
+  await homey.alert(errorMessage)
+}
 
-  const handleTemperatureSensorsError = async (
-    errorMessage: string,
-  ): Promise<void> => {
-    if (errorMessage === 'no_device_ata') {
+const getHomeySettings = async (
+  homey: Homey,
+  language: string,
+): Promise<void> => {
+  const homeySettings: HomeySettingsUI = await new Promise<HomeySettingsUI>(
+    (resolve, reject) => {
       // @ts-expect-error: `homey` is partially typed
-      await homey.confirm(
-        homey.__('settings.no_device_ata'),
-        null,
-        async (error: Error | null, ok: boolean): Promise<void> => {
+      homey.get(
+        async (
+          error: Error | null,
+          settings: HomeySettingsUI,
+        ): Promise<void> => {
           if (error) {
             // @ts-expect-error: `homey` is partially typed
             await homey.alert(error.message)
+            reject(error)
+            return
           }
-          if (ok) {
-            // @ts-expect-error: `homey` is partially typed
-            await homey.openURL('https://homey.app/a/com.mecloud')
-          }
+          resolve(settings)
         },
       )
-      return
-    }
-    // @ts-expect-error: `homey` is partially typed
-    await homey.alert(errorMessage)
+    },
+  )
+  if (!logsElement.childElementCount) {
+    ;(homeySettings.lastLogs ?? [])
+      .filter(({ time }) => {
+        const date: Date = new Date(time)
+        const oldestDate: Date = new Date()
+        oldestDate.setDate(oldestDate.getDate() - SIX_DAYS)
+        oldestDate.setHours(0, 0, 0, 0)
+        return date >= oldestDate
+      })
+      .reverse()
+      .forEach((log: TimestampedLog) => {
+        displayLog(log, language)
+      })
   }
+  capabilityPathElement.value = homeySettings.capabilityPath ?? ''
+  enabledElement.value = String(homeySettings.enabled ?? false)
+  enableButtons()
+}
 
-  const getTemperatureSensors = (): void => {
-    // @ts-expect-error: `homey` is partially typed
-    homey.api(
-      'GET',
-      '/devices/sensors/temperature',
-      async (
-        error: Error | null,
-        devices: TemperatureSensor[],
-      ): Promise<void> => {
-        if (error) {
-          await handleTemperatureSensorsError(error.message)
-          return
-        }
-        if (!devices.length) {
-          // @ts-expect-error: `homey` is partially typed
-          await homey.alert(homey.__('settings.no_device_measure'))
-          return
-        }
-        devices.forEach((device: TemperatureSensor) => {
-          const { capabilityPath, capabilityName } = device
-          const optionElement: HTMLOptionElement =
-            document.createElement('option')
-          optionElement.value = capabilityPath
-          optionElement.innerText = capabilityName
-          capabilityPathElement.appendChild(optionElement)
-        })
-        await getHomeySettings()
-      },
-    )
-  }
+const getTemperatureSensors = (homey: Homey, language: string): void => {
+  // @ts-expect-error: `homey` is partially typed
+  homey.api(
+    'GET',
+    '/devices/sensors/temperature',
+    async (
+      error: Error | null,
+      devices: TemperatureSensor[],
+    ): Promise<void> => {
+      if (error) {
+        await handleTemperatureSensorsError(homey, error.message)
+        return
+      }
+      if (!devices.length) {
+        // @ts-expect-error: `homey` is partially typed
+        await homey.alert(homey.__('settings.no_device_measure'))
+        return
+      }
+      devices.forEach((device: TemperatureSensor) => {
+        const { capabilityPath, capabilityName } = device
+        const optionElement: HTMLOptionElement =
+          document.createElement('option')
+        optionElement.value = capabilityPath
+        optionElement.innerText = capabilityName
+        capabilityPathElement.appendChild(optionElement)
+      })
+      await getHomeySettings(homey, language)
+    },
+  )
+}
+
+// eslint-disable-next-line func-style
+async function onHomeyReady(homey: Homey): Promise<void> {
+  await homey.ready()
+
+  const language: string = await getLanguage(homey)
 
   refreshElement.addEventListener('click', (): void => {
     disableButtons()
-    getHomeySettings()
+    getHomeySettings(homey, language)
       .catch(async (error: Error): Promise<void> => {
         // @ts-expect-error: `homey` is partially typed
         await homey.alert(error.message)
@@ -255,7 +263,9 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     )
   })
 
-  homey.on('log', displayLog)
+  homey.on('log', (log: TimestampedLog) => {
+    displayLog(log, language)
+  })
 
-  getTemperatureSensors()
+  getTemperatureSensors(homey, language)
 }
