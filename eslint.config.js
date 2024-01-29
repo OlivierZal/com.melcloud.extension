@@ -27,17 +27,6 @@ module.exports = [
       'no-underscore-dangle': ['error', { allow: ['__'] }],
       'one-var': 'off',
     },
-    settings: {
-      ...importPlugin.configs.typescript.settings,
-      'import/ignore': [
-        'node_modules',
-        '\\.(coffee|scss|css|less|hbs|svg|json)$',
-      ],
-      'import/resolver': {
-        ...importPlugin.configs.typescript.settings['import/resolver'],
-        typescript: { alwaysTryTypes: true },
-      },
-    },
   },
   { files: ['**/*.js'], languageOptions: { globals: globals.node } },
   {
@@ -58,6 +47,17 @@ module.exports = [
       '@typescript-eslint/prefer-readonly-parameter-types': 'off',
       'import/extensions': 'off',
       'import/no-duplicates': ['error', { 'prefer-inline': true }],
+    },
+    settings: {
+      ...importPlugin.configs.typescript.settings,
+      'import/ignore': [
+        'node_modules',
+        '\\.(coffee|scss|css|less|hbs|svg|json)$',
+      ],
+      'import/resolver': {
+        ...importPlugin.configs.typescript.settings['import/resolver'],
+        typescript: { alwaysTryTypes: true },
+      },
     },
   },
   prettier,
