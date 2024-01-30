@@ -22,6 +22,8 @@ const CATEGORIES: Record<string, { color?: string; icon: string }> = {
 }
 const SIX_DAYS = 6
 
+let language = ''
+
 const getLanguage = async (homey: Homey): Promise<string> =>
   new Promise<string>((resolve, reject) => {
     // @ts-expect-error: `homey` is partially typed
@@ -75,25 +77,21 @@ const enableButtons = (value = true): void => {
   disableButtons(!value)
 }
 
-const displayTime = (time: number, language: string): string =>
+const displayTime = (time: number): string =>
   new Date(time).toLocaleString(language, {
     hour: 'numeric',
     minute: 'numeric',
     weekday: 'short',
   })
 
-const createTimeElement = (
-  time: number,
-  icon: string,
-  language: string,
-): HTMLDivElement => {
+const createTimeElement = (time: number, icon: string): HTMLDivElement => {
   const timeElement: HTMLDivElement = document.createElement('div')
   timeElement.style.color = '#888'
   timeElement.style.flexShrink = '0'
   timeElement.style.marginRight = '1em'
   timeElement.style.textAlign = 'center'
   timeElement.style.whiteSpace = 'nowrap'
-  timeElement.innerHTML = `${displayTime(time, language)}<br>${icon}`
+  timeElement.innerHTML = `${displayTime(time)}<br>${icon}`
   return timeElement
 }
 
@@ -109,13 +107,9 @@ const createMessageElement = (
   return messageElement
 }
 
-const displayLog = (log: TimestampedLog, language: string): void => {
+const displayLog = (log: TimestampedLog): void => {
   const { color, icon } = CATEGORIES[log.category ?? 'error']
-  const timeElement: HTMLDivElement = createTimeElement(
-    log.time,
-    icon,
-    language,
-  )
+  const timeElement: HTMLDivElement = createTimeElement(log.time, icon)
   const messageElement: HTMLDivElement = createMessageElement(
     log.message,
     color,
@@ -154,10 +148,7 @@ const handleTemperatureSensorsError = async (
   await homey.alert(errorMessage)
 }
 
-const getHomeySettings = async (
-  homey: Homey,
-  language: string,
-): Promise<void> => {
+const getHomeySettings = async (homey: Homey): Promise<void> => {
   const homeySettings: HomeySettingsUI = await new Promise<HomeySettingsUI>(
     (resolve, reject) => {
       // @ts-expect-error: `homey` is partially typed
@@ -187,16 +178,14 @@ const getHomeySettings = async (
         return date >= oldestDate
       })
       .reverse()
-      .forEach((log: TimestampedLog) => {
-        displayLog(log, language)
-      })
+      .forEach(displayLog)
   }
   capabilityPathElement.value = homeySettings.capabilityPath ?? ''
   enabledElement.value = String(homeySettings.enabled ?? false)
   enableButtons()
 }
 
-const getTemperatureSensors = (homey: Homey, language: string): void => {
+const getTemperatureSensors = (homey: Homey): void => {
   // @ts-expect-error: `homey` is partially typed
   homey.api(
     'GET',
@@ -222,7 +211,7 @@ const getTemperatureSensors = (homey: Homey, language: string): void => {
         optionElement.innerText = capabilityName
         capabilityPathElement.appendChild(optionElement)
       })
-      await getHomeySettings(homey, language)
+      await getHomeySettings(homey)
     },
   )
 }
@@ -231,11 +220,11 @@ const getTemperatureSensors = (homey: Homey, language: string): void => {
 async function onHomeyReady(homey: Homey): Promise<void> {
   await homey.ready()
 
-  const language: string = await getLanguage(homey)
+  language = await getLanguage(homey)
 
   refreshElement.addEventListener('click', (): void => {
     disableButtons()
-    getHomeySettings(homey, language)
+    getHomeySettings(homey)
       .catch(async (error: Error): Promise<void> => {
         // @ts-expect-error: `homey` is partially typed
         await homey.alert(error.message)
@@ -263,9 +252,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     )
   })
 
-  homey.on('log', (log: TimestampedLog) => {
-    displayLog(log, language)
-  })
+  homey.on('log', displayLog)
 
-  getTemperatureSensors(homey, language)
+  getTemperatureSensors(homey)
 }
