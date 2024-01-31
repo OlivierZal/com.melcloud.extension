@@ -24,16 +24,16 @@ const SIX_DAYS = 6
 
 let language = ''
 
-const getLanguage = async (homey: Homey): Promise<string> =>
-  new Promise<string>((resolve, reject) => {
+const getLanguage = async (homey: Homey): Promise<void> =>
+  new Promise<void>((resolve, reject) => {
     // @ts-expect-error: `homey` is partially typed
     homey.api('GET', '/language', (error: Error | null, lang: string): void => {
       if (error) {
         reject(error)
         return
       }
-      document.documentElement.lang = lang
-      resolve(lang)
+      language = lang
+      resolve()
     })
   })
 
@@ -219,8 +219,9 @@ const getTemperatureSensors = (homey: Homey): void => {
 // eslint-disable-next-line func-style
 async function onHomeyReady(homey: Homey): Promise<void> {
   await homey.ready()
+  await getLanguage(homey)
 
-  language = await getLanguage(homey)
+  document.documentElement.lang = language
 
   refreshElement.addEventListener('click', (): void => {
     disableButtons()
