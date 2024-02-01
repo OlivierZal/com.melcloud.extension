@@ -1,6 +1,5 @@
 /* eslint-disable
-  @typescript-eslint/no-unsafe-call,
-  @typescript-eslint/no-unsafe-member-access
+  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 */
 import 'source-map-support/register'
 import type {

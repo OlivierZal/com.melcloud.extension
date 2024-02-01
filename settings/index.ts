@@ -17,7 +17,7 @@ const CATEGORIES: Record<string, { color?: string; icon: string }> = {
   retry: { icon: '🔄' },
   'target_temperature.calculated': { color: '#008000', icon: '🔢' },
   'target_temperature.reverted': { icon: '↩️' },
-  'target_temperature.saved': { icon: '☁️' },
+  'target_temperature.saved': { icon: '☁️' }
   /* eslint-enable @typescript-eslint/naming-convention */
 }
 const SIX_DAYS = 6
