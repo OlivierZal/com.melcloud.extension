@@ -1,5 +1,6 @@
 const globals = require('globals')
 const importPlugin = require('eslint-plugin-import')
+const jestPlugin = require('eslint-plugin-jest')
 const js = require('@eslint/js')
 const prettier = require('eslint-config-prettier')
 const tsParser = require('@typescript-eslint/parser')
@@ -56,6 +57,12 @@ module.exports = [
         typescript: { alwaysTryTypes: true },
       },
     },
+  },
+  {
+    files: ['tests/**'],
+    languageOptions: { globals: globals.jest },
+    plugins: { jest: jestPlugin },
+    rules: jestPlugin.configs.all.rules,
   },
   prettier,
 ]
