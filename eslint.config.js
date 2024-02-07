@@ -1,9 +1,9 @@
 const globals = require('globals')
 const importPlugin = require('eslint-plugin-import')
-const jestPlugin = require('eslint-plugin-jest')
+const jest = require('eslint-plugin-jest')
 const js = require('@eslint/js')
+const parser = require('@typescript-eslint/parser')
 const prettier = require('eslint-config-prettier')
-const tsParser = require('@typescript-eslint/parser')
 const tsPlugin = require('@typescript-eslint/eslint-plugin')
 
 const MAGIC_NUMBERS = [0]
@@ -13,7 +13,7 @@ module.exports = [
   {
     languageOptions: {
       ecmaVersion: 'latest',
-      parser: tsParser,
+      parser,
       parserOptions: { project: './tsconfig.json' },
       sourceType: 'module',
     },
@@ -61,8 +61,8 @@ module.exports = [
   {
     files: ['tests/**'],
     languageOptions: { globals: globals.jest },
-    plugins: { jest: jestPlugin },
-    rules: jestPlugin.configs.all.rules,
+    plugins: { jest },
+    rules: jest.configs.all.rules,
   },
   prettier,
 ]
