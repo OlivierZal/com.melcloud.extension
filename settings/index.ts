@@ -21,6 +21,7 @@ const CATEGORIES: Record<string, { color?: string; icon: string }> = {
   /* eslint-enable @typescript-eslint/naming-convention */
 }
 const SIX_DAYS = 6
+const ZERO = 0
 
 let language = ''
 
@@ -174,7 +175,7 @@ const getHomeySettings = async (homey: Homey): Promise<void> => {
         const date: Date = new Date(time)
         const oldestDate: Date = new Date()
         oldestDate.setDate(oldestDate.getDate() - SIX_DAYS)
-        oldestDate.setHours(0, 0, 0, 0)
+        oldestDate.setHours(ZERO, ZERO, ZERO, ZERO)
         return date >= oldestDate
       })
       .reverse()

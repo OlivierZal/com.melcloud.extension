@@ -17,6 +17,7 @@ import Event from './lib/Event'
 import EventError from './lib/EventError'
 import { HomeyAPIV3Local } from 'homey-api'
 
+const DEFAULT_ZERO = 0
 const MAX_TEMPERATURE = 38
 const MAX_TEMPERATURE_GAP = 8
 const SECOND_IN_MS = 1000
@@ -403,7 +404,7 @@ class MELCloudExtensionApp extends App {
   }
 
   private getThreshold(deviceId: string): number {
-    return this.getHomeySetting('thresholds')?.[deviceId] ?? 0
+    return this.getHomeySetting('thresholds')?.[deviceId] ?? DEFAULT_ZERO
   }
 
   private setThreshold(
