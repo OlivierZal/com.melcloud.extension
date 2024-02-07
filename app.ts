@@ -17,10 +17,10 @@ import Event from './lib/Event'
 import EventError from './lib/EventError'
 import { HomeyAPIV3Local } from 'homey-api'
 
-const DEFAULT_ZERO = 0
+const DEFAULT_0 = 0
 const MAX_TEMPERATURE = 38
 const MAX_TEMPERATURE_GAP = 8
-const SECOND_IN_MS = 1000
+const SECONDS_1_IN_MILLISECONDS = 1000
 
 class MELCloudExtensionApp extends App {
   public melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
@@ -103,7 +103,7 @@ class MELCloudExtensionApp extends App {
       } catch (error: unknown) {
         this.error(this.getErrorMessage(error))
       }
-    }, SECOND_IN_MS)
+    }, SECONDS_1_IN_MILLISECONDS)
   }
 
   private async loadDevices(): Promise<void> {
@@ -404,7 +404,7 @@ class MELCloudExtensionApp extends App {
   }
 
   private getThreshold(deviceId: string): number {
-    return this.getHomeySetting('thresholds')?.[deviceId] ?? DEFAULT_ZERO
+    return this.getHomeySetting('thresholds')?.[deviceId] ?? DEFAULT_0
   }
 
   private setThreshold(

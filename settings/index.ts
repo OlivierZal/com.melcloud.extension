@@ -20,8 +20,11 @@ const CATEGORIES: Record<string, { color?: string; icon: string }> = {
   'target_temperature.saved': { icon: '☁️' },
   /* eslint-enable @typescript-eslint/naming-convention */
 }
-const SIX_DAYS = 6
-const ZERO = 0
+const DAYS_6 = 6
+const HOURS_0 = 0
+const MINUTES_0 = 0
+const SECONDS_0 = 0
+const MILLISECONDS_0 = 0
 
 let language = ''
 
@@ -174,8 +177,8 @@ const getHomeySettings = async (homey: Homey): Promise<void> => {
       .filter(({ time }) => {
         const date: Date = new Date(time)
         const oldestDate: Date = new Date()
-        oldestDate.setDate(oldestDate.getDate() - SIX_DAYS)
-        oldestDate.setHours(ZERO, ZERO, ZERO, ZERO)
+        oldestDate.setDate(oldestDate.getDate() - DAYS_6)
+        oldestDate.setHours(HOURS_0, MINUTES_0, SECONDS_0, MILLISECONDS_0)
         return date >= oldestDate
       })
       .reverse()
