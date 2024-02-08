@@ -23,10 +23,6 @@ const MAX_TEMPERATURE_GAP = 8
 const SECONDS_1_IN_MILLISECONDS = 1000
 
 class MELCloudExtensionApp extends App {
-  public melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
-
-  public temperatureSensors: HomeyAPIV3Local.ManagerDevices.Device[] = []
-
   readonly #names: Record<string, string> = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
       (name: string): [string, string] => [
@@ -36,17 +32,29 @@ class MELCloudExtensionApp extends App {
     ),
   )
 
+  readonly #outdoorTemperature: {
+    capabilityId: string
+    value: number
+    listener?: TemperatureListener
+  } = { capabilityId: '', value: 0 }
+
+  #melCloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
+
+  #temperatureSensors: HomeyAPIV3Local.ManagerDevices.Device[] = []
+
   #melCloudListeners: Record<string, MELCloudListener> = {}
 
   #api!: HomeyAPIV3Local
 
   #initTimeout!: NodeJS.Timeout
 
-  readonly #outdoorTemperature: {
-    capabilityId: string
-    value: number
-    listener?: TemperatureListener
-  } = { capabilityId: '', value: 0 }
+  public get melCloudDevices(): HomeyAPIV3Local.ManagerDevices.Device[] {
+    return this.#melCloudDevices
+  }
+
+  public get temperatureSensors(): HomeyAPIV3Local.ManagerDevices.Device[] {
+    return this.#temperatureSensors
+  }
 
   public async onInit(): Promise<void> {
     this.#api = (await HomeyAPIV3Local.createAppAPI({
@@ -107,8 +115,8 @@ class MELCloudExtensionApp extends App {
   }
 
   private async loadDevices(): Promise<void> {
-    this.melCloudDevices = []
-    this.temperatureSensors = []
+    this.#melCloudDevices = []
+    this.#temperatureSensors = []
     const devices: HomeyAPIV3Local.ManagerDevices.Device[] =
       // @ts-expect-error: `homey-api` is partially typed
       (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
@@ -116,14 +124,14 @@ class MELCloudExtensionApp extends App {
       (device: HomeyAPIV3Local.ManagerDevices.Device) => {
         // @ts-expect-error: `homey-api` is partially typed
         if (device.driverId === 'homey:app:com.mecloud:melcloud') {
-          this.melCloudDevices.push(device)
+          this.#melCloudDevices.push(device)
         } else if (
           // @ts-expect-error: `homey-api` is partially typed
           (device.capabilities as string[]).some((capability: string) =>
             capability.startsWith('measure_temperature'),
           )
         )
-          this.temperatureSensors.push(device)
+          this.#temperatureSensors.push(device)
       },
     )
   }
@@ -180,7 +188,7 @@ class MELCloudExtensionApp extends App {
 
   private initMELCloudListeners(): void {
     this.#melCloudListeners = Object.fromEntries(
-      this.melCloudDevices.map(
+      this.#melCloudDevices.map(
         (
           device: HomeyAPIV3Local.ManagerDevices.Device,
         ): [string, { device: HomeyAPIV3Local.ManagerDevices.Device }] => [
