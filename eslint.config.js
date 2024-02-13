@@ -1,6 +1,5 @@
 const globals = require('globals')
 const importPlugin = require('eslint-plugin-import')
-const jest = require('eslint-plugin-jest')
 const js = require('@eslint/js')
 const parser = require('@typescript-eslint/parser')
 const prettier = require('eslint-config-prettier')
@@ -40,7 +39,6 @@ module.exports = [
       ...jsOverrides.rules,
       ...tsPlugin.configs.all.rules,
       ...importPlugin.configs.typescript.rules,
-      '@typescript-eslint/member-ordering': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
         { varsIgnorePattern: 'onHomeyReady' },
@@ -57,12 +55,6 @@ module.exports = [
         typescript: { alwaysTryTypes: true },
       },
     },
-  },
-  {
-    files: ['tests/**'],
-    languageOptions: { globals: globals.jest },
-    plugins: { jest },
-    rules: jest.configs.all.rules,
   },
   { rules: { '@stylistic/lines-between-class-members': 'error' } },
   prettier,
