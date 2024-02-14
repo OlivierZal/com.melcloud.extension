@@ -18,10 +18,10 @@ export default class Event {
     this.#homey = homey
     this.name = eventName
     this.message = homey.__(`log.${eventName}`, eventParams)
-    this.pushEventToUI()
+    this.#pushEventToUI()
   }
 
-  private pushEventToUI(): void {
+  #pushEventToUI(): void {
     const newLog: TimestampedLog = {
       category: this.name.startsWith('error.') ? 'error' : this.name,
       message: this.message,
