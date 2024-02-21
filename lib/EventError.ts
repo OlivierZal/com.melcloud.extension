@@ -2,9 +2,9 @@ import type { EventParams } from '../types'
 import type Homey from 'homey/lib/Homey'
 
 export default class EventError extends Error {
-  public readonly name: string
-
   public readonly params?: EventParams
+
+  public readonly name: string
 
   public constructor(
     homey: Homey,

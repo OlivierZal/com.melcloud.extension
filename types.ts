@@ -22,24 +22,24 @@ export type Thresholds = Partial<Record<string, number>>
 export type ValueOf<T> = T[keyof T]
 
 interface BaseHomeySettings<T1, T2, T3, T4> {
-  readonly enabled: T1
-  readonly capabilityPath: T2
-  readonly thresholds: T3
-  readonly lastLogs: T4
+  readonly capabilityPath: T1
+  readonly enabled: T2
+  readonly lastLogs: T3
+  readonly thresholds: T4
 }
 
 export type HomeySettings = BaseHomeySettings<
-  boolean | null,
   string | null,
-  Thresholds | null,
-  TimestampedLog[] | null
+  boolean | null,
+  TimestampedLog[] | null,
+  Thresholds | null
 >
 
 export type HomeySettingsUI = BaseHomeySettings<
-  boolean | undefined,
   string | undefined,
-  Thresholds | undefined,
-  readonly TimestampedLog[] | undefined
+  boolean | undefined,
+  readonly TimestampedLog[] | undefined,
+  Thresholds | undefined
 >
 
 export interface TemperatureSensor {

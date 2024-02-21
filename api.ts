@@ -18,7 +18,7 @@ export = {
   },
   getTemperatureSensors({ homey }: { homey: Homey }): TemperatureSensor[] {
     const app: MELCloudExtensionApp = homey.app as MELCloudExtensionApp
-    if (!app.melCloudDevices.length) {
+    if (!app.melcloudDevices.length) {
       throw new Error('no_device_ata')
     }
     return app.temperatureSensors

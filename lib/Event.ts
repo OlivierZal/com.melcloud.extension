@@ -4,9 +4,9 @@ import type Homey from 'homey/lib/Homey'
 const MAX_LOGS = 100
 
 export default class Event {
-  public readonly name: string
-
   public readonly message: string
+
+  public readonly name: string
 
   readonly #homey: Homey
 
