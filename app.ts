@@ -92,8 +92,8 @@ class MELCloudExtensionApp extends App {
       this.#init()
     })
     this.homey.on('unload', (): void => {
-      this.#cleanListeners().catch((error: Error): void => {
-        this.error(error.message)
+      this.#cleanListeners().catch(({ message }): void => {
+        this.error(message)
       })
     })
   }

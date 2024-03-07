@@ -230,9 +230,9 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   refreshElement.addEventListener('click', (): void => {
     disableButtons()
     getHomeySettings(homey)
-      .catch(async (error: Error): Promise<void> => {
+      .catch(async ({ message }): Promise<void> => {
         // @ts-expect-error: `homey` is partially typed
-        await homey.alert(error.message)
+        await homey.alert(message)
       })
       .finally(enableButtons)
   })
