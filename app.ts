@@ -13,6 +13,7 @@ import type {
   ValueOf,
 } from './types'
 import { App } from 'homey'
+import { DRIVER_ID } from './constants'
 import Event from './lib/Event'
 import EventError from './lib/EventError'
 import { HomeyAPIV3Local } from 'homey-api'
@@ -413,15 +414,17 @@ class MELCloudExtensionApp extends App {
     Object.values(devices).forEach(
       (device: HomeyAPIV3Local.ManagerDevices.Device) => {
         // @ts-expect-error: `homey-api` is partially typed
-        if (device.driverId === 'homey:app:com.mecloud:melcloud') {
+        if (device.driverId === DRIVER_ID) {
           this.#melcloudDevices.push(device)
-        } else if (
+        }
+        if (
           // @ts-expect-error: `homey-api` is partially typed
           (device.capabilities as string[]).some((capability: string) =>
             capability.startsWith('measure_temperature'),
           )
-        )
+        ) {
           this.#temperatureSensors.push(device)
+        }
       },
     )
   }

@@ -1,4 +1,8 @@
-import type { TemperatureListenerData, TemperatureSensor } from './types'
+import type {
+  Capability,
+  TemperatureListenerData,
+  TemperatureSensor,
+} from './types'
 import type Homey from 'homey/lib/Homey'
 import type { HomeyAPIV3Local } from 'homey-api'
 import type MELCloudExtensionApp from './app'
@@ -23,21 +27,30 @@ export = {
     }
     return app.temperatureSensors
       .flatMap(
-        (device: HomeyAPIV3Local.ManagerDevices.Device): TemperatureSensor[] =>
-          Object.values(
+        (
+          device: HomeyAPIV3Local.ManagerDevices.Device,
+        ): TemperatureSensor[] => {
+          const capabilities: Capability[] = Object.values(
             // @ts-expect-error: `homey-api` is partially typed
-            (device.capabilitiesObj as Record<
-              string,
-              { id: string; title: string }
-            > | null) ?? {},
+            (device.capabilitiesObj as Record<string, Capability> | null) ?? {},
+          ).filter(({ id }) => id.startsWith('measure_temperature'))
+          const outdoorCapability: Capability | undefined = capabilities.find(
+            ({ id }) => id.includes('outdoor'),
           )
-            .filter(({ id }) => id.startsWith('measure_temperature'))
-            .map(
-              ({ id, title }): TemperatureSensor => ({
-                capabilityName: `${device.name} - ${title}`,
-                capabilityPath: `${device.id}:${id}`,
-              }),
-            ),
+          return outdoorCapability
+            ? [
+                {
+                  capabilityName: `${device.name} - ${outdoorCapability.title}`,
+                  capabilityPath: `${device.id}:${outdoorCapability.id}`,
+                },
+              ]
+            : capabilities.map(
+                ({ id, title }): TemperatureSensor => ({
+                  capabilityName: `${device.name} - ${title}`,
+                  capabilityPath: `${device.id}:${id}`,
+                }),
+              )
+        },
       )
       .sort((device1: TemperatureSensor, device2: TemperatureSensor) =>
         device1.capabilityName.localeCompare(device2.capabilityName),
