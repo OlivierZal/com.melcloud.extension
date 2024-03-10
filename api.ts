@@ -35,7 +35,9 @@ export = {
             (device.capabilitiesObj as Record<string, Capability> | null) ?? {},
           ).filter(({ id }) => id.startsWith('measure_temperature'))
           const outdoorCapability: Capability | undefined = capabilities.find(
-            ({ id }) => id.includes('outdoor'),
+            ({ id }) =>
+              app.melcloudDevices.includes(device) &&
+              id === 'measure_temperature.outdoor',
           )
           return outdoorCapability
             ? [
