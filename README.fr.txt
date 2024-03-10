@@ -10,6 +10,5 @@ Conditions préalables :
 
 - Vous devez disposer d'un Homey Pro.
 - L'appli Homey MELCloud doit être installée.
-- Une appli Homey qui indique la température extérieure doit être installée.
 
 Cette appli n'est pas prise en charge, vérifiée ou approuvée par Mitsubishi Electric Corporation. Mitsubishi ne peut être tenu responsable de toute réclamation pour des dommages qui pourraient survenir lors de l'utilisation de cette appli pour contrôler les applications ou les appareils MELCloud.
