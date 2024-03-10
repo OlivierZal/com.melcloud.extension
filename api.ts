@@ -39,19 +39,24 @@ export = {
               app.melcloudDevices.includes(device) &&
               id === 'measure_temperature.outdoor',
           )
-          return outdoorCapability
-            ? [
-                {
-                  capabilityName: `${device.name} - ${outdoorCapability.title}`,
-                  capabilityPath: `${device.id}:${outdoorCapability.id}`,
-                },
-              ]
-            : capabilities.map(
-                ({ id, title }): TemperatureSensor => ({
-                  capabilityName: `${device.name} - ${title}`,
-                  capabilityPath: `${device.id}:${id}`,
-                }),
-              )
+          if (outdoorCapability) {
+            const capabilityPath = `${device.id}:${outdoorCapability.id}`
+            if (homey.settings.get('capabilityPath') === null) {
+              homey.settings.set('capabilityPath', capabilityPath)
+            }
+            return [
+              {
+                capabilityName: `${device.name} - ${outdoorCapability.title}`,
+                capabilityPath,
+              },
+            ]
+          }
+          return capabilities.map(
+            ({ id, title }): TemperatureSensor => ({
+              capabilityName: `${device.name} - ${title}`,
+              capabilityPath: `${device.id}:${id}`,
+            }),
+          )
         },
       )
       .sort((device1: TemperatureSensor, device2: TemperatureSensor) =>
