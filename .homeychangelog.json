@@ -43,5 +43,8 @@
   },
   "17.0.0": {
     "en": "Various improvements."
+  },
+  "18.0.0": {
+    "en": "Added air-to-air devices to outdoor temperature sensors."
   }
 }
