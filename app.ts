@@ -4,7 +4,6 @@
 import 'source-map-support/register'
 import type {
   CapabilityValue,
-  DeviceCapability,
   HomeySettings,
   MELCloudListener,
   TemperatureListener,
@@ -103,14 +102,13 @@ class MELCloudExtensionApp extends App {
     await this.#cleanListeners()
   }
 
-  async #cleanListener<L extends TemperatureListener>(
+  async #cleanListener<L extends MELCloudListener | TemperatureListener>(
     listener: L | undefined,
     capability: Extract<Exclude<keyof L, 'device'>, string>,
   ): Promise<void> {
     if (!listener) {
       return
     }
-    ;(listener[capability] as DeviceCapability).destroy()
     this.log(
       new Event(this.homey, 'listener.cleaned', {
         capability: this.#names[capability],
@@ -118,8 +116,10 @@ class MELCloudExtensionApp extends App {
       }),
     )
     if (capability === 'thermostatMode' && 'thermostatMode' in listener) {
+      listener.thermostatMode.destroy()
       delete listener.thermostatMode
     } else if (capability === 'temperature') {
+      listener.temperature.destroy()
       delete listener.temperature
       await this.#revertTemperature(
         listener.device,
