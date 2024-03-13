@@ -110,7 +110,6 @@ class MELCloudExtensionApp extends App {
       listener.thermostatMode.destroy()
     } else {
       listener.temperature.destroy()
-      listener.temperature = null
     }
     this.log(
       new Event(this.homey, 'listener.cleaned', {
@@ -127,10 +126,11 @@ class MELCloudExtensionApp extends App {
     if (!listener) {
       return
     }
-    this.#cleanDeviceCapability(listener, 'temperature')
     if (hardClean && 'thermostatMode' in listener) {
       this.#cleanDeviceCapability(listener, 'thermostatMode')
     }
+    this.#cleanDeviceCapability(listener, 'temperature')
+    listener.temperature = null
     if (listener.device.id !== this.#outdoorTemperature.listener?.device.id) {
       await this.#revertTemperature(
         listener.device,
