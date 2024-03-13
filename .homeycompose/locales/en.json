@@ -1,19 +1,19 @@
 {
   "log": {
     "error": {
-      "missing": "The outdoor temperature is missing.",
-      "not_found": "__name__ `__id__` cannot be found."
+      "missing": "The outdoor temperature is missing",
+      "not_found": "__name__ `__id__` cannot be found"
     },
     "listener": {
-      "cleaned": "Cleaning listener for __capability__ of __name__.",
-      "cleaned_all": "Cleaning all listeners.",
-      "created": "Creating a listener for __capability__ of __name__.",
-      "listened": "Listening to __capability__ of __name__: __value__."
+      "cleaned": "Cleaning listener for __capability__ of __name__",
+      "cleaned_all": "Cleaning all listeners",
+      "created": "Creating a listener for __capability__ of __name__",
+      "listened": "Listening to __capability__ of __name__: __value__"
     },
     "target_temperature": {
-      "calculated": "Calculating the temperature of __name__: __value__ (from the threshold __threshold__ and outdoor temperature __outdoorTemperature__).",
-      "reverted": "Reverting the temperature of __name__: __value__.",
-      "saved": "Saving the temperature of __name__: __value__."
+      "calculated": "Calculating the temperature of __name__: __value__ (from the threshold __threshold__ and outdoor temperature __outdoorTemperature__)",
+      "reverted": "Reverting the temperature of __name__: __value__",
+      "saved": "Saving the temperature of __name__: __value__"
     }
   },
   "names": {
@@ -35,9 +35,9 @@
       "log": "Log"
     },
     "no_device_ata": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
-    "no_device_measure": "You do not have a temperature measurement app in Homey.",
+    "no_device_measure": "You do not have a temperature measurement app in Homey",
     "refresh": "Refresh",
-    "success": "Update succeeded.",
+    "success": "Update succeeded",
     "title": "MELCloud extension settings"
   }
 }

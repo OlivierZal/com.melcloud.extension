@@ -106,31 +106,32 @@ class MELCloudExtensionApp extends App {
     listener: MELCloudListener | TemperatureListener | undefined,
     hardClean = false,
   ): Promise<void> {
-    if (!listener || listener.temperature === null) {
-      return
-    }
-    listener.temperature.destroy()
-    listener.temperature = null
-    this.log(
-      new Event(this.homey, 'listener.cleaned', {
-        capability: this.#names.temperature,
-        name: listener.device.name,
-      }),
-    )
-    if ('thermostatMode' in listener) {
-      if (hardClean) {
-        listener.thermostatMode.destroy()
+    if (listener) {
+      if (listener.temperature !== null) {
+        listener.temperature.destroy()
+        listener.temperature = null
         this.log(
           new Event(this.homey, 'listener.cleaned', {
-            capability: this.#names.thermostatMode,
+            capability: this.#names.temperature,
             name: listener.device.name,
           }),
         )
       }
-      await this.#revertTemperature(
-        listener,
-        this.#getThreshold(listener.device.id),
-      )
+      if ('thermostatMode' in listener) {
+        if (hardClean && listener.thermostatMode !== null) {
+          listener.thermostatMode.destroy()
+          this.log(
+            new Event(this.homey, 'listener.cleaned', {
+              capability: this.#names.thermostatMode,
+              name: listener.device.name,
+            }),
+          )
+        }
+        await this.#revertTemperature(
+          listener,
+          this.#getThreshold(listener.device.id),
+        )
+      }
     }
   }
 

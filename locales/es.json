@@ -1,19 +1,19 @@
 {
   "log": {
     "error": {
-      "missing": "Falta la temperatura exterior.",
-      "not_found": "No se puede encontrar __name__ `__id__`."
+      "missing": "Falta la temperatura exterior",
+      "not_found": "No se puede encontrar __name__ `__id__`"
     },
     "listener": {
-      "cleaned": "Limpieza del oyente para __capability__ de __name__.",
-      "cleaned_all": "Limpieza de todos los oyentes.",
-      "created": "Creación de un oyente para __capability__ de __name__.",
-      "listened": "Escuchando a __capability__ de __name__: __value__."
+      "cleaned": "Limpieza del oyente para __capability__ de __name__",
+      "cleaned_all": "Limpieza de todos los oyentes",
+      "created": "Creación de un oyente para __capability__ de __name__",
+      "listened": "Escuchando a __capability__ de __name__: __value__"
     },
     "target_temperature": {
-      "calculated": "Cálculo de la temperatura de __name__: __value__ (a partir del umbral __threshold__ y la temperatura exterior __outdoorTemperature__).",
-      "reverted": "Revertiendo la temperatura de __name__: __value__.",
-      "saved": "Guardando la temperatura de __name__: __value__."
+      "calculated": "Cálculo de la temperatura de __name__: __value__ (a partir del umbral __threshold__ y la temperatura exterior __outdoorTemperature__)",
+      "reverted": "Revertiendo la temperatura de __name__: __value__",
+      "saved": "Guardando la temperatura de __name__: __value__"
     }
   },
   "names": {
@@ -35,9 +35,9 @@
       "log": "Registro"
     },
     "no_device_ata": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
-    "no_device_measure": "No tienes una aplicación de medición de temperatura en Homey.",
+    "no_device_measure": "No tienes una aplicación de medición de temperatura en Homey",
     "refresh": "Recargar",
-    "success": "Actualización exitosa.",
+    "success": "Actualización exitosa",
     "title": "Configuración de la extensión para MELCloud"
   }
 }
