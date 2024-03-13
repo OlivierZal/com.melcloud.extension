@@ -102,13 +102,10 @@ class MELCloudExtensionApp extends App {
     await this.#cleanListeners()
   }
 
-  #cleanDeviceCapability<L extends MELCloudListener>(
-    listener: L,
-    capability: 'temperature' | 'thermostatMode',
+  #cleanDeviceCapability(
+    listener: MELCloudListener,
+    capability: Extract<Exclude<keyof MELCloudListener, 'device'>, string>,
   ): void {
-    if (!(capability in listener)) {
-      return
-    }
     if (capability === 'thermostatMode') {
       listener.thermostatMode.destroy()
       delete listener.thermostatMode
