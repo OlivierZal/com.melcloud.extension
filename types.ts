@@ -1,3 +1,5 @@
+export const DRIVER_ID = 'homey:app:com.mecloud:melcloud'
+
 import type { HomeyAPIV3Local } from 'homey-api'
 
 export interface Capability {

@@ -2,17 +2,17 @@
   @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 */
 import 'source-map-support/register'
-import type {
-  CapabilityValue,
-  HomeySettings,
-  MELCloudListener,
-  TemperatureListener,
-  TemperatureListenerData,
-  Thresholds,
-  ValueOf,
+import {
+  type CapabilityValue,
+  DRIVER_ID,
+  type HomeySettings,
+  type MELCloudListener,
+  type TemperatureListener,
+  type TemperatureListenerData,
+  type Thresholds,
+  type ValueOf,
 } from './types'
 import { App } from 'homey'
-import { DRIVER_ID } from './constants'
 import Event from './lib/Event'
 import EventError from './lib/EventError'
 import { HomeyAPIV3Local } from 'homey-api'
@@ -185,7 +185,7 @@ class MELCloudExtensionApp extends App {
     excludedListener: MELCloudListener,
   ): Promise<string[]> {
     return Promise.all(
-      Object.values(this.#melcloudListeners)
+      this.#melcloudListeners
         .filter(({ device: { id } }) => id !== excludedListener.device.id)
         .map(
           async ({ device: { id } }): Promise<string> =>
@@ -286,7 +286,7 @@ class MELCloudExtensionApp extends App {
             }),
           )
           await Promise.all(
-            Object.values(this.#melcloudListeners).map(
+            this.#melcloudListeners.map(
               async (listener: MELCloudListener): Promise<void> =>
                 this.#handleTargetTemperature(
                   listener,
@@ -350,7 +350,7 @@ class MELCloudExtensionApp extends App {
   async #listenToThermostatModes(): Promise<void> {
     this.#initMELCloudListeners()
     await Promise.all(
-      Object.values(this.#melcloudListeners).map(
+      this.#melcloudListeners.map(
         async (listener: MELCloudListener): Promise<void> => {
           const currentThermostatMode: string = (await this.#getCapabilityValue(
             listener.device.id,
