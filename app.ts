@@ -102,23 +102,6 @@ class MELCloudExtensionApp extends App {
     await this.#cleanListeners()
   }
 
-  #cleanDeviceCapability<L extends MELCloudListener | TemperatureListener>(
-    listener: L,
-    capability: Extract<Exclude<keyof L, 'device'>, string>,
-  ): void {
-    if (capability === 'thermostatMode' && 'thermostatMode' in listener) {
-      listener.thermostatMode.destroy()
-    } else {
-      listener.temperature.destroy()
-    }
-    this.log(
-      new Event(this.homey, 'listener.cleaned', {
-        capability: this.#names[capability],
-        name: listener.device.name,
-      }),
-    )
-  }
-
   async #cleanListener(
     listener: MELCloudListener | TemperatureListener | undefined,
     hardClean = false,
@@ -126,14 +109,26 @@ class MELCloudExtensionApp extends App {
     if (!listener) {
       return
     }
-    if (hardClean && 'thermostatMode' in listener) {
-      this.#cleanDeviceCapability(listener, 'thermostatMode')
-    }
-    this.#cleanDeviceCapability(listener, 'temperature')
+    listener.temperature.destroy()
     listener.temperature = null
-    if (listener.device.id !== this.#outdoorTemperature.listener?.device.id) {
+    this.log(
+      new Event(this.homey, 'listener.cleaned', {
+        capability: this.#names.temperature,
+        name: listener.device.name,
+      }),
+    )
+    if ('thermostatMode' in listener) {
+      if (hardClean) {
+        listener.thermostatMode.destroy()
+        this.log(
+          new Event(this.homey, 'listener.cleaned', {
+            capability: this.#names.thermostatMode,
+            name: listener.device.name,
+          }),
+        )
+      }
       await this.#revertTemperature(
-        listener.device,
+        listener,
         this.#getThreshold(listener.device.id),
       )
     }
@@ -419,17 +414,17 @@ class MELCloudExtensionApp extends App {
   }
 
   async #revertTemperature(
-    device: HomeyAPIV3Local.ManagerDevices.Device,
+    listener: MELCloudListener,
     value: number,
   ): Promise<void> {
     try {
-      await device.setCapabilityValue({
+      await listener.device.setCapabilityValue({
         capabilityId: 'target_temperature',
         value,
       })
       this.log(
         new Event(this.homey, 'target_temperature.reverted', {
-          name: device.name,
+          name: listener.device.name,
           value: `${value}\u00A0°C`,
         }),
       )
