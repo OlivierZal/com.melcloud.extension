@@ -128,10 +128,10 @@ class MELCloudExtensionApp extends App {
     if (!listener) {
       return
     }
+    this.#cleanDeviceCapability(listener, 'temperature')
     if (hardClean) {
       this.#cleanDeviceCapability(listener, 'thermostatMode')
     }
-    this.#cleanDeviceCapability(listener, 'temperature')
     if (listener.device.id !== this.#outdoorTemperature.listener?.device.id) {
       await this.#revertTemperature(
         listener.device,
