@@ -66,9 +66,9 @@ interface BaseListener {
 }
 
 export interface TemperatureListener extends BaseListener {
-  temperature?: DeviceCapability
+  temperature: DeviceCapability
 }
 
 export interface MELCloudListener extends TemperatureListener {
-  thermostatMode?: DeviceCapability
+  thermostatMode: DeviceCapability
 }

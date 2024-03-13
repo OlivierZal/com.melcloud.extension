@@ -102,16 +102,15 @@ class MELCloudExtensionApp extends App {
     await this.#cleanListeners()
   }
 
-  #cleanDeviceCapability(
-    listener: MELCloudListener,
-    capability: Extract<Exclude<keyof MELCloudListener, 'device'>, string>,
+  #cleanDeviceCapability<L extends MELCloudListener | TemperatureListener>(
+    listener: L,
+    capability: Extract<Exclude<keyof L, 'device'>, string>,
   ): void {
-    if (capability === 'thermostatMode') {
+    if (capability === 'thermostatMode' && 'thermostatMode' in listener) {
       listener.thermostatMode.destroy()
-      delete listener.thermostatMode
     } else {
       listener.temperature.destroy()
-      delete listener.temperature
+      listener.temperature = null
     }
     this.log(
       new Event(this.homey, 'listener.cleaned', {
@@ -122,14 +121,14 @@ class MELCloudExtensionApp extends App {
   }
 
   async #cleanListener(
-    listener: MELCloudListener | undefined,
+    listener: MELCloudListener | TemperatureListener | undefined,
     hardClean = false,
   ): Promise<void> {
     if (!listener) {
       return
     }
     this.#cleanDeviceCapability(listener, 'temperature')
-    if (hardClean) {
+    if (hardClean && 'thermostatMode' in listener) {
       this.#cleanDeviceCapability(listener, 'thermostatMode')
     }
     if (listener.device.id !== this.#outdoorTemperature.listener?.device.id) {
@@ -214,9 +213,6 @@ class MELCloudExtensionApp extends App {
     threshold: number,
   ): Promise<void> {
     await this.#listenToOutdoorTemperature()
-    if (!('temperature' in listener)) {
-      return
-    }
     await this.#setTargetTemperature(listener, threshold)
   }
 
@@ -231,7 +227,7 @@ class MELCloudExtensionApp extends App {
       ] = await this.#validateCapabilityPath(capabilityPath)
       this.#setHomeySettings({ capabilityPath, enabled })
       if (!this.#outdoorTemperature.listener) {
-        this.#outdoorTemperature.listener = { device }
+        this.#outdoorTemperature.listener = { device, temperature: null }
       } else if (device.id !== this.#outdoorTemperature.listener.device.id) {
         this.#outdoorTemperature.listener.device = device
       }
@@ -258,24 +254,23 @@ class MELCloudExtensionApp extends App {
 
   #initMELCloudListeners(): void {
     this.#melcloudListeners = this.#melcloudDevices.map(
-      (
-        device: HomeyAPIV3Local.ManagerDevices.Device,
-      ): { device: HomeyAPIV3Local.ManagerDevices.Device } => ({ device }),
+      (device: HomeyAPIV3Local.ManagerDevices.Device): MELCloudListener => ({
+        device,
+        temperature: null,
+        thermostatMode: null,
+      }),
     )
   }
 
   async #listenToOutdoorTemperature(): Promise<void> {
-    if (
-      !this.#outdoorTemperature.listener ||
-      'temperature' in this.#outdoorTemperature.listener
-    ) {
+    if (!this.#outdoorTemperature.listener) {
       return
     }
     this.#outdoorTemperature.value = (await this.#getCapabilityValue(
       this.#outdoorTemperature.listener.device.id,
       this.#outdoorTemperature.capabilityId,
     )) as number
-    if ('temperature' in this.#outdoorTemperature.listener) {
+    if (this.#outdoorTemperature.listener.temperature !== null) {
       return
     }
     this.#outdoorTemperature.listener.temperature =
@@ -310,7 +305,7 @@ class MELCloudExtensionApp extends App {
   }
 
   async #listenToTargetTemperature(listener: MELCloudListener): Promise<void> {
-    if ('temperature' in listener) {
+    if (listener.temperature !== null) {
       return
     }
     await this.#listenToOutdoorTemperature()
@@ -458,7 +453,7 @@ class MELCloudExtensionApp extends App {
     listener: MELCloudListener,
     threshold: number,
   ): Promise<void> {
-    if (!('temperature' in listener)) {
+    if (listener.temperature === null) {
       return
     }
     const value: number = this.#getTargetTemperature(threshold)
