@@ -2,15 +2,14 @@
   @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 */
 import 'source-map-support/register'
-import {
-  type CapabilityValue,
-  DRIVER_ID,
-  type HomeySettings,
-  type MELCloudListener,
-  type TemperatureListener,
-  type TemperatureListenerData,
-  type Thresholds,
-  type ValueOf,
+import type {
+  CapabilityValue,
+  HomeySettings,
+  MELCloudListener,
+  TemperatureListener,
+  TemperatureListenerData,
+  Thresholds,
+  ValueOf,
 } from './types'
 import { App } from 'homey'
 import Event from './lib/Event'
@@ -18,6 +17,7 @@ import EventError from './lib/EventError'
 import { HomeyAPIV3Local } from 'homey-api'
 
 const DEFAULT_0 = 0
+const DRIVER_ID = 'homey:app:com.mecloud:melcloud'
 const MAX_TEMPERATURE = 38
 const MAX_TEMPERATURE_GAP = 8
 const SECONDS_1_IN_MILLISECONDS = 1000
