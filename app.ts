@@ -106,7 +106,7 @@ class MELCloudExtensionApp extends App {
     listener: MELCloudListener | TemperatureListener | undefined,
     hardClean = false,
   ): Promise<void> {
-    if (!listener) {
+    if (!listener || listener.temperature === null) {
       return
     }
     listener.temperature.destroy()
