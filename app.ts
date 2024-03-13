@@ -136,6 +136,7 @@ class MELCloudExtensionApp extends App {
   }
 
   async #cleanListeners(): Promise<void> {
+    this.log(new Event(this.homey, 'listener.cleaned_all'))
     await Promise.all(
       this.#melcloudListeners.map(
         async (listener: MELCloudListener): Promise<void> => {
@@ -145,7 +146,6 @@ class MELCloudExtensionApp extends App {
     )
     this.#melcloudListeners = []
     await this.#cleanListener(this.#outdoorTemperature.listener)
-    this.log(new Event(this.homey, 'listener.cleaned_all'))
   }
 
   async #getCapabilityValue(
