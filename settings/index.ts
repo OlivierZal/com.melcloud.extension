@@ -202,11 +202,6 @@ const getTemperatureSensors = (homey: Homey): void => {
         await handleTemperatureSensorsError(homey, error.message)
         return
       }
-      if (!devices.length) {
-        // @ts-expect-error: `homey` is partially typed
-        await homey.alert(homey.__('settings.no_device_measure'))
-        return
-      }
       devices.forEach((device: TemperatureSensor) => {
         const { capabilityPath, capabilityName } = device
         const optionElement: HTMLOptionElement =

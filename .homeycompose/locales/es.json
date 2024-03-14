@@ -35,7 +35,6 @@
       "log": "Registro"
     },
     "no_device_ata": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
-    "no_device_measure": "No tienes una aplicación de medición de temperatura en Homey",
     "refresh": "Recargar",
     "success": "Actualización exitosa",
     "title": "Configuración de la extensión para MELCloud"

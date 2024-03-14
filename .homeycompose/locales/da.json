@@ -35,7 +35,6 @@
       "log": "Log"
     },
     "no_device_ata": "Du skal først konfigurere dine enheder i MELCloud Homey-appen.\n\nØnsker du at installere den?",
-    "no_device_measure": "Du har ingen temperaturmåleapp i Homey",
     "refresh": "Genindlæs",
     "success": "Opdatering lykkedes",
     "title": "Indstillinger for MELCloud-udvidelse"

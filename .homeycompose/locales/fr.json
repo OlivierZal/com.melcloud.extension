@@ -35,7 +35,6 @@
       "log": "Journal"
     },
     "no_device_ata": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
-    "no_device_measure": "Vous ne disposez pas d'appli de mesure de la température dans Homey",
     "refresh": "Rafraîchir",
     "success": "La mise à jour a réussi",
     "title": "Paramètres de l'extension pour MELCloud"

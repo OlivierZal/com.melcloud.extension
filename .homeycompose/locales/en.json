@@ -35,7 +35,6 @@
       "log": "Log"
     },
     "no_device_ata": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
-    "no_device_measure": "You do not have a temperature measurement app in Homey",
     "refresh": "Refresh",
     "success": "Update succeeded",
     "title": "MELCloud extension settings"
