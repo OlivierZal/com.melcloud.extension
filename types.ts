@@ -61,11 +61,8 @@ export type DeviceCapability =
   // @ts-expect-error: `homey-api` is partially typed
   HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability
 
-interface BaseListener {
+export interface TemperatureListener {
   device: HomeyAPIV3Local.ManagerDevices.Device
-}
-
-export interface TemperatureListener extends BaseListener {
   temperature: DeviceCapability
 }
 
