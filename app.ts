@@ -131,6 +131,7 @@ class MELCloudExtensionApp extends App {
     )
     if (this.#outdoorTemperatureListener) {
       await this.#outdoorTemperatureListener.destroy()
+      this.#outdoorTemperatureListener = null
     }
   }
 
