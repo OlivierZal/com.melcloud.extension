@@ -1,5 +1,7 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 
+export const DEFAULT_0 = 0
+
 export interface Capability {
   id: string
   title: string
@@ -60,12 +62,3 @@ export interface TemperatureListenerData {
 export type DeviceCapability =
   // @ts-expect-error: `homey-api` is partially typed
   HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability
-
-export interface TemperatureListener {
-  device: HomeyAPIV3Local.ManagerDevices.Device
-  temperature: DeviceCapability
-}
-
-export interface MELCloudListener extends TemperatureListener {
-  thermostatMode: DeviceCapability
-}
