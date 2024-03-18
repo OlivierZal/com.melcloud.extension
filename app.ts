@@ -99,8 +99,8 @@ class MELCloudExtensionApp extends App {
       this.#init()
     })
     this.homey.on('unload', (): void => {
-      this.#destroyListeners().catch(({ message }): void => {
-        this.error(message)
+      this.#destroyListeners().catch((error: unknown): void => {
+        this.error(error instanceof Error ? error.message : String(error))
       })
     })
   }
@@ -139,10 +139,7 @@ class MELCloudExtensionApp extends App {
     if (error instanceof ListenerEventError) {
       return new ListenerEvent(this.homey, error.name, error.params)
     }
-    if (error instanceof Error) {
-      return error.message
-    }
-    return String(error)
+    return error instanceof Error ? error.message : String(error)
   }
 
   #init(): void {
