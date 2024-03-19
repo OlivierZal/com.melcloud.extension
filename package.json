@@ -18,7 +18,7 @@
     "@stylistic/eslint-plugin": "^1.7.0",
     "@tsconfig/node21": "^21.0.1",
     "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.5",
-    "@types/node": "^20.11.29",
+    "@types/node": "^20.11.30",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
     "eslint": "^8.57.0",
@@ -31,7 +31,7 @@
     "typescript": "^5.4.2"
   },
   "dependencies": {
-    "homey-api": "^3.4.29",
+    "homey-api": "^3.4.30",
     "source-map-support": "^0.5.21"
   }
 }
