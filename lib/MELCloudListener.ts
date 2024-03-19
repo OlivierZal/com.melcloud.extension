@@ -11,6 +11,7 @@ import BaseTemperatureListener from './BaseTemperatureListener'
 import type { HomeyAPIV3Local } from 'homey-api'
 import ListenerEvent from './ListenerEvent'
 import type MELCloudExtensionApp from '../app'
+import OutdoorTemperatureListener from './OutdoorTemperatureListener'
 
 const MAX_TEMPERATURE = 38
 const MAX_TEMPERATURE_GAP = 8
@@ -76,9 +77,9 @@ export default class MELCloudListener extends BaseTemperatureListener {
             (await this.#getOtherThermostatModes()).every(
               (mode: string) => mode !== 'cool',
             ) &&
-            this.app.outdoorTemperatureListener
+            OutdoorTemperatureListener.listener
           ) {
-            await this.app.outdoorTemperatureListener.destroy()
+            await OutdoorTemperatureListener.listener.destroy()
           }
         }
       },
@@ -103,7 +104,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
     this.app.log(
       new ListenerEvent(this.app.homey, 'target_temperature.calculated', {
         name: this.device.name,
-        outdoorTemperature: `${this.app.outdoorTemperatureListener?.value}\u00A0°C`,
+        outdoorTemperature: `${OutdoorTemperatureListener.listener?.value}\u00A0°C`,
         threshold: `${this.#getThreshold(this.device.id)}\u00A0°C`,
         value: `${value}\u00A0°C`,
       }),
@@ -125,7 +126,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
     return Math.min(
       Math.max(
         this.#getThreshold(this.device.id),
-        Math.ceil(this.app.outdoorTemperatureListener?.value ?? DEFAULT_0) -
+        Math.ceil(OutdoorTemperatureListener.listener?.value ?? DEFAULT_0) -
           MAX_TEMPERATURE_GAP,
       ),
       MAX_TEMPERATURE,
@@ -139,11 +140,11 @@ export default class MELCloudListener extends BaseTemperatureListener {
   async #listenToTargetTemperature(): Promise<void> {
     if (
       this.temperatureListener !== null ||
-      !this.app.outdoorTemperatureListener
+      !OutdoorTemperatureListener.listener
     ) {
       return
     }
-    await this.app.outdoorTemperatureListener.listenToOutdoorTemperature()
+    await OutdoorTemperatureListener.listener.listenToOutdoorTemperature()
     const currentTargetTemperature: number = (await this.getCapabilityValue(
       'target_temperature',
     )) as number

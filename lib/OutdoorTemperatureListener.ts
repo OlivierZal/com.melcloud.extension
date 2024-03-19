@@ -14,6 +14,8 @@ import type MELCloudExtensionApp from '../app'
 import MELCloudListener from './MELCloudListener'
 
 export default class OutdoorTemperatureListener extends BaseTemperatureListener {
+  static #listener: OutdoorTemperatureListener | null = null
+
   #value: number = DEFAULT_0
 
   readonly #capabilityId: string
@@ -27,6 +29,10 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
     this.#capabilityId = capabilityId
   }
 
+  public static get listener(): OutdoorTemperatureListener | null {
+    return this.#listener
+  }
+
   public get value(): number {
     return this.#value
   }
@@ -34,22 +40,26 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
   public static async create(
     app: MELCloudExtensionApp,
     { capabilityPath, enabled }: TemperatureListenerData,
-  ): Promise<OutdoorTemperatureListener> {
+  ): Promise<void> {
     try {
       const [device, capabilityId]: [
         HomeyAPIV3Local.ManagerDevices.Device,
         string,
-      ] = await OutdoorTemperatureListener.#validateCapabilityPath(
-        app,
-        capabilityPath,
-      )
+      ] = await this.#validateCapabilityPath(app, capabilityPath)
       app.setHomeySettings({ capabilityPath, enabled })
-      return new OutdoorTemperatureListener(app, device, capabilityId)
+      this.#listener = new OutdoorTemperatureListener(app, device, capabilityId)
     } catch (error: unknown) {
       if (error instanceof ListenerEventError) {
         throw new ListenerEventError(app.homey, error.name, error.params)
       }
       throw new Error(error instanceof Error ? error.message : String(error))
+    }
+  }
+
+  public static async destroy(): Promise<void> {
+    if (this.#listener) {
+      this.#listener = null
+      await this.destroy()
     }
   }
 

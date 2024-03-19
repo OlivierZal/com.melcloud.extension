@@ -29,8 +29,6 @@ class MELCloudExtensionApp extends App {
 
   #melcloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
-  #outdoorTemperatureListener: OutdoorTemperatureListener | null = null
-
   #temperatureSensors: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
   public get api(): HomeyAPIV3Local {
@@ -39,10 +37,6 @@ class MELCloudExtensionApp extends App {
 
   public get melcloudDevices(): HomeyAPIV3Local.ManagerDevices.Device[] {
     return this.#melcloudDevices
-  }
-
-  public get outdoorTemperatureListener(): OutdoorTemperatureListener | null {
-    return this.#outdoorTemperatureListener
   }
 
   public get temperatureSensors(): HomeyAPIV3Local.ManagerDevices.Device[] {
@@ -63,10 +57,7 @@ class MELCloudExtensionApp extends App {
       this.setHomeySettings({ capabilityPath, enabled })
       return
     }
-    this.#outdoorTemperatureListener = await OutdoorTemperatureListener.create(
-      this,
-      { capabilityPath, enabled },
-    )
+    await OutdoorTemperatureListener.create(this, { capabilityPath, enabled })
     if (enabled) {
       await this.#listenToThermostatModes()
     }
@@ -124,10 +115,7 @@ class MELCloudExtensionApp extends App {
         },
       ),
     )
-    if (this.#outdoorTemperatureListener) {
-      await this.#outdoorTemperatureListener.destroy()
-      this.#outdoorTemperatureListener = null
-    }
+    await OutdoorTemperatureListener.destroy()
   }
 
   #getErrorMessage(error: unknown): ListenerEvent | string {
