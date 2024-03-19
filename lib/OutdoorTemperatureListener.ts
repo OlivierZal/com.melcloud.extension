@@ -18,7 +18,7 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
 
   readonly #capabilityId: string
 
-  public constructor(
+  private constructor(
     app: MELCloudExtensionApp,
     device: HomeyAPIV3Local.ManagerDevices.Device,
     capabilityId: string,
