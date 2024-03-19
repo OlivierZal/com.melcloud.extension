@@ -16,6 +16,11 @@ const MAX_TEMPERATURE = 38
 const MAX_TEMPERATURE_GAP = 8
 
 export default class MELCloudListener extends BaseTemperatureListener {
+  public static readonly listeners: Map<string, MELCloudListener> = new Map<
+    string,
+    MELCloudListener
+  >()
+
   #thermostatModeListener: DeviceCapability = null
 
   public constructor(
@@ -23,8 +28,8 @@ export default class MELCloudListener extends BaseTemperatureListener {
     device: HomeyAPIV3Local.ManagerDevices.Device,
   ) {
     super(app, device)
-    if (!this.app.melcloudListeners.has(device.id)) {
-      this.app.melcloudListeners.set(device.id, this)
+    if (!MELCloudListener.listeners.has(device.id)) {
+      MELCloudListener.listeners.set(device.id, this)
     }
   }
 
@@ -46,7 +51,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
         name: this.device.name,
       }),
     )
-    this.app.melcloudListeners.delete(this.device.id)
+    MELCloudListener.listeners.delete(this.device.id)
   }
 
   public async listenToThermostatMode(): Promise<void> {
@@ -107,7 +112,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
 
   async #getOtherThermostatModes(): Promise<string[]> {
     return Promise.all(
-      Array.from(this.app.melcloudListeners.values())
+      Array.from(MELCloudListener.listeners.values())
         .filter(({ device: { id } }) => id !== this.device.id)
         .map(
           async (): Promise<string> =>

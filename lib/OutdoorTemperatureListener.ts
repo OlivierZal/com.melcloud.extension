@@ -11,7 +11,7 @@ import type { HomeyAPIV3Local } from 'homey-api'
 import ListenerEvent from './ListenerEvent'
 import ListenerEventError from './ListenerEventError'
 import type MELCloudExtensionApp from '../app'
-import type MELCloudListener from './MELCloudListener'
+import MELCloudListener from './MELCloudListener'
 
 export default class OutdoorTemperatureListener extends BaseTemperatureListener {
   #value: number = DEFAULT_0
@@ -97,7 +97,7 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
           }),
         )
         await Promise.all(
-          Array.from(this.app.melcloudListeners.values()).map(
+          Array.from(MELCloudListener.listeners.values()).map(
             async (listener: MELCloudListener): Promise<void> =>
               listener.setTargetTemperature(),
           ),

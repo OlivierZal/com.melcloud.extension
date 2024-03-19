@@ -14,11 +14,6 @@ const DRIVER_ID = 'homey:app:com.mecloud:melcloud'
 const SECONDS_1_IN_MILLISECONDS = 1000
 
 class MELCloudExtensionApp extends App {
-  public readonly melcloudListeners: Map<string, MELCloudListener> = new Map<
-    string,
-    MELCloudListener
-  >()
-
   public readonly names: Record<string, string> = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
       (name: string): [string, string] => [
@@ -123,7 +118,7 @@ class MELCloudExtensionApp extends App {
   async #destroyListeners(): Promise<void> {
     this.log(new ListenerEvent(this.homey, 'listener.cleaned_all'))
     await Promise.all(
-      Array.from(this.melcloudListeners.values()).map(
+      Array.from(MELCloudListener.listeners.values()).map(
         async (listener: MELCloudListener): Promise<void> => {
           await listener.hardDestroy()
         },
