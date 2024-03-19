@@ -21,7 +21,7 @@ export default abstract class BaseTemperatureListener {
     this.device = device
   }
 
-  public async destroy(): Promise<void> {
+  public destroy(): void {
     if (this.temperatureListener !== null) {
       this.temperatureListener.destroy()
       this.temperatureListener = null
@@ -32,7 +32,6 @@ export default abstract class BaseTemperatureListener {
         name: this.device.name,
       }),
     )
-    return Promise.resolve()
   }
 
   protected async getCapabilityValue(

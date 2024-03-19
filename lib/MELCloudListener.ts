@@ -34,25 +34,21 @@ export default class MELCloudListener extends BaseTemperatureListener {
     }
   }
 
-  public async destroy(): Promise<void> {
-    await super.destroy()
-    if (this.temperatureListener !== null) {
-      await this.#revertTemperature()
-    }
+  public static async destroy(): Promise<void> {
+    await Promise.all(
+      Array.from(this.listeners.values()).map(
+        async (listener: MELCloudListener): Promise<void> => {
+          await listener.#delete()
+        },
+      ),
+    )
   }
 
-  public async hardDestroy(): Promise<void> {
-    await this.destroy()
-    if (this.#thermostatModeListener !== null) {
-      this.#thermostatModeListener.destroy()
+  public async destroy(): Promise<void> {
+    if (this.temperatureListener !== null) {
+      super.destroy()
+      await this.#revertTemperature()
     }
-    this.app.log(
-      new ListenerEvent(this.app.homey, 'listener.cleaned', {
-        capability: this.app.names.thermostatMode,
-        name: this.device.name,
-      }),
-    )
-    MELCloudListener.listeners.delete(this.device.id)
   }
 
   public async listenToThermostatMode(): Promise<void> {
@@ -79,7 +75,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
             ) &&
             OutdoorTemperatureListener.listener
           ) {
-            await OutdoorTemperatureListener.listener.destroy()
+            OutdoorTemperatureListener.listener.destroy()
           }
         }
       },
@@ -109,6 +105,20 @@ export default class MELCloudListener extends BaseTemperatureListener {
         value: `${value}\u00A0°C`,
       }),
     )
+  }
+
+  async #delete(): Promise<void> {
+    await this.destroy()
+    if (this.#thermostatModeListener !== null) {
+      this.#thermostatModeListener.destroy()
+    }
+    this.app.log(
+      new ListenerEvent(this.app.homey, 'listener.cleaned', {
+        capability: this.app.names.thermostatMode,
+        name: this.device.name,
+      }),
+    )
+    MELCloudListener.listeners.delete(this.device.id)
   }
 
   async #getOtherThermostatModes(): Promise<string[]> {

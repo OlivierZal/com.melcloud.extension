@@ -107,15 +107,9 @@ class MELCloudExtensionApp extends App {
   }
 
   async #destroyListeners(): Promise<void> {
+    await MELCloudListener.destroy()
+    OutdoorTemperatureListener.destroy()
     this.log(new ListenerEvent(this.homey, 'listener.cleaned_all'))
-    await Promise.all(
-      Array.from(MELCloudListener.listeners.values()).map(
-        async (listener: MELCloudListener): Promise<void> => {
-          await listener.hardDestroy()
-        },
-      ),
-    )
-    await OutdoorTemperatureListener.destroy()
   }
 
   #getErrorMessage(error: unknown): ListenerEvent | string {
