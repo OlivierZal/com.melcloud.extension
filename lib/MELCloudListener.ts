@@ -44,13 +44,6 @@ export default class MELCloudListener extends BaseTemperatureListener {
     )
   }
 
-  public async destroyTemperature(): Promise<void> {
-    if (this.temperatureListener !== null) {
-      super.destroyTemperature()
-      await this.#revertTemperature()
-    }
-  }
-
   public async listenToThermostatMode(): Promise<void> {
     const currentThermostatMode: string = (await this.getCapabilityValue(
       'thermostat_mode',
@@ -70,9 +63,9 @@ export default class MELCloudListener extends BaseTemperatureListener {
         await this.destroyTemperature()
         if (
           !this.#isItCoolingElsewhere() &&
-          OutdoorTemperatureListener.listener
+          OutdoorTemperatureListener.temperatureListener !== null
         ) {
-          OutdoorTemperatureListener.listener.destroyTemperature()
+          OutdoorTemperatureListener.destroyTemperature()
         }
       },
     )
@@ -91,10 +84,17 @@ export default class MELCloudListener extends BaseTemperatureListener {
       await this.temperatureListener.setValue(value)
       new ListenerEvent(this.homey, 'target_temperature.calculated', {
         name: this.device.name,
-        outdoorTemperature: `${OutdoorTemperatureListener.listener?.value}\u00A0°C`,
+        outdoorTemperature: `${OutdoorTemperatureListener.value}\u00A0°C`,
         threshold: `${this.#getThreshold()}\u00A0°C`,
         value: `${value}\u00A0°C`,
       }).pushToUI()
+    }
+  }
+
+  protected async destroyTemperature(): Promise<void> {
+    if (this.temperatureListener !== null) {
+      super.destroyTemperature()
+      await this.#revertTemperature()
     }
   }
 
@@ -114,7 +114,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
     return Math.min(
       Math.max(
         this.#getThreshold(),
-        Math.ceil(OutdoorTemperatureListener.listener?.value ?? DEFAULT_0) -
+        Math.ceil(OutdoorTemperatureListener.value ?? DEFAULT_0) -
           MAX_TEMPERATURE_GAP,
       ),
       MAX_TEMPERATURE,
@@ -140,11 +140,8 @@ export default class MELCloudListener extends BaseTemperatureListener {
   }
 
   async #listenToTargetTemperature(): Promise<void> {
-    if (
-      this.temperatureListener === null &&
-      OutdoorTemperatureListener.listener
-    ) {
-      await OutdoorTemperatureListener.listener.listenToOutdoorTemperature()
+    if (this.temperatureListener === null) {
+      await OutdoorTemperatureListener.listenToOutdoorTemperature()
       const currentTargetTemperature: number = (await this.getCapabilityValue(
         'target_temperature',
       )) as number

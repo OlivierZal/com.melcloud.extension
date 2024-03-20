@@ -28,7 +28,7 @@ export default abstract class BaseTemperatureListener {
     this.device = device
   }
 
-  public destroyTemperature(): void {
+  protected destroyTemperature(): void {
     if (this.temperatureListener !== null) {
       this.temperatureListener.destroy()
       this.temperatureListener = null
