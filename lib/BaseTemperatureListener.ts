@@ -2,6 +2,7 @@
   @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 */
 import type { DeviceCapability } from '../types'
+import type Homey from 'homey/lib/Homey'
 import type { HomeyAPIV3Local } from 'homey-api'
 import ListenerEvent from './ListenerEvent'
 import type MELCloudExtensionApp from '../app'
@@ -13,11 +14,17 @@ export default abstract class BaseTemperatureListener {
 
   protected readonly device: HomeyAPIV3Local.ManagerDevices.Device
 
+  protected readonly homey: Homey
+
+  protected readonly names: Record<string, string>
+
   public constructor(
-    app: MELCloudExtensionApp,
+    homey: Homey,
     device: HomeyAPIV3Local.ManagerDevices.Device,
   ) {
-    this.app = app
+    this.homey = homey
+    this.app = homey.app as MELCloudExtensionApp
+    this.names = this.app.names
     this.device = device
   }
 
@@ -26,12 +33,10 @@ export default abstract class BaseTemperatureListener {
       this.temperatureListener.destroy()
       this.temperatureListener = null
     }
-    this.app.log(
-      new ListenerEvent(this.app.homey, 'listener.cleaned', {
-        capability: this.app.names.temperature,
-        name: this.device.name,
-      }),
-    )
+    new ListenerEvent(this.homey, 'listener.cleaned', {
+      capability: this.names.temperature,
+      name: this.device.name,
+    }).pushToUI()
   }
 
   protected async getCapabilityValue(

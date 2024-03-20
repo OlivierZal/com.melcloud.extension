@@ -9,7 +9,7 @@ export interface Capability {
 
 export type CapabilityValue = boolean | number | string
 
-export interface EventParams {
+export interface ListenerEventParams {
   readonly capability?: string
   readonly id?: string
   readonly name?: string

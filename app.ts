@@ -51,7 +51,10 @@ class MELCloudExtensionApp extends App {
   ): Promise<void> {
     await this.#destroyListeners()
     if (capabilityPath) {
-      await OutdoorTemperatureListener.create(this, { capabilityPath, enabled })
+      await OutdoorTemperatureListener.create(this.homey, {
+        capabilityPath,
+        enabled,
+      })
     } else if (enabled) {
       throw new ListenerEventError(this.homey, 'error.missing')
     }
@@ -101,16 +104,9 @@ class MELCloudExtensionApp extends App {
   }
 
   async #destroyListeners(): Promise<void> {
-    this.log(new ListenerEvent(this.homey, 'listener.cleaned_all'))
+    new ListenerEvent(this.homey, 'listener.cleaned_all').pushToUI()
     await MELCloudListener.destroy()
     OutdoorTemperatureListener.destroy()
-  }
-
-  #getErrorMessage(error: unknown): ListenerEvent | string {
-    if (error instanceof ListenerEventError) {
-      return new ListenerEvent(this.homey, error.name, error.params)
-    }
-    return error instanceof Error ? error.message : String(error)
   }
 
   #init(): void {
@@ -120,7 +116,11 @@ class MELCloudExtensionApp extends App {
         await this.#loadDevices()
         await this.autoAdjustCooling()
       } catch (error: unknown) {
-        this.error(this.#getErrorMessage(error))
+        if (error instanceof ListenerEventError) {
+          new ListenerEvent(this.homey, error.name, error.params).pushToUI()
+          return
+        }
+        this.error(error instanceof Error ? error.message : error)
       }
     }, SECONDS_1_IN_MILLISECONDS)
   }

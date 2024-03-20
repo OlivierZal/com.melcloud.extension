@@ -1,18 +1,18 @@
-import type { EventParams } from '../types'
 import type Homey from 'homey/lib/Homey'
+import type { ListenerEventParams } from '../types'
 
-export default class EventError extends Error {
-  public readonly params?: EventParams
+export default class ListenerEventError extends Error {
+  public readonly params?: ListenerEventParams
 
   public readonly name: string
 
   public constructor(
     homey: Homey,
-    eventName: string,
-    eventParams?: EventParams,
+    listenerEventName: string,
+    listenerEventParams?: ListenerEventParams,
   ) {
-    super(homey.__(`log.${eventName}`, eventParams))
-    this.name = eventName
-    this.params = eventParams
+    super(homey.__(`log.${listenerEventName}`, listenerEventParams))
+    this.name = listenerEventName
+    this.params = listenerEventParams
   }
 }

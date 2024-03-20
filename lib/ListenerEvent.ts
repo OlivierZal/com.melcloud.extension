@@ -1,39 +1,42 @@
-import type { EventParams, HomeySettings, TimestampedLog } from '../types'
+import type { ListenerEventParams, TimestampedLog } from '../types'
 import type Homey from 'homey/lib/Homey'
+import type MELCloudExtensionApp from '../app'
 
 const MAX_LOGS = 100
 
-export default class Event {
-  public readonly message: string
-
-  public readonly name: string
+export default class ListenerEvent {
+  readonly #app: MELCloudExtensionApp
 
   readonly #homey: Homey
 
+  readonly #message: string
+
+  readonly #name: string
+
   public constructor(
     homey: Homey,
-    eventName: string,
-    eventParams?: EventParams,
+    listenerEventName: string,
+    listenerEventParams?: ListenerEventParams,
   ) {
     this.#homey = homey
-    this.name = eventName
-    this.message = homey.__(`log.${eventName}`, eventParams)
-    this.#pushEventToUI()
+    this.#app = homey.app as MELCloudExtensionApp
+    this.#name = listenerEventName
+    this.#message = homey.__(`log.${listenerEventName}`, listenerEventParams)
   }
 
-  #pushEventToUI(): void {
+  public pushToUI(): void {
     const newLog: TimestampedLog = {
-      category: this.name.startsWith('error.') ? 'error' : this.name,
-      message: this.message,
+      category: this.#name.startsWith('error.') ? 'error' : this.#name,
+      message: this.#message,
       time: Date.now(),
     }
+    this.#homey.api.realtime('log', newLog)
     const lastLogs: TimestampedLog[] =
-      (this.#homey.settings.get('lastLogs') as HomeySettings['lastLogs']) ?? []
+      this.#app.getHomeySetting('lastLogs') ?? []
     lastLogs.unshift(newLog)
     if (lastLogs.length > MAX_LOGS) {
       lastLogs.length = MAX_LOGS
     }
-    this.#homey.settings.set('lastLogs', lastLogs)
-    this.#homey.api.realtime('log', newLog)
+    this.#app.setHomeySettings({ lastLogs })
   }
 }
