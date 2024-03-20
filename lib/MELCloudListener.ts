@@ -90,19 +90,18 @@ export default class MELCloudListener extends BaseTemperatureListener {
   }
 
   public async setTargetTemperature(): Promise<void> {
-    if (this.temperatureListener === null) {
-      return
+    if (this.temperatureListener !== null) {
+      const value: number = this.#getTargetTemperature()
+      await this.temperatureListener.setValue(value)
+      this.app.log(
+        new ListenerEvent(this.app.homey, 'target_temperature.calculated', {
+          name: this.device.name,
+          outdoorTemperature: `${OutdoorTemperatureListener.listener?.value}\u00A0°C`,
+          threshold: `${this.#getThreshold()}\u00A0°C`,
+          value: `${value}\u00A0°C`,
+        }),
+      )
     }
-    const value: number = this.#getTargetTemperature()
-    await this.temperatureListener.setValue(value)
-    this.app.log(
-      new ListenerEvent(this.app.homey, 'target_temperature.calculated', {
-        name: this.device.name,
-        outdoorTemperature: `${OutdoorTemperatureListener.listener?.value}\u00A0°C`,
-        threshold: `${this.#getThreshold()}\u00A0°C`,
-        value: `${value}\u00A0°C`,
-      }),
-    )
   }
 
   async #delete(): Promise<void> {
@@ -150,38 +149,36 @@ export default class MELCloudListener extends BaseTemperatureListener {
 
   async #listenToTargetTemperature(): Promise<void> {
     if (
-      this.temperatureListener !== null ||
-      !OutdoorTemperatureListener.listener
+      this.temperatureListener === null &&
+      OutdoorTemperatureListener.listener
     ) {
-      return
+      await OutdoorTemperatureListener.listener.listenToOutdoorTemperature()
+      const currentTargetTemperature: number = (await this.getCapabilityValue(
+        'target_temperature',
+      )) as number
+      this.temperatureListener = this.device.makeCapabilityInstance(
+        'target_temperature',
+        async (value: CapabilityValue): Promise<void> => {
+          if (value !== this.#getTargetTemperature()) {
+            this.app.log(
+              new ListenerEvent(this.app.homey, 'listener.listened', {
+                capability: this.app.names.temperature,
+                name: this.device.name,
+                value: `${value as number}\u00A0°C`,
+              }),
+            )
+            await this.#setThreshold(value as number)
+          }
+        },
+      )
+      this.app.log(
+        new ListenerEvent(this.app.homey, 'listener.created', {
+          capability: this.app.names.temperature,
+          name: this.device.name,
+        }),
+      )
+      await this.#setThreshold(currentTargetTemperature)
     }
-    await OutdoorTemperatureListener.listener.listenToOutdoorTemperature()
-    const currentTargetTemperature: number = (await this.getCapabilityValue(
-      'target_temperature',
-    )) as number
-    this.temperatureListener = this.device.makeCapabilityInstance(
-      'target_temperature',
-      async (value: CapabilityValue): Promise<void> => {
-        if (value === this.#getTargetTemperature()) {
-          return
-        }
-        this.app.log(
-          new ListenerEvent(this.app.homey, 'listener.listened', {
-            capability: this.app.names.temperature,
-            name: this.device.name,
-            value: `${value as number}\u00A0°C`,
-          }),
-        )
-        await this.#setThreshold(value as number)
-      },
-    )
-    this.app.log(
-      new ListenerEvent(this.app.homey, 'listener.created', {
-        capability: this.app.names.temperature,
-        name: this.device.name,
-      }),
-    )
-    await this.#setThreshold(currentTargetTemperature)
   }
 
   async #revertTemperature(): Promise<void> {

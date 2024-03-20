@@ -94,34 +94,33 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
 
   public async listenToOutdoorTemperature(): Promise<void> {
     this.#value = (await this.getCapabilityValue(this.#capabilityId)) as number
-    if (this.temperatureListener !== null) {
-      return
+    if (this.temperatureListener === null) {
+      this.temperatureListener = this.device.makeCapabilityInstance(
+        this.#capabilityId,
+        async (value: CapabilityValue): Promise<void> => {
+          this.#value = value as number
+          this.app.log(
+            new ListenerEvent(this.app.homey, 'listener.listened', {
+              capability: this.app.names.temperature,
+              name: this.device.name,
+              value: `${value}\u00A0°C`,
+            }),
+          )
+          await Promise.all(
+            Array.from(MELCloudListener.listeners.values()).map(
+              async (listener: MELCloudListener): Promise<void> =>
+                listener.setTargetTemperature(),
+            ),
+          )
+        },
+      )
+      this.app.log(
+        new ListenerEvent(this.app.homey, 'listener.created', {
+          capability: this.app.names.temperature,
+          name: this.device.name,
+        }),
+      )
     }
-    this.temperatureListener = this.device.makeCapabilityInstance(
-      this.#capabilityId,
-      async (value: CapabilityValue): Promise<void> => {
-        this.#value = value as number
-        this.app.log(
-          new ListenerEvent(this.app.homey, 'listener.listened', {
-            capability: this.app.names.temperature,
-            name: this.device.name,
-            value: `${value}\u00A0°C`,
-          }),
-        )
-        await Promise.all(
-          Array.from(MELCloudListener.listeners.values()).map(
-            async (listener: MELCloudListener): Promise<void> =>
-              listener.setTargetTemperature(),
-          ),
-        )
-      },
-    )
-    this.app.log(
-      new ListenerEvent(this.app.homey, 'listener.created', {
-        capability: this.app.names.temperature,
-        name: this.device.name,
-      }),
-    )
   }
 
   async #listenToThermostatModes(): Promise<void> {

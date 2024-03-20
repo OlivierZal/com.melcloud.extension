@@ -130,26 +130,26 @@ const handleTemperatureSensorsError = async (
   homey: Homey,
   errorMessage: string,
 ): Promise<void> => {
-  if (errorMessage === 'no_device_ata') {
+  if (errorMessage !== 'no_device_ata') {
     // @ts-expect-error: `homey` is partially typed
-    await homey.confirm(
-      homey.__('settings.no_device_ata'),
-      null,
-      async (error: Error | null, ok: boolean): Promise<void> => {
-        if (error) {
-          // @ts-expect-error: `homey` is partially typed
-          await homey.alert(error.message)
-        }
-        if (ok) {
-          // @ts-expect-error: `homey` is partially typed
-          await homey.openURL('https://homey.app/a/com.mecloud')
-        }
-      },
-    )
+    await homey.alert(errorMessage)
     return
   }
   // @ts-expect-error: `homey` is partially typed
-  await homey.alert(errorMessage)
+  await homey.confirm(
+    homey.__('settings.no_device_ata'),
+    null,
+    async (error: Error | null, ok: boolean): Promise<void> => {
+      if (error) {
+        // @ts-expect-error: `homey` is partially typed
+        await homey.alert(error.message)
+      }
+      if (ok) {
+        // @ts-expect-error: `homey` is partially typed
+        await homey.openURL('https://homey.app/a/com.mecloud')
+      }
+    },
+  )
 }
 
 const getHomeySettings = async (homey: Homey): Promise<void> => {
