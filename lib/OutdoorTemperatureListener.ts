@@ -46,8 +46,10 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
         HomeyAPIV3Local.ManagerDevices.Device,
         string,
       ] = await this.#validateCapabilityPath(app, capabilityPath)
-      app.setHomeySettings({ capabilityPath, enabled })
-      this.#listener = new OutdoorTemperatureListener(app, device, capabilityId)
+      this.#listener = new this(app, device, capabilityId)
+      if (enabled) {
+        await this.#listener.#listenToThermostatModes()
+      }
     } catch (error: unknown) {
       if (error instanceof ListenerEventError) {
         throw new ListenerEventError(app.homey, error.name, error.params)
@@ -119,6 +121,15 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
         capability: this.app.names.temperature,
         name: this.device.name,
       }),
+    )
+  }
+
+  async #listenToThermostatModes(): Promise<void> {
+    await Promise.all(
+      this.app.melcloudDevices.map(
+        async (device: HomeyAPIV3Local.ManagerDevices.Device): Promise<void> =>
+          new MELCloudListener(this.app, device).listenToThermostatMode(),
+      ),
     )
   }
 }

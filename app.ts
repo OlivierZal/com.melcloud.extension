@@ -52,12 +52,7 @@ class MELCloudExtensionApp extends App {
     await this.#destroyListeners()
     if (capabilityPath) {
       await OutdoorTemperatureListener.create(this, { capabilityPath, enabled })
-      if (enabled) {
-        await this.#listenToThermostatModes()
-      }
-      return
-    }
-    if (enabled) {
+    } else if (enabled) {
       throw new ListenerEventError(this.homey, 'error.missing')
     }
     this.setHomeySettings({ capabilityPath, enabled })
@@ -129,15 +124,6 @@ class MELCloudExtensionApp extends App {
         this.error(this.#getErrorMessage(error))
       }
     }, SECONDS_1_IN_MILLISECONDS)
-  }
-
-  async #listenToThermostatModes(): Promise<void> {
-    await Promise.all(
-      this.#melcloudDevices.map(
-        async (device: HomeyAPIV3Local.ManagerDevices.Device): Promise<void> =>
-          new MELCloudListener(this, device).listenToThermostatMode(),
-      ),
-    )
   }
 
   async #loadDevices(): Promise<void> {
