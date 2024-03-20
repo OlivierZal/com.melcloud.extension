@@ -60,7 +60,7 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
 
   public static destroy(): void {
     if (this.#listener) {
-      this.#listener.destroy()
+      this.#listener.destroyTemperature()
       this.#listener = null
     }
   }

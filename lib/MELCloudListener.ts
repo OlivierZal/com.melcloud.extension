@@ -38,15 +38,15 @@ export default class MELCloudListener extends BaseTemperatureListener {
     await Promise.all(
       Array.from(this.listeners.values()).map(
         async (listener: MELCloudListener): Promise<void> => {
-          await listener.#delete()
+          await listener.#destroy()
         },
       ),
     )
   }
 
-  public async destroy(): Promise<void> {
+  public async destroyTemperature(): Promise<void> {
     if (this.temperatureListener !== null) {
-      super.destroy()
+      super.destroyTemperature()
       await this.#revertTemperature()
     }
   }
@@ -69,12 +69,12 @@ export default class MELCloudListener extends BaseTemperatureListener {
           await this.#listenToTargetTemperature()
           return
         }
-        await this.destroy()
+        await this.destroyTemperature()
         if (
           !this.#isItCoolingElsewhere() &&
           OutdoorTemperatureListener.listener
         ) {
-          OutdoorTemperatureListener.listener.destroy()
+          OutdoorTemperatureListener.listener.destroyTemperature()
         }
       },
     )
@@ -104,8 +104,8 @@ export default class MELCloudListener extends BaseTemperatureListener {
     }
   }
 
-  async #delete(): Promise<void> {
-    await this.destroy()
+  async #destroy(): Promise<void> {
+    await this.destroyTemperature()
     if (this.#thermostatModeListener !== null) {
       this.#thermostatModeListener.destroy()
     }
