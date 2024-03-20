@@ -91,14 +91,13 @@ class MELCloudExtensionApp extends App {
   }
 
   public setHomeySettings(settings: Partial<HomeySettings>): void {
-    Object.entries(settings)
-      .filter(
-        ([setting, value]: [string, ValueOf<HomeySettings>]) =>
-          value !== this.getHomeySetting(setting as keyof HomeySettings),
-      )
-      .forEach(([setting, value]: [string, ValueOf<HomeySettings>]) => {
-        this.homey.settings.set(setting, value)
-      })
+    Object.entries(settings).forEach(
+      ([setting, value]: [string, ValueOf<HomeySettings>]) => {
+        if (value !== this.getHomeySetting(setting as keyof HomeySettings)) {
+          this.homey.settings.set(setting, value)
+        }
+      },
+    )
   }
 
   async #destroyListeners(): Promise<void> {
