@@ -99,7 +99,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
       new ListenerEvent(this.app.homey, 'target_temperature.calculated', {
         name: this.device.name,
         outdoorTemperature: `${OutdoorTemperatureListener.listener?.value}\u00A0°C`,
-        threshold: `${this.#getThreshold(this.device.id)}\u00A0°C`,
+        threshold: `${this.#getThreshold()}\u00A0°C`,
         value: `${value}\u00A0°C`,
       }),
     )
@@ -122,7 +122,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
   #getTargetTemperature(): number {
     return Math.min(
       Math.max(
-        this.#getThreshold(this.device.id),
+        this.#getThreshold(),
         Math.ceil(OutdoorTemperatureListener.listener?.value ?? DEFAULT_0) -
           MAX_TEMPERATURE_GAP,
       ),
@@ -130,8 +130,12 @@ export default class MELCloudListener extends BaseTemperatureListener {
     )
   }
 
-  #getThreshold(deviceId: string): number {
-    return this.app.getHomeySetting('thresholds')?.[deviceId] ?? DEFAULT_0
+  #getThreshold(): number {
+    return this.#getThresholds()[this.device.id] ?? DEFAULT_0
+  }
+
+  #getThresholds(): Thresholds {
+    return this.app.getHomeySetting('thresholds') ?? {}
   }
 
   #isItCoolingElsewhere(): boolean {
@@ -181,7 +185,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
   }
 
   async #revertTemperature(): Promise<void> {
-    const value: number = this.#getThreshold(this.device.id)
+    const value: number = this.#getThreshold()
     await this.device.setCapabilityValue({
       capabilityId: 'target_temperature',
       value,
@@ -195,7 +199,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
   }
 
   async #setThreshold(value: number): Promise<void> {
-    const thresholds: Thresholds = this.app.getHomeySetting('thresholds') ?? {}
+    const thresholds: Thresholds = this.#getThresholds()
     thresholds[this.device.id] = value
     this.app.setHomeySettings({ thresholds })
     this.app.log(
