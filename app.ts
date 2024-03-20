@@ -50,17 +50,17 @@ class MELCloudExtensionApp extends App {
     },
   ): Promise<void> {
     await this.#destroyListeners()
-    if (!capabilityPath) {
+    if (capabilityPath) {
+      await OutdoorTemperatureListener.create(this, { capabilityPath, enabled })
       if (enabled) {
-        throw new ListenerEventError(this.homey, 'error.missing')
+        await this.#listenToThermostatModes()
       }
-      this.setHomeySettings({ capabilityPath, enabled })
       return
     }
-    await OutdoorTemperatureListener.create(this, { capabilityPath, enabled })
     if (enabled) {
-      await this.#listenToThermostatModes()
+      throw new ListenerEventError(this.homey, 'error.missing')
     }
+    this.setHomeySettings({ capabilityPath, enabled })
   }
 
   public getHomeySetting<K extends keyof HomeySettings>(

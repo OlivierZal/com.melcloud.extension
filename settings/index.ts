@@ -71,9 +71,9 @@ const disableButtons = (value = true): void => {
   ;[applyElement, refreshElement].forEach((element: HTMLButtonElement) => {
     if (value) {
       element.classList.add('is-disabled')
-    } else {
-      element.classList.remove('is-disabled')
+      return
     }
+    element.classList.remove('is-disabled')
   })
 }
 

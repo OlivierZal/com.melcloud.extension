@@ -67,16 +67,14 @@ export default class MELCloudListener extends BaseTemperatureListener {
         )
         if (value === 'cool') {
           await this.#listenToTargetTemperature()
-        } else {
-          await this.destroy()
-          if (
-            (await this.#getOtherThermostatModes()).every(
-              (mode: string) => mode !== 'cool',
-            ) &&
-            OutdoorTemperatureListener.listener
-          ) {
-            OutdoorTemperatureListener.listener.destroy()
-          }
+          return
+        }
+        await this.destroy()
+        if (
+          !this.#isItCoolingElsewhere() &&
+          OutdoorTemperatureListener.listener
+        ) {
+          OutdoorTemperatureListener.listener.destroy()
         }
       },
     )
@@ -121,17 +119,6 @@ export default class MELCloudListener extends BaseTemperatureListener {
     MELCloudListener.listeners.delete(this.device.id)
   }
 
-  async #getOtherThermostatModes(): Promise<string[]> {
-    return Promise.all(
-      Array.from(MELCloudListener.listeners.values())
-        .filter(({ device: { id } }) => id !== this.device.id)
-        .map(
-          async (): Promise<string> =>
-            (await this.getCapabilityValue('thermostat_mode')) as string,
-        ),
-    )
-  }
-
   #getTargetTemperature(): number {
     return Math.min(
       Math.max(
@@ -145,6 +132,16 @@ export default class MELCloudListener extends BaseTemperatureListener {
 
   #getThreshold(deviceId: string): number {
     return this.app.getHomeySetting('thresholds')?.[deviceId] ?? DEFAULT_0
+  }
+
+  #isItCoolingElsewhere(): boolean {
+    return Array.from(MELCloudListener.listeners.values())
+      .filter(({ device: { id } }) => id !== this.device.id)
+      .map(
+        (listener: MELCloudListener): string =>
+          listener.#thermostatModeListener.value as string,
+      )
+      .some((mode: string) => mode === 'cool')
   }
 
   async #listenToTargetTemperature(): Promise<void> {
