@@ -45,6 +45,7 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
         HomeyAPIV3Local.ManagerDevices.Device,
         string,
       ] = await this.#validateCapabilityPath(app, capabilityPath)
+      app.setHomeySettings({ capabilityPath, enabled })
       this.#listener = new this(app, device, capabilityId)
       if (enabled) {
         await this.#listener.#listenToThermostatModes()
