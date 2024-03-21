@@ -8,11 +8,11 @@ export default class ListenerError extends Error {
 
   public constructor(
     homey: Homey,
-    listenerEventName: string,
-    listenerEventParams?: ListenerEventParams,
+    listenerErrorName: string,
+    listenerErrorParams?: ListenerEventParams,
   ) {
-    super(homey.__(`log.${listenerEventName}`, listenerEventParams))
-    this.name = listenerEventName
-    this.params = listenerEventParams
+    super(homey.__(`log.${listenerErrorName}`, listenerErrorParams))
+    this.name = listenerErrorName
+    this.params = listenerErrorParams
   }
 }

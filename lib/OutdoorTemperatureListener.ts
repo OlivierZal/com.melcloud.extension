@@ -40,21 +40,14 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
     app: MELCloudExtensionApp,
     { capabilityPath, enabled }: TemperatureListenerData,
   ): Promise<void> {
-    try {
-      const [device, capabilityId]: [
-        HomeyAPIV3Local.ManagerDevices.Device,
-        string,
-      ] = await this.#validateCapabilityPath(app, capabilityPath)
-      app.setHomeySettings({ capabilityPath, enabled })
-      this.#listener = new this(app, device, capabilityId)
-      if (enabled) {
-        await this.#listener.#listenToThermostatModes()
-      }
-    } catch (error: unknown) {
-      if (error instanceof ListenerError) {
-        throw new ListenerError(app.homey, error.name, error.params)
-      }
-      throw new Error(error instanceof Error ? error.message : String(error))
+    const [device, capabilityId]: [
+      HomeyAPIV3Local.ManagerDevices.Device,
+      string,
+    ] = await this.#validateCapabilityPath(app, capabilityPath)
+    app.setHomeySettings({ capabilityPath, enabled })
+    this.#listener = new this(app, device, capabilityId)
+    if (enabled) {
+      await this.#listener.#listenToThermostatModes()
     }
   }
 

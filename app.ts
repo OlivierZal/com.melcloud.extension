@@ -55,10 +55,18 @@ class MELCloudExtensionApp extends App {
     },
   ): Promise<void> {
     await this.#destroyListeners()
-    await OutdoorTemperatureListener.create(this, {
-      capabilityPath,
-      enabled,
-    })
+    try {
+      await OutdoorTemperatureListener.create(this, {
+        capabilityPath,
+        enabled,
+      })
+    } catch (error: unknown) {
+      if (error instanceof ListenerError) {
+        this.pushToUI(error.name, error.params)
+        return
+      }
+      this.pushToUI(error instanceof Error ? error.message : String(error))
+    }
   }
 
   public getHomeySetting<K extends keyof HomeySettings>(
@@ -116,16 +124,8 @@ class MELCloudExtensionApp extends App {
   #init(): void {
     this.homey.clearTimeout(this.#initTimeout)
     this.#initTimeout = this.homey.setTimeout(async (): Promise<void> => {
-      try {
-        await this.#loadDevices()
-        await this.autoAdjustCooling()
-      } catch (error: unknown) {
-        if (error instanceof ListenerError) {
-          this.pushToUI(error.name, error.params)
-          return
-        }
-        this.error(error instanceof Error ? error.message : error)
-      }
+      await this.#loadDevices()
+      await this.autoAdjustCooling()
     }, SECONDS_1_IN_MILLISECONDS)
   }
 
