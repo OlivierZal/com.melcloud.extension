@@ -1,7 +1,6 @@
 {
   "log": {
     "error": {
-      "missing": "La température extérieure est manquante",
       "not_found": "__name__ `__id__` est introuvable"
     },
     "listener": {

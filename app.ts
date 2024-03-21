@@ -60,8 +60,6 @@ class MELCloudExtensionApp extends App {
         capabilityPath,
         enabled,
       })
-    } else if (enabled) {
-      throw new ListenerError(this.homey, 'error.missing')
     }
     this.setHomeySettings({ capabilityPath, enabled })
   }

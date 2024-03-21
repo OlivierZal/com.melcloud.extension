@@ -1,7 +1,6 @@
 {
   "log": {
     "error": {
-      "missing": "Buitentemperatuur ontbreekt",
       "not_found": "__name__ `__id__` kan niet worden gevonden"
     },
     "listener": {

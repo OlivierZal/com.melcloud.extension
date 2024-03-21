@@ -1,7 +1,6 @@
 {
   "log": {
     "error": {
-      "missing": "Utomhustemperaturen saknas",
       "not_found": "__name__ `__id__` kunde inte hittas"
     },
     "listener": {

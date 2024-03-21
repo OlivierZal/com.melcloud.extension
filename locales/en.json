@@ -1,7 +1,6 @@
 {
   "log": {
     "error": {
-      "missing": "The outdoor temperature is missing",
       "not_found": "__name__ `__id__` cannot be found"
     },
     "listener": {
