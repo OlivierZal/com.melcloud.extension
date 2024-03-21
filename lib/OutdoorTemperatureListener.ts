@@ -8,7 +8,7 @@ import type {
 } from '../types'
 import BaseTemperatureListener from './BaseTemperatureListener'
 import type { HomeyAPIV3Local } from 'homey-api'
-import ListenerError from './ListenerEventError'
+import ListenerError from './ListenerError'
 import type MELCloudExtensionApp from '../app'
 import MELCloudListener from './MELCloudListener'
 

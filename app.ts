@@ -10,7 +10,7 @@ import type {
 } from './types'
 import { App } from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
-import ListenerError from './lib/ListenerEventError'
+import ListenerError from './lib/ListenerError'
 import ListenerEvent from './lib/ListenerEvent'
 import MELCloudListener from './lib/MELCloudListener'
 import OutdoorTemperatureListener from './lib/OutdoorTemperatureListener'
