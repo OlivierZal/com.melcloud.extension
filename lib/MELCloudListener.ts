@@ -10,7 +10,6 @@ import {
 import BaseTemperatureListener from './BaseTemperatureListener'
 import type Homey from 'homey/lib/Homey'
 import type { HomeyAPIV3Local } from 'homey-api'
-import ListenerEvent from './ListenerEvent'
 import OutdoorTemperatureListener from './OutdoorTemperatureListener'
 
 const MAX_TEMPERATURE = 38
@@ -51,11 +50,11 @@ export default class MELCloudListener extends BaseTemperatureListener {
     this.#thermostatModeListener = this.device.makeCapabilityInstance(
       'thermostat_mode',
       async (value: CapabilityValue): Promise<void> => {
-        new ListenerEvent(this.homey, 'listener.listened', {
+        this.app.pushToUI('listener.listened', {
           capability: this.names.thermostatMode,
           name: this.device.name,
           value,
-        }).pushToUI()
+        })
         if (value === 'cool') {
           await this.#listenToTargetTemperature()
           return
@@ -69,10 +68,10 @@ export default class MELCloudListener extends BaseTemperatureListener {
         }
       },
     )
-    new ListenerEvent(this.homey, 'listener.created', {
+    this.app.pushToUI('listener.created', {
       capability: this.names.thermostatMode,
       name: this.device.name,
-    }).pushToUI()
+    })
     if (currentThermostatMode === 'cool') {
       await this.#listenToTargetTemperature()
     }
@@ -82,12 +81,12 @@ export default class MELCloudListener extends BaseTemperatureListener {
     if (this.temperatureListener !== null) {
       const value: number = this.#getTargetTemperature()
       await this.temperatureListener.setValue(value)
-      new ListenerEvent(this.homey, 'target_temperature.calculated', {
+      this.app.pushToUI('target_temperature.calculated', {
         name: this.device.name,
         outdoorTemperature: `${OutdoorTemperatureListener.value}\u00A0°C`,
         threshold: `${this.#getThreshold()}\u00A0°C`,
         value: `${value}\u00A0°C`,
-      }).pushToUI()
+      })
     }
   }
 
@@ -103,10 +102,10 @@ export default class MELCloudListener extends BaseTemperatureListener {
     if (this.#thermostatModeListener !== null) {
       this.#thermostatModeListener.destroy()
     }
-    new ListenerEvent(this.homey, 'listener.cleaned', {
+    this.app.pushToUI('listener.cleaned', {
       capability: this.names.thermostatMode,
       name: this.device.name,
-    }).pushToUI()
+    })
     MELCloudListener.listeners.delete(this.device.id)
   }
 
@@ -149,19 +148,19 @@ export default class MELCloudListener extends BaseTemperatureListener {
         'target_temperature',
         async (value: CapabilityValue): Promise<void> => {
           if (value !== this.#getTargetTemperature()) {
-            new ListenerEvent(this.homey, 'listener.listened', {
+            this.app.pushToUI('listener.listened', {
               capability: this.names.temperature,
               name: this.device.name,
               value: `${value as number}\u00A0°C`,
-            }).pushToUI()
+            })
             await this.#setThreshold(value as number)
           }
         },
       )
-      new ListenerEvent(this.homey, 'listener.created', {
+      this.app.pushToUI('listener.created', {
         capability: this.names.temperature,
         name: this.device.name,
-      }).pushToUI()
+      })
       await this.#setThreshold(currentTargetTemperature)
     }
   }
@@ -172,20 +171,20 @@ export default class MELCloudListener extends BaseTemperatureListener {
       capabilityId: 'target_temperature',
       value,
     })
-    new ListenerEvent(this.homey, 'target_temperature.reverted', {
+    this.app.pushToUI('target_temperature.reverted', {
       name: this.device.name,
       value: `${value}\u00A0°C`,
-    }).pushToUI()
+    })
   }
 
   async #setThreshold(value: number): Promise<void> {
     const thresholds: Thresholds = this.#getThresholds()
     thresholds[this.device.id] = value
     this.app.setHomeySettings({ thresholds })
-    new ListenerEvent(this.homey, 'target_temperature.saved', {
+    this.app.pushToUI('target_temperature.saved', {
       name: this.device.name,
       value: `${value}\u00A0°C`,
-    }).pushToUI()
+    })
     await this.setTargetTemperature()
   }
 }

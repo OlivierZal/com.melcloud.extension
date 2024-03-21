@@ -2,7 +2,12 @@
   @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 */
 import 'source-map-support/register'
-import type { HomeySettings, TemperatureListenerData, ValueOf } from './types'
+import type {
+  HomeySettings,
+  ListenerEventParams,
+  TemperatureListenerData,
+  ValueOf,
+} from './types'
 import { App } from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
 import ListenerEvent from './lib/ListenerEvent'
@@ -93,6 +98,10 @@ class MELCloudExtensionApp extends App {
     await this.#destroyListeners()
   }
 
+  public pushToUI(name: string, params?: ListenerEventParams): void {
+    new ListenerEvent(this.homey, name, params).pushToUI()
+  }
+
   public setHomeySettings(settings: Partial<HomeySettings>): void {
     Object.entries(settings).forEach(
       ([setting, value]: [string, ValueOf<HomeySettings>]) => {
@@ -104,7 +113,7 @@ class MELCloudExtensionApp extends App {
   }
 
   async #destroyListeners(): Promise<void> {
-    new ListenerEvent(this.homey, 'listener.cleaned_all').pushToUI()
+    this.pushToUI('listener.cleaned_all')
     await MELCloudListener.destroy()
     OutdoorTemperatureListener.destroy()
   }
@@ -117,7 +126,7 @@ class MELCloudExtensionApp extends App {
         await this.autoAdjustCooling()
       } catch (error: unknown) {
         if (error instanceof ListenerEventError) {
-          new ListenerEvent(this.homey, error.name, error.params).pushToUI()
+          this.pushToUI(error.name, error.params)
           return
         }
         this.error(error instanceof Error ? error.message : error)

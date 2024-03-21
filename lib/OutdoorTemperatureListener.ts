@@ -9,7 +9,6 @@ import type {
 import BaseTemperatureListener from './BaseTemperatureListener'
 import type Homey from 'homey/lib/Homey'
 import type { HomeyAPIV3Local } from 'homey-api'
-import ListenerEvent from './ListenerEvent'
 import ListenerEventError from './ListenerEventError'
 import type MELCloudExtensionApp from '../app'
 import MELCloudListener from './MELCloudListener'
@@ -84,11 +83,11 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
             async (value: CapabilityValue): Promise<void> => {
               if (this.#listener !== null) {
                 this.#listener.#value = value as number
-                new ListenerEvent(this.#listener.homey, 'listener.listened', {
+                this.#listener.app.pushToUI('listener.listened', {
                   capability: this.#listener.names.temperature,
                   name: this.#listener.device.name,
                   value: `${value}\u00A0°C`,
-                }).pushToUI()
+                })
                 await Promise.all(
                   Array.from(MELCloudListener.listeners.values()).map(
                     async (listener: MELCloudListener): Promise<void> =>
@@ -98,10 +97,10 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
               }
             },
           )
-        new ListenerEvent(this.#listener.homey, 'listener.created', {
+        this.#listener.app.pushToUI('listener.created', {
           capability: this.#listener.names.temperature,
           name: this.#listener.device.name,
-        }).pushToUI()
+        })
       }
     }
   }

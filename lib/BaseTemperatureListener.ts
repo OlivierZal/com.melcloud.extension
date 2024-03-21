@@ -4,7 +4,6 @@
 import type { DeviceCapability } from '../types'
 import type Homey from 'homey/lib/Homey'
 import type { HomeyAPIV3Local } from 'homey-api'
-import ListenerEvent from './ListenerEvent'
 import type MELCloudExtensionApp from '../app'
 
 export default abstract class BaseTemperatureListener {
@@ -33,10 +32,10 @@ export default abstract class BaseTemperatureListener {
       this.temperatureListener.destroy()
       this.temperatureListener = null
     }
-    new ListenerEvent(this.homey, 'listener.cleaned', {
+    this.app.pushToUI('listener.cleaned', {
       capability: this.names.temperature,
       name: this.device.name,
-    }).pushToUI()
+    })
   }
 
   protected async getCapabilityValue(
