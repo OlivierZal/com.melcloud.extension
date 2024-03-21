@@ -50,7 +50,7 @@ class MELCloudExtensionApp extends App {
 
   public async autoAdjustCooling(
     { capabilityPath, enabled }: TemperatureListenerData = {
-      capabilityPath: this.getHomeySetting('capabilityPath') ?? '',
+      capabilityPath: this.getHomeySetting('capabilityPath') ?? ':',
       enabled: this.getHomeySetting('enabled') ?? false,
     },
   ): Promise<void> {

@@ -40,7 +40,7 @@ export = {
               id === 'measure_temperature.outdoor',
           )
           if (outdoorCapability) {
-            const capabilityPath = `${device.id}:${outdoorCapability.id}`
+            const capabilityPath: `${string}:${string}` = `${device.id}:${outdoorCapability.id}`
             if (homey.settings.get('capabilityPath') === null) {
               homey.settings.set('capabilityPath', capabilityPath)
             }

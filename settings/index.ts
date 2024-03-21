@@ -58,12 +58,8 @@ const logsElement: HTMLTableSectionElement = document.getElementById(
 ) as HTMLTableSectionElement
 
 capabilityPathElement.addEventListener('change', (): void => {
-  if (capabilityPathElement.value) {
-    if (enabledElement.value === 'false') {
-      enabledElement.value = 'true'
-    }
-  } else if (enabledElement.value === 'true') {
-    enabledElement.value = 'false'
+  if (enabledElement.value === 'false') {
+    enabledElement.value = 'true'
   }
 })
 
@@ -237,7 +233,8 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   applyElement.addEventListener('click', (): void => {
     disableButtons()
     const enabled: boolean = enabledElement.value === 'true'
-    const capabilityPath: string = capabilityPathElement.value
+    const capabilityPath: `${string}:${string}` =
+      capabilityPathElement.value as `${string}:${string}`
     const body: TemperatureListenerData = { capabilityPath, enabled }
     // @ts-expect-error: `homey` is partially typed
     homey.api(
