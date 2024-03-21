@@ -36,10 +36,10 @@ export interface HomeySettings {
 }
 
 export interface HomeySettingsUI {
-  readonly capabilityPath: `${string}:${string}` | undefined
-  readonly enabled: boolean | undefined
-  readonly lastLogs: readonly TimestampedLog[] | undefined
-  readonly thresholds: Thresholds | undefined
+  readonly capabilityPath?: `${string}:${string}`
+  readonly enabled?: boolean
+  readonly lastLogs?: readonly TimestampedLog[]
+  readonly thresholds?: Thresholds
 }
 
 export interface TemperatureSensor {
