@@ -13,15 +13,12 @@ export default abstract class BaseTemperatureListener {
 
   protected readonly device: HomeyAPIV3Local.ManagerDevices.Device
 
-  protected readonly homey: Homey
-
   protected readonly names: Record<string, string>
 
   public constructor(
     homey: Homey,
     device: HomeyAPIV3Local.ManagerDevices.Device,
   ) {
-    this.homey = homey
     this.app = homey.app as MELCloudExtensionApp
     this.names = this.app.names
     this.device = device
