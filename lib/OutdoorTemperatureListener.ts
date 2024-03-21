@@ -20,15 +20,12 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
 
   readonly #capabilityId: string
 
-  readonly #homey: Homey
-
   private constructor(
     homey: Homey,
     device: HomeyAPIV3Local.ManagerDevices.Device,
     capabilityId: string,
   ) {
     super(homey, device)
-    this.#homey = homey
     this.#capabilityId = capabilityId
   }
 
@@ -140,7 +137,7 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
     await Promise.all(
       this.app.melcloudDevices.map(
         async (device: HomeyAPIV3Local.ManagerDevices.Device): Promise<void> =>
-          new MELCloudListener(this.#homey, device).listenToThermostatMode(),
+          new MELCloudListener(this.app.homey, device).listenToThermostatMode(),
       ),
     )
   }
