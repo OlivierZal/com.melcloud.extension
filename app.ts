@@ -56,7 +56,7 @@ class MELCloudExtensionApp extends App {
   ): Promise<void> {
     await this.#destroyListeners()
     if (capabilityPath) {
-      await OutdoorTemperatureListener.create(this.homey, {
+      await OutdoorTemperatureListener.create(this, {
         capabilityPath,
         enabled,
       })

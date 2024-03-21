@@ -7,7 +7,6 @@ import type {
   TemperatureListenerData,
 } from '../types'
 import BaseTemperatureListener from './BaseTemperatureListener'
-import type Homey from 'homey/lib/Homey'
 import type { HomeyAPIV3Local } from 'homey-api'
 import ListenerEventError from './ListenerEventError'
 import type MELCloudExtensionApp from '../app'
@@ -21,11 +20,11 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
   readonly #capabilityId: string
 
   private constructor(
-    homey: Homey,
+    app: MELCloudExtensionApp,
     device: HomeyAPIV3Local.ManagerDevices.Device,
     capabilityId: string,
   ) {
-    super(homey, device)
+    super(app, device)
     this.#capabilityId = capabilityId
   }
 
@@ -38,21 +37,21 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
   }
 
   public static async create(
-    homey: Homey,
+    app: MELCloudExtensionApp,
     { capabilityPath, enabled }: TemperatureListenerData,
   ): Promise<void> {
     try {
       const [device, capabilityId]: [
         HomeyAPIV3Local.ManagerDevices.Device,
         string,
-      ] = await this.#validateCapabilityPath(homey, capabilityPath)
-      this.#listener = new this(homey, device, capabilityId)
+      ] = await this.#validateCapabilityPath(app, capabilityPath)
+      this.#listener = new this(app, device, capabilityId)
       if (enabled) {
         await this.#listener.#listenToThermostatModes()
       }
     } catch (error: unknown) {
       if (error instanceof ListenerEventError) {
-        throw new ListenerEventError(homey, error.name, error.params)
+        throw new ListenerEventError(app.homey, error.name, error.params)
       }
       throw new Error(error instanceof Error ? error.message : String(error))
     }
@@ -106,10 +105,9 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
   }
 
   static async #validateCapabilityPath(
-    homey: Homey,
+    app: MELCloudExtensionApp,
     capabilityPath: string,
   ): Promise<[HomeyAPIV3Local.ManagerDevices.Device, string]> {
-    const app: MELCloudExtensionApp = homey.app as MELCloudExtensionApp
     const [deviceId, capabilityId]: string[] = capabilityPath.split(':')
     let device: HomeyAPIV3Local.ManagerDevices.Device | null = null
     try {
@@ -118,14 +116,14 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
         id: deviceId,
       })) as HomeyAPIV3Local.ManagerDevices.Device | null
     } catch (error: unknown) {
-      throw new ListenerEventError(homey, 'error.not_found', {
+      throw new ListenerEventError(app.homey, 'error.not_found', {
         id: deviceId,
         name: app.names.device,
       })
     }
     // @ts-expect-error: `homey-api` is partially typed
     if (!device || !(capabilityId in (device.capabilitiesObj ?? {}))) {
-      throw new ListenerEventError(homey, 'error.not_found', {
+      throw new ListenerEventError(app.homey, 'error.not_found', {
         id: capabilityId,
         name: app.names.outdoorTemperature,
       })
@@ -137,7 +135,7 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
     await Promise.all(
       this.app.melcloudDevices.map(
         async (device: HomeyAPIV3Local.ManagerDevices.Device): Promise<void> =>
-          new MELCloudListener(this.app.homey, device).listenToThermostatMode(),
+          new MELCloudListener(this.app, device).listenToThermostatMode(),
       ),
     )
   }

@@ -2,7 +2,6 @@
   @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 */
 import type { DeviceCapability } from '../types'
-import type Homey from 'homey/lib/Homey'
 import type { HomeyAPIV3Local } from 'homey-api'
 import type MELCloudExtensionApp from '../app'
 
@@ -16,11 +15,11 @@ export default abstract class BaseTemperatureListener {
   protected readonly names: Record<string, string>
 
   public constructor(
-    homey: Homey,
+    app: MELCloudExtensionApp,
     device: HomeyAPIV3Local.ManagerDevices.Device,
   ) {
-    this.app = homey.app as MELCloudExtensionApp
-    this.names = this.app.names
+    this.app = app
+    this.names = app.names
     this.device = device
   }
 

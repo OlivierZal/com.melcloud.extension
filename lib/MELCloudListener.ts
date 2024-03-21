@@ -8,8 +8,8 @@ import {
   type Thresholds,
 } from '../types'
 import BaseTemperatureListener from './BaseTemperatureListener'
-import type Homey from 'homey/lib/Homey'
 import type { HomeyAPIV3Local } from 'homey-api'
+import type MELCloudExtensionApp from '../app'
 import OutdoorTemperatureListener from './OutdoorTemperatureListener'
 
 const MAX_TEMPERATURE = 38
@@ -24,10 +24,10 @@ export default class MELCloudListener extends BaseTemperatureListener {
   #thermostatModeListener: DeviceCapability = null
 
   public constructor(
-    homey: Homey,
+    app: MELCloudExtensionApp,
     device: HomeyAPIV3Local.ManagerDevices.Device,
   ) {
-    super(homey, device)
+    super(app, device)
     if (!MELCloudListener.listeners.has(device.id)) {
       MELCloudListener.listeners.set(device.id, this)
     }
