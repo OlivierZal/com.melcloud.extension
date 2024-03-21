@@ -8,7 +8,7 @@ import type {
 } from '../types'
 import BaseTemperatureListener from './BaseTemperatureListener'
 import type { HomeyAPIV3Local } from 'homey-api'
-import ListenerEventError from './ListenerEventError'
+import ListenerError from './ListenerEventError'
 import type MELCloudExtensionApp from '../app'
 import MELCloudListener from './MELCloudListener'
 
@@ -50,8 +50,8 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
         await this.#listener.#listenToThermostatModes()
       }
     } catch (error: unknown) {
-      if (error instanceof ListenerEventError) {
-        throw new ListenerEventError(app.homey, error.name, error.params)
+      if (error instanceof ListenerError) {
+        throw new ListenerError(app.homey, error.name, error.params)
       }
       throw new Error(error instanceof Error ? error.message : String(error))
     }
@@ -116,14 +116,14 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
         id: deviceId,
       })) as HomeyAPIV3Local.ManagerDevices.Device | null
     } catch (error: unknown) {
-      throw new ListenerEventError(app.homey, 'error.not_found', {
+      throw new ListenerError(app.homey, 'error.not_found', {
         id: deviceId,
         name: app.names.device,
       })
     }
     // @ts-expect-error: `homey-api` is partially typed
     if (!device || !(capabilityId in (device.capabilitiesObj ?? {}))) {
-      throw new ListenerEventError(app.homey, 'error.not_found', {
+      throw new ListenerError(app.homey, 'error.not_found', {
         id: capabilityId,
         name: app.names.outdoorTemperature,
       })

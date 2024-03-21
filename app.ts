@@ -10,8 +10,8 @@ import type {
 } from './types'
 import { App } from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
+import ListenerError from './lib/ListenerEventError'
 import ListenerEvent from './lib/ListenerEvent'
-import ListenerEventError from './lib/ListenerEventError'
 import MELCloudListener from './lib/MELCloudListener'
 import OutdoorTemperatureListener from './lib/OutdoorTemperatureListener'
 
@@ -61,7 +61,7 @@ class MELCloudExtensionApp extends App {
         enabled,
       })
     } else if (enabled) {
-      throw new ListenerEventError(this.homey, 'error.missing')
+      throw new ListenerError(this.homey, 'error.missing')
     }
     this.setHomeySettings({ capabilityPath, enabled })
   }
@@ -125,7 +125,7 @@ class MELCloudExtensionApp extends App {
         await this.#loadDevices()
         await this.autoAdjustCooling()
       } catch (error: unknown) {
-        if (error instanceof ListenerEventError) {
+        if (error instanceof ListenerError) {
           this.pushToUI(error.name, error.params)
           return
         }
