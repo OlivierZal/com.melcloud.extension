@@ -6,7 +6,6 @@ import type {
   HomeySettings,
   ListenerEventParams,
   TemperatureListenerData,
-  ValueOf,
 } from './types'
 import { App } from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
@@ -19,12 +18,9 @@ const DRIVER_ID = 'homey:app:com.mecloud:melcloud'
 const SECONDS_1_IN_MILLISECONDS = 1000
 
 class MELCloudExtensionApp extends App {
-  public readonly names: Record<string, string> = Object.fromEntries(
+  public readonly names = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
-      (name: string): [string, string] => [
-        name,
-        this.homey.__(`names.${name}`),
-      ],
+      (name) => [name, this.homey.__(`names.${name}`)],
     ),
   )
 
@@ -60,7 +56,7 @@ class MELCloudExtensionApp extends App {
         capabilityPath,
         enabled,
       })
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof ListenerError) {
         this.pushToUI(error.name, error.params)
         return
@@ -83,15 +79,15 @@ class MELCloudExtensionApp extends App {
     await this.#api.devices.connect()
     this.#init()
     // @ts-expect-error: `homey-api` is partially typed
-    this.#api.devices.on('device.create', (): void => {
+    this.#api.devices.on('device.create', () => {
       this.#init()
     })
     // @ts-expect-error: `homey-api` is partially typed
-    this.#api.devices.on('device.delete', (): void => {
+    this.#api.devices.on('device.delete', () => {
       this.#init()
     })
-    this.homey.on('unload', (): void => {
-      this.#destroyListeners().catch((error: unknown): void => {
+    this.homey.on('unload', () => {
+      this.#destroyListeners().catch((error: unknown) => {
         this.error(error instanceof Error ? error.message : String(error))
       })
     })
@@ -106,13 +102,11 @@ class MELCloudExtensionApp extends App {
   }
 
   public setHomeySettings(settings: Partial<HomeySettings>): void {
-    Object.entries(settings).forEach(
-      ([setting, value]: [string, ValueOf<HomeySettings>]) => {
-        if (value !== this.getHomeySetting(setting as keyof HomeySettings)) {
-          this.homey.settings.set(setting, value)
-        }
-      },
-    )
+    Object.entries(settings).forEach(([setting, value]) => {
+      if (value !== this.getHomeySetting(setting as keyof HomeySettings)) {
+        this.homey.settings.set(setting, value)
+      }
+    })
   }
 
   async #destroyListeners(): Promise<void> {
@@ -123,7 +117,7 @@ class MELCloudExtensionApp extends App {
 
   #init(): void {
     this.homey.clearTimeout(this.#initTimeout)
-    this.#initTimeout = this.homey.setTimeout(async (): Promise<void> => {
+    this.#initTimeout = this.homey.setTimeout(async () => {
       await this.#loadDevices()
       await this.autoAdjustCooling()
     }, SECONDS_1_IN_MILLISECONDS)
@@ -132,25 +126,23 @@ class MELCloudExtensionApp extends App {
   async #loadDevices(): Promise<void> {
     this.#melcloudDevices = []
     this.#temperatureSensors = []
-    const devices: HomeyAPIV3Local.ManagerDevices.Device[] =
+    const devices =
       // @ts-expect-error: `homey-api` is partially typed
       (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
-    Object.values(devices).forEach(
-      (device: HomeyAPIV3Local.ManagerDevices.Device) => {
+    Object.values(devices).forEach((device) => {
+      // @ts-expect-error: `homey-api` is partially typed
+      if (device.driverId === DRIVER_ID) {
+        this.#melcloudDevices.push(device)
+      }
+      if (
         // @ts-expect-error: `homey-api` is partially typed
-        if (device.driverId === DRIVER_ID) {
-          this.#melcloudDevices.push(device)
-        }
-        if (
-          // @ts-expect-error: `homey-api` is partially typed
-          (device.capabilities as string[]).some((capability: string) =>
-            capability.startsWith('measure_temperature'),
-          )
-        ) {
-          this.#temperatureSensors.push(device)
-        }
-      },
-    )
+        (device.capabilities as string[]).some((capability) =>
+          capability.startsWith('measure_temperature'),
+        )
+      ) {
+        this.#temperatureSensors.push(device)
+      }
+    })
   }
 }
 

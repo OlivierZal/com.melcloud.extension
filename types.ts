@@ -7,15 +7,13 @@ export interface Capability {
   title: string
 }
 
-export type CapabilityValue = boolean | number | string
-
 export interface ListenerEventParams {
   readonly capability?: string
   readonly id?: string
   readonly name?: string
   readonly outdoorTemperature?: string
   readonly threshold?: string
-  readonly value?: CapabilityValue
+  readonly value?: boolean | number | string
 }
 
 export interface TimestampedLog {
@@ -25,8 +23,6 @@ export interface TimestampedLog {
 }
 
 export type Thresholds = Partial<Record<string, number>>
-
-export type ValueOf<T> = T[keyof T]
 
 export interface HomeySettings {
   readonly capabilityPath: `${string}:${string}` | null

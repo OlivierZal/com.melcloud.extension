@@ -36,13 +36,13 @@ export default abstract class BaseTemperatureListener {
 
   protected async getCapabilityValue(
     capabilityId: string,
-  ): Promise<number | string> {
+  ): Promise<boolean | number | string | null> {
     return (
       // @ts-expect-error: `homey-api` is partially typed
       (await this.app.api.devices.getCapabilityValue({
         capabilityId,
         deviceId: this.device.id,
-      })) as number | string
+      })) as boolean | number | string | null
     )
   }
 }

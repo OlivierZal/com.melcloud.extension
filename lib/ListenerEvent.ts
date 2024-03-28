@@ -31,8 +31,7 @@ export default class ListenerEvent {
       time: Date.now(),
     }
     this.#homey.api.realtime('log', newLog)
-    const lastLogs: TimestampedLog[] =
-      this.#app.getHomeySetting('lastLogs') ?? []
+    const lastLogs = this.#app.getHomeySetting('lastLogs') ?? []
     lastLogs.unshift(newLog)
     if (lastLogs.length > MAX_LOGS) {
       lastLogs.length = MAX_LOGS
