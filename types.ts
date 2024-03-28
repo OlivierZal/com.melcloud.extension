@@ -44,7 +44,7 @@ export interface TemperatureSensor {
 }
 
 export interface TemperatureListenerData {
-  readonly capabilityPath: `${string}:${string}`
+  readonly capabilityPath: TemperatureSensor['capabilityPath']
   readonly enabled: boolean
 }
 
