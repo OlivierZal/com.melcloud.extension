@@ -165,7 +165,6 @@ module.exports = [
         { varsIgnorePattern: 'onHomeyReady' },
       ],
       '@typescript-eslint/prefer-readonly-parameter-types': 'off',
-      'import/extensions': 'off',
       'import/no-duplicates': ['error', { 'prefer-inline': true }],
     },
     settings: {
