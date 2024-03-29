@@ -128,19 +128,23 @@ export default class MELCloudListener extends BaseTemperatureListener {
   async #listenToTargetTemperature(): Promise<void> {
     if (this.temperatureListener === null) {
       await OutdoorTemperatureListener.listenToOutdoorTemperature()
+      const currentTargetTemperature =
+        await this.getCapabilityValue('target_temperature')
+      if (typeof currentTargetTemperature === 'number') {
+        await this.#setThreshold(currentTargetTemperature)
+      }
       this.temperatureListener = this.device.makeCapabilityInstance(
         'target_temperature',
         async (value) => {
-          if (
-            typeof value === 'number' &&
-            value !== this.#getTargetTemperature()
-          ) {
+          if (value !== this.#getTargetTemperature()) {
             this.app.pushToUI('listener.listened', {
               capability: this.names.temperature,
               name: this.device.name,
               value: `${value}\u00A0°C`,
             })
-            await this.#setThreshold(value)
+            if (typeof value === 'number') {
+              await this.#setThreshold(value)
+            }
           }
         },
       )
@@ -148,11 +152,6 @@ export default class MELCloudListener extends BaseTemperatureListener {
         capability: this.names.temperature,
         name: this.device.name,
       })
-      const currentTargetTemperature =
-        await this.getCapabilityValue('target_temperature')
-      if (typeof currentTargetTemperature === 'number') {
-        await this.#setThreshold(currentTargetTemperature)
-      }
     }
   }
 
