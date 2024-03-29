@@ -7,6 +7,8 @@ export interface Capability {
   title: string
 }
 
+export type CapabilityPath = `${string}:${string}`
+
 export interface ListenerEventParams {
   readonly capability?: string
   readonly id?: string
@@ -25,14 +27,14 @@ export interface TimestampedLog {
 export type Thresholds = Partial<Record<string, number>>
 
 export interface HomeySettings {
-  readonly capabilityPath: `${string}:${string}` | null
+  readonly capabilityPath: CapabilityPath | null
   readonly enabled: boolean | null
   readonly lastLogs: TimestampedLog[] | null
   readonly thresholds: Thresholds | null
 }
 
 export interface HomeySettingsUI {
-  readonly capabilityPath?: `${string}:${string}`
+  readonly capabilityPath?: CapabilityPath
   readonly enabled?: boolean
   readonly lastLogs?: readonly TimestampedLog[]
   readonly thresholds?: Thresholds
@@ -40,11 +42,11 @@ export interface HomeySettingsUI {
 
 export interface TemperatureSensor {
   readonly capabilityName: string
-  readonly capabilityPath: `${string}:${string}`
+  readonly capabilityPath: CapabilityPath
 }
 
 export interface TemperatureListenerData {
-  readonly capabilityPath: TemperatureSensor['capabilityPath']
+  readonly capabilityPath: CapabilityPath
   readonly enabled: boolean
 }
 

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import type {
+  CapabilityPath,
   HomeySettingsUI,
   TemperatureListenerData,
   TemperatureSensor,
@@ -213,7 +214,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   applyElement.addEventListener('click', () => {
     disableButtons()
     const enabled = enabledElement.value === 'true'
-    const capabilityPath = capabilityPathElement.value as `${string}:${string}`
+    const capabilityPath = capabilityPathElement.value as CapabilityPath
     const body: TemperatureListenerData = { capabilityPath, enabled }
     // @ts-expect-error: `homey` is partially typed
     homey.api(
