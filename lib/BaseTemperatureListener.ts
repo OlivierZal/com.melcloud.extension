@@ -28,7 +28,7 @@ export default abstract class BaseTemperatureListener {
       this.temperatureListener.destroy()
       this.temperatureListener = null
     }
-    this.app.pushToUI('listener.cleaned', {
+    this.app.pushToUI('cleaned', {
       capability: this.names.temperature,
       name: this.device.name,
     })

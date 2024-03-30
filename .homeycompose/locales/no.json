@@ -1,19 +1,15 @@
 {
   "log": {
+    "calculated": "Beregning av temperaturen til __name__: __value__ (fra terskel __threshold__ og utetemperatur __outdoorTemperature__)",
+    "cleaned": "Rengjøring av lytter for __capability__ av __name__",
+    "cleanedAll": "Rengjøring av alle lyttere",
+    "created": "Oppretter en lytter for __capability__ av __name__",
     "error": {
       "not_found": "__name__ `__id__` ble ikke funnet"
     },
-    "listener": {
-      "cleaned": "Rengjøring av lytter for __capability__ av __name__",
-      "cleaned_all": "Rengjøring av alle lyttere",
-      "created": "Oppretter en lytter for __capability__ av __name__",
-      "listened": "Lytt til __capability__ av __name__: __value__"
-    },
-    "target_temperature": {
-      "calculated": "Beregning av temperaturen til __name__: __value__ (fra terskel __threshold__ og utetemperatur __outdoorTemperature__)",
-      "reverted": "Gjenoppretter temperaturen til __name__: __value__",
-      "saved": "Lagrer temperaturen til __name__: __value__"
-    }
+    "listened": "Lytt til __capability__ av __name__: __value__",
+    "reverted": "Gjenoppretter temperaturen til __name__: __value__",
+    "saved": "Lagrer temperaturen til __name__: __value__"
   },
   "names": {
     "device": "Enheten",

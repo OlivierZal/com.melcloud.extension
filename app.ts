@@ -110,7 +110,7 @@ class MELCloudExtensionApp extends App {
   }
 
   async #destroyListeners(): Promise<void> {
-    this.pushToUI('listener.cleaned_all')
+    this.pushToUI('cleanedAll')
     await MELCloudListener.destroy()
     OutdoorTemperatureListener.destroy()
   }

@@ -9,16 +9,14 @@ import type {
 import type Homey from 'homey/lib/Homey'
 
 const CATEGORIES: Record<string, { color?: string; icon: string }> = {
-  /* eslint-disable @typescript-eslint/naming-convention */
+  calculated: { color: '#008000', icon: '🔢' },
+  cleaned: { icon: '🗑️' },
+  cleanedAll: { icon: '🛑' },
+  created: { icon: '🔊' },
   error: { color: '#E8000D', icon: '⚠️' },
-  'listener.cleaned': { icon: '🗑️' },
-  'listener.cleaned_all': { icon: '🛑' },
-  'listener.created': { icon: '🔊' },
-  'listener.listened': { color: '#0047AB', icon: '👂' },
-  'target_temperature.calculated': { color: '#008000', icon: '🔢' },
-  'target_temperature.reverted': { icon: '↩️' },
-  'target_temperature.saved': { icon: '☁️' },
-  /* eslint-enable @typescript-eslint/naming-convention */
+  listened: { color: '#0047AB', icon: '👂' },
+  reverted: { icon: '↩️' },
+  saved: { icon: '☁️' },
 }
 const DAYS_6 = 6
 const HOURS_0 = 0

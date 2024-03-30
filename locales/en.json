@@ -1,19 +1,15 @@
 {
   "log": {
+    "calculated": "Calculating the temperature of __name__: __value__ (from the threshold __threshold__ and outdoor temperature __outdoorTemperature__)",
+    "cleaned": "Cleaning listener for __capability__ of __name__",
+    "cleanedAll": "Cleaning all listeners",
+    "created": "Creating a listener for __capability__ of __name__",
     "error": {
       "not_found": "__name__ `__id__` cannot be found"
     },
-    "listener": {
-      "cleaned": "Cleaning listener for __capability__ of __name__",
-      "cleaned_all": "Cleaning all listeners",
-      "created": "Creating a listener for __capability__ of __name__",
-      "listened": "Listening to __capability__ of __name__: __value__"
-    },
-    "target_temperature": {
-      "calculated": "Calculating the temperature of __name__: __value__ (from the threshold __threshold__ and outdoor temperature __outdoorTemperature__)",
-      "reverted": "Reverting the temperature of __name__: __value__",
-      "saved": "Saving the temperature of __name__: __value__"
-    }
+    "listened": "Listening to __capability__ of __name__: __value__",
+    "reverted": "Reverting the temperature of __name__: __value__",
+    "saved": "Saving the temperature of __name__: __value__"
   },
   "names": {
     "device": "Device",

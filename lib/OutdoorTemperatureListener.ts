@@ -72,7 +72,7 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
             async (value) => {
               if (this.#listener !== null) {
                 this.#listener.#value = value as number
-                this.#listener.app.pushToUI('listener.listened', {
+                this.#listener.app.pushToUI('listened', {
                   capability: this.#listener.names.temperature,
                   name: this.#listener.device.name,
                   value: `${value}\u00A0°C`,
@@ -85,7 +85,7 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
               }
             },
           )
-        this.#listener.app.pushToUI('listener.created', {
+        this.#listener.app.pushToUI('created', {
           capability: this.#listener.names.temperature,
           name: this.#listener.device.name,
         })

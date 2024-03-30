@@ -1,19 +1,15 @@
 {
   "log": {
+    "calculated": "Calcul de la température de __name__ : __value__ (à partir du seuil __threshold__ et de la température extérieure __outdoorTemperature__)",
+    "cleaned": "Nettoyage de l'écouteur pour __capability__ de __name__",
+    "cleanedAll": "Nettoyage de tous les écouteurs",
+    "created": "Création d'un écouteur pour __capability__ de __name__",
     "error": {
       "not_found": "__name__ `__id__` est introuvable"
     },
-    "listener": {
-      "cleaned": "Nettoyage de l'écouteur pour __capability__ de __name__",
-      "cleaned_all": "Nettoyage de tous les écouteurs",
-      "created": "Création d'un écouteur pour __capability__ de __name__",
-      "listened": "Écoute de __capability__ de __name__ : __value__"
-    },
-    "target_temperature": {
-      "calculated": "Calcul de la température de __name__ : __value__ (à partir du seuil __threshold__ et de la température extérieure __outdoorTemperature__)",
-      "reverted": "Rétablissement de la température de __name__ : __value__",
-      "saved": "Enregistrement de la température de __name__ : __value__"
-    }
+    "listened": "Écoute de __capability__ de __name__ : __value__",
+    "reverted": "Rétablissement de la température de __name__ : __value__",
+    "saved": "Enregistrement de la température de __name__ : __value__"
   },
   "names": {
     "device": "L'appareil",

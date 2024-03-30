@@ -1,19 +1,15 @@
 {
   "log": {
+    "calculated": "Cálculo de la temperatura de __name__: __value__ (a partir del umbral __threshold__ y la temperatura exterior __outdoorTemperature__)",
+    "cleaned": "Limpieza del oyente para __capability__ de __name__",
+    "cleanedAll": "Limpieza de todos los oyentes",
+    "created": "Creación de un oyente para __capability__ de __name__",
     "error": {
       "not_found": "No se puede encontrar __name__ `__id__`"
     },
-    "listener": {
-      "cleaned": "Limpieza del oyente para __capability__ de __name__",
-      "cleaned_all": "Limpieza de todos los oyentes",
-      "created": "Creación de un oyente para __capability__ de __name__",
-      "listened": "Escuchando a __capability__ de __name__: __value__"
-    },
-    "target_temperature": {
-      "calculated": "Cálculo de la temperatura de __name__: __value__ (a partir del umbral __threshold__ y la temperatura exterior __outdoorTemperature__)",
-      "reverted": "Revertiendo la temperatura de __name__: __value__",
-      "saved": "Guardando la temperatura de __name__: __value__"
-    }
+    "listened": "Escuchando a __capability__ de __name__: __value__",
+    "reverted": "Revertiendo la temperatura de __name__: __value__",
+    "saved": "Guardando la temperatura de __name__: __value__"
   },
   "names": {
     "device": "El dispositivo",
