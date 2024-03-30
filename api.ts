@@ -38,9 +38,6 @@ export = {
         )
         if (outdoorCapability) {
           const capabilityPath: CapabilityPath = `${device.id}:${outdoorCapability.id}`
-          if (homey.settings.get('capabilityPath') === null) {
-            homey.settings.set('capabilityPath', capabilityPath)
-          }
           return [
             {
               capabilityName: `${device.name} - ${outdoorCapability.title}`,

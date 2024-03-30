@@ -72,6 +72,9 @@ class MELCloudExtensionApp extends App {
   }
 
   public async onInit(): Promise<void> {
+    if (this.getHomeySetting('enabled') === null) {
+      this.setHomeySettings({ enabled: false })
+    }
     this.#api = (await HomeyAPIV3Local.createAppAPI({
       homey: this.homey,
     })) as HomeyAPIV3Local
@@ -133,6 +136,11 @@ class MELCloudExtensionApp extends App {
       // @ts-expect-error: `homey-api` is partially typed
       if (device.driverId === DRIVER_ID) {
         this.#melcloudDevices.push(device)
+        if (this.getHomeySetting('capabilityPath') === null) {
+          this.setHomeySettings({
+            capabilityPath: `${device.id}:measure_temperature.outdoor`,
+          })
+        }
       }
       if (
         // @ts-expect-error: `homey-api` is partially typed
