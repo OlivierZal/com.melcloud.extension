@@ -15,7 +15,6 @@ const CATEGORIES: Record<string, { color?: string; icon: string }> = {
   'listener.cleaned_all': { icon: '🛑' },
   'listener.created': { icon: '🔊' },
   'listener.listened': { color: '#0047AB', icon: '👂' },
-  retry: { icon: '🔄' },
   'target_temperature.calculated': { color: '#008000', icon: '🔢' },
   'target_temperature.reverted': { icon: '↩️' },
   'target_temperature.saved': { icon: '☁️' },
