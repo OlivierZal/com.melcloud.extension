@@ -167,27 +167,29 @@ const getHomeySettings = async (homey: Homey): Promise<void> => {
   enableButtons()
 }
 
-const getTemperatureSensors = (homey: Homey): void => {
-  // @ts-expect-error: `homey` is partially typed
-  homey.api(
-    'GET',
-    '/devices/sensors/temperature',
-    async (error: Error | null, devices: TemperatureSensor[]) => {
-      if (error) {
-        await handleTemperatureSensorsError(homey, error.message)
-        return
-      }
-      devices.forEach((device) => {
-        const { capabilityPath, capabilityName } = device
-        const optionElement = document.createElement('option')
-        optionElement.value = capabilityPath
-        optionElement.innerText = capabilityName
-        capabilityPathElement.appendChild(optionElement)
-      })
-      await getHomeySettings(homey)
-    },
-  )
-}
+const getTemperatureSensors = async (homey: Homey): Promise<void> =>
+  new Promise<void>((resolve, reject) => {
+    // @ts-expect-error: `homey` is partially typed
+    homey.api(
+      'GET',
+      '/devices/sensors/temperature',
+      async (error: Error | null, devices: TemperatureSensor[]) => {
+        if (error) {
+          await handleTemperatureSensorsError(homey, error.message)
+          reject(error)
+          return
+        }
+        devices.forEach((device) => {
+          const { capabilityPath, capabilityName } = device
+          const optionElement = document.createElement('option')
+          optionElement.value = capabilityPath
+          optionElement.innerText = capabilityName
+          capabilityPathElement.appendChild(optionElement)
+        })
+        resolve()
+      },
+    )
+  })
 
 // eslint-disable-next-line func-style
 async function onHomeyReady(homey: Homey): Promise<void> {
@@ -230,5 +232,6 @@ async function onHomeyReady(homey: Homey): Promise<void> {
 
   homey.on('log', displayLog)
 
-  getTemperatureSensors(homey)
+  await getTemperatureSensors(homey)
+  await getHomeySettings(homey)
 }
