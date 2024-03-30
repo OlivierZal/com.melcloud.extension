@@ -103,21 +103,24 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
       // @ts-expect-error: `homey-api` is partially typed
       device = (await app.api.devices.getDevice({
         id: deviceId,
-      })) as HomeyAPIV3Local.ManagerDevices.Device | null
+      })) as HomeyAPIV3Local.ManagerDevices.Device
+      // @ts-expect-error: `homey-api` is partially typed
+      if (!(capabilityId in (device.capabilitiesObj ?? {}))) {
+        throw new ListenerError(app.homey, 'error.not_found', {
+          id: capabilityId,
+          name: app.names.outdoorTemperature,
+        })
+      }
+      return [device, capabilityId]
     } catch (error) {
+      if (error instanceof ListenerError) {
+        throw error
+      }
       throw new ListenerError(app.homey, 'error.not_found', {
         id: deviceId,
         name: app.names.device,
       })
     }
-    // @ts-expect-error: `homey-api` is partially typed
-    if (!device || !(capabilityId in (device.capabilitiesObj ?? {}))) {
-      throw new ListenerError(app.homey, 'error.not_found', {
-        id: capabilityId,
-        name: app.names.outdoorTemperature,
-      })
-    }
-    return [device, capabilityId]
   }
 
   async #listenToThermostatModes(): Promise<void> {
