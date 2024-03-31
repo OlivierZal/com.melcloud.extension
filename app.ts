@@ -72,9 +72,6 @@ class MELCloudExtensionApp extends App {
   }
 
   public async onInit(): Promise<void> {
-    if (this.getHomeySetting('enabled') === null) {
-      this.setHomeySettings({ enabled: false })
-    }
     this.#api = (await HomeyAPIV3Local.createAppAPI({
       homey: this.homey,
     })) as HomeyAPIV3Local
