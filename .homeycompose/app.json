@@ -20,9 +20,7 @@
     "da": "Juster automatisk temperaturen på din aircondition",
     "es": "Ajuste automático de la temperatura de su aire acondicionado"
   },
-  "category": [
-    "climate"
-  ],
+  "category": ["climate"],
   "version": "19.0.0",
   "compatibility": ">=5.0.0",
   "tags": {
@@ -120,10 +118,6 @@
       "path": "/melcloud/cooling/auto_adjustment"
     }
   },
-  "platforms": [
-    "local"
-  ],
-  "permissions": [
-    "homey:manager:api"
-  ]
+  "platforms": ["local"],
+  "permissions": ["homey:manager:api"]
 }
