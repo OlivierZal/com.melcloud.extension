@@ -2,15 +2,15 @@
   @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 */
 import { DEFAULT_0, type DeviceCapability, type Thresholds } from '../types'
-import BaseTemperatureListener from './BaseTemperatureListener'
 import type { HomeyAPIV3Local } from 'homey-api'
 import type MELCloudExtensionApp from '../app'
 import OutdoorTemperatureListener from './OutdoorTemperatureListener'
+import TemperatureListener from './TemperatureListener'
 
 const MAX_TEMPERATURE = 38
 const MAX_TEMPERATURE_GAP = 8
 
-export default class MELCloudListener extends BaseTemperatureListener {
+export default class MELCloudListener extends TemperatureListener {
   public static readonly listeners = new Map<string, MELCloudListener>()
 
   #thermostatModeListener: DeviceCapability = null
@@ -34,8 +34,8 @@ export default class MELCloudListener extends BaseTemperatureListener {
   }
 
   public async listenToThermostatMode(): Promise<void> {
-    const currentThermostatMode =
-      await this.getCapabilityValue('thermostat_mode')
+    const currentThermostatMode
+      = await this.getCapabilityValue('thermostat_mode')
     this.#thermostatModeListener = this.device.makeCapabilityInstance(
       'thermostat_mode',
       async (value) => {
@@ -50,8 +50,8 @@ export default class MELCloudListener extends BaseTemperatureListener {
         }
         await this.destroyTemperature()
         if (
-          !this.#isItCoolingElsewhere() &&
-          OutdoorTemperatureListener.temperatureListener !== null
+          !this.#isItCoolingElsewhere()
+          && OutdoorTemperatureListener.temperatureListener !== null
         ) {
           OutdoorTemperatureListener.destroyTemperature()
         }
@@ -69,12 +69,13 @@ export default class MELCloudListener extends BaseTemperatureListener {
   public async setTargetTemperature(): Promise<void> {
     if (this.temperatureListener !== null) {
       const value = this.#getTargetTemperature()
+      const outdoorTemperature = OutdoorTemperatureListener.value
       await this.temperatureListener.setValue(value)
       this.app.pushToUI('calculated', {
         name: this.device.name,
-        outdoorTemperature: `${OutdoorTemperatureListener.value}\u00A0°C`,
-        threshold: `${this.#getThreshold()}\u00A0°C`,
-        value: `${value}\u00A0°C`,
+        outdoorTemperature: `${String(outdoorTemperature)}\u00A0°C`,
+        threshold: `${String(this.#getThreshold())}\u00A0°C`,
+        value: `${String(value)}\u00A0°C`,
       })
     }
   }
@@ -102,8 +103,8 @@ export default class MELCloudListener extends BaseTemperatureListener {
     return Math.min(
       Math.max(
         this.#getThreshold(),
-        Math.ceil(OutdoorTemperatureListener.value ?? DEFAULT_0) -
-          MAX_TEMPERATURE_GAP,
+        Math.ceil(OutdoorTemperatureListener.value ?? DEFAULT_0)
+        - MAX_TEMPERATURE_GAP,
       ),
       MAX_TEMPERATURE,
     )
@@ -119,17 +120,17 @@ export default class MELCloudListener extends BaseTemperatureListener {
 
   #isItCoolingElsewhere(): boolean {
     return Array.from(MELCloudListener.listeners.values()).some(
-      (listener) =>
-        (listener.device.id !== this.device.id &&
-          listener.#thermostatModeListener.value) === 'cool',
+      listener =>
+        (listener.device.id !== this.device.id
+        && listener.#thermostatModeListener.value) === 'cool',
     )
   }
 
   async #listenToTargetTemperature(): Promise<void> {
     if (this.temperatureListener === null) {
       await OutdoorTemperatureListener.listenToOutdoorTemperature()
-      const currentTargetTemperature =
-        await this.getCapabilityValue('target_temperature')
+      const currentTargetTemperature
+        = await this.getCapabilityValue('target_temperature')
       if (typeof currentTargetTemperature === 'number') {
         await this.#setThreshold(currentTargetTemperature)
       }
@@ -140,7 +141,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
             this.app.pushToUI('listened', {
               capability: this.names.temperature,
               name: this.device.name,
-              value: `${value}\u00A0°C`,
+              value: `${String(value)}\u00A0°C`,
             })
             if (typeof value === 'number') {
               await this.#setThreshold(value)
@@ -163,7 +164,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
     })
     this.app.pushToUI('reverted', {
       name: this.device.name,
-      value: `${value}\u00A0°C`,
+      value: `${String(value)}\u00A0°C`,
     })
   }
 
@@ -173,7 +174,7 @@ export default class MELCloudListener extends BaseTemperatureListener {
     this.app.setHomeySettings({ thresholds })
     this.app.pushToUI('saved', {
       name: this.device.name,
-      value: `${value}\u00A0°C`,
+      value: `${String(value)}\u00A0°C`,
     })
     await this.setTargetTemperature()
   }

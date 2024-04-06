@@ -1,14 +1,16 @@
 /* eslint-disable
-  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+  @typescript-eslint/no-unsafe-call,
+  @typescript-eslint/no-unsafe-member-access,
+  @typescript-eslint/no-unsafe-return
 */
 import type { DeviceCapability, TemperatureListenerData } from '../types'
-import BaseTemperatureListener from './BaseTemperatureListener'
 import type { HomeyAPIV3Local } from 'homey-api'
 import ListenerError from './ListenerError'
 import type MELCloudExtensionApp from '../app'
 import MELCloudListener from './MELCloudListener'
+import TemperatureListener from './TemperatureListener'
 
-export default class OutdoorTemperatureListener extends BaseTemperatureListener {
+export default class OutdoorTemperatureListener extends TemperatureListener {
   static #listener: OutdoorTemperatureListener | null = null
 
   #value: number | null = null
@@ -66,8 +68,8 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
         this.#listener.#capabilityId,
       )) as number
       if (this.#listener.temperatureListener === null) {
-        this.#listener.temperatureListener =
-          this.#listener.device.makeCapabilityInstance(
+        this.#listener.temperatureListener
+          = this.#listener.device.makeCapabilityInstance(
             this.#listener.#capabilityId,
             async (value) => {
               if (this.#listener !== null) {
@@ -75,11 +77,11 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
                 this.#listener.app.pushToUI('listened', {
                   capability: this.#listener.names.temperature,
                   name: this.#listener.device.name,
-                  value: `${value}\u00A0°C`,
+                  value: `${String(value)}\u00A0°C`,
                 })
                 await Promise.all(
                   Array.from(MELCloudListener.listeners.values()).map(
-                    async (listener) => listener.setTargetTemperature(),
+                    async listener => listener.setTargetTemperature(),
                   ),
                 )
               }
@@ -112,7 +114,8 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
         })
       }
       return [device, capabilityId]
-    } catch (error) {
+    }
+    catch (error) {
       if (error instanceof ListenerError) {
         throw error
       }
@@ -125,7 +128,7 @@ export default class OutdoorTemperatureListener extends BaseTemperatureListener 
 
   async #listenToThermostatModes(): Promise<void> {
     await Promise.all(
-      this.app.melcloudDevices.map(async (device) =>
+      this.app.melcloudDevices.map(async device =>
         new MELCloudListener(this.app, device).listenToThermostatMode(),
       ),
     )

@@ -1,6 +1,5 @@
 import type {
   Capability,
-  CapabilityPath,
   TemperatureListenerData,
   TemperatureSensor,
 } from './types'
@@ -33,16 +32,15 @@ export = {
         ).filter(({ id }) => id.startsWith('measure_temperature'))
         const outdoorCapability = capabilities.find(
           ({ id }) =>
-            app.melcloudDevices.includes(device) &&
-            id === 'measure_temperature.outdoor',
+            app.melcloudDevices.includes(device)
+            && id === 'measure_temperature.outdoor',
         )
         if (outdoorCapability) {
-          const capabilityPath: CapabilityPath = `${device.id}:${outdoorCapability.id}`
           return [
             {
               capabilityName: `${device.name} - ${outdoorCapability.title}`,
-              capabilityPath,
-            },
+              capabilityPath: `${device.id}:${outdoorCapability.id}`,
+            } satisfies TemperatureSensor,
           ]
         }
         return capabilities.map(

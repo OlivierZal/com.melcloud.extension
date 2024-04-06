@@ -20,7 +20,7 @@ const SECONDS_1_IN_MILLISECONDS = 1000
 class MELCloudExtensionApp extends App {
   public readonly names = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
-      (name) => [name, this.homey.__(`names.${name}`)],
+      name => [name, this.homey.__(`names.${name}`)],
     ),
   )
 
@@ -56,7 +56,8 @@ class MELCloudExtensionApp extends App {
         capabilityPath,
         enabled,
       })
-    } catch (error) {
+    }
+    catch (error) {
       if (error instanceof ListenerError) {
         this.pushToUI(error.name, error.params)
         return
@@ -126,9 +127,11 @@ class MELCloudExtensionApp extends App {
   async #loadDevices(): Promise<void> {
     this.#melcloudDevices = []
     this.#temperatureSensors = []
-    const devices =
-      // @ts-expect-error: `homey-api` is partially typed
-      (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
+    const devices
+      = (
+        // @ts-expect-error: `homey-api` is partially typed
+        await this.#api.devices.getDevices()
+      ) as HomeyAPIV3Local.ManagerDevices.Device[]
     Object.values(devices).forEach((device) => {
       // @ts-expect-error: `homey-api` is partially typed
       if (device.driverId === DRIVER_ID) {
@@ -141,7 +144,7 @@ class MELCloudExtensionApp extends App {
       }
       if (
         // @ts-expect-error: `homey-api` is partially typed
-        (device.capabilities as string[]).some((capability) =>
+        (device.capabilities as string[]).some(capability =>
           capability.startsWith('measure_temperature'),
         )
       ) {

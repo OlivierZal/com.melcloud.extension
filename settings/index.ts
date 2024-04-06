@@ -8,7 +8,7 @@ import type {
 } from '../types'
 import type Homey from 'homey/lib/Homey'
 
-const CATEGORIES: Record<string, { color?: string; icon: string }> = {
+const CATEGORIES: Record<string, { color?: string, icon: string }> = {
   calculated: { color: '#008000', icon: '🔢' },
   cleaned: { icon: '🗑️' },
   cleanedAll: { icon: '🛑' },
@@ -54,7 +54,7 @@ capabilityPathElement.addEventListener('change', () => {
 })
 
 const disableButtons = (value = true): void => {
-  ;[applyElement, refreshElement].forEach((element) => {
+  [applyElement, refreshElement].forEach((element) => {
     if (value) {
       element.classList.add('is-disabled')
       return
@@ -151,7 +151,7 @@ const getHomeySettings = async (homey: Homey): Promise<void> => {
     },
   )
   if (!logsElement.childElementCount) {
-    ;(homeySettings.lastLogs ?? [])
+    (homeySettings.lastLogs ?? [])
       .filter(({ time }) => {
         const date = new Date(time)
         const oldestDate = new Date()
