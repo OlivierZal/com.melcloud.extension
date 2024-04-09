@@ -34,8 +34,8 @@ export default class MELCloudListener extends TemperatureListener {
   }
 
   public async listenToThermostatMode(): Promise<void> {
-    const currentThermostatMode
-      = await this.getCapabilityValue('thermostat_mode')
+    const currentThermostatMode =
+      await this.getCapabilityValue('thermostat_mode')
     this.#thermostatModeListener = this.device.makeCapabilityInstance(
       'thermostat_mode',
       async (value) => {
@@ -50,8 +50,8 @@ export default class MELCloudListener extends TemperatureListener {
         }
         await this.destroyTemperature()
         if (
-          !this.#isItCoolingElsewhere()
-          && OutdoorTemperatureListener.temperatureListener !== null
+          !this.#isItCoolingElsewhere() &&
+          OutdoorTemperatureListener.temperatureListener !== null
         ) {
           OutdoorTemperatureListener.destroyTemperature()
         }
@@ -103,8 +103,8 @@ export default class MELCloudListener extends TemperatureListener {
     return Math.min(
       Math.max(
         this.#getThreshold(),
-        Math.ceil(OutdoorTemperatureListener.value ?? DEFAULT_0)
-        - MAX_TEMPERATURE_GAP,
+        Math.ceil(OutdoorTemperatureListener.value ?? DEFAULT_0) -
+          MAX_TEMPERATURE_GAP,
       ),
       MAX_TEMPERATURE,
     )
@@ -120,17 +120,17 @@ export default class MELCloudListener extends TemperatureListener {
 
   #isItCoolingElsewhere(): boolean {
     return Array.from(MELCloudListener.listeners.values()).some(
-      listener =>
-        (listener.device.id !== this.device.id
-        && listener.#thermostatModeListener.value) === 'cool',
+      (listener) =>
+        (listener.device.id !== this.device.id &&
+          listener.#thermostatModeListener.value) === 'cool',
     )
   }
 
   async #listenToTargetTemperature(): Promise<void> {
     if (this.temperatureListener === null) {
       await OutdoorTemperatureListener.listenToOutdoorTemperature()
-      const currentTargetTemperature
-        = await this.getCapabilityValue('target_temperature')
+      const currentTargetTemperature =
+        await this.getCapabilityValue('target_temperature')
       if (typeof currentTargetTemperature === 'number') {
         await this.#setThreshold(currentTargetTemperature)
       }
