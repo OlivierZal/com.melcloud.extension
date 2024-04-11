@@ -1,5 +1,6 @@
 /* eslint-disable
-  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  @typescript-eslint/no-unsafe-call,
+  @typescript-eslint/no-unsafe-member-access
 */
 import 'source-map-support/register'
 import type {
@@ -126,7 +127,8 @@ class MELCloudExtensionApp extends App {
   async #loadDevices(): Promise<void> {
     this.#melcloudDevices = []
     this.#temperatureSensors = []
-    const devices = // @ts-expect-error: `homey-api` is partially typed
+    const devices =
+      // @ts-expect-error: `homey-api` is partially typed
       (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
     Object.values(devices).forEach((device) => {
       // @ts-expect-error: `homey-api` is partially typed

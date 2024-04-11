@@ -1,5 +1,6 @@
 /* eslint-disable
-  @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  @typescript-eslint/no-unsafe-call,
+  @typescript-eslint/no-unsafe-member-access
 */
 import type { DeviceCapability } from '../types'
 import type { HomeyAPIV3Local } from 'homey-api'

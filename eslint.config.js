@@ -6,11 +6,23 @@ const prettier = require('eslint-config-prettier')
 const stylistic = require('@stylistic/eslint-plugin')
 const tsEslint = require('typescript-eslint')
 
+const { rules } = eslint.configs.all
+const eslintConfig = (function filteredEslintConfig() {
+  'use strict'
+  return {
+    ...eslint.configs.all,
+    rules: Object.fromEntries(
+      Object.entries(rules).filter(
+        ([rule]) => rule !== 'no-useless-assignment',
+      ),
+    ),
+  }
+})()
+
 module.exports = tsEslint.config(
   { ignores: ['.homeybuild/'] },
-  eslint.configs.recommended,
-  ...tsEslint.configs.strictTypeChecked,
-  ...tsEslint.configs.stylisticTypeChecked,
+  eslintConfig,
+  ...tsEslint.configs.all,
   ...markdown.configs.recommended,
   {
     languageOptions: { parserOptions: { project: true } },
@@ -145,9 +157,10 @@ module.exports = tsEslint.config(
         'error',
         { varsIgnorePattern: 'onHomeyReady' },
       ],
-      'func-style': 'error',
+      '@typescript-eslint/prefer-readonly-parameter-types': 'off',
+      'no-ternary': 'off',
       'no-underscore-dangle': ['error', { allow: ['__'] }],
-      'sort-imports': 'error',
+      'one-var': 'off',
       'sort-keys': ['error', 'asc', { natural: true }],
     },
   },
@@ -174,6 +187,8 @@ module.exports = tsEslint.config(
     },
     rules: {
       ...tsEslint.configs.disableTypeChecked.rules,
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/no-var-requires': 'off',
     },
   },
