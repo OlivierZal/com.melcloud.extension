@@ -6,13 +6,12 @@ const prettier = require('eslint-config-prettier')
 const stylistic = require('@stylistic/eslint-plugin')
 const tsEslint = require('typescript-eslint')
 
-const { rules } = eslint.configs.all
 const eslintConfig = (function filteredEslintConfig() {
   'use strict'
   return {
     ...eslint.configs.all,
     rules: Object.fromEntries(
-      Object.entries(rules).filter(
+      Object.entries(eslint.configs.all.rules).filter(
         ([rule]) => rule !== 'no-useless-assignment',
       ),
     ),
