@@ -38,7 +38,7 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
     app: MELCloudExtensionApp,
     { capabilityPath, enabled }: TemperatureListenerData,
   ): Promise<void> {
-    const [device, capabilityId] = await this.#validateCapabilityPath(
+    const { capabilityId, device } = await this.#validateCapabilityPath(
       app,
       capabilityPath,
     )
@@ -98,7 +98,10 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
   static async #validateCapabilityPath(
     app: MELCloudExtensionApp,
     capabilityPath: string,
-  ): Promise<[HomeyAPIV3Local.ManagerDevices.Device, string]> {
+  ): Promise<{
+    capabilityId: string
+    device: HomeyAPIV3Local.ManagerDevices.Device
+  }> {
     const [deviceId, capabilityId] = capabilityPath.split(':')
     let device: HomeyAPIV3Local.ManagerDevices.Device | null = null
     try {
@@ -113,7 +116,7 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
           name: app.names.outdoorTemperature,
         })
       }
-      return [device, capabilityId]
+      return { capabilityId, device }
     } catch (error) {
       if (error instanceof ListenerError) {
         throw error
