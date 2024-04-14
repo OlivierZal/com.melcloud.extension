@@ -195,9 +195,7 @@ const getTemperatureSensors = async (homey: Homey): Promise<void> =>
 async function onHomeyReady(homey: Homey): Promise<void> {
   await homey.ready()
   await getLanguage(homey)
-
   document.documentElement.lang = language
-
   refreshElement.addEventListener('click', () => {
     disableButtons()
     getHomeySettings(homey)
@@ -209,7 +207,6 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       })
       .finally(enableButtons)
   })
-
   applyElement.addEventListener('click', () => {
     disableButtons()
     const enabled = enabledElement.value === 'true'
@@ -229,9 +226,7 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       },
     )
   })
-
   homey.on('log', displayLog)
-
   await getTemperatureSensors(homey)
   await getHomeySettings(homey)
 }
