@@ -103,10 +103,9 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
     device: HomeyAPIV3Local.ManagerDevices.Device
   }> {
     const [deviceId, capabilityId] = capabilityPath.split(':')
-    let device: HomeyAPIV3Local.ManagerDevices.Device | null = null
     try {
       // @ts-expect-error: `homey-api` is partially typed
-      device = (await app.api.devices.getDevice({
+      const device = (await app.api.devices.getDevice({
         id: deviceId,
       })) as HomeyAPIV3Local.ManagerDevices.Device
       // @ts-expect-error: `homey-api` is partially typed
