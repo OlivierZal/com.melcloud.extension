@@ -111,7 +111,7 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
       })) as HomeyAPIV3Local.ManagerDevices.Device
       // @ts-expect-error: `homey-api` is partially typed
       if (!(capabilityId in (device.capabilitiesObj ?? {}))) {
-        throw new ListenerError(app.homey, 'error.not_found', {
+        throw new ListenerError('error.not_found', {
           id: capabilityId,
           name: app.names.outdoorTemperature,
         })
@@ -121,7 +121,7 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
       if (error instanceof ListenerError) {
         throw error
       }
-      throw new ListenerError(app.homey, 'error.not_found', {
+      throw new ListenerError('error.not_found', {
         id: deviceId,
         name: app.names.device,
       })

@@ -7,15 +7,16 @@ import type {
   HomeySettings,
   ListenerEventParams,
   TemperatureListenerData,
+  TimestampedLog,
 } from './types'
 import { App } from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
 import ListenerError from './lib/ListenerError'
-import ListenerEvent from './lib/ListenerEvent'
 import MELCloudListener from './lib/MELCloudListener'
 import OutdoorTemperatureListener from './lib/OutdoorTemperatureListener'
 
 const DRIVER_ID = 'homey:app:com.mecloud:melcloud'
+const MAX_LOGS = 100
 const SECONDS_1_IN_MILLISECONDS = 1000
 
 class MELCloudExtensionApp extends App {
@@ -59,7 +60,7 @@ class MELCloudExtensionApp extends App {
       })
     } catch (error) {
       if (error instanceof ListenerError) {
-        this.pushToUI(error.name, error.params)
+        this.pushToUI(error.message, error.params)
         return
       }
       this.pushToUI(error instanceof Error ? error.message : String(error))
@@ -99,7 +100,18 @@ class MELCloudExtensionApp extends App {
   }
 
   public pushToUI(name: string, params?: ListenerEventParams): void {
-    new ListenerEvent(this.homey, name, params).pushToUI()
+    const newLog: TimestampedLog = {
+      category: name.startsWith('error.') ? 'error' : name,
+      message: this.homey.__(`log.${name}`, params),
+      time: Date.now(),
+    }
+    this.homey.api.realtime('log', newLog)
+    const lastLogs = this.getHomeySetting('lastLogs') ?? []
+    lastLogs.unshift(newLog)
+    if (lastLogs.length > MAX_LOGS) {
+      lastLogs.length = MAX_LOGS
+    }
+    this.setHomeySettings({ lastLogs })
   }
 
   public setHomeySettings(settings: Partial<HomeySettings>): void {
