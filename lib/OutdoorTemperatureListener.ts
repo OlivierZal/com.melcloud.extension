@@ -1,8 +1,3 @@
-/* eslint-disable
-  @typescript-eslint/no-unsafe-call,
-  @typescript-eslint/no-unsafe-member-access,
-  @typescript-eslint/no-unsafe-return
-*/
 import type { DeviceCapability, TemperatureListenerData } from '../types'
 import type { HomeyAPIV3Local } from 'homey-api'
 import ListenerError from './ListenerError'
@@ -27,6 +22,7 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
   }
 
   public static get temperatureListener(): DeviceCapability {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.#listener?.temperatureListener
   }
 
@@ -105,6 +101,7 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
     const [deviceId, capabilityId] = capabilityPath.split(':')
     try {
       // @ts-expect-error: `homey-api` is partially typed
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       const device = (await app.api.devices.getDevice({
         id: deviceId,
       })) as HomeyAPIV3Local.ManagerDevices.Device

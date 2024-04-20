@@ -1,7 +1,3 @@
-/* eslint-disable
-  @typescript-eslint/no-unsafe-call,
-  @typescript-eslint/no-unsafe-member-access
-*/
 import type { DeviceCapability } from '../types'
 import type { HomeyAPIV3Local } from 'homey-api'
 import type MELCloudExtensionApp from '../app'
@@ -26,6 +22,7 @@ export default abstract class TemperatureListener {
 
   protected destroyTemperature(): void {
     if (this.temperatureListener !== null) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       this.temperatureListener.destroy()
       this.temperatureListener = null
     }
@@ -40,6 +37,7 @@ export default abstract class TemperatureListener {
   ): Promise<boolean | number | string | null> {
     return (
       // @ts-expect-error: `homey-api` is partially typed
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       (await this.app.api.devices.getCapabilityValue({
         capabilityId,
         deviceId: this.device.id,

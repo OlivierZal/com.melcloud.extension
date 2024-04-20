@@ -1,7 +1,3 @@
-/* eslint-disable
-  @typescript-eslint/no-unsafe-call,
-  @typescript-eslint/no-unsafe-member-access
-*/
 import { DEFAULT_0, type DeviceCapability, type Thresholds } from '../types'
 import type { HomeyAPIV3Local } from 'homey-api'
 import type MELCloudExtensionApp from '../app'
@@ -71,6 +67,7 @@ export default class MELCloudListener extends TemperatureListener {
     if (this.temperatureListener !== null) {
       const value = this.#getTargetTemperature()
       const outdoorTemperature = OutdoorTemperatureListener.value
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       await this.temperatureListener.setValue(value)
       this.app.pushToUI('calculated', {
         name: this.device.name,
@@ -91,6 +88,7 @@ export default class MELCloudListener extends TemperatureListener {
   async #destroy(): Promise<void> {
     await this.destroyTemperature()
     if (this.#thermostatModeListener !== null) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       this.#thermostatModeListener.destroy()
     }
     this.app.pushToUI('cleaned', {
@@ -123,6 +121,7 @@ export default class MELCloudListener extends TemperatureListener {
     return Array.from(MELCloudListener.listeners.values()).some(
       (listener) =>
         (listener.device.id !== this.device.id &&
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           listener.#thermostatModeListener.value) === 'cool',
     )
   }

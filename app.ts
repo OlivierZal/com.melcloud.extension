@@ -1,7 +1,3 @@
-/* eslint-disable
-  @typescript-eslint/no-unsafe-call,
-  @typescript-eslint/no-unsafe-member-access
-*/
 import 'source-map-support/register'
 import type {
   HomeySettings,
@@ -78,13 +74,16 @@ class MELCloudExtensionApp extends App {
       homey: this.homey,
     })) as HomeyAPIV3Local
     // @ts-expect-error: `homey-api` is partially typed
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     await this.#api.devices.connect()
     this.#init()
     // @ts-expect-error: `homey-api` is partially typed
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     this.#api.devices.on('device.create', () => {
       this.#init()
     })
     // @ts-expect-error: `homey-api` is partially typed
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     this.#api.devices.on('device.delete', () => {
       this.#init()
     })
@@ -141,6 +140,7 @@ class MELCloudExtensionApp extends App {
     this.#temperatureSensors = []
     const devices =
       // @ts-expect-error: `homey-api` is partially typed
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
     Object.values(devices).forEach((device) => {
       // @ts-expect-error: `homey-api` is partially typed
