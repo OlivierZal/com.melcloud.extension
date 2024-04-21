@@ -141,6 +141,8 @@ module.exports = tsEslint.config(
           },
         },
       ],
+      '@typescript-eslint/no-explicit-any': ['error', { ignoreRestArgs: true }],
+      '@typescript-eslint/no-magic-numbers': ['error', { ignoreEnums: true }],
       '@typescript-eslint/no-unused-vars': [
         'error',
         { varsIgnorePattern: 'onHomeyReady' },
