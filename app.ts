@@ -69,7 +69,7 @@ class MELCloudExtensionApp extends App {
     return this.homey.settings.get(setting) as HomeySettings[K]
   }
 
-  public async onInit(): Promise<void> {
+  public override async onInit(): Promise<void> {
     this.#api = (await HomeyAPIV3Local.createAppAPI({
       homey: this.homey,
     })) as HomeyAPIV3Local
@@ -94,7 +94,7 @@ class MELCloudExtensionApp extends App {
     })
   }
 
-  public async onUninit(): Promise<void> {
+  public override async onUninit(): Promise<void> {
     await this.#destroyListeners()
   }
 

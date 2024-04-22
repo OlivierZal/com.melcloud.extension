@@ -78,7 +78,7 @@ export default class MELCloudListener extends TemperatureListener {
     }
   }
 
-  protected async destroyTemperature(): Promise<void> {
+  protected override async destroyTemperature(): Promise<void> {
     if (this.temperatureListener !== null) {
       super.destroyTemperature()
       await this.#revertTemperature()
