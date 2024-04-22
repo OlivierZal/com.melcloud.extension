@@ -28,7 +28,7 @@ export type Thresholds = Partial<Record<string, number>>
 
 export interface HomeySettings {
   readonly capabilityPath: CapabilityPath | null
-  readonly enabled: boolean | null
+  readonly isEnabled: boolean | null
   readonly lastLogs: TimestampedLog[] | null
   readonly thresholds: Thresholds | null
 }
@@ -47,7 +47,7 @@ export interface TemperatureSensor {
 
 export interface TemperatureListenerData {
   readonly capabilityPath: CapabilityPath
-  readonly enabled: boolean
+  readonly isEnabled: boolean
 }
 
 export type DeviceCapability =

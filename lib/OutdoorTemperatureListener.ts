@@ -32,15 +32,15 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
 
   public static async create(
     app: MELCloudExtensionApp,
-    { capabilityPath, enabled }: TemperatureListenerData,
+    { capabilityPath, isEnabled }: TemperatureListenerData,
   ): Promise<void> {
     const { capabilityId, device } = await this.#validateCapabilityPath(
       app,
       capabilityPath,
     )
-    app.setHomeySettings({ capabilityPath, enabled })
+    app.setHomeySettings({ capabilityPath, isEnabled })
     this.#listener = new this(app, device, capabilityId)
-    if (enabled) {
+    if (isEnabled) {
       await this.#listener.#listenToThermostatModes()
     }
   }

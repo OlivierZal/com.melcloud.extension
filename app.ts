@@ -43,16 +43,16 @@ class MELCloudExtensionApp extends App {
   }
 
   public async autoAdjustCooling(
-    { capabilityPath, enabled }: TemperatureListenerData = {
+    { capabilityPath, isEnabled }: TemperatureListenerData = {
       capabilityPath: this.getHomeySetting('capabilityPath') ?? ':',
-      enabled: this.getHomeySetting('enabled') ?? false,
+      isEnabled: this.getHomeySetting('isEnabled') ?? false,
     },
   ): Promise<void> {
     await this.#destroyListeners()
     try {
       await OutdoorTemperatureListener.create(this, {
         capabilityPath,
-        enabled,
+        isEnabled,
       })
     } catch (error) {
       if (error instanceof ListenerError) {

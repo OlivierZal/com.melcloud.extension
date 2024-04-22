@@ -209,9 +209,9 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   })
   applyElement.addEventListener('click', () => {
     disableButtons()
-    const enabled = enabledElement.value === 'true'
+    const isEnabled = enabledElement.value === 'true'
     const capabilityPath = capabilityPathElement.value as CapabilityPath
-    const body: TemperatureListenerData = { capabilityPath, enabled }
+    const body: TemperatureListenerData = { capabilityPath, isEnabled }
     // @ts-expect-error: `homey` is partially typed
     homey.api(
       'PUT',
