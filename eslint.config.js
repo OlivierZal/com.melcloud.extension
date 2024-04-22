@@ -148,6 +148,7 @@ module.exports = tsEslint.config(
         { varsIgnorePattern: 'onHomeyReady' },
       ],
       '@typescript-eslint/prefer-readonly-parameter-types': 'off',
+      camelcase: 'off',
       'no-ternary': 'off',
       'no-underscore-dangle': ['error', { allow: ['__'] }],
       'one-var': 'off',
