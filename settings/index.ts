@@ -97,10 +97,10 @@ const createMessageElement = (
   return messageElement
 }
 
-const displayLog = (log: TimestampedLog): void => {
-  const { color, icon } = CATEGORIES[log.category ?? 'error']
-  const timeElement = createTimeElement(log.time, icon)
-  const messageElement = createMessageElement(log.message, color)
+const displayLog = ({ category, message, time }: TimestampedLog): void => {
+  const { color, icon } = CATEGORIES[category ?? 'error']
+  const timeElement = createTimeElement(time, icon)
+  const messageElement = createMessageElement(message, color)
   const rowElement = document.createElement('div')
   rowElement.style.display = 'flex'
   rowElement.style.marginBottom = '1em'
@@ -179,8 +179,7 @@ const getTemperatureSensors = async (homey: Homey): Promise<void> =>
           reject(error)
           return
         }
-        devices.forEach((device) => {
-          const { capabilityPath, capabilityName } = device
+        devices.forEach(({ capabilityPath, capabilityName }) => {
           const optionElement = document.createElement('option')
           optionElement.value = capabilityPath
           optionElement.innerText = capabilityName
