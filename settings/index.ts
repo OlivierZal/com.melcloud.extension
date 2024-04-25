@@ -208,14 +208,14 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   })
   applyElement.addEventListener('click', () => {
     disableButtons()
-    const isEnabled = enabledElement.value === 'true'
-    const capabilityPath = capabilityPathElement.value as CapabilityPath
-    const body: TemperatureListenerData = { capabilityPath, isEnabled }
     // @ts-expect-error: `homey` is partially typed
     homey.api(
       'PUT',
       '/melcloud/cooling/auto_adjustment',
-      body,
+      {
+        capabilityPath: capabilityPathElement.value as CapabilityPath,
+        isEnabled: enabledElement.value === 'true',
+      } satisfies TemperatureListenerData,
       async (error: Error | null) => {
         enableButtons()
         if (error) {
