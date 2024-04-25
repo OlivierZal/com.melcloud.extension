@@ -24,7 +24,7 @@ const MINUTES_0 = 0
 const SECONDS_0 = 0
 const MILLISECONDS_0 = 0
 
-let language = String()
+let language = ''
 
 const getLanguage = async (homey: Homey): Promise<void> =>
   new Promise<void>((resolve, reject) => {
