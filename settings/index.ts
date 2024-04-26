@@ -116,7 +116,7 @@ const handleTemperatureSensorsError = async (
     return
   }
   // @ts-expect-error: `homey` is partially typed
-  await homey.confirm(
+  homey.confirm(
     homey.__('settings.no_device_ata'),
     null,
     async (error: Error | null, ok: boolean) => {
