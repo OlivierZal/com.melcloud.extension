@@ -19,10 +19,7 @@ const CATEGORIES: Record<string, { color?: string; icon: string }> = {
   saved: { icon: '☁️' },
 }
 const DAYS_6 = 6
-const HOURS_0 = 0
-const MINUTES_0 = 0
-const SECONDS_0 = 0
-const MILLISECONDS_0 = 0
+const NUMBER_0 = 0
 
 let language = ''
 
@@ -156,7 +153,7 @@ const getHomeySettings = async (homey: Homey): Promise<void> => {
         const date = new Date(time)
         const oldestDate = new Date()
         oldestDate.setDate(oldestDate.getDate() - DAYS_6)
-        oldestDate.setHours(HOURS_0, MINUTES_0, SECONDS_0, MILLISECONDS_0)
+        oldestDate.setHours(NUMBER_0, NUMBER_0, NUMBER_0, NUMBER_0)
         return date >= oldestDate
       })
       .reverse()
