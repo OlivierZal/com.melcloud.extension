@@ -1,6 +1,6 @@
 import { DEFAULT_0, type DeviceCapability, type Thresholds } from '../types'
 import type { HomeyAPIV3Local } from 'homey-api'
-import type MELCloudExtensionApp from '../app'
+import type MELCloudExtensionApp from '..'
 import OutdoorTemperatureListener from './OutdoorTemperatureListener'
 import TemperatureListener from './TemperatureListener'
 
