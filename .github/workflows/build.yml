@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-    name: npm scripts
     runs-on: ubuntu-latest
     permissions:
       contents: write
