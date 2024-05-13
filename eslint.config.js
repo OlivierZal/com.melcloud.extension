@@ -8,7 +8,7 @@ const tsEslint = require('typescript-eslint')
 
 module.exports = tsEslint.config(
   {
-    ignores: ['dist/'],
+    ignores: ['.homeybuild/'],
   },
   {
     extends: [
@@ -217,6 +217,7 @@ module.exports = tsEslint.config(
           varsIgnorePattern: 'onHomeyReady',
         },
       ],
+      'func-style': 'error',
       'no-underscore-dangle': [
         'error',
         {
