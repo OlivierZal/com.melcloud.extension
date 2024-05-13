@@ -187,7 +187,6 @@ const getTemperatureSensors = async (homey: Homey): Promise<void> =>
     )
   })
 
-// eslint-disable-next-line func-style
 async function onHomeyReady(homey: Homey): Promise<void> {
   await homey.ready()
   await getLanguage(homey)
