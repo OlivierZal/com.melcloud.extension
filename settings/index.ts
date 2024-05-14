@@ -189,19 +189,18 @@ const getTemperatureSensors = async (homey: Homey): Promise<void> =>
 
 // eslint-disable-next-line func-style
 async function onHomeyReady(homey: Homey): Promise<void> {
-  await homey.ready()
   await getLanguage(homey)
   document.documentElement.lang = language
   refreshElement.addEventListener('click', () => {
     disableButtons()
     getHomeySettings(homey)
-      .catch(async (error: unknown) => {
-        // @ts-expect-error: `homey` is partially typed
-        await homey.alert(
-          error instanceof Error ? error.message : String(error),
-        )
-      })
-      .finally(enableButtons)
+    .catch(async (error: unknown) => {
+      // @ts-expect-error: `homey` is partially typed
+      await homey.alert(
+        error instanceof Error ? error.message : String(error),
+      )
+    })
+    .finally(enableButtons)
   })
   applyElement.addEventListener('click', () => {
     disableButtons()
@@ -225,4 +224,5 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   homey.on('log', displayLog)
   await getTemperatureSensors(homey)
   await getHomeySettings(homey)
+  await homey.ready()
 }
