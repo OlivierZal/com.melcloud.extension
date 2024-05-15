@@ -13,7 +13,12 @@ module.exports = tsEslint.config(
     ignores: ['.homeybuild/'],
   },
   {
-    extends: [eslint.configs.all, ...tsEslint.configs.all],
+    extends: [
+      eslint.configs.all,
+      ...tsEslint.configs.all,
+      importPlugin.configs.typescript,
+      prettier,
+    ],
     languageOptions: {
       parserOptions: {
         project: true,
@@ -218,6 +223,12 @@ module.exports = tsEslint.config(
       ],
       '@typescript-eslint/prefer-readonly-parameter-types': 'off',
       camelcase: 'off',
+      'import/no-duplicates': [
+        'error',
+        {
+          'prefer-inline': true,
+        },
+      ],
       'max-lines': 'off',
       'no-bitwise': 'off',
       'no-empty': [
@@ -242,18 +253,6 @@ module.exports = tsEslint.config(
         },
       ],
     },
-  },
-  {
-    extends: [importPlugin.configs.typescript],
-    files: ['**/*.ts'],
-    rules: {
-      'import/no-duplicates': [
-        'error',
-        {
-          'prefer-inline': true,
-        },
-      ],
-    },
     settings: {
       'import/resolver': {
         ...importPlugin.configs.typescript.settings['import/resolver'],
@@ -275,5 +274,4 @@ module.exports = tsEslint.config(
       '@typescript-eslint/no-var-requires': 'off',
     },
   },
-  prettier,
 )
