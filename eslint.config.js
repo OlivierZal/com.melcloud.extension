@@ -217,7 +217,9 @@ module.exports = tsEslint.config(
         },
       ],
       '@typescript-eslint/prefer-readonly-parameter-types': 'off',
+      camelcase: 'off',
       'max-lines': 'off',
+      'no-bitwise': 'off',
       'no-empty': [
         'error',
         {
