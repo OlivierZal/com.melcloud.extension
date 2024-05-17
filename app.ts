@@ -15,7 +15,7 @@ const DRIVER_ID = 'homey:app:com.mecloud:melcloud'
 const MAX_LOGS = 100
 const SECONDS_1_IN_MILLISECONDS = 1000
 
-class MELCloudExtensionApp extends App {
+export = class extends App {
   public readonly names = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
       (name) => [name, this.homey.__(`names.${name}`)],
@@ -163,5 +163,3 @@ class MELCloudExtensionApp extends App {
     })
   }
 }
-
-export = MELCloudExtensionApp
