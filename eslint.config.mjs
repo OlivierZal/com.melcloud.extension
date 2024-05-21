@@ -196,6 +196,7 @@ export default tsEslint.config(
         },
         {
           format: ['camelCase'],
+          leadingUnderscore: 'allow',
           selector: 'default',
         },
       ],
