@@ -185,10 +185,8 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   refreshElement.addEventListener('click', () => {
     disableButtons()
     getHomeySettings(homey)
-      .catch(async (error: unknown) => {
-        await homey.alert(
-          error instanceof Error ? error.message : String(error),
-        )
+      .catch(async (err: unknown) => {
+        await homey.alert(err instanceof Error ? err.message : String(err))
       })
       .finally(enableButtons)
   })
