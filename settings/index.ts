@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import type {
   CapabilityPath,
   HomeySettingsUI,
@@ -6,7 +5,7 @@ import type {
   TemperatureSensor,
   TimestampedLog,
 } from '../types'
-import type Homey from 'homey/lib/Homey'
+import type Homey from 'homey/lib/HomeySettings'
 
 const CATEGORIES: Record<string, { color?: string; icon: string }> = {
   calculated: { color: '#008000', icon: '🔢' },
@@ -25,7 +24,6 @@ let language = ''
 
 const getLanguage = async (homey: Homey): Promise<void> =>
   new Promise<void>((resolve, reject) => {
-    // @ts-expect-error: `homey` is partially typed
     homey.api('GET', '/language', (error: Error | null, lang: string) => {
       if (error) {
         reject(error)
@@ -111,21 +109,17 @@ const handleTemperatureSensorsError = async (
   errorMessage: string,
 ): Promise<void> => {
   if (errorMessage !== 'no_device_ata') {
-    // @ts-expect-error: `homey` is partially typed
     await homey.alert(errorMessage)
     return
   }
-  // @ts-expect-error: `homey` is partially typed
   homey.confirm(
     homey.__('settings.no_device_ata'),
     null,
     async (error: Error | null, ok: boolean) => {
       if (error) {
-        // @ts-expect-error: `homey` is partially typed
         await homey.alert(error.message)
       }
       if (ok) {
-        // @ts-expect-error: `homey` is partially typed
         await homey.openURL('https://homey.app/a/com.mecloud')
       }
     },
@@ -135,10 +129,8 @@ const handleTemperatureSensorsError = async (
 const getHomeySettings = async (homey: Homey): Promise<void> => {
   const homeySettings = await new Promise<HomeySettingsUI>(
     (resolve, reject) => {
-      // @ts-expect-error: `homey` is partially typed
       homey.get(async (error: Error | null, settings: HomeySettingsUI) => {
         if (error) {
-          // @ts-expect-error: `homey` is partially typed
           await homey.alert(error.message)
           reject(error)
           return
@@ -166,7 +158,6 @@ const getHomeySettings = async (homey: Homey): Promise<void> => {
 
 const getTemperatureSensors = async (homey: Homey): Promise<void> =>
   new Promise<void>((resolve, reject) => {
-    // @ts-expect-error: `homey` is partially typed
     homey.api(
       'GET',
       '/devices/sensors/temperature',
@@ -195,7 +186,6 @@ async function onHomeyReady(homey: Homey): Promise<void> {
     disableButtons()
     getHomeySettings(homey)
       .catch(async (error: unknown) => {
-        // @ts-expect-error: `homey` is partially typed
         await homey.alert(
           error instanceof Error ? error.message : String(error),
         )
@@ -204,7 +194,6 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   })
   applyElement.addEventListener('click', () => {
     disableButtons()
-    // @ts-expect-error: `homey` is partially typed
     homey.api(
       'PUT',
       '/melcloud/cooling/auto_adjustment',
@@ -215,7 +204,6 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       async (error: Error | null) => {
         enableButtons()
         if (error) {
-          // @ts-expect-error: `homey` is partially typed
           await homey.alert(error.message)
         }
       },
