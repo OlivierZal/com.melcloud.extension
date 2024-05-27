@@ -28,7 +28,7 @@
     "homey": "^3.3.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^8.0.0-alpha.14"
+    "typescript-eslint": "^8.0.0-alpha.16"
   },
   "dependencies": {
     "homey-api": "^3.4.33",
