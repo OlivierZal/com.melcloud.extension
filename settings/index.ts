@@ -23,7 +23,7 @@ const NUMBER_0 = 0
 let language = ''
 
 const getLanguage = async (homey: Homey): Promise<void> =>
-  new Promise<void>((resolve, reject) => {
+  new Promise((resolve, reject) => {
     homey.api('GET', '/language', (error: Error | null, lang: string) => {
       if (error) {
         reject(error)
@@ -157,7 +157,7 @@ const getHomeySettings = async (homey: Homey): Promise<void> => {
 }
 
 const getTemperatureSensors = async (homey: Homey): Promise<void> =>
-  new Promise<void>((resolve, reject) => {
+  new Promise((resolve, reject) => {
     homey.api(
       'GET',
       '/devices/sensors/temperature',
