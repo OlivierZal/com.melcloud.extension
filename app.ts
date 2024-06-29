@@ -24,7 +24,7 @@ export = class extends App {
 
   #api!: HomeyAPIV3Local
 
-  #initTimeout!: NodeJS.Timeout
+  #initTimeout: NodeJS.Timeout | null = null
 
   #melcloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
