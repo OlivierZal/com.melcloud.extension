@@ -11,7 +11,6 @@ import ListenerError from './lib/ListenerError'
 import MELCloudListener from './lib/MELCloudListener'
 import OutdoorTemperatureListener from './lib/OutdoorTemperatureListener'
 
-const DRIVER_ID = 'homey:app:com.mecloud:melcloud'
 const MAX_LOGS = 100
 const SECONDS_1_IN_MILLISECONDS = 1000
 
@@ -144,7 +143,7 @@ export = class extends App {
       (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
     Object.values(devices).forEach((device) => {
       // @ts-expect-error: `homey-api` is partially typed
-      if (device.driverId === DRIVER_ID) {
+      if (device.driverId === 'homey:app:com.mecloud:melcloud') {
         this.#melcloudDevices.push(device)
         if (this.getHomeySetting('capabilityPath') === null) {
           this.setHomeySettings({
