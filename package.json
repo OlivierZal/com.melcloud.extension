@@ -33,7 +33,7 @@
     "typescript-eslint": "^8.0.0-alpha.44"
   },
   "dependencies": {
-    "homey-api": "^3.5.1",
+    "homey-api": "^3.5.2",
     "source-map-support": "^0.5.21"
   }
 }
