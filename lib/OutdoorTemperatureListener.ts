@@ -114,13 +114,12 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
       }
       return { capabilityId, device }
     } catch (error) {
-      if (error instanceof ListenerError) {
-        throw error
-      }
-      throw new ListenerError('error.not_found', {
-        id: deviceId,
-        name: app.names.device,
-      })
+      throw error instanceof ListenerError ? error : (
+          new ListenerError('error.not_found', {
+            id: deviceId,
+            name: app.names.device,
+          })
+        )
     }
   }
 
