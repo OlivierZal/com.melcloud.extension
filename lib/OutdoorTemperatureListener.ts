@@ -1,7 +1,9 @@
-import type { DeviceCapability, TemperatureListenerData } from '../types'
 import type { HomeyAPIV3Local } from 'homey-api'
-import ListenerError from './ListenerError'
+
 import type MELCloudExtensionApp from '..'
+import type { DeviceCapability, TemperatureListenerData } from '../types'
+
+import ListenerError from './ListenerError'
 import MELCloudListener from './MELCloudListener'
 import TemperatureListener from './TemperatureListener'
 

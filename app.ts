@@ -1,12 +1,14 @@
+import { App } from 'homey'
+import { HomeyAPIV3Local } from 'homey-api'
 import 'source-map-support/register'
+
 import type {
   HomeySettings,
   ListenerEventParams,
   TemperatureListenerData,
   TimestampedLog,
 } from './types'
-import { App } from 'homey'
-import { HomeyAPIV3Local } from 'homey-api'
+
 import ListenerError from './lib/ListenerError'
 import MELCloudListener from './lib/MELCloudListener'
 import OutdoorTemperatureListener from './lib/OutdoorTemperatureListener'

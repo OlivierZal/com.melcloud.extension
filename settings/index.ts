@@ -1,3 +1,5 @@
+import type Homey from 'homey/lib/HomeySettings'
+
 import type {
   CapabilityPath,
   HomeySettingsUI,
@@ -5,7 +7,6 @@ import type {
   TemperatureSensor,
   TimestampedLog,
 } from '../types'
-import type Homey from 'homey/lib/HomeySettings'
 
 const CATEGORIES: Record<string, { color?: string; icon: string }> = {
   calculated: { color: '#008000', icon: '🔢' },

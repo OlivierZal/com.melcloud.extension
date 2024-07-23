@@ -1,10 +1,11 @@
+import type Homey from 'homey/lib/Homey'
+
+import type MELCloudExtensionApp from '.'
 import type {
   Capability,
   TemperatureListenerData,
   TemperatureSensor,
 } from './types'
-import type Homey from 'homey/lib/Homey'
-import type MELCloudExtensionApp from '.'
 
 export = {
   async autoAdjustCooling({
