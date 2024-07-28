@@ -26,10 +26,6 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'npm'
-      - name: Update package-lock.json, lint & format code
-        run: npm install --force
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Validate app
         uses: athombv/github-action-homey-app-validate@v1
         with:
@@ -41,13 +37,13 @@ jobs:
 
           git add -A
           if ! git diff --cached --exit-code; then
-            git commit -m "Code maintenance: update package version, lint and format code"
+            git commit -m "Code maintenance: update package version, lint, format and build code"
             if [[ ${{ github.ref }} == "refs/heads/main" ]]; then
               echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
               BRANCH_NAME="maintenance-$(date +'%Y%m%d%H%M%S')"
               git checkout -b "$BRANCH_NAME"
               git push origin "$BRANCH_NAME"
-              gh pr create --base main --head "$BRANCH_NAME" --title "Maintenance PR" --body "Automatic code maintenance: update package version, lint and format code."
+              gh pr create --base main --head "$BRANCH_NAME" --title "Maintenance PR" --body "Automatic code maintenance: update package version, lint, format and build code."
               gh pr merge --auto --squash --delete-branch ${{ github.event.pull_request.html_url }}
             else
               git pull origin ${{ github.head_ref }} --rebase

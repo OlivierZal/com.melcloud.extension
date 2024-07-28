@@ -1,8 +1,6 @@
 import eslint from '@eslint/js'
 import stylistic from '@stylistic/eslint-plugin'
 import prettier from 'eslint-config-prettier'
-// @ts-expect-error: untyped module
-import importPlugin from 'eslint-plugin-import'
 import perfectionist from 'eslint-plugin-perfectionist'
 import tsEslint from 'typescript-eslint'
 
@@ -41,12 +39,7 @@ export default tsEslint.config(
     ignores: ['.homeybuild/'],
   },
   {
-    extends: [
-      eslint.configs.all,
-      ...tsEslint.configs.all,
-      importPlugin.configs.typescript,
-      prettier,
-    ],
+    extends: [eslint.configs.all, ...tsEslint.configs.all, prettier],
     languageOptions: {
       parserOptions: {
         project: 'tsconfig.json',
@@ -58,7 +51,6 @@ export default tsEslint.config(
     plugins: {
       // @ts-expect-error: incorrect type
       '@stylistic': stylistic,
-      import: importPlugin,
       // @ts-expect-error: incorrect type
       perfectionist,
     },
@@ -322,12 +314,6 @@ export default tsEslint.config(
       '@typescript-eslint/prefer-readonly-parameter-types': 'off',
       '@typescript-eslint/typedef': 'off',
       camelcase: 'off',
-      'import/no-duplicates': [
-        'error',
-        {
-          'prefer-inline': true,
-        },
-      ],
       'max-lines': 'off',
       'no-bitwise': 'off',
       'no-empty': [
@@ -372,14 +358,6 @@ export default tsEslint.config(
           natural: true,
         },
       ],
-    },
-    settings: {
-      'import/resolver': {
-        ...importPlugin.configs.typescript.settings['import/resolver'],
-        typescript: {
-          alwaysTryTypes: true,
-        },
-      },
     },
   },
   {
