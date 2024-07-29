@@ -26,6 +26,8 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'npm'
+      - name: Install dependencies, update package-lock.json, lint & format code
+        run: npm install
       - name: Validate app
         uses: athombv/github-action-homey-app-validate@v1
         with:
