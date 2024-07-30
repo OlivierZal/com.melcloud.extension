@@ -19,7 +19,7 @@ jobs:
           mv package.json.tmp package.json
       - uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: 22
           cache: 'npm'
       - name: Install dependencies, update package-lock.json, lint & format code
         run: npm install
