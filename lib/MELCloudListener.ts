@@ -159,15 +159,22 @@ export default class MELCloudListener extends TemperatureListener {
   }
 
   async #revertTemperature(): Promise<void> {
-    const value = this.#getThreshold()
-    await this.device.setCapabilityValue({
-      capabilityId: 'target_temperature',
-      value,
-    })
-    this.app.pushToUI('reverted', {
-      name: this.device.name,
-      value: `${String(value)}\u00A0°C`,
-    })
+    try {
+      const value = this.#getThreshold()
+      await this.device.setCapabilityValue({
+        capabilityId: 'target_temperature',
+        value,
+      })
+      this.app.pushToUI('reverted', {
+        name: this.device.name,
+        value: `${String(value)}\u00A0°C`,
+      })
+    } catch (_error) {
+      this.app.pushToUI('error.not_found', {
+        id: this.device.id,
+        name: this.device.name,
+      })
+    }
   }
 
   async #setThreshold(value: number): Promise<void> {

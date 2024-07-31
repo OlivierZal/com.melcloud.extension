@@ -16,6 +16,9 @@ import OutdoorTemperatureListener from './lib/OutdoorTemperatureListener'
 const MAX_LOGS = 100
 const SECONDS_1_IN_MILLISECONDS = 1000
 
+const getErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error)
+
 export = class extends App {
   public readonly names = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
@@ -60,7 +63,7 @@ export = class extends App {
         this.pushToUI(error.message, error.params)
         return
       }
-      this.pushToUI(error instanceof Error ? error.message : String(error))
+      this.pushToUI(getErrorMessage(error))
     }
   }
 
@@ -90,7 +93,7 @@ export = class extends App {
     })
     this.homey.on('unload', () => {
       this.#destroyListeners().catch((error: unknown) => {
-        this.error(error instanceof Error ? error.message : String(error))
+        this.error(getErrorMessage(error))
       })
     })
   }
