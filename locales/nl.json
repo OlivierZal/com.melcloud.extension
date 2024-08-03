@@ -5,7 +5,7 @@
     "cleanedAll": "Reinigen alle luisteraars",
     "created": "Aanmaken van een luisteraar voor __capability__ van __name__",
     "error": {
-      "not_found": "__name__ `__id__` kan niet worden gevonden"
+      "not_found": "__type__ `__idOrName__` kan niet worden gevonden"
     },
     "listened": "Luisteren naar __capability__ van __name__: __value__",
     "reverted": "Herstellen de temperatuur van __name__: __value__",

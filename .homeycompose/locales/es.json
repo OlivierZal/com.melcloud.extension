@@ -5,7 +5,7 @@
     "cleanedAll": "Limpieza de todos los oyentes",
     "created": "Creación de un oyente para __capability__ de __name__",
     "error": {
-      "not_found": "No se puede encontrar __name__ `__id__`"
+      "not_found": "No se puede encontrar __type__ `__idOrName__`"
     },
     "listened": "Escuchando a __capability__ de __name__: __value__",
     "reverted": "Revertiendo la temperatura de __name__: __value__",

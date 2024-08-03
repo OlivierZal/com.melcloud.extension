@@ -5,7 +5,7 @@
     "cleanedAll": "Rengör alla lyssnare",
     "created": "Skapa en lyssnare för __capability__ av __name__",
     "error": {
-      "not_found": "__name__ `__id__` kunde inte hittas"
+      "not_found": "__type__ `__idOrName__` kunde inte hittas"
     },
     "listened": "Lyssnar på __capability__ av __name__: __value__",
     "reverted": "Återställer temperaturen av __name__: __value__",

@@ -5,7 +5,7 @@
     "cleanedAll": "Rengjøring av alle lyttere",
     "created": "Oppretter en lytter for __capability__ av __name__",
     "error": {
-      "not_found": "__name__ `__id__` ble ikke funnet"
+      "not_found": "__type__ `__idOrName__` ble ikke funnet"
     },
     "listened": "Lytt til __capability__ av __name__: __value__",
     "reverted": "Gjenoppretter temperaturen til __name__: __value__",

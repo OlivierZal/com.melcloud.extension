@@ -171,8 +171,8 @@ export default class MELCloudListener extends TemperatureListener {
       })
     } catch (_error) {
       this.app.pushToUI('error.not_found', {
-        id: this.device.id,
-        name: this.device.name,
+        idOrName: this.device.name,
+        type: this.names.device,
       })
     }
   }

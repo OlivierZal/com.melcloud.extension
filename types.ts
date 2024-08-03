@@ -11,10 +11,11 @@ export type CapabilityPath = `${string}:${string}`
 
 export interface ListenerEventParams {
   readonly capability?: string
-  readonly id?: string
+  readonly idOrName?: string
   readonly name?: string
   readonly outdoorTemperature?: string
   readonly threshold?: string
+  readonly type?: string
   readonly value?: boolean | number | string
 }
 

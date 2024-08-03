@@ -5,7 +5,7 @@
     "cleanedAll": "Nettoyage de tous les écouteurs",
     "created": "Création d'un écouteur pour __capability__ de __name__",
     "error": {
-      "not_found": "__name__ `__id__` est introuvable"
+      "not_found": "__type__ `__idOrName__` est introuvable"
     },
     "listened": "Écoute de __capability__ de __name__\u00A0: __value__",
     "reverted": "Rétablissement de la température de __name__\u00A0: __value__",
