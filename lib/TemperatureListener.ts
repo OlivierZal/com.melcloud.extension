@@ -21,7 +21,7 @@ export default abstract class TemperatureListener {
     this.device = device
   }
 
-  protected destroyTemperature(): void {
+  protected async destroyTemperature(): Promise<void> {
     if (this.temperatureListener !== null) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       this.temperatureListener.destroy()
@@ -31,6 +31,7 @@ export default abstract class TemperatureListener {
       capability: this.names.temperature,
       name: this.device.name,
     })
+    return Promise.resolve()
   }
 
   protected async getCapabilityValue(

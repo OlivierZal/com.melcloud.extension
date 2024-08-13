@@ -52,7 +52,7 @@ export default class MELCloudListener extends TemperatureListener {
           !this.#isItCoolingElsewhere() &&
           OutdoorTemperatureListener.temperatureListener !== null
         ) {
-          OutdoorTemperatureListener.destroyTemperature()
+          await OutdoorTemperatureListener.destroyTemperature()
         }
       },
     )
@@ -82,7 +82,7 @@ export default class MELCloudListener extends TemperatureListener {
 
   protected override async destroyTemperature(): Promise<void> {
     if (this.temperatureListener !== null) {
-      super.destroyTemperature()
+      await super.destroyTemperature()
       await this.#revertTemperature()
     }
   }

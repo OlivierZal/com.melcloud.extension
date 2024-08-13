@@ -47,16 +47,16 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
     }
   }
 
-  public static destroy(): void {
+  public static async destroy(): Promise<void> {
     if (this.#listener) {
-      this.destroyTemperature()
+      await this.destroyTemperature()
       this.#listener = null
     }
   }
 
-  public static destroyTemperature(): void {
+  public static async destroyTemperature(): Promise<void> {
     if (this.#listener) {
-      this.#listener.destroyTemperature()
+      await this.#listener.destroyTemperature()
     }
   }
 

@@ -128,7 +128,7 @@ export = class extends App {
   async #destroyListeners(): Promise<void> {
     this.pushToUI('cleanedAll')
     await MELCloudListener.destroy()
-    OutdoorTemperatureListener.destroy()
+    await OutdoorTemperatureListener.destroy()
   }
 
   #init(): void {
