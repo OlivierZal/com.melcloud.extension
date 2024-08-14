@@ -86,7 +86,7 @@ const createMessageElement = (
   color?: string,
 ): HTMLDivElement => {
   const messageElement = document.createElement('div')
-  if (typeof color !== 'undefined') {
+  if (color !== undefined) {
     messageElement.style.color = color
   }
   messageElement.innerText = message
@@ -168,7 +168,7 @@ const getTemperatureSensors = async (homey: Homey): Promise<void> =>
           reject(error)
           return
         }
-        devices.forEach(({ capabilityPath, capabilityName }) => {
+        devices.forEach(({ capabilityName, capabilityPath }) => {
           const optionElement = document.createElement('option')
           optionElement.value = capabilityPath
           optionElement.innerText = capabilityName

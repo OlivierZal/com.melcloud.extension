@@ -34,6 +34,35 @@ export = class extends App {
 
   #temperatureSensors: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
+  public override async onInit(): Promise<void> {
+    this.#api = (await HomeyAPIV3Local.createAppAPI({
+      homey: this.homey,
+    })) as HomeyAPIV3Local
+    // @ts-expect-error: `homey-api` is partially typed
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    await this.#api.devices.connect()
+    this.#init()
+    // @ts-expect-error: `homey-api` is partially typed
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    this.#api.devices.on('device.create', () => {
+      this.#init()
+    })
+    // @ts-expect-error: `homey-api` is partially typed
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    this.#api.devices.on('device.delete', () => {
+      this.#init()
+    })
+    this.homey.on('unload', () => {
+      this.#destroyListeners().catch((error: unknown) => {
+        this.error(getErrorMessage(error))
+      })
+    })
+  }
+
+  public override async onUninit(): Promise<void> {
+    await this.#destroyListeners()
+  }
+
   public get api(): HomeyAPIV3Local {
     return this.#api
   }
@@ -71,35 +100,6 @@ export = class extends App {
     setting: Extract<K, string>,
   ): HomeySettings[K] {
     return this.homey.settings.get(setting) as HomeySettings[K]
-  }
-
-  public override async onInit(): Promise<void> {
-    this.#api = (await HomeyAPIV3Local.createAppAPI({
-      homey: this.homey,
-    })) as HomeyAPIV3Local
-    // @ts-expect-error: `homey-api` is partially typed
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    await this.#api.devices.connect()
-    this.#init()
-    // @ts-expect-error: `homey-api` is partially typed
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    this.#api.devices.on('device.create', () => {
-      this.#init()
-    })
-    // @ts-expect-error: `homey-api` is partially typed
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    this.#api.devices.on('device.delete', () => {
-      this.#init()
-    })
-    this.homey.on('unload', () => {
-      this.#destroyListeners().catch((error: unknown) => {
-        this.error(getErrorMessage(error))
-      })
-    })
-  }
-
-  public override async onUninit(): Promise<void> {
-    await this.#destroyListeners()
   }
 
   public pushToUI(name: string, params?: ListenerEventParams): void {

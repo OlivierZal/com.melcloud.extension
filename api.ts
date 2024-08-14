@@ -9,8 +9,8 @@ import type {
 
 export = {
   async autoAdjustCooling({
-    homey,
     body,
+    homey,
   }: {
     body: TemperatureListenerData
     homey: Homey
