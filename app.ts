@@ -59,10 +59,6 @@ export = class extends App {
     })
   }
 
-  public override async onUninit(): Promise<void> {
-    await this.#destroyListeners()
-  }
-
   public get api(): HomeyAPIV3Local {
     return this.#api
   }
@@ -100,6 +96,10 @@ export = class extends App {
     setting: Extract<K, string>,
   ): HomeySettings[K] {
     return this.homey.settings.get(setting) as HomeySettings[K]
+  }
+
+  public override async onUninit(): Promise<void> {
+    await this.#destroyListeners()
   }
 
   public pushToUI(name: string, params?: ListenerEventParams): void {
