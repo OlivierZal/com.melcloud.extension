@@ -9,6 +9,7 @@ import type {
   TimestampedLog,
 } from './types'
 
+import changelog from './.homeychangelog.json'
 import ListenerError from './lib/ListenerError'
 import MELCloudListener from './lib/MELCloudListener'
 import OutdoorTemperatureListener from './lib/OutdoorTemperatureListener'
@@ -57,6 +58,7 @@ export = class extends App {
         this.error(getErrorMessage(error))
       })
     })
+    await this.#createNotification()
   }
 
   public get api(): HomeyAPIV3Local {
@@ -123,6 +125,22 @@ export = class extends App {
         this.homey.settings.set(setting, value)
       }
     })
+  }
+
+  async #createNotification(): Promise<void> {
+    const { version } = this.homey.manifest as { version: string }
+    if (version in changelog) {
+      const versionChangelog = changelog[version as keyof typeof changelog]
+      const language = this.homey.i18n.getLanguage()
+      await this.homey.notifications.createNotification({
+        excerpt:
+          changelog[version as keyof typeof changelog][
+            language in versionChangelog ?
+              (language as keyof typeof versionChangelog)
+            : 'en'
+          ],
+      })
+    }
   }
 
   async #destroyListeners(): Promise<void> {
