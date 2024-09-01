@@ -98,8 +98,7 @@ const displayLog = ({ category, message, time }: TimestampedLog): void => {
   const rowElement = document.createElement('div')
   rowElement.style.display = 'flex'
   rowElement.style.marginBottom = '1em'
-  rowElement.appendChild(timeElement)
-  rowElement.appendChild(messageElement)
+  rowElement.append(timeElement, messageElement)
   logsElement.insertBefore(rowElement, logsElement.firstChild)
 }
 
@@ -165,7 +164,7 @@ const getTemperatureSensors = async (homey: Homey): Promise<void> =>
             const optionElement = document.createElement('option')
             optionElement.value = capabilityPath
             optionElement.innerText = capabilityName
-            capabilityPathElement.appendChild(optionElement)
+            capabilityPathElement.append(optionElement)
           })
         }
         resolve()
