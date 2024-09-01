@@ -23,15 +23,13 @@ const NUMBER_0 = 0
 
 let language = ''
 
-const getLanguage = async (homey: Homey): Promise<void> =>
-  new Promise((resolve, reject) => {
+const fetchLanguage = async (homey: Homey): Promise<string> =>
+  new Promise((resolve) => {
     homey.api('GET', '/language', (error: Error | null, lang: string) => {
-      if (error) {
-        reject(error)
-        return
+      if (!error) {
+        document.documentElement.lang = lang
       }
-      language = lang
-      resolve()
+      resolve(lang)
     })
   })
 
@@ -127,19 +125,16 @@ const handleTemperatureSensorsError = async (
   )
 }
 
-const getHomeySettings = async (homey: Homey): Promise<void> => {
-  const homeySettings = await new Promise<HomeySettingsUI>(
-    (resolve, reject) => {
-      homey.get(async (error: Error | null, settings: HomeySettingsUI) => {
-        if (error) {
-          await homey.alert(error.message)
-          reject(error)
-          return
-        }
-        resolve(settings)
-      })
-    },
-  )
+const fetchHomeySettings = async (homey: Homey): Promise<void> => {
+  const homeySettings = await new Promise<HomeySettingsUI>((resolve) => {
+    homey.get(async (error: Error | null, settings: HomeySettingsUI) => {
+      enableButtons()
+      if (error) {
+        await homey.alert(error.message)
+      }
+      resolve(settings)
+    })
+  })
   if (!logsElement.childElementCount) {
     ;(homeySettings.lastLogs ?? [])
       .filter(({ time }) => {
@@ -158,43 +153,28 @@ const getHomeySettings = async (homey: Homey): Promise<void> => {
 }
 
 const getTemperatureSensors = async (homey: Homey): Promise<void> =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve) => {
     homey.api(
       'GET',
       '/devices/sensors/temperature',
       async (error: Error | null, devices: TemperatureSensor[]) => {
         if (error) {
           await handleTemperatureSensorsError(homey, error.message)
-          reject(error)
-          return
+        } else {
+          devices.forEach(({ capabilityName, capabilityPath }) => {
+            const optionElement = document.createElement('option')
+            optionElement.value = capabilityPath
+            optionElement.innerText = capabilityName
+            capabilityPathElement.appendChild(optionElement)
+          })
         }
-        devices.forEach(({ capabilityName, capabilityPath }) => {
-          const optionElement = document.createElement('option')
-          optionElement.value = capabilityPath
-          optionElement.innerText = capabilityName
-          capabilityPathElement.appendChild(optionElement)
-        })
         resolve()
       },
     )
   })
 
-// eslint-disable-next-line func-style
-async function onHomeyReady(homey: Homey): Promise<void> {
-  await getLanguage(homey)
-  document.documentElement.lang = language
-  refreshElement.addEventListener('click', () => {
-    disableButtons()
-    getHomeySettings(homey)
-      .catch(async (error: unknown) => {
-        await homey.alert(
-          error instanceof Error ? error.message : String(error),
-        )
-      })
-      .finally(enableButtons)
-  })
-  applyElement.addEventListener('click', () => {
-    disableButtons()
+const autoAdjustCooling = async (homey: Homey): Promise<void> =>
+  new Promise((resolve) => {
     homey.api(
       'PUT',
       '/melcloud/cooling/auto_adjustment',
@@ -207,11 +187,28 @@ async function onHomeyReady(homey: Homey): Promise<void> {
         if (error) {
           await homey.alert(error.message)
         }
+        resolve()
       },
     )
   })
+
+// eslint-disable-next-line func-style
+async function onHomeyReady(homey: Homey): Promise<void> {
+  language = await fetchLanguage(homey)
+  refreshElement.addEventListener('click', () => {
+    disableButtons()
+    fetchHomeySettings(homey).catch(() => {
+      //
+    })
+  })
+  applyElement.addEventListener('click', () => {
+    disableButtons()
+    autoAdjustCooling(homey).catch(() => {
+      //
+    })
+  })
   homey.on('log', displayLog)
   await getTemperatureSensors(homey)
-  await getHomeySettings(homey)
+  await fetchHomeySettings(homey)
   await homey.ready()
 }

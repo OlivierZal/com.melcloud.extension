@@ -54,8 +54,8 @@ export = class extends App {
       this.#init()
     })
     this.homey.on('unload', () => {
-      this.#destroyListeners().catch((error: unknown) => {
-        this.error(getErrorMessage(error))
+      this.#destroyListeners().catch(() => {
+        //
       })
     })
     await this.#createNotification()
