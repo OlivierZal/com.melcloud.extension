@@ -148,7 +148,7 @@ const fetchHomeySettings = async (homey: Homey): Promise<void> => {
       .forEach(displayLog)
   }
   capabilityPathElement.value = homeySettings.capabilityPath ?? ''
-  enabledElement.value = String(homeySettings.enabled ?? false)
+  enabledElement.value = String(homeySettings.enabled === true)
   enableButtons()
 }
 

@@ -76,7 +76,7 @@ export = class extends App {
   public async autoAdjustCooling(
     { capabilityPath, isEnabled }: TemperatureListenerData = {
       capabilityPath: this.getHomeySetting('capabilityPath') ?? ':',
-      isEnabled: this.getHomeySetting('isEnabled') ?? false,
+      isEnabled: this.getHomeySetting('isEnabled') === true,
     },
   ): Promise<void> {
     await this.#destroyListeners()
