@@ -23,13 +23,14 @@ const NUMBER_0 = 0
 
 let language = ''
 
-const fetchLanguage = async (homey: Homey): Promise<string> =>
+const fetchLanguage = async (homey: Homey): Promise<void> =>
   new Promise((resolve) => {
     homey.api('GET', '/language', (error: Error | null, lang: string) => {
       if (!error) {
         document.documentElement.lang = lang
+        language = lang
       }
-      resolve(lang)
+      resolve()
     })
   })
 
@@ -193,7 +194,7 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
 
 // eslint-disable-next-line func-style
 async function onHomeyReady(homey: Homey): Promise<void> {
-  language = await fetchLanguage(homey)
+  await fetchLanguage(homey)
   refreshElement.addEventListener('click', () => {
     disableButtons()
     fetchHomeySettings(homey).catch(() => {
