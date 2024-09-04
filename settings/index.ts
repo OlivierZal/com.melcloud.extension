@@ -65,12 +65,9 @@ const enableButtons = (value = true): void => {
 const withDisablingButton = async (
   action: () => Promise<void>,
 ): Promise<void> => {
-  try {
-    disableButtons()
-    await action()
-  } finally {
-    enableButtons()
-  }
+  disableButtons()
+  await action()
+  enableButtons()
 }
 
 const displayTime = (time: number): string =>
