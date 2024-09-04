@@ -62,6 +62,17 @@ const enableButtons = (value = true): void => {
   disableButtons(!value)
 }
 
+const withDisablingButton = async (
+  action: () => Promise<void>,
+): Promise<void> => {
+  try {
+    disableButtons()
+    await action()
+  } finally {
+    enableButtons()
+  }
+}
+
 const displayTime = (time: number): string =>
   new Date(time).toLocaleString(language, {
     hour: 'numeric',
@@ -126,15 +137,19 @@ const handleTemperatureSensorsError = async (
 }
 
 const fetchHomeySettings = async (homey: Homey): Promise<void> => {
-  const homeySettings = await new Promise<HomeySettingsUI>((resolve) => {
-    homey.get(async (error: Error | null, settings: HomeySettingsUI) => {
-      enableButtons()
-      if (error) {
-        await homey.alert(error.message)
-      }
-      resolve(settings)
-    })
-  })
+  let homeySettings: HomeySettingsUI = {}
+  await withDisablingButton(
+    async () =>
+      new Promise((resolve) => {
+        homey.get(async (error: Error | null, settings: HomeySettingsUI) => {
+          if (error) {
+            await homey.alert(error.message)
+          }
+          homeySettings = settings
+          resolve()
+        })
+      }),
+  )
   if (!logsElement.childElementCount) {
     ;(homeySettings.lastLogs ?? [])
       .filter(({ time }) => {
@@ -149,7 +164,6 @@ const fetchHomeySettings = async (homey: Homey): Promise<void> => {
   }
   capabilityPathElement.value = homeySettings.capabilityPath ?? ''
   enabledElement.value = String(homeySettings.enabled === true)
-  enableButtons()
 }
 
 const getTemperatureSensors = async (homey: Homey): Promise<void> =>
@@ -174,35 +188,35 @@ const getTemperatureSensors = async (homey: Homey): Promise<void> =>
   })
 
 const autoAdjustCooling = async (homey: Homey): Promise<void> =>
-  new Promise((resolve) => {
-    homey.api(
-      'PUT',
-      '/melcloud/cooling/auto_adjustment',
-      {
-        capabilityPath: capabilityPathElement.value as CapabilityPath,
-        isEnabled: enabledElement.value === 'true',
-      } satisfies TemperatureListenerData,
-      async (error: Error | null) => {
-        enableButtons()
-        if (error) {
-          await homey.alert(error.message)
-        }
-        resolve()
-      },
-    )
-  })
+  withDisablingButton(
+    async () =>
+      new Promise((resolve) => {
+        homey.api(
+          'PUT',
+          '/melcloud/cooling/auto_adjustment',
+          {
+            capabilityPath: capabilityPathElement.value as CapabilityPath,
+            isEnabled: enabledElement.value === 'true',
+          } satisfies TemperatureListenerData,
+          async (error: Error | null) => {
+            if (error) {
+              await homey.alert(error.message)
+            }
+            resolve()
+          },
+        )
+      }),
+  )
 
 // eslint-disable-next-line func-style
 async function onHomeyReady(homey: Homey): Promise<void> {
   await fetchLanguage(homey)
   refreshElement.addEventListener('click', () => {
-    disableButtons()
     fetchHomeySettings(homey).catch(() => {
       //
     })
   })
   applyElement.addEventListener('click', () => {
-    disableButtons()
     autoAdjustCooling(homey).catch(() => {
       //
     })
