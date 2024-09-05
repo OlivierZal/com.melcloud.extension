@@ -62,7 +62,7 @@ const enableButtons = (value = true): void => {
   disableButtons(!value)
 }
 
-const withDisablingButton = async (
+const withDisablingButtons = async (
   action: () => Promise<void>,
 ): Promise<void> => {
   disableButtons()
@@ -135,7 +135,7 @@ const handleTemperatureSensorsError = async (
 
 const fetchHomeySettings = async (homey: Homey): Promise<void> => {
   let homeySettings: HomeySettingsUI = {}
-  await withDisablingButton(
+  await withDisablingButtons(
     async () =>
       new Promise((resolve) => {
         homey.get(async (error: Error | null, settings: HomeySettingsUI) => {
@@ -185,7 +185,7 @@ const getTemperatureSensors = async (homey: Homey): Promise<void> =>
   })
 
 const autoAdjustCooling = async (homey: Homey): Promise<void> =>
-  withDisablingButton(
+  withDisablingButtons(
     async () =>
       new Promise((resolve) => {
         homey.api(
