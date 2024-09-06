@@ -37,7 +37,7 @@ const fetchLanguage = async (homey: Homey): Promise<void> =>
 const applyElement = document.getElementById('apply') as HTMLButtonElement
 const refreshElement = document.getElementById('refresh') as HTMLButtonElement
 const capabilityPathElement = document.getElementById(
-  'capabilityPath',
+  'capability_path',
 ) as HTMLSelectElement
 const enabledElement = document.getElementById('enabled') as HTMLSelectElement
 const logsElement = document.getElementById('logs') as HTMLTableSectionElement
