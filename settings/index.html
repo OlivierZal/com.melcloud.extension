@@ -1,78 +1,76 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MELCloud Extension Settings</title>
-    <link rel="stylesheet" type="text/css" href="styles.css" />
-    <script
-      type="text/javascript"
-      src="/homey.js"
-      data-origin="settings"
-    ></script>
-    <script>
-      const exports = {}
-    </script>
-    <script src="index.js" defer></script>
-  </head>
-  <body>
-    <header class="homey-header">
-      <h1 class="homey-title" data-i18n="settings.title"></h1>
-    </header>
-    <fieldset class="homey-form-fieldset">
-      <legend
-        class="homey-form-legend"
-        data-i18n="settings.legends.autoadjust"
-      ></legend>
-      <div class="homey-form-group">
-        <label
-          class="homey-form-label"
-          for="enabled"
-          aria-label="Enabled"
-          data-i18n="settings.enabled"
-        ></label>
-        <select class="homey-form-select" id="enabled">
-          <option value="false" data-i18n="settings.boolean.false"></option>
-          <option value="true" data-i18n="settings.boolean.true"></option>
-        </select>
-      </div>
-      <div class="homey-form-group">
-        <label
-          class="homey-form-label"
-          for="capabilityPath"
-          aria-label="Capability path"
-          data-i18n="settings.capabilities"
-        ></label>
-        <select class="homey-form-select" id="capabilityPath"></select>
-      </div>
-      <div class="homey-form-group">
-        <button
-          id="refresh"
-          aria-label="Refresh"
-          class="homey-button-secondary-shadow-full"
-          data-i18n="settings.refresh"
-        ></button>
-      </div>
-      <div class="homey-form-group">
-        <button
-          id="apply"
-          aria-label="Apply"
-          class="homey-button-danger-shadow-full"
-          data-i18n="settings.apply"
-        ></button>
-      </div>
-    </fieldset>
-    <fieldset class="homey-form-fieldset">
-      <legend
-        class="homey-form-legend"
-        data-i18n="settings.legends.log"
-      ></legend>
-      <table class="homey-form-group" aria-describedby="Log">
-        <thead>
-          <th></th>
-        </thead>
-        <tbody id="logs"></tbody>
-      </table>
-    </fieldset>
-  </body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MELCloud Extension Settings</title>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="styles.css"
+        >
+        <script
+            type="text/javascript"
+            src="/homey.js"
+            data-origin="settings"
+        ></script>
+        <script>
+            const exports = {}
+        </script>
+        <script src="index.js" defer></script>
+    </head>
+    <body>
+        <header class="homey-header">
+            <h1 class="homey-title" data-i18n="settings.title"></h1>
+        </header>
+        <fieldset class="homey-form-fieldset">
+            <legend class="homey-form-legend" data-i18n="settings.legends.autoadjust"></legend>
+            <div class="homey-form-group">
+                <label
+                    class="homey-form-label"
+                    for="enabled"
+                    aria-label="Enabled"
+                    data-i18n="settings.enabled"
+                ></label>
+                <select class="homey-form-select" id="enabled">
+                    <option value="false" data-i18n="settings.boolean.false"></option>
+                    <option value="true" data-i18n="settings.boolean.true"></option>
+                </select>
+            </div>
+            <div class="homey-form-group">
+                <label
+                    class="homey-form-label"
+                    for="capabilityPath"
+                    aria-label="Capability path"
+                    data-i18n="settings.capabilities"
+                ></label>
+                <select class="homey-form-select" id="capabilityPath"></select>
+            </div>
+            <div class="homey-form-group">
+                <button
+                    id="refresh"
+                    aria-label="Refresh"
+                    class="homey-button-secondary-shadow-full"
+                    data-i18n="settings.refresh"
+                ></button>
+            </div>
+            <div class="homey-form-group">
+                <button
+                    id="apply"
+                    aria-label="Apply"
+                    class="homey-button-danger-shadow-full"
+                    data-i18n="settings.apply"
+                ></button>
+            </div>
+        </fieldset>
+        <fieldset class="homey-form-fieldset">
+            <legend class="homey-form-legend" data-i18n="settings.legends.log"></legend>
+            <table class="homey-form-group" aria-describedby="Log">
+                <thead>
+                    <th></th>
+                </thead>
+                <tbody id="logs"></tbody>
+            </table>
+        </fieldset>
+    </body>
 </html>
