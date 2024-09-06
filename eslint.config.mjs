@@ -354,8 +354,8 @@ export default [
     },
   ),
   {
-    ...html.configs['flat/recommended'],
     files: ['**/*.html'],
+    ...html.configs['flat/recommended'],
     rules: {
       ...html.configs['flat/recommended'].rules,
       '@html-eslint/id-naming-convention': 'error',
