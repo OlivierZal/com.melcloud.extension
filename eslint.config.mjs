@@ -145,7 +145,7 @@ export default [
           {
             argsIgnorePattern: '^_context$',
             caughtErrorsIgnorePattern: '^_',
-            varsIgnorePattern: 'onHomeyReady',
+            varsIgnorePattern: '^onHomeyReady$',
           },
         ],
         '@typescript-eslint/prefer-readonly-parameter-types': 'off',
