@@ -26,9 +26,9 @@ export default class MELCloudListener extends TemperatureListener {
 
   public static async destroy(): Promise<void> {
     await Promise.all(
-      Array.from(this.listeners.values()).map(async (listener) => {
-        await listener.#destroy()
-      }),
+      Array.from(this.listeners.values()).map(async (listener) =>
+        listener.#destroy(),
+      ),
     )
   }
 
