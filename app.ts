@@ -134,7 +134,7 @@ export = class extends App {
       const language = this.homey.i18n.getLanguage()
       await this.homey.notifications.createNotification({
         excerpt:
-          changelog[version as keyof typeof changelog][
+          versionChangelog[
             language in versionChangelog ?
               (language as keyof typeof versionChangelog)
             : 'en'
