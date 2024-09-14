@@ -78,7 +78,7 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
                   value: `${String(value)}\u00A0°C`,
                 })
                 await Promise.all(
-                  Array.from(MELCloudListener.listeners.values()).map(
+                  [...MELCloudListener.listeners.values()].map(
                     async (listener) => listener.setTargetTemperature(),
                   ),
                 )

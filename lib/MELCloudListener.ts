@@ -26,9 +26,7 @@ export default class MELCloudListener extends TemperatureListener {
 
   public static async destroy(): Promise<void> {
     await Promise.all(
-      Array.from(this.listeners.values()).map(async (listener) =>
-        listener.#destroy(),
-      ),
+      [...this.listeners.values()].map(async (listener) => listener.#destroy()),
     )
   }
 
@@ -120,7 +118,7 @@ export default class MELCloudListener extends TemperatureListener {
   }
 
   #isItCoolingElsewhere(): boolean {
-    return Array.from(MELCloudListener.listeners.values()).some(
+    return [...MELCloudListener.listeners.values()].some(
       (listener) =>
         (listener.device.id !== this.device.id &&
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
