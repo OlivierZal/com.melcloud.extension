@@ -3,7 +3,6 @@
 /.homeybuild/
 /.homeycompose/
 /.npmignore
-/.npmrc
 /.prettierignore
 /.vscode/
 /LICENSE
