@@ -18,10 +18,10 @@ const CATEGORIES: Record<string, { color?: string; icon: string }> = {
   reverted: { icon: '↩️' },
   saved: { icon: '☁️' },
 }
-const DAYS_6 = 6
 const NUMBER_0 = 0
+const NUMBER_6 = 6
 
-let language = ''
+let language = 'en'
 
 const fetchLanguage = async (homey: Homey): Promise<void> =>
   new Promise((resolve) => {
@@ -152,7 +152,7 @@ const fetchHomeySettings = async (homey: Homey): Promise<void> => {
       .filter(({ time }) => {
         const date = new Date(time)
         const oldestDate = new Date()
-        oldestDate.setDate(oldestDate.getDate() - DAYS_6)
+        oldestDate.setDate(oldestDate.getDate() - NUMBER_6)
         oldestDate.setHours(NUMBER_0, NUMBER_0, NUMBER_0, NUMBER_0)
         return date >= oldestDate
       })
