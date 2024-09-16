@@ -22,6 +22,14 @@ const categories: Record<string, { color?: string; icon: string }> = {
   saved: { icon: '☁️' },
 } as const
 
+const applyElement = document.getElementById('apply') as HTMLButtonElement
+const refreshElement = document.getElementById('refresh') as HTMLButtonElement
+const capabilityPathElement = document.getElementById(
+  'capability_path',
+) as HTMLSelectElement
+const enabledElement = document.getElementById('enabled') as HTMLSelectElement
+const logsElement = document.getElementById('logs') as HTMLTableSectionElement
+
 let language = 'en'
 
 const fetchLanguage = async (homey: Homey): Promise<void> =>
@@ -34,20 +42,6 @@ const fetchLanguage = async (homey: Homey): Promise<void> =>
       resolve()
     })
   })
-
-const applyElement = document.getElementById('apply') as HTMLButtonElement
-const refreshElement = document.getElementById('refresh') as HTMLButtonElement
-const capabilityPathElement = document.getElementById(
-  'capability_path',
-) as HTMLSelectElement
-const enabledElement = document.getElementById('enabled') as HTMLSelectElement
-const logsElement = document.getElementById('logs') as HTMLTableSectionElement
-
-capabilityPathElement.addEventListener('change', () => {
-  if (enabledElement.value === 'false') {
-    enabledElement.value = 'true'
-  }
-})
 
 const disableButtons = (value = true): void => {
   ;[applyElement, refreshElement].forEach((element) => {
@@ -205,6 +199,12 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
         )
       }),
   )
+
+capabilityPathElement.addEventListener('change', () => {
+  if (enabledElement.value === 'false') {
+    enabledElement.value = 'true'
+  }
+})
 
 // eslint-disable-next-line func-style
 async function onHomeyReady(homey: Homey): Promise<void> {
