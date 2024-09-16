@@ -9,7 +9,7 @@ import type {
 } from '../types'
 
 const LOG_RETENTION_DAYS = 6
-const ZERO_TIME = 0
+const TIME_ZERO = 0
 
 const categories: Record<string, { color?: string; icon: string }> = {
   calculated: { color: '#008000', icon: '🔢' },
@@ -154,7 +154,7 @@ const fetchHomeySettings = async (homey: Homey): Promise<void> => {
         const date = new Date(time)
         const oldestDate = new Date()
         oldestDate.setDate(oldestDate.getDate() - LOG_RETENTION_DAYS)
-        oldestDate.setHours(ZERO_TIME, ZERO_TIME, ZERO_TIME, ZERO_TIME)
+        oldestDate.setHours(TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_ZERO)
         return date >= oldestDate
       })
       .reverse()
