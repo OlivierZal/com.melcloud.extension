@@ -200,15 +200,12 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
       }),
   )
 
-capabilityPathElement.addEventListener('change', () => {
-  if (enabledElement.value === 'false') {
-    enabledElement.value = 'true'
-  }
-})
-
-// eslint-disable-next-line func-style
-async function onHomeyReady(homey: Homey): Promise<void> {
-  await fetchLanguage(homey)
+const addEventListeners = (homey: Homey): void => {
+  capabilityPathElement.addEventListener('change', () => {
+    if (enabledElement.value === 'false') {
+      enabledElement.value = 'true'
+    }
+  })
   refreshElement.addEventListener('click', () => {
     fetchHomeySettings(homey).catch(() => {
       //
@@ -219,6 +216,12 @@ async function onHomeyReady(homey: Homey): Promise<void> {
       //
     })
   })
+}
+
+// eslint-disable-next-line func-style
+async function onHomeyReady(homey: Homey): Promise<void> {
+  await fetchLanguage(homey)
+  addEventListeners(homey)
   homey.on('log', displayLog)
   await getTemperatureSensors(homey)
   await fetchHomeySettings(homey)
