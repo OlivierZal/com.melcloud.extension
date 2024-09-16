@@ -1,7 +1,5 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 
-export const DEFAULT_0 = 0
-
 export interface Capability {
   id: string
   title: string

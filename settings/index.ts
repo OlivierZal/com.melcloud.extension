@@ -8,7 +8,10 @@ import type {
   TimestampedLog,
 } from '../types'
 
-const CATEGORIES: Record<string, { color?: string; icon: string }> = {
+const LOG_RETENTION_DAYS = 6
+const ZERO_TIME = 0
+
+const categories: Record<string, { color?: string; icon: string }> = {
   calculated: { color: '#008000', icon: '🔢' },
   cleaned: { icon: '🗑️' },
   cleanedAll: { icon: '🛑' },
@@ -18,8 +21,6 @@ const CATEGORIES: Record<string, { color?: string; icon: string }> = {
   reverted: { icon: '↩️' },
   saved: { icon: '☁️' },
 }
-const NUMBER_0 = 0
-const NUMBER_6 = 6
 
 let language = 'en'
 
@@ -101,7 +102,7 @@ const createMessageElement = (
 }
 
 const displayLog = ({ category, message, time }: TimestampedLog): void => {
-  const { color, icon } = CATEGORIES[category ?? 'error']
+  const { color, icon } = categories[category ?? 'error']
   const timeElement = createTimeElement(time, icon)
   const messageElement = createMessageElement(message, color)
   const rowElement = document.createElement('div')
@@ -152,8 +153,8 @@ const fetchHomeySettings = async (homey: Homey): Promise<void> => {
       .filter(({ time }) => {
         const date = new Date(time)
         const oldestDate = new Date()
-        oldestDate.setDate(oldestDate.getDate() - NUMBER_6)
-        oldestDate.setHours(NUMBER_0, NUMBER_0, NUMBER_0, NUMBER_0)
+        oldestDate.setDate(oldestDate.getDate() - LOG_RETENTION_DAYS)
+        oldestDate.setHours(ZERO_TIME, ZERO_TIME, ZERO_TIME, ZERO_TIME)
         return date >= oldestDate
       })
       .reverse()

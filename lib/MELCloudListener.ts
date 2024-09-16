@@ -1,11 +1,12 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 
 import type MELCloudExtensionApp from '..'
+import type { DeviceCapability, Thresholds } from '../types'
 
-import { type DeviceCapability, type Thresholds, DEFAULT_0 } from '../types'
 import OutdoorTemperatureListener from './OutdoorTemperatureListener'
 import TemperatureListener from './TemperatureListener'
 
+const DEFAULT_TEMPERATURE = 0
 const MAX_TEMPERATURE = 38
 const MAX_TEMPERATURE_GAP = 8
 
@@ -102,7 +103,7 @@ export default class MELCloudListener extends TemperatureListener {
     return Math.min(
       Math.max(
         this.#getThreshold(),
-        Math.ceil(OutdoorTemperatureListener.value ?? DEFAULT_0) -
+        Math.ceil(OutdoorTemperatureListener.value ?? DEFAULT_TEMPERATURE) -
           MAX_TEMPERATURE_GAP,
       ),
       MAX_TEMPERATURE,
@@ -110,7 +111,7 @@ export default class MELCloudListener extends TemperatureListener {
   }
 
   #getThreshold(): number {
-    return this.#getThresholds()[this.device.id] ?? DEFAULT_0
+    return this.#getThresholds()[this.device.id] ?? DEFAULT_TEMPERATURE
   }
 
   #getThresholds(): Thresholds {

@@ -14,8 +14,8 @@ import ListenerError from './lib/ListenerError'
 import MELCloudListener from './lib/MELCloudListener'
 import OutdoorTemperatureListener from './lib/OutdoorTemperatureListener'
 
+const DEBOUNCE = 1000
 const MAX_LOGS = 100
-const SECONDS_1_IN_MILLISECONDS = 1000
 
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error)
@@ -154,7 +154,7 @@ export = class extends App {
     this.#initTimeout = this.homey.setTimeout(async () => {
       await this.#loadDevices()
       await this.autoAdjustCooling()
-    }, SECONDS_1_IN_MILLISECONDS)
+    }, DEBOUNCE)
   }
 
   async #loadDevices(): Promise<void> {
