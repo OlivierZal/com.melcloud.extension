@@ -20,7 +20,7 @@ const categories: Record<string, { color?: string; icon: string }> = {
   listened: { color: '#0047AB', icon: '👂' },
   reverted: { icon: '↩️' },
   saved: { icon: '☁️' },
-}
+} as const
 
 let language = 'en'
 
