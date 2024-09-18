@@ -133,7 +133,6 @@ export default class MELCloudListener extends TemperatureListener {
       const temperature = (await this.getCapabilityValue(
         'target_temperature',
       )) as number
-      await this.#setThreshold(temperature)
       this.temperatureListener = this.device.makeCapabilityInstance(
         'target_temperature',
         async (value) => {
@@ -151,6 +150,7 @@ export default class MELCloudListener extends TemperatureListener {
         capability: this.names.temperature,
         name: this.device.name,
       })
+      await this.#setThreshold(temperature)
     }
   }
 
