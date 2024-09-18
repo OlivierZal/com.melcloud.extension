@@ -168,8 +168,9 @@ const getTemperatureSensors = async (homey: Homey): Promise<void> =>
           await handleTemperatureSensorsError(homey, error.message)
         } else {
           devices.forEach(({ capabilityName, capabilityPath }) => {
-            const optionElement = new Option(capabilityName, capabilityPath)
-            capabilityPathElement.append(optionElement)
+            capabilityPathElement.append(
+              new Option(capabilityName, capabilityPath),
+            )
           })
         }
         resolve()
