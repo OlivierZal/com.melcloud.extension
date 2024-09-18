@@ -168,9 +168,7 @@ const getTemperatureSensors = async (homey: Homey): Promise<void> =>
           await handleTemperatureSensorsError(homey, error.message)
         } else {
           devices.forEach(({ capabilityName, capabilityPath }) => {
-            const optionElement = document.createElement('option')
-            optionElement.value = capabilityPath
-            optionElement.innerText = capabilityName
+            const optionElement = new Option(capabilityName, capabilityPath)
             capabilityPathElement.append(optionElement)
           })
         }
