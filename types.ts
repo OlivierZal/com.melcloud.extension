@@ -32,12 +32,7 @@ export interface HomeySettings {
   readonly thresholds: Thresholds | null
 }
 
-export interface HomeySettingsUI {
-  readonly capabilityPath?: CapabilityPath
-  readonly enabled?: boolean
-  readonly lastLogs?: readonly TimestampedLog[]
-  readonly thresholds?: Thresholds
-}
+export type HomeySettingsUI = Partial<NonNullable<HomeySettings>>
 
 export interface TemperatureSensor {
   readonly capabilityName: string
