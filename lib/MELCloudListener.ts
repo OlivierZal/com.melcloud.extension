@@ -6,6 +6,7 @@ import type { DeviceCapability, Thresholds } from '../types'
 import OutdoorTemperatureListener from './OutdoorTemperatureListener'
 import TemperatureListener from './TemperatureListener'
 
+const COOL = 'cool'
 const DEFAULT_TEMPERATURE = 0
 const GAP_TEMPERATURE = 8
 const MAX_TEMPERATURE = 38
@@ -42,7 +43,7 @@ export default class MELCloudListener extends TemperatureListener {
           name: this.device.name,
           value,
         })
-        if (value === 'cool') {
+        if (value === COOL) {
           await this.#listenToTargetTemperature()
           return
         }
@@ -59,7 +60,7 @@ export default class MELCloudListener extends TemperatureListener {
       capability: this.names.thermostatMode,
       name: this.device.name,
     })
-    if (currentThermostatMode === 'cool') {
+    if (currentThermostatMode === COOL) {
       await this.#listenToTargetTemperature()
     }
   }
@@ -123,7 +124,7 @@ export default class MELCloudListener extends TemperatureListener {
       (listener) =>
         (listener.device.id !== this.device.id &&
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          listener.#thermostatModeListener.value) === 'cool',
+          listener.#thermostatModeListener.value) === COOL,
     )
   }
 
