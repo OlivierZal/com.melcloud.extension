@@ -8,7 +8,7 @@ import TemperatureListener from './TemperatureListener'
 
 const DEFAULT_TEMPERATURE = 0
 const MAX_TEMPERATURE = 38
-const MAX_TEMPERATURE_GAP = 8
+const GAP_TEMPERATURE = 8
 
 export default class MELCloudListener extends TemperatureListener {
   public static readonly listeners = new Map<string, MELCloudListener>()
@@ -104,7 +104,7 @@ export default class MELCloudListener extends TemperatureListener {
       Math.max(
         this.#getThreshold(),
         Math.ceil(OutdoorTemperatureListener.value ?? DEFAULT_TEMPERATURE) -
-          MAX_TEMPERATURE_GAP,
+          GAP_TEMPERATURE,
       ),
       MAX_TEMPERATURE,
     )
