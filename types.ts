@@ -5,6 +5,8 @@ export interface Capability {
   title: string
 }
 
+export type Value = boolean | number | string | null
+
 export type CapabilityPath = `${string}:${string}`
 
 export interface ListenerEventParams {
@@ -14,7 +16,7 @@ export interface ListenerEventParams {
   readonly outdoorTemperature?: string
   readonly threshold?: string
   readonly type?: string
-  readonly value?: boolean | number | string
+  readonly value?: Value
 }
 
 export interface TimestampedLog {

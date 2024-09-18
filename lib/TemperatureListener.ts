@@ -1,7 +1,7 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 
 import type MELCloudExtensionApp from '..'
-import type { DeviceCapability } from '../types'
+import type { DeviceCapability, Value } from '../types'
 
 export default abstract class TemperatureListener {
   protected temperatureListener: DeviceCapability = null
@@ -34,16 +34,14 @@ export default abstract class TemperatureListener {
     return Promise.resolve()
   }
 
-  protected async getCapabilityValue(
-    capabilityId: string,
-  ): Promise<boolean | number | string | null> {
+  protected async getCapabilityValue(capabilityId: string): Promise<Value> {
     return (
       // @ts-expect-error: `homey-api` is partially typed
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       (await this.app.api.devices.getCapabilityValue({
         capabilityId,
         deviceId: this.device.id,
-      })) as boolean | number | string | null
+      })) as Value
     )
   }
 }

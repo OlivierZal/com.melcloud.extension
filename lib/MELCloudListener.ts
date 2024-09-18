@@ -130,11 +130,10 @@ export default class MELCloudListener extends TemperatureListener {
   async #listenToTargetTemperature(): Promise<void> {
     if (this.temperatureListener === null) {
       await OutdoorTemperatureListener.listenToOutdoorTemperature()
-      const currentTargetTemperature =
-        await this.getCapabilityValue('target_temperature')
-      if (typeof currentTargetTemperature === 'number') {
-        await this.#setThreshold(currentTargetTemperature)
-      }
+      const temperature = (await this.getCapabilityValue(
+        'target_temperature',
+      )) as number
+      await this.#setThreshold(temperature)
       this.temperatureListener = this.device.makeCapabilityInstance(
         'target_temperature',
         async (value) => {
@@ -144,9 +143,7 @@ export default class MELCloudListener extends TemperatureListener {
               name: this.device.name,
               value: `${String(value)}\u00A0°C`,
             })
-            if (typeof value === 'number') {
-              await this.#setThreshold(value)
-            }
+            await this.#setThreshold(value as number)
           }
         },
       )
@@ -177,13 +174,11 @@ export default class MELCloudListener extends TemperatureListener {
   }
 
   async #setThreshold(value: number): Promise<void> {
+    const { id, name } = this.device
     const thresholds = this.#getThresholds()
-    thresholds[this.device.id] = value
+    thresholds[id] = value
     this.app.setHomeySettings({ thresholds })
-    this.app.pushToUI('saved', {
-      name: this.device.name,
-      value: `${String(value)}\u00A0°C`,
-    })
+    this.app.pushToUI('saved', { name, value: `${String(value)}\u00A0°C` })
     await this.setTargetTemperature()
   }
 }
