@@ -2,18 +2,20 @@ import { App } from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
 import 'source-map-support/register'
 
-import type {
-  HomeySettings,
-  ListenerEventParams,
-  TemperatureListenerData,
-  TimestampedLog,
-} from './types'
-
 import changelog from './.homeychangelog.json'
 import ListenerError from './lib/ListenerError'
 import MELCloudListener from './lib/MELCloudListener'
 import OutdoorTemperatureListener from './lib/OutdoorTemperatureListener'
+import {
+  type HomeySettings,
+  type ListenerEventParams,
+  type TemperatureListenerData,
+  type TimestampedLog,
+  MEASURE_TEMPERATURE,
+  OUTDOOR_TEMPERATURE,
+} from './types'
 
+const MELCLOUD_DRIVER_ID = 'homey:app:com.mecloud:melcloud'
 const DEBOUNCE = 1000
 const MAX_LOGS = 100
 
@@ -166,18 +168,18 @@ export = class extends App {
       (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
     Object.values(devices).forEach((device) => {
       // @ts-expect-error: `homey-api` is partially typed
-      if (device.driverId === 'homey:app:com.mecloud:melcloud') {
+      if (device.driverId === MELCLOUD_DRIVER_ID) {
         this.#melcloudDevices.push(device)
         if (this.getHomeySetting('capabilityPath') === null) {
           this.setHomeySettings({
-            capabilityPath: `${device.id}:measure_temperature.outdoor`,
+            capabilityPath: `${device.id}:${OUTDOOR_TEMPERATURE}`,
           })
         }
       }
       if (
         // @ts-expect-error: `homey-api` is partially typed
         (device.capabilities as string[]).some((capability) =>
-          capability.startsWith('measure_temperature'),
+          capability.startsWith(MEASURE_TEMPERATURE),
         )
       ) {
         this.#temperatureSensors.push(device)

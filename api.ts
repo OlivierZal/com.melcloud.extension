@@ -1,11 +1,21 @@
 import type Homey from 'homey/lib/Homey'
 
 import type MELCloudExtensionApp from '.'
-import type {
-  Capability,
-  TemperatureListenerData,
-  TemperatureSensor,
+
+import {
+  type Capability,
+  type TemperatureListenerData,
+  type TemperatureSensor,
+  MEASURE_TEMPERATURE,
+  OUTDOOR_TEMPERATURE,
 } from './types'
+
+class AtaDeviceNotFoundError extends Error {
+  public constructor() {
+    super('no_ata_device')
+    this.name = 'AtaDeviceNotFoundError'
+  }
+}
 
 export = {
   async autoAdjustCooling({
@@ -23,18 +33,17 @@ export = {
   getTemperatureSensors({ homey }: { homey: Homey }): TemperatureSensor[] {
     const app = homey.app as MELCloudExtensionApp
     if (!app.melcloudDevices.length) {
-      throw new Error('no_device_ata')
+      throw new AtaDeviceNotFoundError()
     }
     return app.temperatureSensors
       .flatMap((device) => {
         const capabilities = Object.values(
           // @ts-expect-error: `homey-api` is partially typed
           (device.capabilitiesObj as Record<string, Capability> | null) ?? {},
-        ).filter(({ id }) => id.startsWith('measure_temperature'))
+        ).filter(({ id }) => id.startsWith(MEASURE_TEMPERATURE))
         const outdoorCapability = capabilities.find(
           ({ id }) =>
-            app.melcloudDevices.includes(device) &&
-            id === 'measure_temperature.outdoor',
+            app.melcloudDevices.includes(device) && id === OUTDOOR_TEMPERATURE,
         )
         if (outdoorCapability) {
           return [

@@ -1,5 +1,8 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 
+export const MEASURE_TEMPERATURE = 'measure_temperature'
+export const OUTDOOR_TEMPERATURE = `${MEASURE_TEMPERATURE}.outdoor`
+
 export interface Capability {
   id: string
   title: string

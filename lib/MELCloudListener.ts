@@ -7,6 +7,9 @@ import OutdoorTemperatureListener from './OutdoorTemperatureListener'
 import TemperatureListener from './TemperatureListener'
 
 const COOL = 'cool'
+const TARGET_TEMPERATURE = 'target_temperature'
+const THERMOSTAT_MODE = 'thermostat_mode'
+
 const DEFAULT_TEMPERATURE = 0
 const GAP_TEMPERATURE = 8
 const MAX_TEMPERATURE = 38
@@ -33,10 +36,9 @@ export default class MELCloudListener extends TemperatureListener {
   }
 
   public async listenToThermostatMode(): Promise<void> {
-    const currentThermostatMode =
-      await this.getCapabilityValue('thermostat_mode')
+    const currentThermostatMode = await this.getCapabilityValue(THERMOSTAT_MODE)
     this.#thermostatModeListener = this.device.makeCapabilityInstance(
-      'thermostat_mode',
+      THERMOSTAT_MODE,
       async (value) => {
         this.app.pushToUI('listened', {
           capability: this.names.thermostatMode,
@@ -132,10 +134,10 @@ export default class MELCloudListener extends TemperatureListener {
     if (this.temperatureListener === null) {
       await OutdoorTemperatureListener.listenToOutdoorTemperature()
       const temperature = (await this.getCapabilityValue(
-        'target_temperature',
+        TARGET_TEMPERATURE,
       )) as number
       this.temperatureListener = this.device.makeCapabilityInstance(
-        'target_temperature',
+        TARGET_TEMPERATURE,
         async (value) => {
           if (value !== this.#getTargetTemperature()) {
             this.app.pushToUI('listened', {
@@ -159,7 +161,7 @@ export default class MELCloudListener extends TemperatureListener {
     try {
       const value = this.#getThreshold()
       await this.device.setCapabilityValue({
-        capabilityId: 'target_temperature',
+        capabilityId: TARGET_TEMPERATURE,
         value,
       })
       this.app.pushToUI('reverted', {
