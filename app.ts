@@ -89,7 +89,7 @@ export = class extends App {
       })
     } catch (error) {
       if (error instanceof ListenerError) {
-        this.pushToUI(error.message, error.params)
+        this.pushToUI(error.message, error.cause as ListenerEventParams)
         return
       }
       this.pushToUI(getErrorMessage(error))

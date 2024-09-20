@@ -110,12 +110,12 @@ const handleTemperatureSensorsError = async (
   homey: Homey,
   errorMessage: string,
 ): Promise<void> => {
-  if (errorMessage !== 'no_ata_device') {
+  if (errorMessage !== 'ataDeviceNotFound') {
     await homey.alert(errorMessage)
     return
   }
   homey.confirm(
-    homey.__('settings.no_ata_device'),
+    homey.__('settings.ataDeviceNotFound'),
     null,
     async (error: Error | null, ok: boolean) => {
       if (error) {

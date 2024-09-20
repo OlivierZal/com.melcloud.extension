@@ -5,7 +5,7 @@
     "cleanedAll": "Nettoyage de tous les écouteurs",
     "created": "Création d'un écouteur pour __capability__ de __name__",
     "error": {
-      "not_found": "__type__ `__idOrName__` est introuvable"
+      "notFound": "__type__ `__idOrName__` est introuvable"
     },
     "listened": "Écoute de __capability__ de __name__\u00A0: __value__",
     "reverted": "Rétablissement de la température de __name__\u00A0: __value__",
@@ -19,6 +19,7 @@
   },
   "settings": {
     "apply": "Appliquer à tous les appareils air-air",
+    "ataDeviceNotFound": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
     "boolean": {
       "false": "Non",
       "true": "Oui"
@@ -29,7 +30,6 @@
       "autoadjust": "Auto-ajuster la température de la climatisation",
       "log": "Journal"
     },
-    "no_device_ata": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
     "refresh": "Rafraîchir",
     "success": "La mise à jour a réussi",
     "title": "Paramètres de l'extension pour MELCloud"

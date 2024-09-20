@@ -12,7 +12,7 @@ import {
 
 class AtaDeviceNotFoundError extends Error {
   public constructor() {
-    super('no_ata_device')
+    super('ataDeviceNotFound')
   }
 }
 
