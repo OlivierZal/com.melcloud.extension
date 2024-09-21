@@ -44,15 +44,7 @@ export = {
           ({ id }) =>
             app.melcloudDevices.includes(device) && id === OUTDOOR_TEMPERATURE,
         )
-        if (outdoorCapability) {
-          return [
-            {
-              capabilityName: `${device.name} - ${outdoorCapability.title}`,
-              capabilityPath: `${device.id}:${outdoorCapability.id}`,
-            } satisfies TemperatureSensor,
-          ]
-        }
-        return capabilities.map(
+        return (outdoorCapability ? [outdoorCapability] : capabilities).map(
           ({ id, title }): TemperatureSensor => ({
             capabilityName: `${device.name} - ${title}`,
             capabilityPath: `${device.id}:${id}`,
