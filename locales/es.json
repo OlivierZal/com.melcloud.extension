@@ -21,7 +21,7 @@
   "settings": {
     "apply": "Aplicar a todos los dispositivos aire-aire",
     "ataDeviceNotFound": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
-    "autoadjust": "Autoajustar la temperatura del aire acondicionado",
+    "autoAdjust": "Autoajustar la temperatura del aire acondicionado",
     "boolean": {
       "false": "No",
       "true": "Sí"

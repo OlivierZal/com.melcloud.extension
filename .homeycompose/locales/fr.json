@@ -18,7 +18,7 @@
   "settings": {
     "apply": "Appliquer à tous les appareils air-air",
     "ataDeviceNotFound": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
-    "autoadjust": "Auto-ajuster la température de la climatisation",
+    "autoAdjust": "Auto-ajuster la température de la climatisation",
     "boolean": {
       "false": "Non",
       "true": "Oui"

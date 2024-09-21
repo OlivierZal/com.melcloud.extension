@@ -21,7 +21,7 @@
   "settings": {
     "apply": "Toepassen op alle lucht-lucht apparaten",
     "ataDeviceNotFound": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
-    "autoadjust": "Auto-afstellen airco-temperatuur",
+    "autoAdjust": "Auto-afstellen airco-temperatuur",
     "boolean": {
       "false": "Nee",
       "true": "Ja"

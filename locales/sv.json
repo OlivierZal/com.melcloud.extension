@@ -21,7 +21,7 @@
   "settings": {
     "apply": "Tillämpa på alla luft-luft enheter",
     "ataDeviceNotFound": "Du behöver först konfigurera dina enheter i MELCloud Homey-appen.\n\nVill du installera den?",
-    "autoadjust": "Autojustera luftkonditioneringstemperaturen",
+    "autoAdjust": "Autojustera luftkonditioneringstemperaturen",
     "boolean": {
       "false": "Nej",
       "true": "Ja"
