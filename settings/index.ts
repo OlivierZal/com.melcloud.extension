@@ -120,6 +120,7 @@ const handleTemperatureSensorsError = async (
     async (error: Error | null, ok: boolean) => {
       if (error) {
         await homey.alert(error.message)
+        return
       }
       if (ok) {
         await homey.openURL('https://homey.app/a/com.mecloud')
@@ -136,8 +137,9 @@ const fetchHomeySettings = async (homey: Homey): Promise<void> => {
         homey.get(async (error: Error | null, settings: HomeySettingsUI) => {
           if (error) {
             await homey.alert(error.message)
+          } else {
+            homeySettings = settings
           }
-          homeySettings = settings
           resolve()
         })
       }),

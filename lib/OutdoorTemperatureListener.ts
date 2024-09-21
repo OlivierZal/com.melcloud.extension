@@ -55,13 +55,11 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
   }
 
   public static async destroyTemperature(): Promise<void> {
-    if (this.#listener) {
-      await this.#listener.destroyTemperature()
-    }
+    await this.#listener?.destroyTemperature()
   }
 
   public static async listenToOutdoorTemperature(): Promise<void> {
-    if (this.#listener !== null) {
+    if (this.#listener) {
       this.#listener.#value = (await this.#listener.getCapabilityValue(
         this.#listener.#capabilityId,
       )) as number
@@ -70,7 +68,7 @@ export default class OutdoorTemperatureListener extends TemperatureListener {
           this.#listener.device.makeCapabilityInstance(
             this.#listener.#capabilityId,
             async (value) => {
-              if (this.#listener !== null) {
+              if (this.#listener) {
                 this.#listener.#value = value as number
                 this.#listener.app.pushToUI('listened', {
                   capability: this.#listener.names.temperature,
