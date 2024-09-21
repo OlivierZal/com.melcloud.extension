@@ -9,7 +9,8 @@
     },
     "listened": "Écoute de __capability__ de __name__ : __value__",
     "reverted": "Rétablissement de la température de __name__ : __value__",
-    "saved": "Enregistrement de la température de __name__ : __value__"
+    "saved": "Enregistrement de la température de __name__ : __value__",
+    "notFound": "__type__ `__idOrName__` est introuvable"
   },
   "names": {
     "device": "L'appareil",
@@ -19,17 +20,15 @@
   },
   "settings": {
     "apply": "Appliquer à tous les appareils air-air",
+    "ataDeviceNotFound": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
+    "autoadjust": "Auto-ajuster la température de la climatisation",
     "boolean": {
       "false": "Non",
       "true": "Oui"
     },
     "capabilities": "Température extérieure",
     "enabled": "Maintenir à moins de 8 °C de la température extérieure",
-    "legends": {
-      "autoadjust": "Auto-ajuster la température de la climatisation",
-      "log": "Journal"
-    },
-    "ataDeviceNotFound": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
+    "log": "Journal",
     "refresh": "Rafraîchir",
     "success": "La mise à jour a réussi",
     "title": "Paramètres de l'extension pour MELCloud"

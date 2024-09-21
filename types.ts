@@ -12,7 +12,7 @@ export type Value = boolean | number | string | null
 
 export type CapabilityPath = `${string}:${string}`
 
-export interface ListenerEventParams {
+export interface ListenerParams {
   readonly capability?: string
   readonly idOrName?: string
   readonly name?: string

@@ -8,7 +8,7 @@ import MELCloudListener from './lib/MELCloudListener'
 import OutdoorTemperatureListener from './lib/OutdoorTemperatureListener'
 import {
   type HomeySettings,
-  type ListenerEventParams,
+  type ListenerParams,
   type TemperatureListenerData,
   type TimestampedLog,
   MEASURE_TEMPERATURE,
@@ -89,7 +89,7 @@ export = class extends App {
       })
     } catch (error) {
       if (error instanceof ListenerError) {
-        this.pushToUI(error.message, error.cause as ListenerEventParams)
+        this.pushToUI(error.message, error.cause as ListenerParams)
         return
       }
       this.pushToUI(getErrorMessage(error))
@@ -106,10 +106,11 @@ export = class extends App {
     await this.#destroyListeners()
   }
 
-  public pushToUI(name: string, params?: ListenerEventParams): void {
+  public pushToUI(name: string, params?: ListenerParams): void {
+    const [messageId, category = messageId] = name.split('.').reverse()
     const newLog: TimestampedLog = {
-      category: name.startsWith('error.') ? 'error' : name,
-      message: this.homey.__(`log.${name}`, params),
+      category,
+      message: this.homey.__(`log.${messageId}`, params),
       time: Date.now(),
     }
     this.homey.api.realtime('log', newLog)

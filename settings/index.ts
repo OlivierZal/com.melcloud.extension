@@ -110,23 +110,23 @@ const handleTemperatureSensorsError = async (
   homey: Homey,
   errorMessage: string,
 ): Promise<void> => {
-  if (errorMessage !== 'ataDeviceNotFound') {
-    await homey.alert(errorMessage)
+  if (errorMessage === 'ataDeviceNotFound') {
+    homey.confirm(
+      homey.__('settings.ataDeviceNotFound'),
+      null,
+      async (error: Error | null, ok: boolean) => {
+        if (error) {
+          await homey.alert(error.message)
+          return
+        }
+        if (ok) {
+          await homey.openURL('https://homey.app/a/com.mecloud')
+        }
+      },
+    )
     return
   }
-  homey.confirm(
-    homey.__('settings.ataDeviceNotFound'),
-    null,
-    async (error: Error | null, ok: boolean) => {
-      if (error) {
-        await homey.alert(error.message)
-        return
-      }
-      if (ok) {
-        await homey.openURL('https://homey.app/a/com.mecloud')
-      }
-    },
-  )
+  await homey.alert(errorMessage)
 }
 
 const fetchHomeySettings = async (homey: Homey): Promise<void> => {

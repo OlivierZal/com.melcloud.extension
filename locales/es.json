@@ -9,7 +9,8 @@
     },
     "listened": "Escuchando a __capability__ de __name__: __value__",
     "reverted": "Revertiendo la temperatura de __name__: __value__",
-    "saved": "Guardando la temperatura de __name__: __value__"
+    "saved": "Guardando la temperatura de __name__: __value__",
+    "notFound": "No se puede encontrar __type__ `__idOrName__`"
   },
   "names": {
     "device": "El dispositivo",
@@ -19,17 +20,15 @@
   },
   "settings": {
     "apply": "Aplicar a todos los dispositivos aire-aire",
+    "ataDeviceNotFound": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
+    "autoadjust": "Autoajustar la temperatura del aire acondicionado",
     "boolean": {
       "false": "No",
       "true": "Sí"
     },
     "capabilities": "Temperatura exterior",
     "enabled": "Mantener dentro de los 8 °C de la temperatura exterior",
-    "legends": {
-      "autoadjust": "Autoajustar la temperatura del aire acondicionado",
-      "log": "Registro"
-    },
-    "ataDeviceNotFound": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
+    "log": "Registro",
     "refresh": "Recargar",
     "success": "Actualización exitosa",
     "title": "Configuración de la extensión para MELCloud"

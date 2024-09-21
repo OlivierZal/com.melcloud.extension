@@ -1,7 +1,7 @@
-import type { ListenerEventParams } from '../types'
+import type { ListenerParams } from '../types'
 
 export default class extends Error {
-  public constructor(cause?: ListenerEventParams) {
-    super('error.notFound', { cause })
+  public constructor(message: string, cause?: ListenerParams) {
+    super(`error.${message}`, { cause })
   }
 }

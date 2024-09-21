@@ -9,7 +9,8 @@
     },
     "listened": "Lytt til __capability__ av __name__: __value__",
     "reverted": "Gjenoppretter temperaturen til __name__: __value__",
-    "saved": "Lagrer temperaturen til __name__: __value__"
+    "saved": "Lagrer temperaturen til __name__: __value__",
+    "notFound": "__type__ `__idOrName__` ble ikke funnet"
   },
   "names": {
     "device": "Enheten",
@@ -19,17 +20,15 @@
   },
   "settings": {
     "apply": "Bruk på alle luft-luft enheter",
+    "ataDeviceNotFound": "Først må du sette opp enhetene dine i MELCloud Homey-appen.\n\nVil du installere den?",
+    "autoadjust": "Autojuster aircondition-temperaturen",
     "boolean": {
       "false": "Nei",
       "true": "Ja"
     },
     "capabilities": "Utetemperatur",
     "enabled": "Hold innenfor 8 °C av utetemperaturen",
-    "legends": {
-      "autoadjust": "Autojuster aircondition-temperaturen",
-      "log": "Logg"
-    },
-    "ataDeviceNotFound": "Først må du sette opp enhetene dine i MELCloud Homey-appen.\n\nVil du installere den?",
+    "log": "Logg",
     "refresh": "Gjenta",
     "success": "Oppdatering vellykket",
     "title": "Innstillinger for MELCloud-utvidelse"

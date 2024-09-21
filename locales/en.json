@@ -9,7 +9,8 @@
     },
     "listened": "Listening to __capability__ of __name__: __value__",
     "reverted": "Reverting the temperature of __name__: __value__",
-    "saved": "Saving the temperature of __name__: __value__"
+    "saved": "Saving the temperature of __name__: __value__",
+    "notFound": "__type__ `__idOrName__` cannot be found"
   },
   "names": {
     "device": "Device",
@@ -19,17 +20,15 @@
   },
   "settings": {
     "apply": "Apply to all air-to-air devices",
+    "ataDeviceNotFound": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
+    "autoadjust": "Auto-adjust air conditioning temperature",
     "boolean": {
       "false": "No",
       "true": "Yes"
     },
     "capabilities": "Outdoor temperature",
     "enabled": "Keep within 8 °C of the outdoor temperature",
-    "legends": {
-      "autoadjust": "Auto-adjust air conditioning temperature",
-      "log": "Log"
-    },
-    "ataDeviceNotFound": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
+    "log": "Log",
     "refresh": "Refresh",
     "success": "Update succeeded",
     "title": "MELCloud extension settings"
