@@ -15,9 +15,9 @@ import {
   OUTDOOR_TEMPERATURE,
 } from './types'
 
-const MELCLOUD_DRIVER_ID = 'homey:app:com.mecloud:melcloud'
-const DEBOUNCE = 1000
+const DELAY = 1000
 const MAX_LOGS = 100
+const MELCLOUD_DRIVER_ID = 'homey:app:com.mecloud:melcloud'
 
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error)
@@ -157,7 +157,7 @@ export = class extends App {
     this.#initTimeout = this.homey.setTimeout(async () => {
       await this.#loadDevices()
       await this.autoAdjustCooling()
-    }, DEBOUNCE)
+    }, DELAY)
   }
 
   async #loadDevices(): Promise<void> {
