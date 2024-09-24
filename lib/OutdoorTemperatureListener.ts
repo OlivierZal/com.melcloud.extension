@@ -10,9 +10,9 @@ import TemperatureListener from './TemperatureListener'
 export default class OutdoorTemperatureListener extends TemperatureListener {
   static #listener: OutdoorTemperatureListener | null = null
 
-  #value: number | null = null
-
   readonly #capabilityId: string
+
+  #value: number | null = null
 
   private constructor(
     app: MELCloudExtensionApp,

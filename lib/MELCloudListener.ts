@@ -29,6 +29,13 @@ export default class MELCloudListener extends TemperatureListener {
     }
   }
 
+  protected override async destroyTemperature(): Promise<void> {
+    if (this.temperatureListener !== null) {
+      await super.destroyTemperature()
+      await this.#revertTemperature()
+    }
+  }
+
   public static async destroy(): Promise<void> {
     await Promise.all(
       [...this.listeners.values()].map(async (listener) => listener.#destroy()),
@@ -79,13 +86,6 @@ export default class MELCloudListener extends TemperatureListener {
         threshold: `${String(this.#getThreshold())}\u00A0°C`,
         value: `${String(value)}\u00A0°C`,
       })
-    }
-  }
-
-  protected override async destroyTemperature(): Promise<void> {
-    if (this.temperatureListener !== null) {
-      await super.destroyTemperature()
-      await this.#revertTemperature()
     }
   }
 

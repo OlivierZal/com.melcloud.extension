@@ -37,6 +37,18 @@ export = class extends App {
 
   #temperatureSensors: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
+  public get api(): HomeyAPIV3Local {
+    return this.#api
+  }
+
+  public get melcloudDevices(): HomeyAPIV3Local.ManagerDevices.Device[] {
+    return this.#melcloudDevices
+  }
+
+  public get temperatureSensors(): HomeyAPIV3Local.ManagerDevices.Device[] {
+    return this.#temperatureSensors
+  }
+
   public override async onInit(): Promise<void> {
     this.#api = (await HomeyAPIV3Local.createAppAPI({
       homey: this.homey,
@@ -63,16 +75,8 @@ export = class extends App {
     await this.#createNotification()
   }
 
-  public get api(): HomeyAPIV3Local {
-    return this.#api
-  }
-
-  public get melcloudDevices(): HomeyAPIV3Local.ManagerDevices.Device[] {
-    return this.#melcloudDevices
-  }
-
-  public get temperatureSensors(): HomeyAPIV3Local.ManagerDevices.Device[] {
-    return this.#temperatureSensors
+  public override async onUninit(): Promise<void> {
+    await this.#destroyListeners()
   }
 
   public async autoAdjustCooling(
@@ -100,10 +104,6 @@ export = class extends App {
     setting: Extract<K, string>,
   ): HomeySettings[K] {
     return this.homey.settings.get(setting) as HomeySettings[K]
-  }
-
-  public override async onUninit(): Promise<void> {
-    await this.#destroyListeners()
   }
 
   public pushToUI(name: string, params?: ListenerParams): void {

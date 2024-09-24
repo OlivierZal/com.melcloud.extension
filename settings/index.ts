@@ -11,7 +11,7 @@ import type {
 const LOG_RETENTION_DAYS = 6
 const TIME_ZERO = 0
 
-const categories: Record<string, { color?: string; icon: string }> = {
+const categories: Record<string, { icon: string; color?: string }> = {
   calculated: { color: '#008000', icon: '🔢' },
   cleaned: { icon: '🗑️' },
   cleanedAll: { icon: '🛑' },

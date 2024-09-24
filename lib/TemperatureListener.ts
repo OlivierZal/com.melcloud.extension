@@ -4,13 +4,13 @@ import type MELCloudExtensionApp from '..'
 import type { DeviceCapability, Value } from '../types'
 
 export default abstract class TemperatureListener {
-  protected temperatureListener: DeviceCapability = null
-
   protected readonly app: MELCloudExtensionApp
 
   protected readonly device: HomeyAPIV3Local.ManagerDevices.Device
 
   protected readonly names: Record<string, string>
+
+  protected temperatureListener: DeviceCapability = null
 
   protected constructor(
     app: MELCloudExtensionApp,

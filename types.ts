@@ -23,9 +23,9 @@ export interface ListenerParams {
 }
 
 export interface TimestampedLog {
-  readonly category?: string
   readonly message: string
   readonly time: number
+  readonly category?: string
 }
 
 export type Thresholds = Partial<Record<string, number>>
