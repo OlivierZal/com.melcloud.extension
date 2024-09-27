@@ -1,14 +1,14 @@
-import type Homey from 'homey/lib/Homey'
-
-import type MELCloudExtensionApp from '.'
-
 import {
+  MEASURE_TEMPERATURE,
+  OUTDOOR_TEMPERATURE,
   type Capability,
   type TemperatureListenerData,
   type TemperatureSensor,
-  MEASURE_TEMPERATURE,
-  OUTDOOR_TEMPERATURE,
 } from './types'
+
+import type Homey from 'homey/lib/Homey'
+
+import type MELCloudExtensionApp from '.'
 
 class AtaDeviceNotFoundError extends Error {
   public constructor() {

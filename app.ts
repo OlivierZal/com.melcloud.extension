@@ -1,18 +1,19 @@
+import 'source-map-support/register'
+
 import { App } from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
-import 'source-map-support/register'
 
 import changelog from './.homeychangelog.json'
 import ListenerError from './lib/ListenerError'
 import MELCloudListener from './lib/MELCloudListener'
 import OutdoorTemperatureListener from './lib/OutdoorTemperatureListener'
 import {
+  MEASURE_TEMPERATURE,
+  OUTDOOR_TEMPERATURE,
   type HomeySettings,
   type ListenerParams,
   type TemperatureListenerData,
   type TimestampedLog,
-  MEASURE_TEMPERATURE,
-  OUTDOOR_TEMPERATURE,
 } from './types'
 
 const INIT_DELAY = 1000
