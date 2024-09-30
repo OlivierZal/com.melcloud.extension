@@ -226,5 +226,5 @@ async function onHomeyReady(homey: Homey): Promise<void> {
   await getTemperatureSensors(homey)
   await fetchHomeySettings(homey)
   addEventListeners(homey)
-  await homey.ready()
+  homey.ready()
 }
