@@ -13,7 +13,7 @@
     "publish": "homey app publish"
   },
   "dependencies": {
-    "homey-api": "^3.6.3",
+    "homey-api": "^3.6.4",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
