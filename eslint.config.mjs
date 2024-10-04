@@ -186,7 +186,7 @@ const config = [
         importPlugin.flatConfigs.typescript,
         prettier,
       ],
-      files: ['**/*.ts', '**/*.mjs'],
+      files: ['**/*.ts', '**/*.config.mjs'],
       languageOptions: {
         parserOptions: {
           projectService: true,
@@ -386,6 +386,12 @@ const config = [
             alwaysTryTypes: true,
           },
         },
+      },
+    },
+    {
+      files: ['lib/MELCloudListener.ts', 'lib/OutdoorTemperatureListener.ts'],
+      rules: {
+        'import/no-cycle': 'off',
       },
     },
     {
