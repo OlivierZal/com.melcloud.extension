@@ -4,9 +4,11 @@ import { App } from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
 
 import changelog from './.homeychangelog.json'
-import { ListenerError } from './lib/ListenerError'
-import { MELCloudListener } from './lib/MELCloudListener'
-import { OutdoorTemperatureListener } from './lib/OutdoorTemperatureListener'
+import {
+  ListenerError,
+  MELCloudListener,
+  OutdoorTemperatureListener,
+} from './lib'
 import {
   MEASURE_TEMPERATURE,
   OUTDOOR_TEMPERATURE,
