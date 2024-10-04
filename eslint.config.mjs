@@ -309,7 +309,6 @@ const config = [
         'import/no-named-as-default-member': 'error',
         'import/no-named-default': 'error',
         'import/no-namespace': 'error',
-        'import/no-nodejs-modules': 'error',
         'import/no-relative-packages': 'error',
         'import/no-self-import': 'error',
         'import/no-unassigned-import': [
