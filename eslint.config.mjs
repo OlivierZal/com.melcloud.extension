@@ -315,10 +315,7 @@ const config = [
         'import/no-unassigned-import': [
           'error',
           {
-            allow: [
-              'core-js/*',
-              'source-map-support/register',
-            ],
+            allow: ['source-map-support/register'],
           },
         ],
         'import/no-unused-modules': 'error',
