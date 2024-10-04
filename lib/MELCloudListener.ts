@@ -1,5 +1,5 @@
-import OutdoorTemperatureListener from './OutdoorTemperatureListener'
-import TemperatureListener from './TemperatureListener'
+import { OutdoorTemperatureListener } from './OutdoorTemperatureListener'
+import { TemperatureListener } from './TemperatureListener'
 
 import type { HomeyAPIV3Local } from 'homey-api'
 
@@ -14,7 +14,7 @@ const DEFAULT_TEMPERATURE = 0
 const GAP_TEMPERATURE = 8
 const MAX_TEMPERATURE = 38
 
-export default class MELCloudListener extends TemperatureListener {
+export class MELCloudListener extends TemperatureListener {
   public static readonly listeners = new Map<string, MELCloudListener>()
 
   #thermostatModeListener: DeviceCapability = null

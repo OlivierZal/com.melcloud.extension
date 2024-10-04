@@ -1,13 +1,13 @@
-import ListenerError from './ListenerError'
-import MELCloudListener from './MELCloudListener'
-import TemperatureListener from './TemperatureListener'
+import { ListenerError } from './ListenerError'
+import { MELCloudListener } from './MELCloudListener'
+import { TemperatureListener } from './TemperatureListener'
 
 import type { HomeyAPIV3Local } from 'homey-api'
 
 import type MELCloudExtensionApp from '..'
 import type { DeviceCapability, TemperatureListenerData } from '../types'
 
-export default class OutdoorTemperatureListener extends TemperatureListener {
+export class OutdoorTemperatureListener extends TemperatureListener {
   static #listener: OutdoorTemperatureListener | null = null
 
   readonly #capabilityId: string

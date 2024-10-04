@@ -2,11 +2,12 @@ import js from '@eslint/js'
 import html from '@html-eslint/eslint-plugin'
 import stylistic from '@stylistic/eslint-plugin'
 import prettier from 'eslint-config-prettier'
+import importPlugin from 'eslint-plugin-import'
 import jsonc from 'eslint-plugin-jsonc'
 import packageJson from 'eslint-plugin-package-json/configs/recommended'
 import perfectionist from 'eslint-plugin-perfectionist'
 import jsoncParser from 'jsonc-eslint-parser'
-import ts from 'typescript-eslint'
+import ts, { configs as tsConfigs } from 'typescript-eslint'
 
 const modifiersOrder = [
   ['declare', 'override', ''],
@@ -171,16 +172,18 @@ const valuesFirst = {
   groupKind: 'values-first',
 }
 
-export default [
+const config = [
+  {
+    ignores: ['.homeybuild/'],
+  },
   ...ts.config(
-    {
-      ignores: ['.homeybuild/'],
-    },
     {
       extends: [
         js.configs.all,
-        ...ts.configs.all,
-        ...ts.configs.strictTypeChecked,
+        ...tsConfigs.all,
+        ...tsConfigs.strictTypeChecked,
+        importPlugin.flatConfigs.errors,
+        importPlugin.flatConfigs.typescript,
         prettier,
       ],
       files: ['**/*.ts', '**/*.mjs'],
@@ -287,6 +290,41 @@ export default [
         '@typescript-eslint/typedef': 'off',
         camelcase: 'off',
         curly: 'error',
+        'import/dynamic-import-chunkname': 'error',
+        'import/first': 'error',
+        'import/newline-after-import': 'error',
+        'import/no-absolute-path': 'error',
+        'import/no-amd': 'error',
+        'import/no-anonymous-default-export': 'error',
+        'import/no-commonjs': 'error',
+        'import/no-cycle': 'error',
+        'import/no-default-export': 'error',
+        'import/no-deprecated': 'error',
+        'import/no-duplicates': 'error',
+        'import/no-dynamic-require': 'error',
+        'import/no-empty-named-blocks': 'error',
+        'import/no-import-module-exports': 'error',
+        'import/no-mutable-exports': 'error',
+        'import/no-named-as-default': 'error',
+        'import/no-named-as-default-member': 'error',
+        'import/no-named-default': 'error',
+        'import/no-namespace': 'error',
+        'import/no-nodejs-modules': 'error',
+        'import/no-relative-packages': 'error',
+        'import/no-self-import': 'error',
+        'import/no-unassigned-import': [
+          'error',
+          {
+            allow: [
+              'core-js/actual/object/group-by',
+              'source-map-support/register',
+            ],
+          },
+        ],
+        'import/no-unused-modules': 'error',
+        'import/no-useless-path-segments': 'error',
+        'import/no-webpack-loader-syntax': 'error',
+        'import/unambiguous': 'error',
         'max-lines': 'off',
         'no-bitwise': 'off',
         'no-empty': [
@@ -322,16 +360,6 @@ export default [
         'sort-imports': 'off',
         'sort-keys': 'off',
       },
-    },
-    {
-      files: ['**/*.mjs'],
-      ...ts.configs.disableTypeChecked,
-      rules: {
-        ...ts.configs.disableTypeChecked.rules,
-        '@typescript-eslint/explicit-function-return-type': 'off',
-      },
-    },
-    {
       settings: {
         perfectionist: {
           ignoreCase: false,
@@ -339,6 +367,22 @@ export default [
           partitionByComment: true,
           type: 'natural',
         },
+        ...importPlugin.flatConfigs.typescript.settings,
+        'import/resolver': {
+          ...importPlugin.flatConfigs.typescript.settings['import/resolver'],
+          typescript: {
+            alwaysTryTypes: true,
+          },
+        },
+      },
+    },
+    {
+      files: ['**/*.config.mjs'],
+      ...tsConfigs.disableTypeChecked,
+      rules: {
+        ...tsConfigs.disableTypeChecked.rules,
+        '@typescript-eslint/explicit-function-return-type': 'off',
+        'import/no-default-export': 'off',
       },
     },
   ),
@@ -428,3 +472,5 @@ export default [
   },
   packageJson,
 ]
+
+export default config

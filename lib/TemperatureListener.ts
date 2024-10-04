@@ -3,7 +3,7 @@ import type { HomeyAPIV3Local } from 'homey-api'
 import type MELCloudExtensionApp from '..'
 import type { DeviceCapability, Value } from '../types'
 
-export default abstract class TemperatureListener {
+export abstract class TemperatureListener {
   protected readonly app: MELCloudExtensionApp
 
   protected readonly device: HomeyAPIV3Local.ManagerDevices.Device

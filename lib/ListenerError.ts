@@ -1,6 +1,6 @@
 import type { ListenerParams } from '../types'
 
-export default class extends Error {
+export class ListenerError extends Error {
   public constructor(message: string, cause?: ListenerParams) {
     super(`error.${message}`, { cause })
   }
