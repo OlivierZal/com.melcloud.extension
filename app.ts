@@ -18,9 +18,10 @@ import {
   type TimestampedLog,
 } from './types'
 
-const INIT_DELAY = 1000
-const MAX_LOGS = 100
 const MELCLOUD_DRIVER_ID = 'homey:app:com.mecloud:melcloud'
+const MAX_LOGS = 100
+const INIT_DELAY = 1000
+const NOTIFICATION_DELAY = 10000
 
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error)
@@ -31,6 +32,8 @@ export = class extends App {
       (name) => [name, this.homey.__(`names.${name}`)],
     ),
   )
+
+  readonly #language = this.homey.i18n.getLanguage()
 
   #api!: HomeyAPIV3Local
 
@@ -75,7 +78,7 @@ export = class extends App {
         //
       })
     })
-    await this.#createNotification()
+    this.#createNotification()
   }
 
   public override async onUninit(): Promise<void> {
@@ -133,19 +136,26 @@ export = class extends App {
     })
   }
 
-  async #createNotification(): Promise<void> {
+  #createNotification(): void {
     const { version } = this.homey.manifest as { version: string }
-    if (version in changelog) {
+    if (
+      this.homey.settings.get('notifiedVersion') !== version &&
+      version in changelog
+    ) {
       const versionChangelog = changelog[version as keyof typeof changelog]
-      const language = this.homey.i18n.getLanguage()
-      await this.homey.notifications.createNotification({
-        excerpt:
-          versionChangelog[
-            language in versionChangelog ?
-              (language as keyof typeof versionChangelog)
-            : 'en'
-          ],
-      })
+      this.homey.setTimeout(async () => {
+        try {
+          await this.homey.notifications.createNotification({
+            excerpt:
+              versionChangelog[
+                this.#language in versionChangelog ?
+                  (this.#language as keyof typeof versionChangelog)
+                : 'en'
+              ],
+          })
+          this.homey.settings.set('notifiedVersion', version)
+        } catch (_error) {}
+      }, NOTIFICATION_DELAY)
     }
   }
 
