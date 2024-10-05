@@ -387,12 +387,6 @@ const config = [
       },
     },
     {
-      files: ['lib/MELCloudListener.ts', 'lib/OutdoorTemperatureListener.ts'],
-      rules: {
-        'import/no-cycle': 'off',
-      },
-    },
-    {
       files: ['**/*.config.mjs'],
       ...tsConfigs.disableTypeChecked,
       rules: {
