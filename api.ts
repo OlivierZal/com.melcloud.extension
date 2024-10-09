@@ -51,7 +51,7 @@ export = {
           }),
         )
       })
-      .toSorted((device1, device2) =>
+      .sort((device1, device2) =>
         device1.capabilityName.localeCompare(device2.capabilityName),
       )
   },
