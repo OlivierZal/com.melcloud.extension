@@ -153,7 +153,7 @@ const fetchHomeySettings = async (homey: Homey): Promise<void> => {
         oldestDate.setHours(TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_ZERO)
         return date >= oldestDate
       })
-      .reverse()
+      .toReversed()
       .forEach(displayLog)
   }
   capabilityPathElement.value = homeySettings.capabilityPath ?? ''
