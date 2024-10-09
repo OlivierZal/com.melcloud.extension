@@ -113,7 +113,7 @@ export = class extends App {
   }
 
   public pushToUI(name: string, params?: ListenerParams): void {
-    const [messageId, category = messageId] = name.split('.').toReversed()
+    const [messageId, category = messageId] = name.split('.').reverse()
     const newLog: TimestampedLog = {
       category,
       message: this.homey.__(`log.${messageId}`, params),
