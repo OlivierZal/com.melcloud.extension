@@ -35,13 +35,13 @@ export = class extends App {
 
   readonly #language = this.homey.i18n.getLanguage()
 
+  readonly #melcloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
+
+  readonly #temperatureSensors: HomeyAPIV3Local.ManagerDevices.Device[] = []
+
   #api!: HomeyAPIV3Local
 
   #initTimeout: NodeJS.Timeout | null = null
-
-  #melcloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
-
-  #temperatureSensors: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
   public get api(): HomeyAPIV3Local {
     return this.#api
@@ -174,8 +174,8 @@ export = class extends App {
   }
 
   async #loadDevices(): Promise<void> {
-    this.#melcloudDevices = []
-    this.#temperatureSensors = []
+    this.#melcloudDevices.length = 0
+    this.#temperatureSensors.length = 0
     const devices =
       // @ts-expect-error: `homey-api` is partially typed
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
