@@ -96,7 +96,9 @@ const createMessageElement = (
 }
 
 const displayLog = ({ category, message, time }: TimestampedLog): void => {
-  const { color, icon } = categories[category ?? 'error']
+  const {
+    [category ?? 'error']: { color, icon },
+  } = categories
   const timeElement = createTimeElement(time, icon)
   const messageElement = createMessageElement(message, color)
   const rowElement = document.createElement('div')

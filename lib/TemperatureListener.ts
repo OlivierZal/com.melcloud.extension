@@ -17,8 +17,8 @@ export abstract class TemperatureListener {
     device: HomeyAPIV3Local.ManagerDevices.Device,
   ) {
     this.app = app
-    this.names = app.names
     this.device = device
+    ;({ names: this.names } = app)
   }
 
   protected async destroyTemperature(): Promise<void> {

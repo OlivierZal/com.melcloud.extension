@@ -88,8 +88,8 @@ export class MELCloudListener extends TemperatureListener {
   public async setTargetTemperature(): Promise<void> {
     if (this.temperatureListener !== null) {
       const value = this.#getTargetTemperature()
-      const outdoorTemperature =
-        MELCloudListener.#outdoorTemperatureListener.value
+      const { value: outdoorTemperature } =
+        MELCloudListener.#outdoorTemperatureListener
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       await this.temperatureListener.setValue(value)
       this.app.pushToUI('calculated', {
@@ -191,7 +191,9 @@ export class MELCloudListener extends TemperatureListener {
   }
 
   async #setThreshold(value: number): Promise<void> {
-    const { id, name } = this.device
+    const {
+      device: { id, name },
+    } = this
     const thresholds = this.#getThresholds()
     thresholds[id] = value
     this.app.setHomeySettings({ thresholds })

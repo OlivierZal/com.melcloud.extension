@@ -142,7 +142,8 @@ export = class extends App {
       this.homey.settings.get('notifiedVersion') !== version &&
       version in changelog
     ) {
-      const versionChangelog = changelog[version as keyof typeof changelog]
+      const { [version as keyof typeof changelog]: versionChangelog } =
+        changelog
       this.homey.setTimeout(async () => {
         try {
           await this.homey.notifications.createNotification({
