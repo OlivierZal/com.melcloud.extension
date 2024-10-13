@@ -27,9 +27,7 @@ export class MELCloudListener extends TemperatureListener {
     device: HomeyAPIV3Local.ManagerDevices.Device,
   ) {
     super(app, device)
-    if (!MELCloudListener.listeners.has(device.id)) {
-      MELCloudListener.listeners.set(device.id, this)
-    }
+    MELCloudListener.listeners.set(device.id, this)
   }
 
   protected override async destroyTemperature(): Promise<void> {
