@@ -408,7 +408,12 @@ const config = [
       },
     },
     {
-      files: ['**/*.config.js', 'app.mts', '**/api.mts'],
+      files: [
+        '**/*.config.js',
+        'app.mts',
+        'drivers/*/{device,driver}.mts',
+        '**/api.mts',
+      ],
       rules: {
         'import/no-default-export': 'off',
         'import/prefer-default-export': [
