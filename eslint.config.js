@@ -408,16 +408,20 @@ const config = [
       },
     },
     {
-      files: ['**/*.config.js', 'app.mts', '**/api.mts'],
+      files: [
+        '**/*.config.js',
+        '**/api.mts',
+        'app.mts',
+        'drivers/*/{device,driver}.mts',
+      ],
       rules: {
         'import/no-default-export': 'off',
-      },
-    },
-    {
-      files: ['app.mts'],
-      rules: {
-        'import/default': 'off',
-        'import/no-named-as-default-member': 'off',
+        'import/prefer-default-export': [
+          'error',
+          {
+            target: 'any',
+          },
+        ],
       },
     },
   ),

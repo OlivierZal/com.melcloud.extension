@@ -1,9 +1,9 @@
 import 'source-map-support/register.js'
 
-import Homey from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
 
 import changelog from './.homeychangelog.json' assert { type: 'json' }
+import { Homey } from './homey.mjs'
 import {
   ListenerError,
   MELCloudListener,
