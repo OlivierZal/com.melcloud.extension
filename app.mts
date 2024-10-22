@@ -1,10 +1,9 @@
 import 'source-map-support/register.js'
 
-// eslint-disable-next-line import/default
-import Homey from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
 
 import changelog from './.homeychangelog.json' assert { type: 'json' }
+import { Homey } from './homey.mjs'
 import {
   ListenerError,
   MELCloudListener,
@@ -27,7 +26,6 @@ const NOTIFICATION_DELAY = 10000
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error)
 
-// eslint-disable-next-line import/no-named-as-default-member
 class MELCloudExtensionApp extends Homey.App {
   public readonly names = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
