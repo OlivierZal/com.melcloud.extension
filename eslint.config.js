@@ -411,6 +411,12 @@ const config = [
       files: ['**/*.config.js', 'app.mts', '**/api.mts'],
       rules: {
         'import/no-default-export': 'off',
+        'import/prefer-default-export': [
+          'error',
+          {
+            target: 'any',
+          },
+        ],
       },
     },
     {
