@@ -1,7 +1,8 @@
 {
   "name": "com.melcloud.extension",
   "version": "20.1.2",
-  "main": "app.ts",
+  "type": "module",
+  "exports": "./app.ts",
   "scripts": {
     "build": "homey app validate --level publish",
     "deploy": "homey app install",

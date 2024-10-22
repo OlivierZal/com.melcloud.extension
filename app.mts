@@ -1,14 +1,14 @@
-import 'source-map-support/register'
+import 'source-map-support/register.js'
 
-import { App } from 'homey'
+import Homey from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
 
-import changelog from './.homeychangelog.json'
+import changelog from './.homeychangelog.json' assert { type: 'json' }
 import {
   ListenerError,
   MELCloudListener,
   OutdoorTemperatureListener,
-} from './lib'
+} from './lib/index.mjs'
 import {
   MEASURE_TEMPERATURE,
   OUTDOOR_TEMPERATURE,
@@ -16,7 +16,7 @@ import {
   type ListenerParams,
   type TemperatureListenerData,
   type TimestampedLog,
-} from './types'
+} from './types.mjs'
 
 const MELCLOUD_DRIVER_ID = 'homey:app:com.mecloud:melcloud'
 const MAX_LOGS = 100
@@ -26,7 +26,7 @@ const NOTIFICATION_DELAY = 10000
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error)
 
-export = class extends App {
+class MELCloudExtensionApp extends Homey.App {
   public readonly names = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
       (name) => [name, this.homey.__(`names.${name}`)],
@@ -202,3 +202,5 @@ export = class extends App {
     })
   }
 }
+
+export default MELCloudExtensionApp

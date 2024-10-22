@@ -4,11 +4,11 @@ import {
   type Capability,
   type TemperatureListenerData,
   type TemperatureSensor,
-} from './types'
+} from './types.mjs'
 
 import type Homey from 'homey/lib/Homey'
 
-import type MELCloudExtensionApp from '.'
+import type MELCloudExtensionApp from './app.mjs'
 
 class AtaDeviceNotFoundError extends Error {
   public constructor() {
@@ -16,7 +16,7 @@ class AtaDeviceNotFoundError extends Error {
   }
 }
 
-export = {
+const api = {
   async autoAdjustCooling({
     body,
     homey,
@@ -56,3 +56,5 @@ export = {
       )
   },
 }
+
+export default api

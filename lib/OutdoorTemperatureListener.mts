@@ -1,11 +1,11 @@
-import { ListenerError } from './ListenerError'
-import { MELCloudListener } from './MELCloudListener'
-import { TemperatureListener } from './TemperatureListener'
+import { ListenerError } from './ListenerError.mjs'
+import { MELCloudListener } from './MELCloudListener.mjs'
+import { TemperatureListener } from './TemperatureListener.mjs'
 
 import type { HomeyAPIV3Local } from 'homey-api'
 
-import type MELCloudExtensionApp from '..'
-import type { DeviceCapability, TemperatureListenerData } from '../types'
+import type MELCloudExtensionApp from '../app.mjs'
+import type { DeviceCapability, TemperatureListenerData } from '../types.mjs'
 
 export class OutdoorTemperatureListener extends TemperatureListener {
   static #listener: OutdoorTemperatureListener | null = null
