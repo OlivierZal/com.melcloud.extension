@@ -424,13 +424,6 @@ const config = [
         ],
       },
     },
-    {
-      files: ['app.mts'],
-      rules: {
-        'import/default': 'off',
-        'import/no-named-as-default-member': 'off',
-      },
-    },
   ),
   {
     files: ['**/*.html'],
