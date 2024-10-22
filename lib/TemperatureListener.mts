@@ -1,7 +1,7 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 
-import type MELCloudExtensionApp from '..'
-import type { DeviceCapability, Value } from '../types'
+import type MELCloudExtensionApp from '../app.mjs'
+import type { DeviceCapability, Value } from '../types.mjs'
 
 export abstract class TemperatureListener {
   protected readonly app: MELCloudExtensionApp

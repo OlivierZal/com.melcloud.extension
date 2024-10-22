@@ -1,11 +1,11 @@
-import { TemperatureListener } from './TemperatureListener'
+import { TemperatureListener } from './TemperatureListener.mjs'
 
 import type { HomeyAPIV3Local } from 'homey-api'
 
-import type MELCloudExtensionApp from '..'
-import type { DeviceCapability, Thresholds } from '../types'
+import type MELCloudExtensionApp from '../app.mjs'
+import type { DeviceCapability, Thresholds } from '../types.mjs'
 
-import type { OutdoorTemperatureListener } from './OutdoorTemperatureListener'
+import type { OutdoorTemperatureListener } from './OutdoorTemperatureListener.mjs'
 
 const COOL = 'cool'
 const TARGET_TEMPERATURE = 'target_temperature'
