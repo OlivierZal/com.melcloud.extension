@@ -1,5 +1,5 @@
 *.html
 /.homeycompose/app.json
+/README.md
 /app.json
 /locales/
-/README.md
