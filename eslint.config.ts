@@ -4,10 +4,25 @@ import markdown from '@eslint/markdown'
 import html from '@html-eslint/eslint-plugin'
 import stylistic from '@stylistic/eslint-plugin'
 import prettier from 'eslint-config-prettier'
+// @ts-expect-error: `eslint-plugin-import` is not typed
 import importPlugin from 'eslint-plugin-import'
 import packageJson from 'eslint-plugin-package-json/configs/recommended'
 import perfectionist from 'eslint-plugin-perfectionist'
 import ts, { configs as tsConfigs } from 'typescript-eslint'
+
+import type { Linter as TSLinter } from '@typescript-eslint/utils/ts-eslint'
+import type { Linter } from 'eslint'
+
+const { flatConfigs: importPluginConfigs } = importPlugin as {
+  flatConfigs: {
+    errors: Linter.Config
+    typescript: Linter.Config & {
+      settings: Record<string, unknown> & {
+        'import/resolver': Record<string, unknown>
+      }
+    }
+  }
+}
 
 const modifiersOrder = [
   ['declare', 'override', ''],
@@ -30,8 +45,8 @@ const selectorOrder = [
   'method',
 ]
 
-const cartesianProduct = (arrays) =>
-  arrays.reduce(
+const cartesianProduct = (arrays: string[][]): string[][] =>
+  arrays.reduce<string[][]>(
     (acc, array) =>
       acc.flatMap((accItem) =>
         array.map((item) => [
@@ -53,9 +68,12 @@ const modifierIncompatibilities = {
 
 const compatibleModifierCombos = allModifierCombos.filter((combo) =>
   combo.every((modifier) =>
-    (modifierIncompatibilities[modifier] ?? []).every(
-      (incompatibleModifier) => !combo.includes(incompatibleModifier),
-    ),
+    (modifier in modifierIncompatibilities ?
+      modifierIncompatibilities[
+        modifier as keyof typeof modifierIncompatibilities
+      ]
+    : []
+    ).every((incompatibleModifier) => !combo.includes(incompatibleModifier)),
   ),
 )
 
@@ -101,17 +119,22 @@ const selectorIncompatibilities = {
   'static-block': allModifiers,
 }
 
-const generateGroupsForSelector = (selector) =>
+const generateGroupsForSelector = (selector: string): string[] =>
   compatibleModifierCombos
     .filter((modifiers) =>
       modifiers.every(
         (modifier) =>
-          !(selectorIncompatibilities[selector] ?? []).includes(modifier),
+          !(
+            selector in selectorIncompatibilities ?
+              selectorIncompatibilities[
+                selector as keyof typeof selectorIncompatibilities
+              ]
+            : []).includes(modifier),
       ),
     )
     .map((modifiers) => [...modifiers, selector].join('-'))
 
-const groups = selectorOrder.flatMap((selector) => {
+const groups = selectorOrder.flatMap((selector): (string | string[])[] => {
   if (Array.isArray(selector)) {
     const groupPairs = selector.map((pairedSelector) =>
       generateGroupsForSelector(pairedSelector),
@@ -194,12 +217,13 @@ const config = [
         js.configs.all,
         ...tsConfigs.all,
         ...tsConfigs.strictTypeChecked,
-        importPlugin.flatConfigs.errors,
-        importPlugin.flatConfigs.typescript,
+        importPluginConfigs.errors,
+        importPluginConfigs.typescript,
         prettier,
       ],
       files: ['**/*.{ts,mts,js}'],
       languageOptions: {
+        ecmaVersion: 'latest',
         parserOptions: {
           projectService: {
             allowDefaultProject: ['*.js'],
@@ -207,6 +231,7 @@ const config = [
           tsconfigRootDir: import.meta.dirname,
           warnOnUnsupportedTypeScriptVersion: false,
         },
+        sourceType: 'module',
       },
       linterOptions: {
         reportUnusedDisableDirectives: true,
@@ -388,9 +413,9 @@ const config = [
           partitionByComment: true,
           type: 'natural',
         },
-        ...importPlugin.flatConfigs.typescript.settings,
+        ...importPluginConfigs.typescript.settings,
         'import/resolver': {
-          ...importPlugin.flatConfigs.typescript.settings['import/resolver'],
+          ...importPluginConfigs.typescript.settings['import/resolver'],
           typescript: {
             alwaysTryTypes: true,
           },
@@ -419,6 +444,12 @@ const config = [
             target: 'any',
           },
         ],
+      },
+    },
+    {
+      files: ['eslint.config.ts'],
+      rules: {
+        '@typescript-eslint/naming-convention': 'off',
       },
     },
   ),
@@ -458,7 +489,7 @@ const config = [
       'locales/*.json',
     ],
     language: 'json/json',
-    ...json.configs.recommended,
+    ...(json.configs as Record<string, Linter.Config>).recommended,
   },
   {
     files: ['**/*.md'],
@@ -467,12 +498,12 @@ const config = [
       markdown,
     },
     rules: {
-      ...markdown.configs.recommended.rules,
+      ...(markdown.configs as Record<string, Linter.Config>).recommended.rules,
       'markdown/no-duplicate-headings': 'error',
       'markdown/no-html': 'error',
     },
   },
   packageJson,
-]
+] satisfies (Linter.Config | TSLinter.ConfigType)[]
 
 export default config
