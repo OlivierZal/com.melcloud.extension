@@ -9,7 +9,7 @@
     "format": "prettier . --check",
     "format:docs": "prettier README.md --ignore-path --write",
     "format:fix": "prettier . --write",
-    "lint": "eslint .",
+    "lint": "eslint . --flag unstable_ts_config",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "npm run format:docs && npm run lint:fix && npm run format:fix",
     "publish": "homey app publish"
