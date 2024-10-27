@@ -4,11 +4,9 @@ import { HomeyAPIV3Local } from 'homey-api'
 
 import changelog from './.homeychangelog.json' assert { type: 'json' }
 import { Homey } from './homey.mjs'
-import {
-  ListenerError,
-  MELCloudListener,
-  OutdoorTemperatureListener,
-} from './lib/index.mjs'
+import { ListenerError } from './lib/ListenerError.mjs'
+import { MELCloudListener } from './lib/MELCloudListener.mjs'
+import { OutdoorTemperatureListener } from './lib/OutdoorTemperatureListener.mjs'
 import {
   MEASURE_TEMPERATURE,
   OUTDOOR_TEMPERATURE,
@@ -17,6 +15,8 @@ import {
   type TemperatureListenerData,
   type TimestampedLog,
 } from './types.mjs'
+
+MELCloudListener.setOutdoorTemperatureListener(OutdoorTemperatureListener)
 
 const MELCLOUD_DRIVER_ID = 'homey:app:com.mecloud:melcloud'
 const MAX_LOGS = 100
