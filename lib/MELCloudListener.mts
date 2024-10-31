@@ -180,7 +180,7 @@ export class MELCloudListener extends TemperatureListener {
         name: this.device.name,
         value: `${String(value)}\u00A0°C`,
       })
-    } catch (_error) {
+    } catch {
       this.app.pushToUI('error.notFound', {
         idOrName: this.device.name,
         type: this.names.device,
