@@ -2,11 +2,11 @@ import 'source-map-support/register.js'
 
 import { HomeyAPIV3Local } from 'homey-api'
 
-import changelog from './.homeychangelog.json' with { type: 'json' }
 import { Homey } from './homey.mjs'
-import { ListenerError } from './lib/ListenerError.mjs'
-import { MELCloudListener } from './lib/MELCloudListener.mjs'
-import { OutdoorTemperatureListener } from './lib/OutdoorTemperatureListener.mjs'
+import { changelog } from './jsonFiles.mjs'
+import { ListenerError } from './listeners/ListenerError.mjs'
+import { MELCloudListener } from './listeners/MELCloudListener.mjs'
+import { OutdoorTemperatureListener } from './listeners/OutdoorTemperatureListener.mjs'
 import {
   MEASURE_TEMPERATURE,
   OUTDOOR_TEMPERATURE,
