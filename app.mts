@@ -26,7 +26,7 @@ const NOTIFICATION_DELAY = 10000
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error)
 
-class MELCloudExtensionApp extends Homey.App {
+export default class MELCloudExtensionApp extends Homey.App {
   public readonly names = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
       (name) => [name, this.homey.__(`names.${name}`)],
@@ -202,5 +202,3 @@ class MELCloudExtensionApp extends Homey.App {
     })
   }
 }
-
-export default MELCloudExtensionApp
