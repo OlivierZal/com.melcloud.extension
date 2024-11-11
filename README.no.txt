@@ -1,4 +1,4 @@
-Denne appen utvider MELCloud Homey-appen ved å automatisk justere dine luft-luft enheter for å opprettholde en kjølingstemperatur innenfor 8 °C fra utetemperaturen.
+Denne appen utvider MELCloud Homey-appen ved å automatisk justere dine luft-til-luft enheter for å opprettholde en kjølingstemperatur innenfor 8 °C fra utetemperaturen.
 
 Hvorfor?
 
