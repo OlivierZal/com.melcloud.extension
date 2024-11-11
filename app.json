@@ -71,7 +71,7 @@
     "da": [
       "aircondition",
       "klimaanlæg",
-      "luft luft",
+      "luft til luft",
       "melcloud",
       "mitsubishi",
       "varmepumpe"
@@ -112,14 +112,14 @@
       "warmtepomp"
     ],
     "no": [
-      "luft luft",
+      "luft til luft",
       "luftkondisjonering",
       "melcloud",
       "mitsubishi",
       "varmepumpe"
     ],
     "sv": [
-      "luft luft",
+      "luft till luft",
       "luftkonditionering",
       "melcloud",
       "mitsubishi",
