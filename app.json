@@ -42,6 +42,7 @@
     "no": "Juster automatisk temperaturen på din aircondition",
     "sv": "Justera automatiskt temperaturen på din luftkonditionering"
   },
+  "esm": true,
   "homeyCommunityTopicId": 73094,
   "id": "com.mecloud.extension",
   "images": {
@@ -126,6 +127,5 @@
       "värmepump"
     ]
   },
-  "version": "20.1.2",
-  "esm": true
+  "version": "20.1.2"
 }
