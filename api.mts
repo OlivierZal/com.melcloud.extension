@@ -4,11 +4,11 @@ import {
   type Capability,
   type TemperatureListenerData,
   type TemperatureSensor,
-} from './types.mjs'
+} from './types.mts'
 
 import type Homey from 'homey/lib/Homey'
 
-import type MELCloudExtensionApp from './app.mjs'
+import type MELCloudExtensionApp from './app.mts'
 
 class AtaDeviceNotFoundError extends Error {
   public constructor() {

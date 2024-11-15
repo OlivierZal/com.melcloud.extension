@@ -6,7 +6,7 @@ import type {
   TemperatureListenerData,
   TemperatureSensor,
   TimestampedLog,
-} from '../types.mjs'
+} from '../types.mts'
 
 const LOG_RETENTION_DAYS = 6
 const TIME_ZERO = 0

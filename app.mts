@@ -2,11 +2,11 @@ import 'source-map-support/register.js'
 
 import { HomeyAPIV3Local } from 'homey-api'
 
-import { Homey } from './homey.mjs'
-import { changelog } from './jsonFiles.mjs'
-import { ListenerError } from './listeners/ListenerError.mjs'
-import { MELCloudListener } from './listeners/MELCloudListener.mjs'
-import { OutdoorTemperatureListener } from './listeners/OutdoorTemperatureListener.mjs'
+import { Homey } from './homey.mts'
+import { changelog } from './jsonFiles.mts'
+import { ListenerError } from './listeners/ListenerError.mts'
+import { MELCloudListener } from './listeners/MELCloudListener.mts'
+import { OutdoorTemperatureListener } from './listeners/OutdoorTemperatureListener.mts'
 import {
   MEASURE_TEMPERATURE,
   OUTDOOR_TEMPERATURE,
@@ -14,7 +14,7 @@ import {
   type ListenerParams,
   type TemperatureListenerData,
   type TimestampedLog,
-} from './types.mjs'
+} from './types.mts'
 
 MELCloudListener.setOutdoorTemperatureListener(OutdoorTemperatureListener)
 
@@ -99,7 +99,7 @@ export default class MELCloudExtensionApp extends Homey.App {
       })
     } catch (error) {
       if (error instanceof ListenerError) {
-        this.pushToUI(error.message, error.cause as ListenerParams)
+        this.pushToUI(error.message, error.cause)
         return
       }
       this.pushToUI(getErrorMessage(error))
