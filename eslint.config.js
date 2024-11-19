@@ -12,12 +12,7 @@ import ts, { configs as tsConfigs } from 'typescript-eslint'
 import { classGroups } from './eslint-utils/classGroups.js'
 
 const decoratorGroups = {
-  customGroups: {
-    'fetch-decorator': '^fetchDevices$',
-    'sync-decorator': '^syncDevices$',
-    'update-decorator': '^updateDevice(s)?$',
-  },
-  groups: ['sync-decorator', 'update-decorator', 'unknown', 'fetch-decorator'],
+  groups: ['unknown'],
 }
 
 const importGroups = {
