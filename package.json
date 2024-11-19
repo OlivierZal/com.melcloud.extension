@@ -38,6 +38,6 @@
     "prettier": "^3.3.3",
     "prettier-plugin-packagejson": "^2.5.3",
     "typescript": "^5.7.1-rc",
-    "typescript-eslint": "^8.14.0"
+    "typescript-eslint": "^8.15.0"
   }
 }
