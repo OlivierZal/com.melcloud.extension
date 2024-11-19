@@ -8,9 +8,12 @@ export interface Capability {
   title: string
 }
 
-export type Value = boolean | number | string | null
-
-export type CapabilityPath = `${string}:${string}`
+export interface HomeySettings {
+  readonly capabilityPath: CapabilityPath | null
+  readonly isEnabled: boolean | null
+  readonly lastLogs: TimestampedLog[] | null
+  readonly thresholds: Thresholds | null
+}
 
 export interface ListenerParams {
   readonly capability?: string
@@ -22,33 +25,30 @@ export interface ListenerParams {
   readonly value?: Value
 }
 
-export interface TimestampedLog {
-  readonly message: string
-  readonly time: number
-  readonly category?: string
+export interface TemperatureListenerData {
+  readonly capabilityPath: CapabilityPath
+  readonly isEnabled: boolean
 }
-
-export type Thresholds = Partial<Record<string, number>>
-
-export interface HomeySettings {
-  readonly capabilityPath: CapabilityPath | null
-  readonly isEnabled: boolean | null
-  readonly lastLogs: TimestampedLog[] | null
-  readonly thresholds: Thresholds | null
-}
-
-export type HomeySettingsUI = Partial<NonNullable<HomeySettings>>
 
 export interface TemperatureSensor {
   readonly capabilityName: string
   readonly capabilityPath: CapabilityPath
 }
 
-export interface TemperatureListenerData {
-  readonly capabilityPath: CapabilityPath
-  readonly isEnabled: boolean
+export interface TimestampedLog {
+  readonly message: string
+  readonly time: number
+  readonly category?: string
 }
+
+export type CapabilityPath = `${string}:${string}`
 
 export type DeviceCapability =
   // @ts-expect-error: `homey-api` is partially typed
   HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability
+
+export type HomeySettingsUI = Partial<NonNullable<HomeySettings>>
+
+export type Thresholds = Partial<Record<string, number>>
+
+export type Value = boolean | number | string | null
