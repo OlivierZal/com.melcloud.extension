@@ -1,6 +1,6 @@
-import { ListenerError } from './ListenerError.mts'
-import { MELCloudListener } from './MELCloudListener.mts'
-import { TemperatureListener } from './TemperatureListener.mts'
+import { ListenerError } from './error.mts'
+import { MELCloudListener } from './melcloud.mts'
+import { TemperatureListener } from './temperature.mts'
 
 import type { HomeyAPIV3Local } from 'homey-api'
 

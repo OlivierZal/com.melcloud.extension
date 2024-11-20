@@ -3,10 +3,10 @@ import 'source-map-support/register.js'
 import { HomeyAPIV3Local } from 'homey-api'
 
 import { Homey } from './homey.mts'
-import { changelog } from './jsonFiles.mts'
-import { ListenerError } from './listeners/ListenerError.mts'
-import { MELCloudListener } from './listeners/MELCloudListener.mts'
-import { OutdoorTemperatureListener } from './listeners/OutdoorTemperatureListener.mts'
+import { changelog } from './json-files.mts'
+import { ListenerError } from './listeners/error.mts'
+import { MELCloudListener } from './listeners/melcloud.mts'
+import { OutdoorTemperatureListener } from './listeners/outdoor-temperature.mts'
 import {
   MEASURE_TEMPERATURE,
   OUTDOOR_TEMPERATURE,
