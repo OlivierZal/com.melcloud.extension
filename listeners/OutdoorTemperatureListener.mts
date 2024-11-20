@@ -60,16 +60,16 @@ export class OutdoorTemperatureListener extends TemperatureListener {
 
   public static async listenToOutdoorTemperature(): Promise<void> {
     if (this.#listener) {
-      this.#listener.#value = (await this.#listener.getCapabilityValue(
-        this.#listener.#capabilityId,
-      )) as number
+      this.#listener.#value = Number(
+        await this.#listener.getCapabilityValue(this.#listener.#capabilityId),
+      )
       if (this.#listener.temperatureListener === null) {
         this.#listener.temperatureListener =
           this.#listener.device.makeCapabilityInstance(
             this.#listener.#capabilityId,
             async (value) => {
               if (this.#listener) {
-                this.#listener.#value = value as number
+                this.#listener.#value = Number(value)
                 this.#listener.app.pushToUI('listened', {
                   capability: this.#listener.names.temperature,
                   name: this.#listener.device.name,
@@ -101,7 +101,7 @@ export class OutdoorTemperatureListener extends TemperatureListener {
     const [deviceId, capabilityId] = capabilityPath.split(':')
     try {
       // @ts-expect-error: `homey-api` is partially typed
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-type-assertion
       const device = (await app.api.devices.getDevice({
         id: deviceId,
       })) as HomeyAPIV3Local.ManagerDevices.Device

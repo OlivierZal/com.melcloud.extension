@@ -26,6 +26,10 @@ const NOTIFICATION_DELAY = 10000
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error)
 
+const isChangelogVersion = (
+  version: string,
+): version is keyof typeof changelog => version in changelog
+
 export default class MELCloudExtensionApp extends Homey.App {
   public readonly names = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
@@ -56,6 +60,7 @@ export default class MELCloudExtensionApp extends Homey.App {
   }
 
   public override async onInit(): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
     this.#api = (await HomeyAPIV3Local.createAppAPI({
       homey: this.homey,
     })) as HomeyAPIV3Local
@@ -109,6 +114,7 @@ export default class MELCloudExtensionApp extends Homey.App {
   public getHomeySetting<K extends keyof HomeySettings>(
     setting: Extract<K, string>,
   ): HomeySettings[K] {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
     return this.homey.settings.get(setting) as HomeySettings[K]
   }
 
@@ -130,6 +136,7 @@ export default class MELCloudExtensionApp extends Homey.App {
 
   public setHomeySettings(settings: Partial<HomeySettings>): void {
     Object.entries(settings).forEach(([setting, value]) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
       if (value !== this.getHomeySetting(setting as keyof HomeySettings)) {
         this.homey.settings.set(setting, value)
       }
@@ -137,13 +144,13 @@ export default class MELCloudExtensionApp extends Homey.App {
   }
 
   #createNotification(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
     const { version } = this.homey.manifest as { version: string }
     if (
       this.homey.settings.get('notifiedVersion') !== version &&
-      version in changelog
+      isChangelogVersion(version)
     ) {
-      const { [version as keyof typeof changelog]: versionChangelog } =
-        changelog
+      const { [version]: versionChangelog } = changelog
       this.homey.setTimeout(async () => {
         try {
           await this.homey.notifications.createNotification({
@@ -179,7 +186,7 @@ export default class MELCloudExtensionApp extends Homey.App {
     this.#temperatureSensors.length = 0
     const devices =
       // @ts-expect-error: `homey-api` is partially typed
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-type-assertion
       (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
     Object.values(devices).forEach((device) => {
       // @ts-expect-error: `homey-api` is partially typed
@@ -193,6 +200,7 @@ export default class MELCloudExtensionApp extends Homey.App {
       }
       if (
         // @ts-expect-error: `homey-api` is partially typed
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
         (device.capabilities as string[]).some((capability) =>
           capability.startsWith(MEASURE_TEMPERATURE),
         )

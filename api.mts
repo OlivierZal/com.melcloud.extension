@@ -6,9 +6,7 @@ import {
   type TemperatureSensor,
 } from './types.mts'
 
-import type Homey from 'homey/lib/Homey'
-
-import type MELCloudExtensionApp from './app.mts'
+import type { Homey } from 'homey/lib/Homey'
 
 class AtaDeviceNotFoundError extends Error {
   public constructor() {
@@ -24,13 +22,13 @@ const api = {
     body: TemperatureListenerData
     homey: Homey
   }): Promise<void> {
-    await (homey.app as MELCloudExtensionApp).autoAdjustCooling(body)
+    await homey.app.autoAdjustCooling(body)
   },
   getLanguage({ homey }: { homey: Homey }): string {
     return homey.i18n.getLanguage()
   },
   getTemperatureSensors({ homey }: { homey: Homey }): TemperatureSensor[] {
-    const app = homey.app as MELCloudExtensionApp
+    const { app } = homey
     if (!app.melcloudDevices.length) {
       throw new AtaDeviceNotFoundError()
     }
@@ -38,6 +36,7 @@ const api = {
       .flatMap((device) => {
         const capabilities = Object.values(
           // @ts-expect-error: `homey-api` is partially typed
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
           (device.capabilitiesObj as Record<string, Capability> | null) ?? {},
         ).filter(({ id }) => id.startsWith(MEASURE_TEMPERATURE))
         const outdoorCapability = capabilities.find(

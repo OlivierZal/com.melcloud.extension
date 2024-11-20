@@ -9,7 +9,7 @@ export interface Capability {
 }
 
 export interface HomeySettings {
-  readonly capabilityPath: CapabilityPath | null
+  readonly capabilityPath: string | null
   readonly isEnabled: boolean | null
   readonly lastLogs: TimestampedLog[] | null
   readonly thresholds: Thresholds | null
@@ -22,17 +22,17 @@ export interface ListenerParams {
   readonly outdoorTemperature?: string
   readonly threshold?: string
   readonly type?: string
-  readonly value?: Value
+  readonly value?: unknown
 }
 
 export interface TemperatureListenerData {
-  readonly capabilityPath: CapabilityPath
+  readonly capabilityPath: string
   readonly isEnabled: boolean
 }
 
 export interface TemperatureSensor {
   readonly capabilityName: string
-  readonly capabilityPath: CapabilityPath
+  readonly capabilityPath: string
 }
 
 export interface TimestampedLog {
@@ -41,8 +41,6 @@ export interface TimestampedLog {
   readonly category?: string
 }
 
-export type CapabilityPath = `${string}:${string}`
-
 export type DeviceCapability =
   // @ts-expect-error: `homey-api` is partially typed
   HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability
@@ -50,5 +48,3 @@ export type DeviceCapability =
 export type HomeySettingsUI = Partial<NonNullable<HomeySettings>>
 
 export type Thresholds = Partial<Record<string, number>>
-
-export type Value = boolean | number | string | null

@@ -145,9 +145,9 @@ export class MELCloudListener extends TemperatureListener {
   async #listenToTargetTemperature(): Promise<void> {
     if (this.temperatureListener === null) {
       await MELCloudListener.#outdoorTemperatureListener.listenToOutdoorTemperature()
-      const temperature = (await this.getCapabilityValue(
-        TARGET_TEMPERATURE,
-      )) as number
+      const temperature = Number(
+        await this.getCapabilityValue(TARGET_TEMPERATURE),
+      )
       this.temperatureListener = this.device.makeCapabilityInstance(
         TARGET_TEMPERATURE,
         async (value) => {
@@ -157,7 +157,7 @@ export class MELCloudListener extends TemperatureListener {
               name: this.device.name,
               value: `${String(value)}\u00A0°C`,
             })
-            await this.#setThreshold(value as number)
+            await this.#setThreshold(Number(value))
           }
         },
       )

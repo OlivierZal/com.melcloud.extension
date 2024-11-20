@@ -1,7 +1,6 @@
 import type Homey from 'homey/lib/HomeySettings'
 
 import type {
-  CapabilityPath,
   HomeySettingsUI,
   TemperatureListenerData,
   TemperatureSensor,
@@ -22,13 +21,35 @@ const categories: Record<string, { icon: string; color?: string }> = {
   saved: { icon: '☁️' },
 } as const
 
-const applyElement = document.getElementById('apply') as HTMLButtonElement
-const refreshElement = document.getElementById('refresh') as HTMLButtonElement
-const capabilityPathElement = document.getElementById(
-  'capability_path',
-) as HTMLSelectElement
-const enabledElement = document.getElementById('enabled') as HTMLSelectElement
-const logsElement = document.getElementById('logs') as HTMLTableSectionElement
+const getButtonElement = (id: string): HTMLButtonElement => {
+  const element = document.getElementById(id)
+  if (!(element instanceof HTMLButtonElement)) {
+    throw new Error(`Element with id \`${id}\` is not a button`)
+  }
+  return element
+}
+
+const getSelectElement = (id: string): HTMLSelectElement => {
+  const element = document.getElementById(id)
+  if (!(element instanceof HTMLSelectElement)) {
+    throw new Error(`Element with id \`${id}\` is not a select`)
+  }
+  return element
+}
+
+const getTableSectionElement = (id: string): HTMLTableSectionElement => {
+  const element = document.getElementById(id)
+  if (!(element instanceof HTMLTableSectionElement)) {
+    throw new Error(`Element with id "${id}" is not a table`)
+  }
+  return element
+}
+
+const applyElement = getButtonElement('apply')
+const refreshElement = getButtonElement('refresh')
+const capabilityPathElement = getSelectElement('capability_path')
+const enabledElement = getSelectElement('enabled')
+const logsElement = getTableSectionElement('logs')
 
 let language = 'en'
 
@@ -190,7 +211,7 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
           'PUT',
           '/melcloud/cooling/auto_adjustment',
           {
-            capabilityPath: capabilityPathElement.value as CapabilityPath,
+            capabilityPath: capabilityPathElement.value,
             isEnabled: enabledElement.value === 'true',
           } satisfies TemperatureListenerData,
           async (error: Error | null) => {

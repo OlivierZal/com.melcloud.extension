@@ -1,7 +1,7 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 
 import type MELCloudExtensionApp from '../app.mts'
-import type { DeviceCapability, Value } from '../types.mts'
+import type { DeviceCapability } from '../types.mts'
 
 export abstract class TemperatureListener {
   protected readonly app: MELCloudExtensionApp
@@ -34,14 +34,14 @@ export abstract class TemperatureListener {
     return Promise.resolve()
   }
 
-  protected async getCapabilityValue(capabilityId: string): Promise<Value> {
+  protected async getCapabilityValue(capabilityId: string): Promise<unknown> {
     return (
       // @ts-expect-error: `homey-api` is partially typed
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      (await this.app.api.devices.getCapabilityValue({
+      await this.app.api.devices.getCapabilityValue({
         capabilityId,
         deviceId: this.device.id,
-      })) as Value
+      })
     )
   }
 }
