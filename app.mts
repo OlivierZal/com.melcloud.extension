@@ -2,7 +2,8 @@ import 'source-map-support/register.js'
 
 import { HomeyAPIV3Local } from 'homey-api'
 
-import { Homey } from './homey.mts'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Homey from 'homey'
 import { changelog } from './json-files.mts'
 import { ListenerError } from './listeners/error.mts'
 import { MELCloudListener } from './listeners/melcloud.mts'
@@ -19,6 +20,7 @@ import {
 MELCloudListener.setOutdoorTemperatureListener(OutdoorTemperatureListener)
 
 const MELCLOUD_DRIVER_ID = 'homey:app:com.mecloud:melcloud'
+
 const MAX_LOGS = 100
 const INIT_DELAY = 1000
 const NOTIFICATION_DELAY = 10000
