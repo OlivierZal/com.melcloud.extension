@@ -2,8 +2,7 @@ import 'source-map-support/register.js'
 
 import { HomeyAPIV3Local } from 'homey-api'
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import Homey from 'homey'
+import { Homey } from './homey.mts'
 import { changelog } from './json-files.mts'
 import { ListenerError } from './listeners/error.mts'
 import { MELCloudListener } from './listeners/melcloud.mts'
