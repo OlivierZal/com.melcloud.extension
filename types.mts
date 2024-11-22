@@ -9,11 +9,11 @@ export interface Capability {
 }
 
 export interface HomeySettings {
-  readonly capabilityPath: string | null
-  readonly isEnabled: boolean | null
-  readonly lastLogs: TimestampedLog[] | null
-  readonly notifiedVersion: string | null
-  readonly thresholds: Thresholds | null
+  readonly capabilityPath?: string | null
+  readonly isEnabled?: boolean | null
+  readonly lastLogs?: TimestampedLog[] | null
+  readonly notifiedVersion?: string | null
+  readonly thresholds?: Thresholds | null
 }
 
 export interface ListenerParams {
@@ -45,7 +45,5 @@ export interface TimestampedLog {
 export type DeviceCapability =
   // @ts-expect-error: `homey-api` is partially typed
   HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability
-
-export type HomeySettingsUI = Partial<NonNullable<HomeySettings>>
 
 export type Thresholds = Partial<Record<string, number>>

@@ -1,7 +1,7 @@
 import type Homey from 'homey/lib/HomeySettings'
 
 import type {
-  HomeySettingsUI,
+  HomeySettings,
   TemperatureListenerData,
   TemperatureSensor,
   TimestampedLog,
@@ -153,11 +153,11 @@ const handleTemperatureSensorsError = async (
 }
 
 const fetchHomeySettings = async (homey: Homey): Promise<void> => {
-  let homeySettings: HomeySettingsUI = {}
+  let homeySettings: HomeySettings = {}
   await withDisablingButtons(
     async () =>
       new Promise((resolve) => {
-        homey.get(async (error: Error | null, settings: HomeySettingsUI) => {
+        homey.get(async (error: Error | null, settings: HomeySettings) => {
           if (error) {
             await homey.alert(error.message)
           } else {
