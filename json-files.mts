@@ -1,5 +1,5 @@
 export const { changelog } = await (async (): Promise<{
-  changelog: object
+  changelog: Record<string, object>
 }> => {
   try {
     return await import('./lib/json-files-with-import.mts')

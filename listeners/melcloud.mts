@@ -130,7 +130,7 @@ export class MELCloudListener extends TemperatureListener {
   }
 
   #getThresholds(): Thresholds {
-    return this.app.getHomeySetting('thresholds') ?? {}
+    return this.app.homey.settings.get('thresholds') ?? {}
   }
 
   #isItCoolingElsewhere(): boolean {
@@ -194,7 +194,7 @@ export class MELCloudListener extends TemperatureListener {
     } = this
     const thresholds = this.#getThresholds()
     thresholds[id] = value
-    this.app.setHomeySettings({ thresholds })
+    this.app.homey.settings.set('thresholds', thresholds)
     this.app.pushToUI('saved', { name, value: `${String(value)}\u00A0°C` })
     await this.setTargetTemperature()
   }

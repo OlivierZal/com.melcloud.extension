@@ -12,6 +12,7 @@ export interface HomeySettings {
   readonly capabilityPath: string | null
   readonly isEnabled: boolean | null
   readonly lastLogs: TimestampedLog[] | null
+  readonly notifiedVersion: string | null
   readonly thresholds: Thresholds | null
 }
 

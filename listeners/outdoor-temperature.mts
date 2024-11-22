@@ -40,7 +40,8 @@ export class OutdoorTemperatureListener extends TemperatureListener {
       app,
       capabilityPath,
     )
-    app.setHomeySettings({ capabilityPath, isEnabled })
+    app.homey.settings.set('capabilityPath', capabilityPath)
+    app.homey.settings.set('isEnabled', isEnabled)
     this.#listener = new this(app, device, capabilityId)
     if (isEnabled) {
       await this.#listener.#listenToThermostatModes()

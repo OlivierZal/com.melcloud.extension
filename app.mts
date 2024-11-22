@@ -1,8 +1,9 @@
 import 'source-map-support/register.js'
 
+// eslint-disable-next-line import/default, import/no-extraneous-dependencies
+import Homey from 'homey'
 import { HomeyAPIV3Local } from 'homey-api'
 
-import { Homey } from './homey.mts'
 import { changelog } from './json-files.mts'
 import { ListenerError } from './listeners/error.mts'
 import { MELCloudListener } from './listeners/melcloud.mts'
@@ -10,7 +11,6 @@ import { OutdoorTemperatureListener } from './listeners/outdoor-temperature.mts'
 import {
   MEASURE_TEMPERATURE,
   OUTDOOR_TEMPERATURE,
-  type HomeySettings,
   type ListenerParams,
   type TemperatureListenerData,
   type TimestampedLog,
@@ -27,18 +27,20 @@ const NOTIFICATION_DELAY = 10000
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error)
 
-const isChangelogVersion = (
-  version: string,
-): version is keyof typeof changelog => version in changelog
+const hasChangelogLanguage = (
+  versionChangelog: object,
+  language: string,
+): language is keyof typeof versionChangelog => language in versionChangelog
 
+// eslint-disable-next-line import/no-named-as-default-member
 export default class MELCloudExtensionApp extends Homey.App {
+  public declare homey: Homey.Homey
+
   public readonly names = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
       (name) => [name, this.homey.__(`names.${name}`)],
     ),
   )
-
-  readonly #language = this.homey.i18n.getLanguage()
 
   readonly #melcloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
@@ -93,8 +95,8 @@ export default class MELCloudExtensionApp extends Homey.App {
 
   public async autoAdjustCooling(
     { capabilityPath, isEnabled }: TemperatureListenerData = {
-      capabilityPath: this.getHomeySetting('capabilityPath') ?? ':',
-      isEnabled: this.getHomeySetting('isEnabled') === true,
+      capabilityPath: this.homey.settings.get('capabilityPath') ?? ':',
+      isEnabled: this.homey.settings.get('isEnabled') === true,
     },
   ): Promise<void> {
     await this.#destroyListeners()
@@ -112,13 +114,6 @@ export default class MELCloudExtensionApp extends Homey.App {
     }
   }
 
-  public getHomeySetting<K extends keyof HomeySettings>(
-    setting: Extract<K, string>,
-  ): HomeySettings[K] {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-    return this.homey.settings.get(setting) as HomeySettings[K]
-  }
-
   public pushToUI(name: string, params?: ListenerParams): void {
     const [messageId, category = messageId] = name.split('.').reverse()
     const newLog: TimestampedLog = {
@@ -127,44 +122,35 @@ export default class MELCloudExtensionApp extends Homey.App {
       time: Date.now(),
     }
     this.homey.api.realtime('log', newLog)
-    const lastLogs = this.getHomeySetting('lastLogs') ?? []
+    const lastLogs = this.homey.settings.get('lastLogs') ?? []
     lastLogs.unshift(newLog)
     if (lastLogs.length > MAX_LOGS) {
       lastLogs.length = MAX_LOGS
     }
-    this.setHomeySettings({ lastLogs })
-  }
-
-  public setHomeySettings(settings: Partial<HomeySettings>): void {
-    Object.entries(settings).forEach(([setting, value]) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-      if (value !== this.getHomeySetting(setting as keyof HomeySettings)) {
-        this.homey.settings.set(setting, value)
-      }
-    })
+    this.homey.settings.set('lastLogs', lastLogs)
   }
 
   #createNotification(): void {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-    const { version } = this.homey.manifest as { version: string }
-    if (
-      this.homey.settings.get('notifiedVersion') !== version &&
-      isChangelogVersion(version)
-    ) {
+    const {
+      homey: {
+        manifest: { version },
+      },
+    } = this
+    if (this.homey.settings.get('notifiedVersion') !== version) {
       const { [version]: versionChangelog } = changelog
-      this.homey.setTimeout(async () => {
-        try {
-          await this.homey.notifications.createNotification({
-            excerpt:
-              versionChangelog[
-                this.#language in versionChangelog ?
-                  (this.#language as keyof typeof versionChangelog)
-                : 'en'
-              ],
-          })
-          this.homey.settings.set('notifiedVersion', version)
-        } catch {}
-      }, NOTIFICATION_DELAY)
+      const language = this.homey.i18n.getLanguage()
+      if (language in versionChangelog) {
+        this.homey.setTimeout(async () => {
+          try {
+            if (hasChangelogLanguage(versionChangelog, language)) {
+              await this.homey.notifications.createNotification({
+                excerpt: versionChangelog[language],
+              })
+              this.homey.settings.set('notifiedVersion', version)
+            }
+          } catch {}
+        }, NOTIFICATION_DELAY)
+      }
     }
   }
 
@@ -193,10 +179,11 @@ export default class MELCloudExtensionApp extends Homey.App {
       // @ts-expect-error: `homey-api` is partially typed
       if (device.driverId === MELCLOUD_DRIVER_ID) {
         this.#melcloudDevices.push(device)
-        if (this.getHomeySetting('capabilityPath') === null) {
-          this.setHomeySettings({
-            capabilityPath: `${device.id}:${OUTDOOR_TEMPERATURE}`,
-          })
+        if (this.homey.settings.get('capabilityPath') === null) {
+          this.homey.settings.set(
+            'capabilityPath',
+            `${device.id}:${OUTDOOR_TEMPERATURE}`,
+          )
         }
       }
       if (
