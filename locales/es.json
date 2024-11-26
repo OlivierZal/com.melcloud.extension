@@ -28,7 +28,7 @@
     },
     "capabilities": "Temperatura exterior",
     "enabled": "Mantener dentro de los 8 °C de la temperatura exterior",
-    "log": "Registro",
+    "log": "Historial",
     "refresh": "Recargar",
     "success": "Actualización exitosa",
     "title": "Configuración de la extensión para MELCloud"
