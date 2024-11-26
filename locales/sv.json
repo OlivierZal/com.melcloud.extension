@@ -28,7 +28,7 @@
     },
     "capabilities": "Utomhustemperatur",
     "enabled": "Håll inom 8 °C från utomhustemperaturen",
-    "log": "Logg",
+    "log": "Historik",
     "refresh": "Ladda om",
     "success": "Uppdatering lyckades",
     "title": "Inställningar för MELCloud-tillägg"
