@@ -25,7 +25,7 @@
     },
     "capabilities": "Température extérieure",
     "enabled": "Maintenir à moins de 8\u00A0°C de la température extérieure",
-    "log": "Journal",
+    "log": "Historique",
     "refresh": "Rafraîchir",
     "success": "La mise à jour a réussi",
     "title": "Paramètres de l'extension pour MELCloud"

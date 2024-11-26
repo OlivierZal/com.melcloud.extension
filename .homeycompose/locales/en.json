@@ -25,7 +25,7 @@
     },
     "capabilities": "Outdoor temperature",
     "enabled": "Keep within 8\u00A0°C of the outdoor temperature",
-    "log": "Log",
+    "log": "History",
     "refresh": "Refresh",
     "success": "Update succeeded",
     "title": "MELCloud extension settings"

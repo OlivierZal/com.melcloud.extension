@@ -25,7 +25,7 @@
     },
     "capabilities": "Udendørstemperatur",
     "enabled": "Hold inden for 8\u00A0°C af udendørstemperaturen",
-    "log": "Log",
+    "log": "Historik",
     "refresh": "Genindlæs",
     "success": "Opdatering lykkedes",
     "title": "Indstillinger for MELCloud-udvidelse"

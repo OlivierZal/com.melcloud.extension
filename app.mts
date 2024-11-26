@@ -34,7 +34,7 @@ const hasChangelogLanguage = (
 
 // eslint-disable-next-line import/no-named-as-default-member
 export default class MELCloudExtensionApp extends Homey.App {
-  public declare homey: Homey.Homey
+  declare public homey: Homey.Homey
 
   public readonly names = Object.fromEntries(
     ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(

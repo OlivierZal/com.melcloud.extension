@@ -25,7 +25,7 @@
     },
     "capabilities": "Buitentemperatuur",
     "enabled": "Blijf binnen 8\u00A0°C van de buitentemperatuur",
-    "log": "Logboek",
+    "log": "Overzicht",
     "refresh": "Herladen",
     "success": "Update geslaagd",
     "title": "Instellingen van de MELCloud-extensie"

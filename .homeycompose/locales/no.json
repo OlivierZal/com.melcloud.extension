@@ -25,7 +25,7 @@
     },
     "capabilities": "Utetemperatur",
     "enabled": "Hold innenfor 8\u00A0°C av utetemperaturen",
-    "log": "Logg",
+    "log": "Historikk",
     "refresh": "Gjenta",
     "success": "Oppdatering vellykket",
     "title": "Innstillinger for MELCloud-utvidelse"
