@@ -65,11 +65,11 @@ const moduleGroups = {
 
 const objectLikeGroups = {
   groups: [
-    'index-signature',
+    'required-index-signature',
     'optional-index-signature',
-    'property',
+    'required-property',
     'optional-property',
-    'method',
+    'required-method',
     'optional-method',
   ],
 }
