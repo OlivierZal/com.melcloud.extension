@@ -152,23 +152,9 @@ const handleTemperatureSensorsError = async (
   await homey.alert(errorMessage)
 }
 
-const fetchHomeySettings = async (homey: Homey): Promise<void> => {
-  let homeySettings: HomeySettings = {}
-  await withDisablingButtons(
-    async () =>
-      new Promise((resolve) => {
-        homey.get(async (error: Error | null, settings: HomeySettings) => {
-          if (error) {
-            await homey.alert(error.message)
-          } else {
-            homeySettings = settings
-          }
-          resolve()
-        })
-      }),
-  )
+const handleSettings = (settings: HomeySettings): void => {
   if (!logsElement.childElementCount) {
-    ;(homeySettings.lastLogs ?? [])
+    ;(settings.lastLogs ?? [])
       .filter(({ time }) => {
         const date = new Date(time)
         const oldestDate = new Date()
@@ -179,8 +165,24 @@ const fetchHomeySettings = async (homey: Homey): Promise<void> => {
       .toReversed()
       .forEach(displayLog)
   }
-  capabilityPathElement.value = homeySettings.capabilityPath ?? ''
-  enabledElement.value = String(homeySettings.isEnabled === true)
+  capabilityPathElement.value = settings.capabilityPath ?? ''
+  enabledElement.value = String(settings.isEnabled === true)
+}
+
+const fetchHomeySettings = async (homey: Homey): Promise<void> => {
+  await withDisablingButtons(
+    async () =>
+      new Promise((resolve) => {
+        homey.get(async (error: Error | null, settings: HomeySettings) => {
+          if (error) {
+            await homey.alert(error.message)
+          } else {
+            handleSettings(settings)
+          }
+          resolve()
+        })
+      }),
+  )
 }
 
 const getTemperatureSensors = async (homey: Homey): Promise<void> =>
