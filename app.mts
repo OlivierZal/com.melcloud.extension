@@ -116,18 +116,20 @@ export default class MELCloudExtensionApp extends Homey.App {
 
   public pushToUI(name: string, params?: ListenerParams): void {
     const [messageId, category = messageId] = name.split('.').reverse()
-    const newLog: TimestampedLog = {
-      category,
-      message: this.homey.__(`log.${messageId}`, params),
-      time: Date.now(),
+    if (messageId !== undefined) {
+      const newLog: TimestampedLog = {
+        category,
+        message: this.homey.__(`log.${messageId}`, params),
+        time: Date.now(),
+      }
+      this.homey.api.realtime('log', newLog)
+      const lastLogs = this.homey.settings.get('lastLogs') ?? []
+      lastLogs.unshift(newLog)
+      if (lastLogs.length > MAX_LOGS) {
+        lastLogs.length = MAX_LOGS
+      }
+      this.homey.settings.set('lastLogs', lastLogs)
     }
-    this.homey.api.realtime('log', newLog)
-    const lastLogs = this.homey.settings.get('lastLogs') ?? []
-    lastLogs.unshift(newLog)
-    if (lastLogs.length > MAX_LOGS) {
-      lastLogs.length = MAX_LOGS
-    }
-    this.homey.settings.set('lastLogs', lastLogs)
   }
 
   #createNotification(): void {
@@ -137,7 +139,7 @@ export default class MELCloudExtensionApp extends Homey.App {
       },
     } = this
     if (this.homey.settings.get('notifiedVersion') !== version) {
-      const { [version]: versionChangelog } = changelog
+      const { [version]: versionChangelog = {} } = changelog
       const language = this.homey.i18n.getLanguage()
       if (language in versionChangelog) {
         this.homey.setTimeout(async () => {

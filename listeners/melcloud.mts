@@ -55,7 +55,7 @@ export class MELCloudListener extends TemperatureListener {
       THERMOSTAT_MODE,
       async (value) => {
         this.app.pushToUI('listened', {
-          capability: this.names.thermostatMode,
+          capability: this.names['thermostatMode'],
           name: this.device.name,
           value,
         })
@@ -75,7 +75,7 @@ export class MELCloudListener extends TemperatureListener {
       },
     )
     this.app.pushToUI('created', {
-      capability: this.names.thermostatMode,
+      capability: this.names['thermostatMode'],
       name: this.device.name,
     })
     if (currentThermostatMode === COOL) {
@@ -106,7 +106,7 @@ export class MELCloudListener extends TemperatureListener {
       this.#thermostatModeListener.destroy()
     }
     this.app.pushToUI('cleaned', {
-      capability: this.names.thermostatMode,
+      capability: this.names['thermostatMode'],
       name: this.device.name,
     })
     MELCloudListener.listeners.delete(this.device.id)
@@ -153,7 +153,7 @@ export class MELCloudListener extends TemperatureListener {
         async (value) => {
           if (value !== this.#getTargetTemperature()) {
             this.app.pushToUI('listened', {
-              capability: this.names.temperature,
+              capability: this.names['temperature'],
               name: this.device.name,
               value: `${String(value)}\u00A0°C`,
             })
@@ -162,7 +162,7 @@ export class MELCloudListener extends TemperatureListener {
         },
       )
       this.app.pushToUI('created', {
-        capability: this.names.temperature,
+        capability: this.names['temperature'],
         name: this.device.name,
       })
       await this.#setThreshold(temperature)
@@ -183,7 +183,7 @@ export class MELCloudListener extends TemperatureListener {
     } catch {
       this.app.pushToUI('error.notFound', {
         idOrName: this.device.name,
-        type: this.names.device,
+        type: this.names['device'],
       })
     }
   }

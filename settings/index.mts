@@ -117,16 +117,17 @@ const createMessageElement = (
 }
 
 const displayLog = ({ category, message, time }: TimestampedLog): void => {
-  const {
-    [category ?? 'error']: { color, icon },
-  } = categories
-  const timeElement = createTimeElement(time, icon)
-  const messageElement = createMessageElement(message, color)
-  const rowElement = document.createElement('div')
-  rowElement.style.display = 'flex'
-  rowElement.style.marginBottom = '1em'
-  rowElement.append(timeElement, messageElement)
-  logsElement.insertBefore(rowElement, logsElement.firstChild)
+  const { [category ?? 'error']: newCategory } = categories
+  if (newCategory) {
+    const { color, icon } = newCategory
+    const timeElement = createTimeElement(time, icon)
+    const messageElement = createMessageElement(message, color)
+    const rowElement = document.createElement('div')
+    rowElement.style.display = 'flex'
+    rowElement.style.marginBottom = '1em'
+    rowElement.append(timeElement, messageElement)
+    logsElement.insertBefore(rowElement, logsElement.firstChild)
+  }
 }
 
 const handleTemperatureSensorsError = async (
@@ -245,6 +246,7 @@ const addEventListeners = (homey: Homey): void => {
   homey.on('log', displayLog)
 }
 
+// @ts-expect-error: read by another script in `./index.html`
 // eslint-disable-next-line func-style
 async function onHomeyReady(homey: Homey): Promise<void> {
   await fetchLanguage(homey)

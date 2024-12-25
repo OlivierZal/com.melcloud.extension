@@ -28,7 +28,7 @@ export abstract class TemperatureListener {
       this.temperatureListener = null
     }
     this.app.pushToUI('cleaned', {
-      capability: this.names.temperature,
+      capability: this.names['temperature'],
       name: this.device.name,
     })
     return Promise.resolve()

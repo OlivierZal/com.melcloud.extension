@@ -72,7 +72,7 @@ export class OutdoorTemperatureListener extends TemperatureListener {
               if (this.#listener) {
                 this.#listener.#value = Number(value)
                 this.#listener.app.pushToUI('listened', {
-                  capability: this.#listener.names.temperature,
+                  capability: this.#listener.names['temperature'],
                   name: this.#listener.device.name,
                   value: `${String(value)}\u00A0°C`,
                 })
@@ -85,7 +85,7 @@ export class OutdoorTemperatureListener extends TemperatureListener {
             },
           )
         this.#listener.app.pushToUI('created', {
-          capability: this.#listener.names.temperature,
+          capability: this.#listener.names['temperature'],
           name: this.#listener.device.name,
         })
       }
@@ -106,11 +106,14 @@ export class OutdoorTemperatureListener extends TemperatureListener {
       const device = (await app.api.devices.getDevice({
         id: deviceId,
       })) as HomeyAPIV3Local.ManagerDevices.Device
-      // @ts-expect-error: `homey-api` is partially typed
-      if (!(capabilityId in (device.capabilitiesObj ?? {}))) {
+      if (
+        capabilityId === undefined ||
+        // @ts-expect-error: `homey-api` is partially typed
+        !(capabilityId in (device.capabilitiesObj ?? {}))
+      ) {
         throw new ListenerError('notFound', {
           idOrName: capabilityId,
-          type: app.names.outdoorTemperature,
+          type: app.names['outdoorTemperature'],
         })
       }
       return { capabilityId, device }
@@ -118,7 +121,7 @@ export class OutdoorTemperatureListener extends TemperatureListener {
       throw error instanceof ListenerError ? error : (
           new ListenerError('notFound', {
             idOrName: deviceId,
-            type: app.names.device,
+            type: app.names['device'],
           })
         )
     }
