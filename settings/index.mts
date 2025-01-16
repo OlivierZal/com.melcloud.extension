@@ -19,7 +19,7 @@ const categories: Record<string, { icon: string; color?: string }> = {
   listened: { color: '#0047AB', icon: '👂' },
   reverted: { icon: '↩️' },
   saved: { icon: '☁️' },
-} as const
+}
 
 const getButtonElement = (id: string): HTMLButtonElement => {
   const element = document.getElementById(id)

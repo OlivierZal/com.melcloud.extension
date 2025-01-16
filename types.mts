@@ -4,8 +4,8 @@ export const MEASURE_TEMPERATURE = 'measure_temperature'
 export const OUTDOOR_TEMPERATURE = `${MEASURE_TEMPERATURE}.outdoor`
 
 export interface Capability {
-  id: string
-  title: string
+  readonly id: string
+  readonly title: string
 }
 
 export interface HomeySettings {
