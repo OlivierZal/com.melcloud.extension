@@ -67,6 +67,10 @@ const moduleGroups = {
   ],
 }
 
+const objectGroups = {
+  groups: ['property', 'method'],
+}
+
 const typeGroups = {
   groups: [
     'import',
@@ -310,7 +314,7 @@ const config = [
         'perfectionist/sort-named-exports': ['error', valuesFirst],
         'perfectionist/sort-named-imports': ['error', valuesFirst],
         'perfectionist/sort-object-types': ['error', typeLikeGroups],
-        'perfectionist/sort-objects': 'error',
+        'perfectionist/sort-objects': ['error', objectGroups],
         'perfectionist/sort-sets': ['error', arrayLikeGroups],
         'perfectionist/sort-switch-case': 'error',
         'perfectionist/sort-union-types': ['error', typeGroups],
