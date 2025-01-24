@@ -1,9 +1,11 @@
 name: Validate app
 on:
+  # eslint-disable yml/no-empty-mapping-value
   pull_request:
+  workflow_dispatch:
+  # eslint-enable yml/no-empty-mapping-value
   push:
     branches: main
-  workflow_dispatch:
 permissions:
   contents: write
   pull-requests: write
@@ -18,8 +20,8 @@ jobs:
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 'latest'
-          cache: 'npm'
+          node-version: latest
+          cache: npm
       - name: Lint & format code
         run: npm ci
       - name: Build code & validate app
