@@ -5,7 +5,7 @@
     "cleanedAll": "Rengøring af alle lyttere",
     "created": "Oprettelse af en lytter for __capability__ af __name__",
     "listened": "Lytter til __capability__ af __name__: __value__",
-    "notFound": "__type__ `__idOrName__` blev ikke fundet",
+    "notFound": "__type__ `__idOrName__` ikke fundet",
     "reverted": "Gendanner temperaturen for __name__: __value__",
     "saved": "Gemmer temperaturen for __name__: __value__"
   },
@@ -17,7 +17,6 @@
   },
   "settings": {
     "apply": "Anvend på alle luft-til-luft enheder",
-    "ataDeviceNotFound": "Du skal først konfigurere dine enheder i MELCloud Homey-appen.\n\nØnsker du at installere den?",
     "autoAdjust": "Autojuster aircondition-temperaturen",
     "boolean": {
       "false": "Nej",
@@ -26,8 +25,8 @@
     "capabilities": "Udendørstemperatur",
     "enabled": "Hold inden for 8\u00A0°C af udendørstemperaturen",
     "log": "Historik",
+    "notFound": "Du skal først konfigurere dine enheder i MELCloud Homey-appen.\n\nØnsker du at installere den?",
     "refresh": "Genindlæs",
-    "success": "Opdatering lykkedes",
     "title": "Indstillinger for MELCloud-udvidelse"
   }
 }

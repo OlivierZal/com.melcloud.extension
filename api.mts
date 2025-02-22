@@ -10,7 +10,7 @@ import type { Homey } from 'homey/lib/Homey'
 
 class AtaDeviceNotFoundError extends Error {
   public constructor() {
-    super('ataDeviceNotFound')
+    super('notFound')
   }
 }
 

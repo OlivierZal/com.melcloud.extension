@@ -5,7 +5,7 @@
     "cleanedAll": "Reinigen alle luisteraars",
     "created": "Aanmaken van een luisteraar voor __capability__ van __name__",
     "listened": "Luisteren naar __capability__ van __name__: __value__",
-    "notFound": "__type__ `__idOrName__` kan niet worden gevonden",
+    "notFound": "__type__ `__idOrName__` niet gevonden",
     "reverted": "Herstellen de temperatuur van __name__: __value__",
     "saved": "Opslaan de temperatuur van __name__: __value__"
   },
@@ -17,7 +17,6 @@
   },
   "settings": {
     "apply": "Toepassen op alle lucht-lucht apparaten",
-    "ataDeviceNotFound": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
     "autoAdjust": "Auto-afstellen airco-temperatuur",
     "boolean": {
       "false": "Nee",
@@ -26,8 +25,8 @@
     "capabilities": "Buitentemperatuur",
     "enabled": "Blijf binnen 8\u00A0°C van de buitentemperatuur",
     "log": "Overzicht",
+    "notFound": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
     "refresh": "Herladen",
-    "success": "Update geslaagd",
     "title": "Instellingen van de MELCloud-extensie"
   }
 }

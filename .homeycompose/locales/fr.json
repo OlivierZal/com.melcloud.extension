@@ -5,7 +5,7 @@
     "cleanedAll": "Nettoyage de tous les écouteurs",
     "created": "Création d'un écouteur pour __capability__ de __name__",
     "listened": "Écoute de __capability__ de __name__\u00A0: __value__",
-    "notFound": "__type__ `__idOrName__` est introuvable",
+    "notFound": "__type__ `__idOrName__` introuvable",
     "reverted": "Rétablissement de la température de __name__\u00A0: __value__",
     "saved": "Enregistrement de la température de __name__\u00A0: __value__"
   },
@@ -17,7 +17,6 @@
   },
   "settings": {
     "apply": "Appliquer à tous les appareils air-air",
-    "ataDeviceNotFound": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
     "autoAdjust": "Auto-ajuster la température de la climatisation",
     "boolean": {
       "false": "Non",
@@ -26,8 +25,8 @@
     "capabilities": "Température extérieure",
     "enabled": "Maintenir à moins de 8\u00A0°C de la température extérieure",
     "log": "Historique",
+    "notFound": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
     "refresh": "Rafraîchir",
-    "success": "La mise à jour a réussi",
     "title": "Paramètres de l'extension pour MELCloud"
   }
 }

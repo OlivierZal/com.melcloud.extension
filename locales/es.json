@@ -4,13 +4,10 @@
     "cleaned": "Limpieza del oyente para __capability__ de __name__",
     "cleanedAll": "Limpieza de todos los oyentes",
     "created": "Creación de un oyente para __capability__ de __name__",
-    "error": {
-      "notFound": "No se puede encontrar __type__ `__idOrName__`"
-    },
     "listened": "Escuchando a __capability__ de __name__: __value__",
+    "notFound": "No se puede encontrar __type__ `__idOrName__`",
     "reverted": "Revertiendo la temperatura de __name__: __value__",
-    "saved": "Guardando la temperatura de __name__: __value__",
-    "notFound": "No se puede encontrar __type__ `__idOrName__`"
+    "saved": "Guardando la temperatura de __name__: __value__"
   },
   "names": {
     "device": "El dispositivo",
@@ -20,7 +17,6 @@
   },
   "settings": {
     "apply": "Aplicar a todos los dispositivos aire-aire",
-    "ataDeviceNotFound": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
     "autoAdjust": "Autoajustar la temperatura del aire acondicionado",
     "boolean": {
       "false": "No",
@@ -29,8 +25,8 @@
     "capabilities": "Temperatura exterior",
     "enabled": "Mantener dentro de los 8 °C de la temperatura exterior",
     "log": "Historial",
+    "notFound": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
     "refresh": "Recargar",
-    "success": "Actualización exitosa",
     "title": "Configuración de la extensión para MELCloud"
   }
 }
