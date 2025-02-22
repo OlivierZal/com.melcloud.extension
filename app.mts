@@ -119,7 +119,10 @@ export default class MELCloudExtensionApp extends Homey.App {
     if (messageId !== undefined) {
       const newLog: TimestampedLog = {
         category,
-        message: this.homey.__(`log.${messageId}`, params),
+        message: this.homey
+          .__(`log.${messageId}`, params)
+          .replace(/de el /giu, 'del ')
+          .replace(/de le /giu, 'du '),
         time: Date.now(),
       }
       this.homey.api.realtime('log', newLog)
