@@ -63,21 +63,13 @@ export default class MELCloudExtensionApp extends Homey.App {
   }
 
   public override async onInit(): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-    this.#api = (await HomeyAPIV3Local.createAppAPI({
-      homey: this.homey,
-    })) as HomeyAPIV3Local
-    // @ts-expect-error: `homey-api` is partially typed
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    this.#api = await HomeyAPIV3Local.createAppAPI({ homey: this.homey })
     await this.#api.devices.connect()
     this.#init()
-    // @ts-expect-error: `homey-api` is partially typed
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     this.#api.devices.on('device.create', () => {
       this.#init()
     })
-    // @ts-expect-error: `homey-api` is partially typed
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     this.#api.devices.on('device.delete', () => {
       this.#init()
     })
@@ -176,12 +168,8 @@ export default class MELCloudExtensionApp extends Homey.App {
   async #loadDevices(): Promise<void> {
     this.#melcloudDevices.length = 0
     this.#temperatureSensors.length = 0
-    const devices =
-      // @ts-expect-error: `homey-api` is partially typed
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-type-assertion
-      (await this.#api.devices.getDevices()) as HomeyAPIV3Local.ManagerDevices.Device[]
+    const devices = await this.#api.devices.getDevices()
     Object.values(devices).forEach((device) => {
-      // @ts-expect-error: `homey-api` is partially typed
       if (device.driverId === MELCLOUD_DRIVER_ID) {
         this.#melcloudDevices.push(device)
         if (this.homey.settings.get('capabilityPath') === null) {
@@ -192,9 +180,7 @@ export default class MELCloudExtensionApp extends Homey.App {
         }
       }
       if (
-        // @ts-expect-error: `homey-api` is partially typed
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-        (device.capabilities as string[]).some((capability) =>
+        device.capabilities.some((capability) =>
           capability.startsWith(MEASURE_TEMPERATURE),
         )
       ) {

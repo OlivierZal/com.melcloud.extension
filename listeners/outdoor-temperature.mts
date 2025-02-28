@@ -5,7 +5,7 @@ import { TemperatureListener } from './temperature.mts'
 import type { HomeyAPIV3Local } from 'homey-api'
 
 import type MELCloudExtensionApp from '../app.mts'
-import type { DeviceCapability, TemperatureListenerData } from '../types.mts'
+import type { TemperatureListenerData } from '../types.mts'
 
 export class OutdoorTemperatureListener extends TemperatureListener {
   static #listener: OutdoorTemperatureListener | null = null
@@ -23,8 +23,10 @@ export class OutdoorTemperatureListener extends TemperatureListener {
     this.#capabilityId = capabilityId
   }
 
-  public static get temperatureListener(): DeviceCapability {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  public static get temperatureListener():
+    | HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability
+    | null
+    | undefined {
     return this.#listener?.temperatureListener
   }
 
@@ -101,14 +103,9 @@ export class OutdoorTemperatureListener extends TemperatureListener {
   }> {
     const [deviceId, capabilityId] = capabilityPath.split(':')
     try {
-      // @ts-expect-error: `homey-api` is partially typed
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-type-assertion
-      const device = (await app.api.devices.getDevice({
-        id: deviceId,
-      })) as HomeyAPIV3Local.ManagerDevices.Device
+      const device = await app.api.devices.getDevice({ id: deviceId })
       if (
         capabilityId === undefined ||
-        // @ts-expect-error: `homey-api` is partially typed
         !(capabilityId in (device.capabilitiesObj ?? {}))
       ) {
         throw new ListenerError('notFound', {

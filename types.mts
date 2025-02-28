@@ -1,12 +1,5 @@
-import type { HomeyAPIV3Local } from 'homey-api'
-
 export const MEASURE_TEMPERATURE = 'measure_temperature'
 export const OUTDOOR_TEMPERATURE = `${MEASURE_TEMPERATURE}.outdoor`
-
-export interface Capability {
-  readonly id: string
-  readonly title: string
-}
 
 export interface HomeySettings {
   readonly capabilityPath?: string | null
@@ -41,9 +34,5 @@ export interface TimestampedLog {
   readonly time: number
   readonly category?: string
 }
-
-export type DeviceCapability =
-  // @ts-expect-error: `homey-api` is partially typed
-  HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability
 
 export type Thresholds = Partial<Record<string, number>>

@@ -1,7 +1,6 @@
 import {
   MEASURE_TEMPERATURE,
   OUTDOOR_TEMPERATURE,
-  type Capability,
   type TemperatureListenerData,
   type TemperatureSensor,
 } from './types.mts'
@@ -34,11 +33,9 @@ const api = {
     }
     return app.temperatureSensors
       .flatMap((device) => {
-        const capabilities = Object.values(
-          // @ts-expect-error: `homey-api` is partially typed
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-          (device.capabilitiesObj as Record<string, Capability> | null) ?? {},
-        ).filter(({ id }) => id.startsWith(MEASURE_TEMPERATURE))
+        const capabilities = Object.values(device.capabilitiesObj ?? {}).filter(
+          ({ id }) => id.startsWith(MEASURE_TEMPERATURE),
+        )
         const outdoorCapability = capabilities.find(
           ({ id }) =>
             app.melcloudDevices.includes(device) && id === OUTDOOR_TEMPERATURE,

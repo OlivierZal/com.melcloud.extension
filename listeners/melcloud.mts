@@ -3,7 +3,7 @@ import { TemperatureListener } from './temperature.mts'
 import type { HomeyAPIV3Local } from 'homey-api'
 
 import type MELCloudExtensionApp from '../app.mts'
-import type { DeviceCapability, Thresholds } from '../types.mts'
+import type { Thresholds } from '../types.mts'
 
 import type { OutdoorTemperatureListener } from './outdoor-temperature.mts'
 
@@ -20,7 +20,8 @@ export class MELCloudListener extends TemperatureListener {
 
   static #outdoorTemperatureListener: typeof OutdoorTemperatureListener
 
-  #thermostatModeListener: DeviceCapability = null
+  #thermostatModeListener: HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability | null =
+    null
 
   public constructor(
     app: MELCloudExtensionApp,
@@ -88,7 +89,6 @@ export class MELCloudListener extends TemperatureListener {
       const value = this.#getTargetTemperature()
       const { value: outdoorTemperature } =
         MELCloudListener.#outdoorTemperatureListener
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       await this.temperatureListener.setValue(value)
       this.app.pushToUI('calculated', {
         name: this.device.name,
@@ -102,7 +102,6 @@ export class MELCloudListener extends TemperatureListener {
   async #destroy(): Promise<void> {
     await this.destroyTemperature()
     if (this.#thermostatModeListener !== null) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       this.#thermostatModeListener.destroy()
     }
     this.app.pushToUI('cleaned', {
@@ -136,9 +135,8 @@ export class MELCloudListener extends TemperatureListener {
   #isItCoolingElsewhere(): boolean {
     return [...MELCloudListener.listeners.values()].some(
       (listener) =>
-        (listener.device.id !== this.device.id &&
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          listener.#thermostatModeListener.value) === COOL,
+        listener.device.id !== this.device.id &&
+        listener.#thermostatModeListener?.value === COOL,
     )
   }
 

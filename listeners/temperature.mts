@@ -1,7 +1,6 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 
 import type MELCloudExtensionApp from '../app.mts'
-import type { DeviceCapability } from '../types.mts'
 
 export abstract class TemperatureListener {
   protected readonly app: MELCloudExtensionApp
@@ -10,7 +9,8 @@ export abstract class TemperatureListener {
 
   protected readonly names: Record<string, string>
 
-  protected temperatureListener: DeviceCapability = null
+  protected temperatureListener: HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability | null =
+    null
 
   protected constructor(
     app: MELCloudExtensionApp,
@@ -23,7 +23,6 @@ export abstract class TemperatureListener {
 
   protected async destroyTemperature(): Promise<void> {
     if (this.temperatureListener !== null) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       this.temperatureListener.destroy()
       this.temperatureListener = null
     }
@@ -35,13 +34,9 @@ export abstract class TemperatureListener {
   }
 
   protected async getCapabilityValue(capabilityId: string): Promise<unknown> {
-    return (
-      // @ts-expect-error: `homey-api` is partially typed
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      await this.app.api.devices.getCapabilityValue({
-        capabilityId,
-        deviceId: this.device.id,
-      })
-    )
+    return this.app.api.devices.getCapabilityValue({
+      capabilityId,
+      deviceId: this.device.id,
+    })
   }
 }
