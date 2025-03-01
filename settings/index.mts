@@ -1,4 +1,4 @@
-import type Homey from 'homey/lib/HomeySettings'
+import type Homey from 'homey/lib/HomeySettings.js'
 
 import type {
   HomeySettings,
