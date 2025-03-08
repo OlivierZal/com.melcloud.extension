@@ -9,7 +9,11 @@ import importPlugin from 'eslint-plugin-import'
 import packageJson from 'eslint-plugin-package-json/configs/recommended'
 import perfectionist from 'eslint-plugin-perfectionist'
 import yml from 'eslint-plugin-yml'
-import ts, { configs as tsConfigs } from 'typescript-eslint'
+import { defineConfig } from 'eslint/config'
+import {
+  config as defineTSConfig,
+  configs as tsConfigs,
+} from 'typescript-eslint'
 
 import { classGroups } from './eslint-utils/class-groups.js'
 
@@ -130,11 +134,11 @@ const typeLikeSortOptions = {
   newlinesBetween: 'never',
 }
 
-const config = [
+const config = defineConfig([
   {
     ignores: ['.homeybuild/'],
   },
-  ...ts.config(
+  ...defineTSConfig(
     {
       extends: [
         js.configs.all,
@@ -386,10 +390,9 @@ const config = [
     },
   ),
   {
+    extends: [html.configs['flat/recommended']],
     files: ['**/*.html'],
-    ...html.configs['flat/recommended'],
     rules: {
-      ...html.configs['flat/recommended'].rules,
       '@html-eslint/id-naming-convention': 'error',
       '@html-eslint/lowercase': 'error',
       '@html-eslint/no-abstract-roles': 'error',
@@ -420,6 +423,7 @@ const config = [
     },
   },
   {
+    extends: [json.configs.recommended],
     files: ['**/*.json'],
     ignores: [
       '**/package-lock.json',
@@ -428,9 +432,7 @@ const config = [
       'locales/*.json',
     ],
     language: 'json/json',
-    ...json.configs.recommended,
     rules: {
-      ...json.configs.recommended.rules,
       'json/sort-keys': [
         'error',
         'asc',
@@ -442,11 +444,10 @@ const config = [
     },
   },
   {
+    extends: [css.configs.recommended],
     files: ['**/*.css'],
     language: 'css/css',
-    ...css.configs.recommended,
     rules: {
-      ...css.configs.recommended.rules,
       'css/require-baseline': [
         'error',
         {
@@ -456,20 +457,16 @@ const config = [
     },
   },
   {
+    extends: [markdown.configs.recommended],
     files: ['**/*.md'],
     language: 'markdown/gfm',
-    plugins: {
-      markdown,
-    },
     rules: {
-      ...markdown.configs.recommended.rules,
       'markdown/no-duplicate-headings': 'error',
       'markdown/no-html': 'error',
     },
   },
-  ...yml.configs['flat/standard'],
-  ...yml.configs['flat/prettier'],
   {
+    extends: [yml.configs['flat/standard'], yml.configs['flat/prettier']],
     rules: {
       'yml/block-mapping-colon-indicator-newline': 'error',
       'yml/file-extension': [
@@ -484,6 +481,6 @@ const config = [
     },
   },
   packageJson,
-]
+])
 
 export default config
