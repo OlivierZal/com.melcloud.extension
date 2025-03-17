@@ -357,6 +357,7 @@ const config = defineConfig([
     rules: {
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
+      'import-x/named': 'error',
     },
   },
   {
@@ -368,7 +369,6 @@ const config = defineConfig([
     ],
     rules: {
       'import-x/max-dependencies': 'off',
-      'import-x/named': 'error',
       'import-x/no-default-export': 'off',
       'import-x/prefer-default-export': [
         'error',
