@@ -9,11 +9,11 @@ import { ListenerError } from './listeners/error.mts'
 import { MELCloudListener } from './listeners/melcloud.mts'
 import { OutdoorTemperatureListener } from './listeners/outdoor-temperature.mts'
 import {
-  MEASURE_TEMPERATURE,
-  OUTDOOR_TEMPERATURE,
   type ListenerParams,
   type TemperatureListenerData,
   type TimestampedLog,
+  MEASURE_TEMPERATURE,
+  OUTDOOR_TEMPERATURE,
 } from './types.mts'
 
 MELCloudListener.setOutdoorTemperatureListener(OutdoorTemperatureListener)

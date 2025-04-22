@@ -1,11 +1,11 @@
+import type { Homey } from 'homey/lib/Homey'
+
 import {
-  MEASURE_TEMPERATURE,
-  OUTDOOR_TEMPERATURE,
   type TemperatureListenerData,
   type TemperatureSensor,
+  MEASURE_TEMPERATURE,
+  OUTDOOR_TEMPERATURE,
 } from './types.mts'
-
-import type { Homey } from 'homey/lib/Homey.js'
 
 class AtaDeviceNotFoundError extends Error {
   public constructor() {
