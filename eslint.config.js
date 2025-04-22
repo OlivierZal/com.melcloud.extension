@@ -47,7 +47,7 @@ const exportSortOptions = {
   newlinesBetween: 'always',
 }
 
-const namedImportSortOptions = {
+const importNamedSortOptions = {
   groups: buildExportImportGroup('import'),
   newlinesBetween: 'always',
 }
@@ -348,7 +348,7 @@ const config = defineConfig([
         'error',
         {
           ...namedSortOptions,
-          ...namedImportSortOptions,
+          ...importNamedSortOptions,
         },
       ],
       'perfectionist/sort-object-types': ['error', typeLikeSortOptions],
