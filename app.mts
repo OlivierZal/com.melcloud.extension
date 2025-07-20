@@ -2,6 +2,7 @@ import 'source-map-support/register.js'
 
 // eslint-disable-next-line import-x/no-extraneous-dependencies
 import Homey from 'homey'
+
 import { HomeyAPIV3Local } from 'homey-api'
 
 import { changelog } from './json-files.mts'
