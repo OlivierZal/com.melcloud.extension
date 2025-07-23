@@ -8,9 +8,9 @@ import type {
 } from '../types.mts'
 
 const LOG_RETENTION_DAYS = 6
-const TIME_ZERO = 0
 
 const categories: Record<string, { icon: string; color?: string }> = {
+  /* eslint-disable unicorn/no-unused-properties */
   calculated: { color: '#008000', icon: '🔢' },
   cleaned: { icon: '🗑️' },
   cleanedAll: { icon: '🛑' },
@@ -19,28 +19,29 @@ const categories: Record<string, { icon: string; color?: string }> = {
   listened: { color: '#0047AB', icon: '👂' },
   reverted: { icon: '↩️' },
   saved: { icon: '☁️' },
+  /* eslint-enable unicorn/no-unused-properties */
 }
 
 const getButtonElement = (id: string): HTMLButtonElement => {
-  const element = document.getElementById(id)
+  const element = document.querySelector(`#${id}`)
   if (!(element instanceof HTMLButtonElement)) {
-    throw new Error(`Element with id \`${id}\` is not a button`)
+    throw new TypeError(`Element with id \`${id}\` is not a button`)
   }
   return element
 }
 
 const getSelectElement = (id: string): HTMLSelectElement => {
-  const element = document.getElementById(id)
+  const element = document.querySelector(`#${id}`)
   if (!(element instanceof HTMLSelectElement)) {
-    throw new Error(`Element with id \`${id}\` is not a select`)
+    throw new TypeError(`Element with id \`${id}\` is not a select`)
   }
   return element
 }
 
 const getTableSectionElement = (id: string): HTMLTableSectionElement => {
-  const element = document.getElementById(id)
+  const element = document.querySelector(`#${id}`)
   if (!(element instanceof HTMLTableSectionElement)) {
-    throw new Error(`Element with id "${id}" is not a table`)
+    throw new TypeError(`Element with id \`${id}\` is not a table`)
   }
   return element
 }
@@ -65,13 +66,13 @@ const fetchLanguage = async (homey: Homey): Promise<void> =>
   })
 
 const disableButtons = (value = true): void => {
-  ;[applyElement, refreshElement].forEach((element) => {
+  for (const element of [applyElement, refreshElement]) {
     if (value) {
       element.classList.add('is-disabled')
-      return
+      continue
     }
     element.classList.remove('is-disabled')
-  })
+  }
 }
 
 const enableButtons = (value = true): void => {
@@ -112,7 +113,7 @@ const createMessageElement = (
   if (color !== undefined) {
     messageElement.style.color = color
   }
-  messageElement.innerText = message
+  messageElement.textContent = message
   return messageElement
 }
 
@@ -155,16 +156,17 @@ const handleTemperatureSensorsError = async (
 
 const handleSettings = (settings: HomeySettings): void => {
   if (!logsElement.childElementCount) {
-    ;(settings.lastLogs ?? [])
+    for (const log of (settings.lastLogs ?? [])
       .filter(({ time }) => {
         const date = new Date(time)
         const oldestDate = new Date()
         oldestDate.setDate(oldestDate.getDate() - LOG_RETENTION_DAYS)
-        oldestDate.setHours(TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_ZERO)
+        oldestDate.setHours(0, 0, 0, 0)
         return date >= oldestDate
       })
-      .toReversed()
-      .forEach(displayLog)
+      .toReversed()) {
+      displayLog(log)
+    }
   }
   capabilityPathElement.value = settings.capabilityPath ?? ''
   enabledElement.value = String(settings.isEnabled === true)
@@ -195,11 +197,11 @@ const getTemperatureSensors = async (homey: Homey): Promise<void> =>
         if (error) {
           await handleTemperatureSensorsError(homey, error.message)
         } else {
-          devices.forEach(({ capabilityName, capabilityPath }) => {
+          for (const { capabilityName, capabilityPath } of devices) {
             capabilityPathElement.append(
               new Option(capabilityName, capabilityPath),
             )
-          })
+          }
         }
         resolve()
       },

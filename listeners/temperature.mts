@@ -21,6 +21,7 @@ export abstract class TemperatureListener {
     ;({ names: this.names } = app)
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   protected async destroyTemperature(): Promise<void> {
     if (this.temperatureListener !== null) {
       this.temperatureListener.destroy()
@@ -30,7 +31,6 @@ export abstract class TemperatureListener {
       capability: this.names['temperature'],
       name: this.device.name,
     })
-    return Promise.resolve()
   }
 
   protected async getCapabilityValue(capabilityId: string): Promise<unknown> {

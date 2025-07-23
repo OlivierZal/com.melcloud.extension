@@ -1,4 +1,5 @@
 import 'source-map-support/register.js'
+import 'core-js/actual/array/to-reversed.js'
 
 // eslint-disable-next-line import-x/no-extraneous-dependencies
 import Homey from 'homey'
@@ -23,7 +24,7 @@ const MELCLOUD_DRIVER_ID = 'homey:app:com.mecloud:melcloud'
 
 const MAX_LOGS = 100
 const INIT_DELAY = 1000
-const NOTIFICATION_DELAY = 10000
+const NOTIFICATION_DELAY = 10_000
 
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error)
@@ -87,11 +88,12 @@ export default class MELCloudExtensionApp extends Homey.App {
   }
 
   public async autoAdjustCooling(
-    { capabilityPath, isEnabled }: TemperatureListenerData = {
+    temperatureListenerData?: TemperatureListenerData,
+  ): Promise<void> {
+    const { capabilityPath, isEnabled } = temperatureListenerData ?? {
       capabilityPath: this.homey.settings.get('capabilityPath') ?? ':',
       isEnabled: this.homey.settings.get('isEnabled') === true,
-    },
-  ): Promise<void> {
+    }
     await this.#destroyListeners()
     try {
       await OutdoorTemperatureListener.create(this, {
@@ -108,14 +110,14 @@ export default class MELCloudExtensionApp extends Homey.App {
   }
 
   public pushToUI(name: string, params?: ListenerParams): void {
-    const [messageId, category = messageId] = name.split('.').reverse()
+    const [messageId, category = messageId] = name.split('.').toReversed()
     if (messageId !== undefined) {
       const newLog: TimestampedLog = {
         category,
         message: this.homey
           .__(`log.${messageId}`, params)
-          .replace(/de el /giu, 'del ')
-          .replace(/de le /giu, 'du '),
+          .replaceAll(/de el /giu, 'del ')
+          .replaceAll(/de le /giu, 'du '),
         time: Date.now(),
       }
       this.homey.api.realtime('log', newLog)
@@ -129,22 +131,24 @@ export default class MELCloudExtensionApp extends Homey.App {
   }
 
   #createNotification(): void {
+    const { homey } = this
     const {
-      homey: {
-        manifest: { version },
-      },
-    } = this
-    if (this.homey.settings.get('notifiedVersion') !== version) {
+      i18n,
+      manifest: { version },
+      notifications,
+      settings,
+    } = homey
+    if (settings.get('notifiedVersion') !== version) {
       const { [version]: versionChangelog = {} } = changelog
-      const language = this.homey.i18n.getLanguage()
+      const language = i18n.getLanguage()
       if (language in versionChangelog) {
-        this.homey.setTimeout(async () => {
+        homey.setTimeout(async () => {
           try {
             if (hasChangelogLanguage(versionChangelog, language)) {
-              await this.homey.notifications.createNotification({
+              await notifications.createNotification({
                 excerpt: versionChangelog[language],
               })
-              this.homey.settings.set('notifiedVersion', version)
+              settings.set('notifiedVersion', version)
             }
           } catch {}
         }, NOTIFICATION_DELAY)
@@ -170,7 +174,7 @@ export default class MELCloudExtensionApp extends Homey.App {
     this.#melcloudDevices.length = 0
     this.#temperatureSensors.length = 0
     const devices = await this.#api.devices.getDevices()
-    Object.values(devices).forEach((device) => {
+    for (const device of Object.values(devices)) {
       if (device.driverId === MELCLOUD_DRIVER_ID) {
         this.#melcloudDevices.push(device)
         if (this.homey.settings.get('capabilityPath') === null) {
@@ -187,6 +191,6 @@ export default class MELCloudExtensionApp extends Homey.App {
       ) {
         this.#temperatureSensors.push(device)
       }
-    })
+    }
   }
 }

@@ -8,6 +8,8 @@ import {
 } from './types.mts'
 
 class AtaDeviceNotFoundError extends Error {
+  public override name = 'AtaDeviceNotFoundError'
+
   public constructor() {
     super('notFound')
   }
@@ -28,7 +30,7 @@ const api = {
   },
   getTemperatureSensors({ homey }: { homey: Homey }): TemperatureSensor[] {
     const { app } = homey
-    if (!app.melcloudDevices.length) {
+    if (app.melcloudDevices.length === 0) {
       throw new AtaDeviceNotFoundError()
     }
     return app.temperatureSensors

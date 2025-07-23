@@ -42,4 +42,5 @@ declare module 'homey-api' {
   }
 }
 
+// eslint-disable-next-line unicorn/require-module-specifiers
 export {}
