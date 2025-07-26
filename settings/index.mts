@@ -9,19 +9,6 @@ import type {
 
 const LOG_RETENTION_DAYS = 6
 
-const categories: Record<string, { icon: string; color?: string }> = {
-  /* eslint-disable unicorn/no-unused-properties */
-  calculated: { color: '#008000', icon: '🔢' },
-  cleaned: { icon: '🗑️' },
-  cleanedAll: { icon: '🛑' },
-  created: { icon: '🔊' },
-  error: { color: '#E8000D', icon: '⚠️' },
-  listened: { color: '#0047AB', icon: '👂' },
-  reverted: { icon: '↩️' },
-  saved: { icon: '☁️' },
-  /* eslint-enable unicorn/no-unused-properties */
-}
-
 const getButtonElement = (id: string): HTMLButtonElement => {
   const element = document.querySelector(`#${id}`)
   if (!(element instanceof HTMLButtonElement)) {
@@ -118,17 +105,25 @@ const createMessageElement = (
 }
 
 const displayLog = ({ category, message, time }: TimestampedLog): void => {
-  const { [category ?? 'error']: newCategory } = categories
-  if (newCategory) {
-    const { color, icon } = newCategory
-    const timeElement = createTimeElement(time, icon)
-    const messageElement = createMessageElement(message, color)
-    const rowElement = document.createElement('div')
-    rowElement.style.display = 'flex'
-    rowElement.style.marginBottom = '1em'
-    rowElement.append(timeElement, messageElement)
-    logsElement.insertBefore(rowElement, logsElement.firstChild)
+  const {
+    [category ?? 'error']: { color, icon },
+  } = {
+    calculated: { color: '#008000', icon: '🔢' },
+    cleaned: { icon: '🗑️' },
+    cleanedAll: { icon: '🛑' },
+    created: { icon: '🔊' },
+    error: { color: '#E8000D', icon: '⚠️' },
+    listened: { color: '#0047AB', icon: '👂' },
+    reverted: { icon: '↩️' },
+    saved: { icon: '☁️' },
   }
+  const timeElement = createTimeElement(time, icon)
+  const messageElement = createMessageElement(message, color)
+  const rowElement = document.createElement('div')
+  rowElement.style.display = 'flex'
+  rowElement.style.marginBottom = '1em'
+  rowElement.append(timeElement, messageElement)
+  logsElement.insertBefore(rowElement, logsElement.firstChild)
 }
 
 const handleTemperatureSensorsError = async (

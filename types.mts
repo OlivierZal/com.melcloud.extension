@@ -32,7 +32,15 @@ export interface TemperatureSensor {
 export interface TimestampedLog {
   readonly message: string
   readonly time: number
-  readonly category?: string
+  readonly category?:
+    | 'calculated'
+    | 'cleaned'
+    | 'cleanedAll'
+    | 'created'
+    | 'error'
+    | 'listened'
+    | 'reverted'
+    | 'saved'
 }
 
 export type Thresholds = Partial<Record<string, number>>
