@@ -6,6 +6,7 @@ import Homey from 'homey'
 
 import { HomeyAPIV3Local } from 'homey-api'
 
+import { LENGTH_ZERO } from './constants'
 import { changelog } from './json-files.mts'
 import { ListenerError } from './listeners/error.mts'
 import { MELCloudListener } from './listeners/melcloud.mts'
@@ -171,8 +172,8 @@ export default class MELCloudExtensionApp extends Homey.App {
   }
 
   async #loadDevices(): Promise<void> {
-    this.#melcloudDevices.length = 0
-    this.#temperatureSensors.length = 0
+    this.#melcloudDevices.length = LENGTH_ZERO
+    this.#temperatureSensors.length = LENGTH_ZERO
     const devices = await this.#api.devices.getDevices()
     for (const device of Object.values(devices)) {
       if (device.driverId === MELCLOUD_DRIVER_ID) {

@@ -8,6 +8,7 @@ import type {
 } from '../types.mts'
 
 const LOG_RETENTION_DAYS = 6
+const TIME_ZERO = 0
 
 const categories: Record<string, { icon: string; color?: string }> = {
   /* eslint-disable unicorn/no-unused-properties */
@@ -161,7 +162,7 @@ const handleSettings = (settings: HomeySettings): void => {
         const date = new Date(time)
         const oldestDate = new Date()
         oldestDate.setDate(oldestDate.getDate() - LOG_RETENTION_DAYS)
-        oldestDate.setHours(0, 0, 0, 0)
+        oldestDate.setHours(TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_ZERO)
         return date >= oldestDate
       })
       .toReversed()) {

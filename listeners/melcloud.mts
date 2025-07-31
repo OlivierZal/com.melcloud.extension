@@ -11,6 +11,7 @@ const COOL = 'cool'
 const TARGET_TEMPERATURE = 'target_temperature'
 const THERMOSTAT_MODE = 'thermostat_mode'
 
+const DEFAULT_TEMPERATURE = 0
 const GAP_TEMPERATURE = 8
 const MAX_TEMPERATURE = 38
 
@@ -114,15 +115,17 @@ export class MELCloudListener extends TemperatureListener {
     return Math.min(
       Math.max(
         this.#getThreshold(),
-        Math.ceil(MELCloudListener.#outdoorTemperatureListener.value ?? 0) -
-          GAP_TEMPERATURE,
+        Math.ceil(
+          MELCloudListener.#outdoorTemperatureListener.value ??
+            DEFAULT_TEMPERATURE,
+        ) - GAP_TEMPERATURE,
       ),
       MAX_TEMPERATURE,
     )
   }
 
   #getThreshold(): number {
-    return this.#getThresholds()[this.device.id] ?? 0
+    return this.#getThresholds()[this.device.id] ?? DEFAULT_TEMPERATURE
   }
 
   #getThresholds(): Thresholds {

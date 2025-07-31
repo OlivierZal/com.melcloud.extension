@@ -1,5 +1,6 @@
 import type { Homey } from 'homey/lib/Homey'
 
+import { LENGTH_ZERO } from './constants'
 import {
   type TemperatureListenerData,
   type TemperatureSensor,
@@ -30,7 +31,7 @@ const api = {
   },
   getTemperatureSensors({ homey }: { homey: Homey }): TemperatureSensor[] {
     const { app } = homey
-    if (app.melcloudDevices.length === 0) {
+    if (app.melcloudDevices.length === LENGTH_ZERO) {
       throw new AtaDeviceNotFoundError()
     }
     return app.temperatureSensors
