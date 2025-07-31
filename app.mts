@@ -6,7 +6,7 @@ import Homey from 'homey'
 
 import { HomeyAPIV3Local } from 'homey-api'
 
-import { LENGTH_ZERO } from './constants'
+import { LENGTH_ZERO } from './constants.mts'
 import { changelog } from './json-files.mts'
 import { ListenerError } from './listeners/error.mts'
 import { MELCloudListener } from './listeners/melcloud.mts'

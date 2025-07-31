@@ -1,6 +1,6 @@
 import type { Homey } from 'homey/lib/Homey'
 
-import { LENGTH_ZERO } from './constants'
+import { LENGTH_ZERO } from './constants.mts'
 import {
   type TemperatureListenerData,
   type TemperatureSensor,
