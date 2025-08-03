@@ -19,29 +19,34 @@ class AtaDeviceNotFoundError extends Error {
 const api = {
   async autoAdjustCooling({
     body,
-    homey,
+    homey: { app },
   }: {
     body: TemperatureListenerData
     homey: Homey
   }): Promise<void> {
-    await homey.app.autoAdjustCooling(body)
+    await app.autoAdjustCooling(body)
   },
-  getLanguage({ homey }: { homey: Homey }): string {
-    return homey.i18n.getLanguage()
+  getLanguage({ homey: { i18n } }: { homey: Homey }): string {
+    return i18n.getLanguage()
   },
-  getTemperatureSensors({ homey }: { homey: Homey }): TemperatureSensor[] {
-    const { app } = homey
-    if (app.melcloudDevices.length === LENGTH_ZERO) {
+  getTemperatureSensors({
+    homey: {
+      app: { melcloudDevices, temperatureSensors },
+    },
+  }: {
+    homey: Homey
+  }): TemperatureSensor[] {
+    if (melcloudDevices.length === LENGTH_ZERO) {
       throw new AtaDeviceNotFoundError()
     }
-    return app.temperatureSensors
+    return temperatureSensors
       .flatMap((device) => {
         const capabilities = Object.values(device.capabilitiesObj ?? {}).filter(
           ({ id }) => id.startsWith(MEASURE_TEMPERATURE),
         )
         const outdoorCapability = capabilities.find(
           ({ id }) =>
-            app.melcloudDevices.includes(device) && id === OUTDOOR_TEMPERATURE,
+            melcloudDevices.includes(device) && id === OUTDOOR_TEMPERATURE,
         )
         return (outdoorCapability ? [outdoorCapability] : capabilities).map(
           ({ id, title }): TemperatureSensor => ({
