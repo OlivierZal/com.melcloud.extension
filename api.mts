@@ -41,7 +41,8 @@ const api = {
     }
     return temperatureSensors
       .flatMap((device) => {
-        const capabilities = Object.values(device.capabilitiesObj ?? {}).filter(
+        const { id: deviceId, name: deviceName, capabilitiesObj } = device
+        const capabilities = Object.values(capabilitiesObj ?? {}).filter(
           ({ id }) => id.startsWith(MEASURE_TEMPERATURE),
         )
         const outdoorCapability = capabilities.find(
@@ -50,13 +51,16 @@ const api = {
         )
         return (outdoorCapability ? [outdoorCapability] : capabilities).map(
           ({ id, title }): TemperatureSensor => ({
-            capabilityName: `${device.name} - ${title}`,
-            capabilityPath: `${device.id}:${id}`,
+            capabilityName: `${deviceName} - ${title}`,
+            capabilityPath: `${deviceId}:${id}`,
           }),
         )
       })
-      .sort((device1, device2) =>
-        device1.capabilityName.localeCompare(device2.capabilityName),
+      .sort(
+        (
+          { capabilityName: capabilityName1 },
+          { capabilityName: capabilityName2 },
+        ) => capabilityName1.localeCompare(capabilityName2),
       )
   },
 }
