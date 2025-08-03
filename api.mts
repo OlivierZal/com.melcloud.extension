@@ -56,11 +56,8 @@ const api = {
           }),
         )
       })
-      .sort(
-        (
-          { capabilityName: capabilityName1 },
-          { capabilityName: capabilityName2 },
-        ) => capabilityName1.localeCompare(capabilityName2),
+      .sort(({ capabilityName: name1 }, { capabilityName: name2 }) =>
+        name1.localeCompare(name2),
       )
   },
 }
