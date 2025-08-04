@@ -41,7 +41,7 @@ const api = {
     }
     return temperatureSensors
       .flatMap((device) => {
-        const { id: deviceId, name: deviceName, capabilitiesObj } = device
+        const { capabilitiesObj, id: deviceId, name: deviceName } = device
         const capabilities = Object.values(capabilitiesObj ?? {}).filter(
           ({ id }) => id.startsWith(MEASURE_TEMPERATURE),
         )
