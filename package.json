@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "core-js": "^3.45.0",
-    "homey-api": "^3.13.3",
+    "homey-api": "^3.14.0",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
