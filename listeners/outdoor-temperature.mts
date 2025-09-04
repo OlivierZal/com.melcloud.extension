@@ -1,4 +1,4 @@
-import type { HomeyAPIV3Local } from 'homey-api'
+import type { HomeyAPIV3 } from 'homey-api'
 
 import type MELCloudExtensionApp from '../app.mts'
 import type { TemperatureListenerData } from '../types.mts'
@@ -16,7 +16,7 @@ export class OutdoorTemperatureListener extends TemperatureListener {
 
   private constructor(
     app: MELCloudExtensionApp,
-    device: HomeyAPIV3Local.ManagerDevices.Device,
+    device: HomeyAPIV3.ManagerDevices.Device,
     capabilityId: string,
   ) {
     super(app, device)
@@ -24,7 +24,7 @@ export class OutdoorTemperatureListener extends TemperatureListener {
   }
 
   public static get temperatureListener():
-    | HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability
+    | HomeyAPIV3.ManagerDevices.Device.DeviceCapability
     | null
     | undefined {
     return this.#listener?.temperatureListener
@@ -99,15 +99,12 @@ export class OutdoorTemperatureListener extends TemperatureListener {
     capabilityPath: string,
   ): Promise<{
     capabilityId: string
-    device: HomeyAPIV3Local.ManagerDevices.Device
+    device: HomeyAPIV3.ManagerDevices.Device
   }> {
-    const [deviceId, capabilityId] = capabilityPath.split(':')
+    const [deviceId = '', capabilityId = ''] = capabilityPath.split(':')
     try {
       const device = await app.api.devices.getDevice({ id: deviceId })
-      if (
-        capabilityId === undefined ||
-        !(capabilityId in (device.capabilitiesObj ?? {}))
-      ) {
+      if (!(capabilityId in (device.capabilitiesObj ?? {}))) {
         throw new ListenerError('notFound', {
           idOrName: capabilityId,
           type: app.names['outdoorTemperature'],
