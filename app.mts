@@ -66,7 +66,6 @@ export default class MELCloudExtensionApp extends Homey.App {
   }
 
   public override async onInit(): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.#api = await HomeyAPIV3Local.createAppAPI({ homey: this.homey })
     await this.#api.devices.connect()
     this.#init()
