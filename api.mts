@@ -1,6 +1,5 @@
 import type { Homey } from 'homey/lib/Homey'
 
-import { LENGTH_ZERO } from './constants.mts'
 import {
   type TemperatureListenerData,
   type TemperatureSensor,
@@ -36,7 +35,7 @@ const api = {
   }: {
     homey: Homey
   }): TemperatureSensor[] {
-    if (melcloudDevices.length === LENGTH_ZERO) {
+    if (!melcloudDevices.length) {
       throw new AtaDeviceNotFoundError()
     }
     return temperatureSensors
@@ -56,7 +55,7 @@ const api = {
           }),
         )
       })
-      .sort(({ capabilityName: name1 }, { capabilityName: name2 }) =>
+      .toSorted(({ capabilityName: name1 }, { capabilityName: name2 }) =>
         name1.localeCompare(name2),
       )
   },

@@ -1,12 +1,12 @@
 import 'source-map-support/register.js'
 import 'core-js/actual/array/to-reversed.js'
+import 'core-js/actual/array/to-sorted.js'
 
 // eslint-disable-next-line import-x/no-extraneous-dependencies
 import Homey from 'homey'
 
 import { HomeyAPIV3Local } from 'homey-api'
 
-import { LENGTH_ZERO } from './constants.mts'
 import { changelog } from './json-files.mts'
 import { ListenerError } from './listeners/error.mts'
 import { MELCloudListener } from './listeners/melcloud.mts'
@@ -171,8 +171,8 @@ export default class MELCloudExtensionApp extends Homey.App {
   }
 
   async #loadDevices(): Promise<void> {
-    this.#melcloudDevices.length = LENGTH_ZERO
-    this.#temperatureSensors.length = LENGTH_ZERO
+    this.#melcloudDevices.length = 0
+    this.#temperatureSensors.length = 0
     const devices = await this.#api.devices.getDevices()
     for (const device of Object.values(devices)) {
       if (device.driverId === MELCLOUD_DRIVER_ID) {
