@@ -23,29 +23,26 @@ const categories: Record<string, { icon: string; color?: string }> = {
   /* eslint-enable unicorn/no-unused-properties */
 }
 
-const getButtonElement = (id: string): HTMLButtonElement => {
+const getElement = <T extends HTMLElement>(
+  id: string,
+  elementConstructor: new () => T,
+  elementType: string,
+): T => {
   const element = document.querySelector(`#${id}`)
-  if (!(element instanceof HTMLButtonElement)) {
-    throw new TypeError(`Element with id \`${id}\` is not a button`)
+  if (!(element instanceof elementConstructor)) {
+    throw new TypeError(`Element with id \`${id}\` is not a ${elementType}`)
   }
   return element
 }
 
-const getSelectElement = (id: string): HTMLSelectElement => {
-  const element = document.querySelector(`#${id}`)
-  if (!(element instanceof HTMLSelectElement)) {
-    throw new TypeError(`Element with id \`${id}\` is not a select`)
-  }
-  return element
-}
+const getButtonElement = (id: string): HTMLButtonElement =>
+  getElement(id, HTMLButtonElement, 'button')
 
-const getTableSectionElement = (id: string): HTMLTableSectionElement => {
-  const element = document.querySelector(`#${id}`)
-  if (!(element instanceof HTMLTableSectionElement)) {
-    throw new TypeError(`Element with id \`${id}\` is not a table`)
-  }
-  return element
-}
+const getSelectElement = (id: string): HTMLSelectElement =>
+  getElement(id, HTMLSelectElement, 'select')
+
+const getTableSectionElement = (id: string): HTMLTableSectionElement =>
+  getElement(id, HTMLTableSectionElement, 'table section')
 
 const applyElement = getButtonElement('apply')
 const refreshElement = getButtonElement('refresh')
