@@ -11,7 +11,7 @@
     "format:fix": "prettier . --write",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "prepare": "npm run format:docs && npm run lint:fix && npm run format:fix",
+    "prepare": "cp homey-api-override.d.ts node_modules/homey-api/assets/types/homey-api.d.ts && npm run format:docs && npm run lint:fix && npm run format:fix",
     "publish": "homey app publish"
   },
   "dependencies": {

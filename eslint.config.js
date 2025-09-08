@@ -145,7 +145,7 @@ const typeLikeSortOptions = {
 
 const config = defineConfig([
   {
-    ignores: ['.homeybuild/'],
+    ignores: ['.homeybuild/', 'homey-api-override.d.ts'],
   },
   {
     extends: [
