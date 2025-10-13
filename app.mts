@@ -1,13 +1,11 @@
 import 'source-map-support/register.js'
-import 'core-js/actual/array/to-reversed.js'
-import 'core-js/actual/array/to-sorted.js'
 
 // eslint-disable-next-line import-x/no-extraneous-dependencies
 import Homey from 'homey'
 
 import { HomeyAPIV3Local } from 'homey-api'
 
-import { changelog } from './json-files.mts'
+import { changelog } from './files.mts'
 import { ListenerError } from './listeners/error.mts'
 import { MELCloudListener } from './listeners/melcloud.mts'
 import { OutdoorTemperatureListener } from './listeners/outdoor-temperature.mts'
@@ -139,7 +137,10 @@ export default class MELCloudExtensionApp extends Homey.App {
       settings,
     } = homey
     if (settings.get('notifiedVersion') !== version) {
-      const { [version]: versionChangelog = {} } = changelog
+      const { [version]: versionChangelog = {} } = changelog as Record<
+        string,
+        object
+      >
       const language = i18n.getLanguage()
       if (language in versionChangelog) {
         homey.setTimeout(async () => {

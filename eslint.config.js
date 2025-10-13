@@ -313,7 +313,7 @@ const config = defineConfig([
       'import-x/no-unassigned-import': [
         'error',
         {
-          allow: ['source-map-support/register.js', 'core-js/actual/**'],
+          allow: ['source-map-support/register.js'],
         },
       ],
       'import-x/no-unused-modules': 'error',
@@ -518,6 +518,7 @@ const config = defineConfig([
     rules: {
       'css/prefer-logical-properties': 'error',
       'css/relative-font-units': 'error',
+      'css/selector-complexity': 'error',
       'css/use-baseline': [
         'error',
         {
