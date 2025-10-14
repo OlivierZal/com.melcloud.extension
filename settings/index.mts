@@ -11,7 +11,6 @@ const LOG_RETENTION_DAYS = 6
 const TIME_ZERO = 0
 
 const categories: Record<string, { icon: string; color?: string }> = {
-  /* eslint-disable unicorn/no-unused-properties */
   calculated: { color: '#008000', icon: '🔢' },
   cleaned: { icon: '🗑️' },
   cleanedAll: { icon: '🛑' },
@@ -20,7 +19,6 @@ const categories: Record<string, { icon: string; color?: string }> = {
   listened: { color: '#0047AB', icon: '👂' },
   reverted: { icon: '↩️' },
   saved: { icon: '☁️' },
-  /* eslint-enable unicorn/no-unused-properties */
 }
 
 const getElement = <T extends HTMLElement>(
@@ -116,7 +114,7 @@ const createMessageElement = (
 }
 
 const displayLog = ({ category, message, time }: TimestampedLog): void => {
-  const { [category ?? 'error']: newCategory } = categories
+  const newCategory = categories[category ?? 'error'] ?? categories['error']
   if (newCategory) {
     const { color, icon } = newCategory
     const timeElement = createTimeElement(time, icon)

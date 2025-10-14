@@ -112,8 +112,7 @@ export default class MELCloudExtensionApp extends Homey.App {
     if (messageId !== undefined) {
       const newLog: TimestampedLog = {
         category,
-        message: this.homey
-          .__(`log.${messageId}`, params)
+        message: (this.homey.__(`log.${messageId}`, params) || messageId)
           .replaceAll(/de el /giu, 'del ')
           .replaceAll(/de le /giu, 'du '),
         time: Date.now(),
