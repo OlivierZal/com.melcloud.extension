@@ -2,6 +2,7 @@
   "name": "com.melcloud.extension",
   "version": "22.0.0",
   "description": "Extension for MELCloud Homey App",
+  "license": "GPL-3.0-only",
   "type": "module",
   "scripts": {
     "build": "npm run prepare && homey app validate --level publish",
@@ -21,7 +22,7 @@
   },
   "devDependencies": {
     "@eslint/css": "^0.13.0",
-    "@eslint/js": "^9.37.0",
+    "@eslint/js": "^9.38.0",
     "@eslint/json": "^0.13.2",
     "@eslint/markdown": "^7.4.0",
     "@html-eslint/eslint-plugin": "^0.47.0",
@@ -29,7 +30,7 @@
     "@stylistic/eslint-plugin": "^5.4.0",
     "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.12",
     "@types/node": "^24.8.1",
-    "eslint": "^9.37.0",
+    "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import-x": "^4.16.1",
