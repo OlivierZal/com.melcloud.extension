@@ -1,4 +1,4 @@
-import type { HomeyAPIV3 } from 'homey-api'
+import type { HomeyAPIV3Local } from 'homey-api'
 
 import type MELCloudExtensionApp from '../app.mts'
 import type { Thresholds } from '../types.mts'
@@ -20,12 +20,12 @@ export class MELCloudListener extends TemperatureListener {
 
   static #outdoorTemperatureListener: typeof OutdoorTemperatureListener
 
-  #thermostatModeListener: HomeyAPIV3.ManagerDevices.Device.DeviceCapability | null =
+  #thermostatModeListener: HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability | null =
     null
 
   public constructor(
     app: MELCloudExtensionApp,
-    device: HomeyAPIV3.ManagerDevices.Device,
+    device: HomeyAPIV3Local.ManagerDevices.Device,
   ) {
     super(app, device)
     MELCloudListener.listeners.set(device.id, this)

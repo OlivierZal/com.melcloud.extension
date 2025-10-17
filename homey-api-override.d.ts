@@ -25,23 +25,19 @@ export namespace HomeyAPIV3Local {
 }
 
 export namespace HomeyAPIV3Local.ManagerDevices {
-  export class Device extends HomeyAPIV3.ManagerDevices.Device {
-    capabilities: string[]
-
-    capabilitiesObj: Record<string, HomeyAPIV3.ManagerDevices.Capability> | null
-
-    driverId: string
-  }
-}
-
-export namespace HomeyAPIV3.ManagerDevices {
-  export class Capability extends HomeyAPIV3.ManagerDevices.Capability {
+  export class Capability {
     id: string
 
     title: string
   }
 
   export class Device {
+    capabilities: string[]
+
+    capabilitiesObj: Record<string, Capability> | null
+
+    driverId: string
+
     id: string
 
     name: string
@@ -59,7 +55,7 @@ export namespace HomeyAPIV3.ManagerDevices {
   }
 }
 
-export namespace HomeyAPIV3.ManagerDevices.Device {
+export namespace HomeyAPIV3Local.ManagerDevices.Device {
   export class DeviceCapability {
     value: boolean | number | string | null
 

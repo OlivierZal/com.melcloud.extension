@@ -1,20 +1,20 @@
-import type { HomeyAPIV3 } from 'homey-api'
+import type { HomeyAPIV3Local } from 'homey-api'
 
 import type MELCloudExtensionApp from '../app.mts'
 
 export abstract class TemperatureListener {
   protected readonly app: MELCloudExtensionApp
 
-  protected readonly device: HomeyAPIV3.ManagerDevices.Device
+  protected readonly device: HomeyAPIV3Local.ManagerDevices.Device
 
   protected readonly names: Record<string, string>
 
-  protected temperatureListener: HomeyAPIV3.ManagerDevices.Device.DeviceCapability | null =
+  protected temperatureListener: HomeyAPIV3Local.ManagerDevices.Device.DeviceCapability | null =
     null
 
   protected constructor(
     app: MELCloudExtensionApp,
-    device: HomeyAPIV3.ManagerDevices.Device,
+    device: HomeyAPIV3Local.ManagerDevices.Device,
   ) {
     this.app = app
     this.device = device
