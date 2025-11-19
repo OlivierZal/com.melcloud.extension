@@ -16,7 +16,7 @@
     "publish": "homey app publish"
   },
   "dependencies": {
-    "core-js": "^3.46.0",
+    "core-js": "^3.47.0",
     "homey-api": "^3.14.20",
     "source-map-support": "^0.5.21"
   },
