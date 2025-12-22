@@ -5,15 +5,13 @@
   "license": "GPL-3.0-only",
   "type": "module",
   "scripts": {
-    "build": "npm run prepare && homey app validate --level publish",
-    "deploy": "npm run prepare && homey app install",
+    "build": "tsc",
     "format": "prettier . --check",
     "format:docs": "prettier README.md --ignore-path --write",
     "format:fix": "prettier . --write",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "prepare": "cp homey-api-override.d.ts node_modules/homey-api/assets/types/homey-api.d.ts && npm run format:docs && npm run lint:fix && npm run format:fix",
-    "publish": "homey app publish"
+    "prepare": "cp homey-api-override.d.ts node_modules/homey-api/assets/types/homey-api.d.ts && npm run format:docs && npm run lint:fix && npm run format:fix"
   },
   "dependencies": {
     "core-js": "^3.47.0",
