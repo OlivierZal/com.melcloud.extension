@@ -1,6 +1,6 @@
 {
   "name": "com.melcloud.extension",
-  "version": "23.0.0",
+  "version": "23.0.1",
   "description": "Extension for MELCloud Homey App",
   "license": "GPL-3.0-only",
   "type": "module",
