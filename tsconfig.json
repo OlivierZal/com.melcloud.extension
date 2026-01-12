@@ -16,7 +16,6 @@
     "rewriteRelativeImportExtensions": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strict": true,
     "target": "esnext",
     "verbatimModuleSyntax": true
   }
