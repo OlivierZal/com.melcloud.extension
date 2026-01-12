@@ -28,7 +28,6 @@
     "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.12",
     "@types/node": "^25.0.6",
     "@typescript/native-preview": "^7.0.0-dev.20260112.1",
-    "baseline-browser-mapping": "^2.9.14",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
