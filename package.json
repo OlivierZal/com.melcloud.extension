@@ -14,7 +14,7 @@
     "prepare": "cp homey-api-override.d.ts node_modules/homey-api/assets/types/homey-api.d.ts && npm run format:docs && npm run lint:fix && npm run format:fix"
   },
   "dependencies": {
-    "homey-api": "^3.16.1",
+    "homey-api": "^3.17.0",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
