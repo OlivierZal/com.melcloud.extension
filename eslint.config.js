@@ -451,19 +451,6 @@ const config = defineConfig([
     },
   },
   {
-    files: ['app.mts'],
-    rules: {
-      'import-x/no-extraneous-dependencies': 'off',
-      'import-x/no-named-as-default-member': 'off',
-    },
-  },
-  {
-    files: ['settings/index.mts'],
-    rules: {
-      'func-style': 'off',
-    },
-  },
-  {
     files: ['**/*.config.{ts,js}'],
     rules: {
       'import-x/max-dependencies': 'off',

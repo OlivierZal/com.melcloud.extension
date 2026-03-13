@@ -251,6 +251,7 @@ const addEventListeners = (homey: Homey): void => {
 }
 
 // @ts-expect-error: read by another script in `./index.html`
+// eslint-disable-next-line func-style
 async function onHomeyReady(homey: Homey): Promise<void> {
   await fetchLanguage(homey)
   await getTemperatureSensors(homey)

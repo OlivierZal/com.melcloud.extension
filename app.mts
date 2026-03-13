@@ -1,3 +1,4 @@
+// eslint-disable-next-line import-x/no-extraneous-dependencies
 import Homey from 'homey'
 
 import { HomeyAPIV3Local } from 'homey-api'
@@ -25,6 +26,7 @@ const NOTIFICATION_DELAY = 10_000
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error)
 
+// eslint-disable-next-line import-x/no-named-as-default-member
 export default class MELCloudExtensionApp extends Homey.App {
   declare public homey: Homey.Homey
 
