@@ -35,7 +35,7 @@ const homeyCallback = async <T,>(
     })
   })
 
-const getElement = <T extends HTMLElement,>(
+const getElement = <T extends HTMLElement>(
   id: string,
   elementConstructor: new () => T,
   elementType: string,
