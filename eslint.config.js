@@ -228,7 +228,14 @@ const config = defineConfig([
       'import-x/no-relative-packages': 'error',
       'import-x/no-self-import': 'error',
       'import-x/no-unassigned-import': 'error',
-      'import-x/no-unused-modules': 'error',
+      'import-x/no-unused-modules': [
+        'error',
+        {
+          missingExports: true,
+          suppressMissingFileEnumeratorAPIWarning: true,
+          unusedExports: true,
+        },
+      ],
       'import-x/no-useless-path-segments': 'error',
       'import-x/no-webpack-loader-syntax': 'error',
       'import-x/unambiguous': 'error',
