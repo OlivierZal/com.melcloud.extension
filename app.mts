@@ -1,6 +1,3 @@
-import 'source-map-support/register.js'
-
-// eslint-disable-next-line import-x/no-extraneous-dependencies
 import Homey from 'homey'
 
 import { HomeyAPIV3Local } from 'homey-api'
@@ -28,12 +25,6 @@ const NOTIFICATION_DELAY = 10_000
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error)
 
-const hasChangelogLanguage = (
-  versionChangelog: object,
-  language: string,
-): language is keyof typeof versionChangelog => language in versionChangelog
-
-// eslint-disable-next-line import-x/no-named-as-default-member
 export default class MELCloudExtensionApp extends Homey.App {
   declare public homey: Homey.Homey
 
@@ -136,20 +127,14 @@ export default class MELCloudExtensionApp extends Homey.App {
       settings,
     } = homey
     if (settings.get('notifiedVersion') !== version) {
-      const { [version]: versionChangelog = {} } = changelog as Record<
-        string,
-        object
-      >
+      const { [version]: versionChangelog } = changelog
       const language = i18n.getLanguage()
-      if (language in versionChangelog) {
+      const excerpt = versionChangelog?.[language]
+      if (excerpt !== undefined) {
         homey.setTimeout(async () => {
           try {
-            if (hasChangelogLanguage(versionChangelog, language)) {
-              await notifications.createNotification({
-                excerpt: versionChangelog[language],
-              })
-              settings.set('notifiedVersion', version)
-            }
+            await notifications.createNotification({ excerpt })
+            settings.set('notifiedVersion', version)
           } catch {}
         }, NOTIFICATION_DELAY)
       }

@@ -1,3 +1,5 @@
+export type Changelog = Record<string, Record<string, string>>
+
 export const MEASURE_TEMPERATURE = 'measure_temperature'
 export const OUTDOOR_TEMPERATURE = `${MEASURE_TEMPERATURE}.outdoor`
 

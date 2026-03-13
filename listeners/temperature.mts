@@ -30,8 +30,7 @@ export abstract class TemperatureListener {
       capability: this.names['temperature'],
       name: this.device.name,
     })
-    // eslint-disable-next-line unicorn/no-useless-promise-resolve-reject
-    return Promise.resolve()
+    await Promise.resolve()
   }
 
   protected async getCapabilityValue(capabilityId: string): Promise<unknown> {
