@@ -2,8 +2,20 @@
   "name": "com.melcloud.extension",
   "version": "23.0.1",
   "description": "Extension for MELCloud Homey App",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OlivierZal/com.melcloud.extension.git"
+  },
   "license": "GPL-3.0-only",
+  "author": "Olivier Zalmanski",
+  "sideEffects": false,
   "type": "module",
+  "exports": {
+    ".": "./app.mts"
+  },
+  "files": [
+    ".homeybuild/"
+  ],
   "scripts": {
     "build": "npm run prepare && tsc",
     "format": "prettier . --check",
