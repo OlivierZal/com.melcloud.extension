@@ -21,6 +21,20 @@ const categories: Record<string, { icon: string; color?: string }> = {
   saved: { icon: '☁️' },
 }
 
+// Promisifies Homey Settings API callbacks (error-first convention)
+const homeyCallback = async <T,>(
+  call: (callback: (error: Error | null, result: T) => void) => void,
+): Promise<T> =>
+  new Promise((resolve, reject) => {
+    call((error, result) => {
+      if (error) {
+        reject(error)
+        return
+      }
+      resolve(result)
+    })
+  })
+
 const getElement = <T extends HTMLElement>(
   id: string,
   elementConstructor: new () => T,
@@ -49,17 +63,6 @@ const enabledElement = getSelectElement('enabled')
 const logsElement = getTableSectionElement('logs')
 
 let language = 'en'
-
-const fetchLanguage = async (homey: Homey): Promise<void> =>
-  new Promise((resolve) => {
-    homey.api('GET', '/language', (error: Error | null, lang: string) => {
-      if (!error) {
-        document.documentElement.lang = lang
-        language = lang
-      }
-      resolve()
-    })
-  })
 
 const disableButtons = (value = true): void => {
   for (const element of [applyElement, refreshElement]) {
@@ -97,7 +100,11 @@ const createTimeElement = (time: number, icon: string): HTMLDivElement => {
   timeElement.style.marginRight = '1em'
   timeElement.style.textAlign = 'center'
   timeElement.style.whiteSpace = 'nowrap'
-  timeElement.innerHTML = `${displayTime(time)}<br>${icon}`
+  timeElement.append(
+    document.createTextNode(displayTime(time)),
+    document.createElement('br'),
+    document.createTextNode(icon),
+  )
   return timeElement
 }
 
@@ -127,6 +134,9 @@ const displayLog = ({ category, message, time }: TimestampedLog): void => {
   }
 }
 
+const getErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error)
+
 const handleTemperatureSensorsError = async (
   homey: Homey,
   errorMessage: string,
@@ -153,6 +163,7 @@ const handleTemperatureSensorsError = async (
 const handleSettings = (settings: HomeySettings): void => {
   if (!logsElement.childElementCount) {
     for (const log of (settings.lastLogs ?? [])
+      // Only show logs from the last LOG_RETENTION_DAYS (midnight cutoff)
       .filter(({ time }) => {
         const date = new Date(time)
         const oldestDate = new Date()
@@ -168,46 +179,45 @@ const handleSettings = (settings: HomeySettings): void => {
   enabledElement.value = String(settings.isEnabled === true)
 }
 
-const fetchHomeySettings = async (homey: Homey): Promise<void> => {
-  await withDisablingButtons(
-    async () =>
-      new Promise((resolve) => {
-        homey.get(async (error: Error | null, settings: HomeySettings) => {
-          if (error) {
-            await homey.alert(error.message)
-          } else {
-            handleSettings(settings)
-          }
-          resolve()
-        })
-      }),
-  )
+const fetchLanguage = async (homey: Homey): Promise<void> => {
+  try {
+    const lang = await homeyCallback<string>((callback) => {
+      homey.api('GET', '/language', callback)
+    })
+    document.documentElement.lang = lang
+    language = lang
+  } catch {}
 }
 
-const getTemperatureSensors = async (homey: Homey): Promise<void> =>
-  new Promise((resolve) => {
-    homey.api(
-      'GET',
-      '/devices/sensors/temperature',
-      async (error: Error | null, devices: TemperatureSensor[]) => {
-        if (error) {
-          await handleTemperatureSensorsError(homey, error.message)
-        } else {
-          for (const { capabilityName, capabilityPath } of devices) {
-            capabilityPathElement.append(
-              new Option(capabilityName, capabilityPath),
-            )
-          }
-        }
-        resolve()
-      },
-    )
+const fetchHomeySettings = async (homey: Homey): Promise<void> =>
+  withDisablingButtons(async () => {
+    try {
+      const settings = await homeyCallback<HomeySettings>((callback) => {
+        homey.get(callback)
+      })
+      handleSettings(settings)
+    } catch (error) {
+      await homey.alert(getErrorMessage(error))
+    }
   })
 
+const getTemperatureSensors = async (homey: Homey): Promise<void> => {
+  try {
+    const devices = await homeyCallback<TemperatureSensor[]>((callback) => {
+      homey.api('GET', '/devices/sensors/temperature', callback)
+    })
+    for (const { capabilityName, capabilityPath } of devices) {
+      capabilityPathElement.append(new Option(capabilityName, capabilityPath))
+    }
+  } catch (error) {
+    await handleTemperatureSensorsError(homey, getErrorMessage(error))
+  }
+}
+
 const autoAdjustCooling = async (homey: Homey): Promise<void> =>
-  withDisablingButtons(
-    async () =>
-      new Promise((resolve) => {
+  withDisablingButtons(async () => {
+    try {
+      await homeyCallback<undefined>((callback) => {
         homey.api(
           'PUT',
           '/melcloud/cooling/auto_adjustment',
@@ -215,17 +225,16 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
             capabilityPath: capabilityPathElement.value,
             isEnabled: enabledElement.value === 'true',
           } satisfies TemperatureListenerData,
-          async (error: Error | null) => {
-            if (error) {
-              await homey.alert(error.message)
-            }
-            resolve()
-          },
+          callback,
         )
-      }),
-  )
+      })
+    } catch (error) {
+      await homey.alert(getErrorMessage(error))
+    }
+  })
 
 const addEventListeners = (homey: Homey): void => {
+  // Auto-enable when the user selects a different sensor (UX convenience)
   capabilityPathElement.addEventListener('change', () => {
     if (enabledElement.value === 'false') {
       enabledElement.value = 'true'

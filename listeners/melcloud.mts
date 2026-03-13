@@ -12,7 +12,9 @@ const TARGET_TEMPERATURE = 'target_temperature'
 const THERMOSTAT_MODE = 'thermostat_mode'
 
 const DEFAULT_TEMPERATURE = 0
+// Minimum gap between outdoor temperature and target cooling temperature
 const GAP_TEMPERATURE = 8
+// MELCloud AC unit maximum cooling target
 const MAX_TEMPERATURE = 38
 
 export class MELCloudListener extends TemperatureListener {
@@ -50,6 +52,12 @@ export class MELCloudListener extends TemperatureListener {
     this.#outdoorTemperatureListener = listener
   }
 
+  /*
+   * Listens to thermostat mode changes: when switching to "cool",
+   * starts monitoring target temperature; when leaving "cool",
+   * stops monitoring and cleans up the outdoor sensor listener
+   * if no other device is still in cooling mode
+   */
   public async listenToThermostatMode(): Promise<void> {
     const currentThermostatMode = await this.getCapabilityValue(THERMOSTAT_MODE)
     this.#thermostatModeListener = this.device.makeCapabilityInstance(
@@ -65,6 +73,7 @@ export class MELCloudListener extends TemperatureListener {
           return
         }
         await this.destroyTemperature()
+        // Only stop outdoor temperature monitoring if no other device needs it
         const outdoorTemperatureListener =
           MELCloudListener.#outdoorTemperatureListener
         if (
@@ -111,6 +120,12 @@ export class MELCloudListener extends TemperatureListener {
     MELCloudListener.listeners.delete(this.device.id)
   }
 
+  /*
+   * Calculates the automatic cooling target:
+   * - At least the user-defined threshold (minimum comfort temperature)
+   * - At least outdoor temperature minus GAP_TEMPERATURE (efficiency floor)
+   * - At most MAX_TEMPERATURE (hardware limit)
+   */
   #getTargetTemperature(): number {
     return Math.min(
       Math.max(
@@ -140,6 +155,14 @@ export class MELCloudListener extends TemperatureListener {
     )
   }
 
+  /*
+   * Starts monitoring target temperature for this AC device:
+   * 1. Ensures outdoor temperature is being monitored first (dependency)
+   * 2. Captures current target temperature as the initial threshold
+   * 3. Listens for manual changes: if the user sets a different value
+   *    than what was auto-calculated, it becomes the new threshold
+   * 4. Triggers an initial recalculation via #setThreshold
+   */
   async #listenToTargetTemperature(): Promise<void> {
     if (this.temperatureListener === null) {
       await MELCloudListener.#outdoorTemperatureListener.listenToOutdoorTemperature()
@@ -167,6 +190,10 @@ export class MELCloudListener extends TemperatureListener {
     }
   }
 
+  /*
+   * Restores the target temperature to the user's threshold when
+   * auto-adjustment stops (e.g. device leaves cooling mode)
+   */
   async #revertTemperature(): Promise<void> {
     try {
       const value = this.#getThreshold()

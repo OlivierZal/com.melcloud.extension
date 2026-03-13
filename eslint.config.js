@@ -57,10 +57,7 @@ const typeLikeSortOptions = {
 
 const config = defineConfig([
   {
-    ignores: ['.homeybuild/'],
-  },
-  {
-    ignores: ['homey-api-override.d.ts'],
+    ignores: ['.homeybuild/', 'homey-api-override.d.ts'],
   },
   {
     extends: [
@@ -230,13 +227,15 @@ const config = defineConfig([
       'import-x/no-named-default': 'error',
       'import-x/no-relative-packages': 'error',
       'import-x/no-self-import': 'error',
-      'import-x/no-unassigned-import': [
+      'import-x/no-unassigned-import': 'error',
+      'import-x/no-unused-modules': [
         'error',
         {
-          allow: ['source-map-support/register.js'],
+          missingExports: true,
+          suppressMissingFileEnumeratorAPIWarning: true,
+          unusedExports: true,
         },
       ],
-      'import-x/no-unused-modules': 'error',
       'import-x/no-useless-path-segments': 'error',
       'import-x/no-webpack-loader-syntax': 'error',
       'import-x/unambiguous': 'error',
