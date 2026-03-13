@@ -61,6 +61,11 @@ export class OutdoorTemperatureListener extends TemperatureListener {
     await this.#listener?.destroyTemperature()
   }
 
+  /*
+   * Starts monitoring the outdoor temperature sensor. On each change,
+   * recalculates all MELCloud devices' target temperatures in parallel.
+   * Called lazily: only when the first device enters cooling mode.
+   */
   public static async listenToOutdoorTemperature(): Promise<void> {
     if (this.#listener) {
       this.#listener.#value = Number(
@@ -94,6 +99,10 @@ export class OutdoorTemperatureListener extends TemperatureListener {
     }
   }
 
+  /*
+   * Parses a capabilityPath ("deviceId:capabilityId") and validates
+   * that both the device and the capability exist
+   */
   static async #validateCapabilityPath(
     app: MELCloudExtensionApp,
     capabilityPath: string,

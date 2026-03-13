@@ -21,6 +21,7 @@ const categories: Record<string, { icon: string; color?: string }> = {
   saved: { icon: '☁️' },
 }
 
+// Promisifies Homey Settings API callbacks (error-first convention)
 const homeyCallback = async <T,>(
   call: (callback: (error: Error | null, result: T) => void) => void,
 ): Promise<T> =>
@@ -162,6 +163,7 @@ const handleTemperatureSensorsError = async (
 const handleSettings = (settings: HomeySettings): void => {
   if (!logsElement.childElementCount) {
     for (const log of (settings.lastLogs ?? [])
+      // Only show logs from the last LOG_RETENTION_DAYS (midnight cutoff)
       .filter(({ time }) => {
         const date = new Date(time)
         const oldestDate = new Date()
@@ -232,6 +234,7 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
   })
 
 const addEventListeners = (homey: Homey): void => {
+  // Auto-enable when the user selects a different sensor (UX convenience)
   capabilityPathElement.addEventListener('change', () => {
     if (enabledElement.value === 'false') {
       enabledElement.value = 'true'

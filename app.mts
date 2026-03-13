@@ -17,6 +17,7 @@ import {
 
 MELCloudListener.setOutdoorTemperatureListener(OutdoorTemperatureListener)
 
+// Driver ID from the MELCloud Homey app (the typo "mecloud" is the actual app ID)
 const MELCLOUD_DRIVER_ID = 'homey:app:com.mecloud:melcloud'
 
 const MAX_LOGS = 100
@@ -100,11 +101,17 @@ export default class MELCloudExtensionApp extends Homey.App {
     }
   }
 
+  /*
+   * Parses "category.messageId" (e.g. "error.notFound") into a log entry
+   * and broadcasts it to the settings UI via realtime events
+   */
   public pushToUI(name: string, params?: ListenerParams): void {
     const [messageId, category = messageId] = name.split('.').toReversed()
     if (messageId !== undefined) {
       const newLog: TimestampedLog = {
         category,
+
+        /* Fix i18n grammar: "de el" → "del" (Spanish), "de le" → "du" (French) */
         message: (this.homey.__(`log.${messageId}`, params) || messageId)
           .replaceAll(/de el /giu, 'del ')
           .replaceAll(/de le /giu, 'du '),
@@ -149,6 +156,10 @@ export default class MELCloudExtensionApp extends Homey.App {
     await OutdoorTemperatureListener.destroy()
   }
 
+  /*
+   * Debounces device list reload: rapid device.create/delete events
+   * are coalesced into a single init after INIT_DELAY
+   */
   #init(): void {
     this.homey.clearTimeout(this.#initTimeout)
     this.#initTimeout = this.homey.setTimeout(async () => {
@@ -164,6 +175,7 @@ export default class MELCloudExtensionApp extends Homey.App {
     for (const device of Object.values(devices)) {
       if (device.driverId === MELCLOUD_DRIVER_ID) {
         this.#melcloudDevices.push(device)
+        // Default to the first MELCloud device's outdoor temperature sensor
         if (this.homey.settings.get('capabilityPath') === null) {
           this.homey.settings.set(
             'capabilityPath',

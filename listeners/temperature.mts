@@ -30,6 +30,11 @@ export abstract class TemperatureListener {
       capability: this.names['temperature'],
       name: this.device.name,
     })
+
+    /*
+     * Needed to satisfy @typescript-eslint/require-await: the method must
+     * be async because subclasses override it with await expressions
+     */
     // eslint-disable-next-line unicorn/no-useless-promise-resolve-reject
     return Promise.resolve()
   }
