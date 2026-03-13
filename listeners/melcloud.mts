@@ -17,6 +17,11 @@ const GAP_TEMPERATURE = 8
 // MELCloud AC unit maximum cooling target
 const MAX_TEMPERATURE = 38
 
+/*
+ * Manages a single MELCloud AC device: listens to thermostat mode
+ * changes and automatically adjusts the target cooling temperature
+ * based on outdoor temperature readings.
+ */
 export class MELCloudListener extends TemperatureListener {
   public static readonly listeners = new Map<string, MELCloudListener>()
 
@@ -112,6 +117,7 @@ export class MELCloudListener extends TemperatureListener {
     await this.destroyTemperature()
     if (this.#thermostatModeListener !== null) {
       this.#thermostatModeListener.destroy()
+      this.#thermostatModeListener = null
     }
     this.app.pushToUI('cleaned', {
       capability: this.names['thermostatMode'],

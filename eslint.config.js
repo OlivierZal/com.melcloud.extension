@@ -22,10 +22,6 @@ const buildImportGroup = (selector) =>
     (modifier) => `${modifier}-${selector}`,
   )
 
-const arrayLikeSortOptions = {
-  groups: ['literal', 'spread'],
-}
-
 const typeSortOptions = {
   groups: [
     'import',
@@ -263,7 +259,12 @@ const config = defineConfig([
         },
       ],
       'one-var': ['error', 'never'],
-      'perfectionist/sort-array-includes': ['error', arrayLikeSortOptions],
+      'perfectionist/sort-array-includes': [
+        'error',
+        {
+          groups: ['literal'],
+        },
+      ],
       'perfectionist/sort-classes': [
         'error',
         {
@@ -391,7 +392,12 @@ const config = defineConfig([
           groups: ['property', 'method'],
         },
       ],
-      'perfectionist/sort-sets': ['error', arrayLikeSortOptions],
+      'perfectionist/sort-sets': [
+        'error',
+        {
+          groups: ['literal'],
+        },
+      ],
       'perfectionist/sort-switch-case': 'error',
       'perfectionist/sort-union-types': ['error', typeSortOptions],
       'sort-imports': 'off',

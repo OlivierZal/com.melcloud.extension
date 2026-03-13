@@ -1,9 +1,9 @@
 {
   "log": {
-    "calculated": "Beregning af temperaturen for __name__: __value__ (fra tærskel __threshold__ og udendørstemperatur __outdoorTemperature__)",
-    "cleaned": "Rengøring af lytter for __capability__ af __name__",
-    "cleanedAll": "Rengøring af alle lyttere",
-    "created": "Oprettelse af en lytter for __capability__ af __name__",
+    "calculated": "Beregner temperaturen for __name__: __value__ (fra tærskel __threshold__ og udendørstemperatur __outdoorTemperature__)",
+    "cleaned": "Rengør lytter for __capability__ af __name__",
+    "cleanedAll": "Rengør alle lyttere",
+    "created": "Opretter en lytter for __capability__ af __name__",
     "listened": "Lytter til __capability__ af __name__: __value__",
     "notFound": "__type__ `__idOrName__` ikke fundet",
     "reverted": "Gendanner temperaturen for __name__: __value__",

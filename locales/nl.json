@@ -1,13 +1,13 @@
 {
   "log": {
-    "calculated": "Berekenen de temperatuur van __name__: __value__ (van de drempelwaarde __threshold__ en de buitentemperatuur __outdoorTemperature__)",
-    "cleaned": "Reinigen luisteraar voor __capability__ van __name__",
-    "cleanedAll": "Reinigen alle luisteraars",
+    "calculated": "Berekenen van de temperatuur van __name__: __value__ (van de drempelwaarde __threshold__ en de buitentemperatuur __outdoorTemperature__)",
+    "cleaned": "Opschonen van de luisteraar voor __capability__ van __name__",
+    "cleanedAll": "Opschonen van alle luisteraars",
     "created": "Aanmaken van een luisteraar voor __capability__ van __name__",
     "listened": "Luisteren naar __capability__ van __name__: __value__",
     "notFound": "__type__ `__idOrName__` niet gevonden",
-    "reverted": "Herstellen de temperatuur van __name__: __value__",
-    "saved": "Opslaan de temperatuur van __name__: __value__"
+    "reverted": "Herstellen van de temperatuur van __name__: __value__",
+    "saved": "Opslaan van de temperatuur van __name__: __value__"
   },
   "names": {
     "device": "Het apparaat",

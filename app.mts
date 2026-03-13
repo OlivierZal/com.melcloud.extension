@@ -27,6 +27,10 @@ const NOTIFICATION_DELAY = 10_000
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error)
 
+/*
+ * Main Homey app: discovers MELCloud AC devices and outdoor temperature
+ * sensors, then manages automatic cooling adjustment listeners.
+ */
 // eslint-disable-next-line import-x/no-named-as-default-member
 export default class MELCloudExtensionApp extends Homey.App {
   declare public homey: Homey.Homey
@@ -79,6 +83,10 @@ export default class MELCloudExtensionApp extends Homey.App {
     await this.#destroyListeners()
   }
 
+  /*
+   * Starts or restarts automatic cooling adjustment. Destroys existing
+   * listeners first, then creates new ones from the provided or stored settings.
+   */
   public async autoAdjustCooling(
     temperatureListenerData?: TemperatureListenerData,
   ): Promise<void> {
@@ -168,6 +176,10 @@ export default class MELCloudExtensionApp extends Homey.App {
     }, INIT_DELAY)
   }
 
+  /*
+   * Categorizes all Homey devices into MELCloud AC units and
+   * temperature sensors, and auto-selects a default outdoor sensor.
+   */
   async #loadDevices(): Promise<void> {
     this.#melcloudDevices.length = 0
     this.#temperatureSensors.length = 0

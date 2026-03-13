@@ -7,6 +7,12 @@ import { ListenerError } from './error.mts'
 import { MELCloudListener } from './melcloud.mts'
 import { TemperatureListener } from './temperature.mts'
 
+/*
+ * Singleton listener for the outdoor temperature sensor. Creates
+ * and coordinates MELCloudListener instances across all AC devices.
+ * Monitors the outdoor sensor lazily — only when at least one device
+ * enters cooling mode.
+ */
 export class OutdoorTemperatureListener extends TemperatureListener {
   static #listener: OutdoorTemperatureListener | null = null
 
@@ -67,36 +73,39 @@ export class OutdoorTemperatureListener extends TemperatureListener {
    * Called lazily: only when the first device enters cooling mode.
    */
   public static async listenToOutdoorTemperature(): Promise<void> {
-    if (this.#listener) {
-      this.#listener.#value = Number(
-        await this.#listener.getCapabilityValue(this.#listener.#capabilityId),
-      )
-      if (this.#listener.temperatureListener === null) {
-        this.#listener.temperatureListener =
-          this.#listener.device.makeCapabilityInstance(
-            this.#listener.#capabilityId,
-            async (value) => {
-              if (this.#listener) {
-                this.#listener.#value = Number(value)
-                this.#listener.app.pushToUI('listened', {
-                  capability: this.#listener.names['temperature'],
-                  name: this.#listener.device.name,
-                  value: `${String(value)}\u00A0°C`,
-                })
-                await Promise.all(
-                  [...MELCloudListener.listeners.values()].map(
-                    async (listener) => listener.setTargetTemperature(),
-                  ),
-                )
-              }
-            },
-          )
-        this.#listener.app.pushToUI('created', {
-          capability: this.#listener.names['temperature'],
-          name: this.#listener.device.name,
-        })
-      }
+    const listener = this.#listener
+    if (!listener) {
+      return
     }
+    listener.#value = Number(
+      await listener.getCapabilityValue(listener.#capabilityId),
+    )
+    if (listener.temperatureListener !== null) {
+      return
+    }
+    listener.temperatureListener = listener.device.makeCapabilityInstance(
+      listener.#capabilityId,
+      async (value) => {
+        if (this.#listener) {
+          this.#listener.#value = Number(value)
+          this.#listener.app.pushToUI('listened', {
+            capability: this.#listener.names['temperature'],
+            name: this.#listener.device.name,
+            value: `${String(value)}\u00A0°C`,
+          })
+          await Promise.all(
+            [...MELCloudListener.listeners.values()].map(
+              async (melcloudListener) =>
+                melcloudListener.setTargetTemperature(),
+            ),
+          )
+        }
+      },
+    )
+    listener.app.pushToUI('created', {
+      capability: listener.names['temperature'],
+      name: listener.device.name,
+    })
   }
 
   /*

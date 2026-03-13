@@ -1,10 +1,10 @@
 {
   "log": {
-    "calculated": "Beregning av temperaturen til __name__: __value__ (fra terskel __threshold__ og utetemperatur __outdoorTemperature__)",
-    "cleaned": "Rengjøring av lytter for __capability__ av __name__",
-    "cleanedAll": "Rengjøring av alle lyttere",
+    "calculated": "Beregner temperaturen til __name__: __value__ (fra terskel __threshold__ og utetemperatur __outdoorTemperature__)",
+    "cleaned": "Rengjør lytter for __capability__ av __name__",
+    "cleanedAll": "Rengjør alle lyttere",
     "created": "Oppretter en lytter for __capability__ av __name__",
-    "listened": "Lytt til __capability__ av __name__: __value__",
+    "listened": "Lytter til __capability__ av __name__: __value__",
     "notFound": "__type__ `__idOrName__` ikke funnet",
     "reverted": "Gjenoppretter temperaturen til __name__: __value__",
     "saved": "Lagrer temperaturen til __name__: __value__"

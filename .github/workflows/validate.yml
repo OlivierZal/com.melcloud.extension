@@ -28,7 +28,7 @@ jobs:
           git add -A
           if ! git diff --cached --exit-code; then
             git commit -m "Code maintenance: lint, format and build code"
-            if [[ ${{ github.ref }} == "refs/heads/main" ]]; then
+            if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
               BRANCH_NAME="maintenance-$(date +'%Y%m%d%H%M%S')"
               git checkout -b "$BRANCH_NAME"
               git push origin "$BRANCH_NAME"
@@ -36,8 +36,8 @@ jobs:
               PR_URL=$(gh pr view "$BRANCH_NAME" --json url -q '.url')
               gh pr merge --auto --merge --delete-branch "$PR_URL"
             else
-              git pull origin $HEAD_REF --rebase
-              git push origin HEAD:$HEAD_REF
+              git pull origin "$HEAD_REF" --rebase
+              git push origin "HEAD:$HEAD_REF"
             fi
           fi
 name: Validate app

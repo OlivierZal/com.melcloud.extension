@@ -1,13 +1,13 @@
 {
   "log": {
-    "calculated": "Beräknar temperaturen av __name__: __value__ (från tröskeln __threshold__ och utomhustemperaturen __outdoorTemperature__)",
-    "cleaned": "Rengör lyssnare för __capability__ av __name__",
-    "cleanedAll": "Rengör alla lyssnare",
-    "created": "Skapa en lyssnare för __capability__ av __name__",
+    "calculated": "Beräknar temperaturen för __name__: __value__ (från tröskeln __threshold__ och utomhustemperaturen __outdoorTemperature__)",
+    "cleaned": "Rensar lyssnare för __capability__ av __name__",
+    "cleanedAll": "Rensar alla lyssnare",
+    "created": "Skapar en lyssnare för __capability__ av __name__",
     "listened": "Lyssnar på __capability__ av __name__: __value__",
-    "notFound": "__type__ `__idOrName__` ej hittad",
-    "reverted": "Återställer temperaturen av __name__: __value__",
-    "saved": "Sparar temperaturen av __name__: __value__"
+    "notFound": "__type__ `__idOrName__` hittades inte",
+    "reverted": "Återställer temperaturen för __name__: __value__",
+    "saved": "Sparar temperaturen för __name__: __value__"
   },
   "names": {
     "device": "Enheten",

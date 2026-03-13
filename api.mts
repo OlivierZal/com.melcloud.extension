@@ -49,10 +49,11 @@ const api = {
          * For MELCloud devices, only expose the outdoor temperature sensor
          * (not all temperature capabilities) to simplify the settings UI
          */
-        const outdoorCapability = capabilities.find(
-          ({ id }) =>
-            melcloudDevices.includes(device) && id === OUTDOOR_TEMPERATURE,
-        )
+        const isMelcloudDevice = melcloudDevices.includes(device)
+        const outdoorCapability =
+          isMelcloudDevice ?
+            capabilities.find(({ id }) => id === OUTDOOR_TEMPERATURE)
+          : undefined
         return (outdoorCapability ? [outdoorCapability] : capabilities).map(
           ({ id, title }): TemperatureSensor => ({
             capabilityName: `${deviceName} - ${title}`,

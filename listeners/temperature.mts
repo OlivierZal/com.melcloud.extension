@@ -2,6 +2,10 @@ import type { HomeyAPIV3Local } from 'homey-api'
 
 import type MELCloudExtensionApp from '../app.mts'
 
+/*
+ * Abstract base class for temperature listeners. Provides shared
+ * device binding, capability value retrieval, and cleanup logic.
+ */
 export abstract class TemperatureListener {
   protected readonly app: MELCloudExtensionApp
 
