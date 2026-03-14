@@ -253,6 +253,11 @@ const addEventListeners = (homey: Homey): void => {
   homey.on('log', displayLog)
 }
 
+/*
+ * Must be a function declaration (not an arrow): homey.js looks up
+ * `onHomeyReady` by name on the global object, and only function
+ * declarations are hoisted into the global scope of a classic script.
+ */
 // @ts-expect-error: read by another script in `./index.html`
 // eslint-disable-next-line func-style
 async function onHomeyReady(homey: Homey): Promise<void> {
