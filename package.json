@@ -38,7 +38,7 @@
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.12",
     "@types/node": "^25.6.0",
-    "@typescript/native-preview": "^7.0.0-dev.20260412.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260413.1",
     "eslint": "^10.2.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
@@ -51,6 +51,6 @@
     "prettier": "^3.8.2",
     "prettier-plugin-packagejson": "^3.0.2",
     "typescript": "^6.0.2",
-    "typescript-eslint": "^8.58.1"
+    "typescript-eslint": "^8.58.2"
   }
 }
