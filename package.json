@@ -29,7 +29,7 @@
     "homey-api": "^3.18.3"
   },
   "devDependencies": {
-    "@eslint/css": "^1.1.0",
+    "@eslint/css": "^1.2.0",
     "@eslint/js": "^10.0.1",
     "@eslint/json": "^1.2.0",
     "@eslint/markdown": "^8.0.1",
@@ -38,7 +38,7 @@
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.12",
     "@types/node": "^25.6.0",
-    "@typescript/native-preview": "^7.0.0-dev.20260429.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260430.1",
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
@@ -46,7 +46,7 @@
     "eslint-plugin-package-json": "^0.91.2",
     "eslint-plugin-perfectionist": "^5.9.0",
     "eslint-plugin-unicorn": "^64.0.0",
-    "eslint-plugin-yml": "^3.3.1",
+    "eslint-plugin-yml": "^3.3.2",
     "jsonc-eslint-parser": "^3.1.0",
     "prettier": "^3.8.3",
     "prettier-plugin-packagejson": "^3.0.2",
