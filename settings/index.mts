@@ -369,9 +369,8 @@ const createOptionItem = (
     option.value === selectedValue ? 'true' : 'false',
   )
   item.textContent = option.name
-  // pointerdown beats the input blur, so picking commits first
-  item.addEventListener('pointerdown', (event) => {
-    event.preventDefault()
+  // click, not pointerdown: a touch drag must scroll the list, not pick
+  item.addEventListener('click', () => {
     onPick(option)
   })
   return item
@@ -424,6 +423,7 @@ const openList = (
   })
   parts.list.hidden = false
   parts.input.setAttribute('aria-expanded', 'true')
+  parts.list.querySelector('.is-selected')?.scrollIntoView({ block: 'nearest' })
   openCombobox.close = (): void => {
     closeList(parts, deviceId)
   }
