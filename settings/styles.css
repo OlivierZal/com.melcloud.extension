@@ -35,3 +35,10 @@ summary {
 .source-search {
   margin-block-end: 0.5em;
 }
+
+/* Two-column grid for button pairs */
+.container {
+  display: grid;
+  gap: var(--homey-su-2);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}

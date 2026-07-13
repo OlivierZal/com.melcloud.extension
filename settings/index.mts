@@ -100,7 +100,11 @@ const getDivElement = (id: string): HTMLDivElement =>
 const getTableSectionElement = (id: string): HTMLTableSectionElement =>
   getElement(id, HTMLTableSectionElement, 'table section')
 
+const getDetailsElement = (id: string): HTMLDetailsElement =>
+  getElement(id, HTMLDetailsElement, 'details')
+
 const applyElement = getButtonElement('apply')
+const configurationElement = getDetailsElement('configuration')
 const refreshElement = getButtonElement('refresh')
 const enabledElement = getSelectElement('enabled')
 const logsElement = getTableSectionElement('logs')
@@ -230,6 +234,9 @@ const displayRetainedLogs = (logs: readonly TimestampedLog[]): void => {
 const handleSettings = (settings: HomeySettings): void => {
   displayRetainedLogs(settings.lastLogs ?? [])
   enabledElement.value = String(settings.isEnabled === true)
+  // Not adjusting yet: surface the configuration; already running:
+  // fold it away so the history is one glance away.
+  configurationElement.open = settings.isEnabled !== true
 }
 
 const fetchLanguage = async (homey: Homey): Promise<void> => {

@@ -17,7 +17,6 @@
     "thermostatMode": "tilstanden"
   },
   "settings": {
-    "apply": "Anvend på alle luft-til-luft enheder",
     "autoAdjust": "Autojuster aircondition-temperaturen",
     "boolean": {
       "false": "Nej",
@@ -30,6 +29,7 @@
     "notFound": "Du skal først konfigurere dine enheder i MELCloud Homey-appen.\n\nØnsker du at installere den?",
     "refresh": "Genindlæs",
     "searchSource": "Søg efter en kilde …",
-    "title": "Indstillinger for MELCloud-udvidelse"
+    "title": "Indstillinger for MELCloud-udvidelse",
+    "update": "Opdater"
   }
 }

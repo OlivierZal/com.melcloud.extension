@@ -17,7 +17,6 @@
     "thermostatMode": "the mode"
   },
   "settings": {
-    "apply": "Apply to all air-to-air devices",
     "autoAdjust": "Auto-adjust air conditioning temperature",
     "boolean": {
       "false": "No",
@@ -30,6 +29,7 @@
     "notFound": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
     "refresh": "Refresh",
     "searchSource": "Search for a source…",
-    "title": "MELCloud extension settings"
+    "title": "MELCloud extension settings",
+    "update": "Update"
   }
 }
