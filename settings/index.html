@@ -4,9 +4,9 @@
         <meta charset="utf-8">
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <title>MELCloud Extension Settings</title>
-        <link href="styles.css?v=57751eb7" rel="stylesheet">
+        <link href="styles.css?v=7bf682fa" rel="stylesheet">
         <script data-origin="settings" defer src="/homey.js"></script>
-        <script type="module" src="index.mjs?v=01e91646"></script>
+        <script type="module" src="index.mjs?v=6ccb92df"></script>
         <meta content="MELCloud extension settings" name="description">
     </head>
     <body>
@@ -20,6 +20,18 @@
             </fieldset>
         </details>
         <fieldset class="homey-form-fieldset">
+            <div class="homey-form-group">
+                <label
+                    class="homey-form-label"
+                    aria-label="Enabled"
+                    data-i18n="settings.enabled"
+                    for="enabled"
+                ></label>
+                <select id="enabled" class="homey-form-select">
+                    <option data-i18n="settings.boolean.false" value="false">No</option>
+                    <option data-i18n="settings.boolean.true" value="true">Yes</option>
+                </select>
+            </div>
             <div class="container">
                 <button
                     id="refresh"
@@ -35,18 +47,6 @@
                     aria-label="Update"
                     data-i18n="settings.update"
                 >Update</button>
-            </div>
-            <div class="homey-form-group">
-                <label
-                    class="homey-form-label"
-                    aria-label="Enabled"
-                    data-i18n="settings.enabled"
-                    for="enabled"
-                ></label>
-                <select id="enabled" class="homey-form-select">
-                    <option data-i18n="settings.boolean.false" value="false">No</option>
-                    <option data-i18n="settings.boolean.true" value="true">Yes</option>
-                </select>
             </div>
         </fieldset>
         <fieldset class="homey-form-fieldset">

@@ -253,9 +253,6 @@ const displayRetainedLogs = (logs: readonly TimestampedLog[]): void => {
 const handleSettings = (settings: HomeySettings): void => {
   displayRetainedLogs(settings.lastLogs ?? [])
   enabledElement.value = String(settings.isEnabled === true)
-  // Not adjusting yet: surface the configuration; already running:
-  // fold it away so the history is one glance away.
-  configurationElement.open = settings.isEnabled !== true
 }
 
 const fetchLanguage = async (homey: Homey): Promise<void> => {
@@ -617,9 +614,16 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
     }
   })
 
+// Refresh restores every value to the last saved state (the stored
+// enable flag and per-device sources) without touching the fold
+const refreshAll = async (homey: Homey): Promise<void> => {
+  await populateSources(homey)
+  await fetchHomeySettings(homey)
+}
+
 const addEventListeners = (homey: Homey): void => {
   refreshElement.addEventListener('click', () => {
-    fireAndForget(fetchHomeySettings(homey))
+    fireAndForget(refreshAll(homey))
   })
   applyElement.addEventListener('click', () => {
     fireAndForget(autoAdjustCooling(homey))
@@ -635,6 +639,10 @@ const onHomeyReady = async (homey: Homey): Promise<void> => {
   }
   await populateSources(homey)
   await fetchHomeySettings(homey)
+  // Not adjusting yet: surface the configuration; already running:
+  // fold it away so the history is one glance away. Initial load only —
+  // a refresh must not undo a manual fold or unfold.
+  configurationElement.open = enabledElement.value === 'false'
   addEventListeners(homey)
   homey.ready()
 }
