@@ -12,8 +12,6 @@ import {
 } from '../types.mts'
 
 const LOG_RETENTION_DAYS = 6
-// Width of the select chevron zone at the field's end (logical inline-end)
-const ARROW_ZONE_PX = 40
 
 interface LogCategory {
   readonly icon: string
@@ -112,19 +110,36 @@ const enabledElement = getSelectElement('enabled')
 const logsElement = getTableSectionElement('logs')
 const sourcesElement = getDivElement('sources')
 
-// Created here rather than in the static page: its options are fully
-// dynamic, and the settings webview is Homey's Chromium (datalist sits
-// below the html/use-baseline bar on paper only).
-const sourceOptionsElement = document.createElement('datalist')
-sourceOptionsElement.id = 'source_options'
-sourcesElement.after(sourceOptionsElement)
+interface SourceOption {
+  readonly name: string
+  readonly value: string
+}
 
-// One combobox per device: the shared datalist provides both the full
-// dropdown (side arrow / focus) and the as-you-type filtering; the
+// One custom combobox per device (iOS webviews render neither the
+// datalist arrow nor showPicker, so the dropdown is ours): clicking the
+// field drops the FULL list select-style, typing filters it, and the
 // current value lives here, keyed by device id.
+const sourceOptions: SourceOption[] = []
 const sourceSelections = new Map<string, string>()
 const sourceNamesByValue = new Map<string, string>()
-const sourceValuesByName = new Map<string, string>()
+
+// At most one list is open; opening another (or clicking away) closes it
+const openCombobox: { close: (() => void) | null } = { close: null }
+
+const closeOpenCombobox = (): void => {
+  openCombobox.close?.()
+  openCombobox.close = null
+}
+
+document.addEventListener('pointerdown', (event) => {
+  if (
+    event.target instanceof Element &&
+    event.target.closest('.combobox') !== null
+  ) {
+    return
+  }
+  closeOpenCombobox()
+})
 
 const setButtonsEnabled = (isEnabled: boolean): void => {
   for (const element of [applyElement, refreshElement]) {
@@ -296,17 +311,15 @@ const enableAdjustment = (): void => {
 
 const registerSourceOption = (name: string, value: string): void => {
   sourceNamesByValue.set(value, name)
-  sourceValuesByName.set(name.toLowerCase(), value)
-  sourceOptionsElement.append(new Option(name))
+  sourceOptions.push({ name, value })
 }
 
 const populateSourceOptions = (
   homey: Homey,
   sensors: readonly TemperatureSensor[],
 ): void => {
-  sourceOptionsElement.replaceChildren()
+  sourceOptions.length = 0
   sourceNamesByValue.clear()
-  sourceValuesByName.clear()
   registerSourceOption(homey.__('settings.disabledSource'), DISABLED_SOURCE)
   registerSourceOption(homey.__('settings.defaultSource'), '')
   for (const { capabilityName, capabilityPath } of sensors) {
@@ -314,84 +327,121 @@ const populateSourceOptions = (
   }
 }
 
-// Single combobox: a text input backed by the shared datalist — the
-// side arrow (or focusing the empty field) drops the full list down,
-// typing filters it. A recognized name (case-insensitive) becomes the
-// selection; anything else snaps back to the current one.
-const applySourceInput = (input: HTMLInputElement, deviceId: string): void => {
-  const value = sourceValuesByName.get(input.value.trim().toLowerCase())
-  if (value === undefined) {
-    const current = sourceSelections.get(deviceId) ?? ''
-    input.value = sourceNamesByValue.get(current) ?? ''
-    return
-  }
-  sourceSelections.set(deviceId, value)
-  input.value = sourceNamesByValue.get(value) ?? ''
-  enableAdjustment()
-}
-
 const createSourceInputElement = (
   homey: Homey,
   device: AdjustableDevice,
 ): HTMLInputElement => {
   const input = document.createElement('input')
-  // The select classes give the combobox the exact homey-form-select
-  // look, chevron included; the input class keeps the text affordances.
-  input.classList.add(
-    'homey-form-input',
-    'homey-form-select',
-    'source-combobox',
-  )
+  input.type = 'text'
+  input.classList.add('homey-form-input', 'combobox-input')
   input.id = `source-${device.id}`
-  input.setAttribute('list', 'source_options')
+  input.setAttribute('role', 'combobox')
+  input.setAttribute('aria-expanded', 'false')
   input.placeholder = homey.__('settings.searchSource')
   input.ariaLabel = `${device.name} — ${homey.__('settings.searchSource')}`
   return input
 }
 
-// Clicking the chevron zone expands the FULL list, select-style: the
-// field is emptied so the datalist popup shows unfiltered (a dismissal
-// restores the display on blur).
-const openFullList = (input: HTMLInputElement): void => {
-  input.value = ''
-  try {
-    input.showPicker()
-  } catch {
-    // Webviews without showPicker: focusing the emptied field drops the
-    // list down instead
-    input.focus()
+const displaySelection = (input: HTMLInputElement, deviceId: string): void => {
+  const current = sourceSelections.get(deviceId) ?? ''
+  input.value = sourceNamesByValue.get(current) ?? ''
+}
+
+const renderOptions = (
+  list: HTMLUListElement,
+  filter: string,
+  onPick: (option: SourceOption) => void,
+): void => {
+  const needle = filter.trim().toLowerCase()
+  const matches =
+    needle === '' ? sourceOptions : (
+      sourceOptions.filter(({ name }) => name.toLowerCase().includes(needle))
+    )
+  list.replaceChildren(
+    ...matches.map((option) => {
+      const item = document.createElement('li')
+      item.classList.add('combobox-option')
+      item.setAttribute('role', 'option')
+      item.textContent = option.name
+      // pointerdown beats the input blur, so picking commits first
+      item.addEventListener('pointerdown', (event) => {
+        event.preventDefault()
+        onPick(option)
+      })
+      return item
+    }),
+  )
+}
+
+const createSourceList = (): HTMLUListElement => {
+  const list = document.createElement('ul')
+  list.classList.add('combobox-list')
+  list.setAttribute('role', 'listbox')
+  list.hidden = true
+  return list
+}
+
+interface ComboboxParts {
+  readonly input: HTMLInputElement
+  readonly list: HTMLUListElement
+}
+
+const closeList = ({ input, list }: ComboboxParts, deviceId: string): void => {
+  list.hidden = true
+  input.setAttribute('aria-expanded', 'false')
+  displaySelection(input, deviceId)
+}
+
+const openList = (
+  parts: ComboboxParts,
+  deviceId: string,
+  onPick: (option: SourceOption) => void,
+): void => {
+  closeOpenCombobox()
+  renderOptions(parts.list, '', onPick)
+  parts.list.hidden = false
+  parts.input.setAttribute('aria-expanded', 'true')
+  parts.input.select()
+  openCombobox.close = (): void => {
+    closeList(parts, deviceId)
   }
 }
 
-const isInArrowZone = (input: HTMLInputElement, event: MouseEvent): boolean => {
-  const distance =
-    getComputedStyle(input).direction === 'rtl' ?
-      event.offsetX
-    : input.offsetWidth - event.offsetX
-  return distance <= ARROW_ZONE_PX
-}
-
-const createSourceInput = (
-  homey: Homey,
-  device: AdjustableDevice,
-): HTMLInputElement => {
-  const input = createSourceInputElement(homey, device)
-  const initialValue = device.outdoorSource ?? ''
-  sourceSelections.set(device.id, initialValue)
-  input.value = sourceNamesByValue.get(initialValue) ?? ''
-  input.addEventListener('change', () => {
-    applySourceInput(input, device.id)
-  })
-  input.addEventListener('click', (event) => {
-    if (isInArrowZone(input, event)) {
-      openFullList(input)
+const wireCombobox = (parts: ComboboxParts, device: AdjustableDevice): void => {
+  const { input, list } = parts
+  const pick = (option: SourceOption): void => {
+    sourceSelections.set(device.id, option.value)
+    enableAdjustment()
+    closeOpenCombobox()
+    input.blur()
+  }
+  // Clicking anywhere in the field drops the FULL list, select-style
+  input.addEventListener('click', () => {
+    if (list.hidden === true) {
+      openList(parts, device.id, pick)
     }
   })
-  input.addEventListener('blur', () => {
-    const current = sourceSelections.get(device.id) ?? ''
-    input.value = sourceNamesByValue.get(current) ?? ''
+  input.addEventListener('input', () => {
+    if (list.hidden === true) {
+      openList(parts, device.id, pick)
+    }
+    renderOptions(list, input.value, pick)
   })
-  return input
+}
+
+const createSourceCombobox = (
+  homey: Homey,
+  device: AdjustableDevice,
+): HTMLDivElement => {
+  const input = createSourceInputElement(homey, device)
+  const list = createSourceList()
+  sourceSelections.set(device.id, device.outdoorSource ?? '')
+  displaySelection(input, device.id)
+  wireCombobox({ input, list }, device)
+  const combobox = document.createElement('div')
+  combobox.classList.add('combobox')
+  combobox.append(input, list)
+  return combobox
 }
 
 const createSourceLabel = (
@@ -408,10 +458,14 @@ const createSourceLabel = (
 // Homey Style Library idiom (settings pages, unlike widgets, use it):
 // one form group per field, the control a SIBLING after its label.
 const appendSourceRow = (homey: Homey, device: AdjustableDevice): void => {
-  const input = createSourceInput(homey, device)
+  const combobox = createSourceCombobox(homey, device)
+  const input = combobox.querySelector('input')
   const group = document.createElement('div')
   group.classList.add('homey-form-group')
-  group.append(createSourceLabel(device, input), input)
+  if (input !== null) {
+    group.append(createSourceLabel(device, input))
+  }
+  group.append(combobox)
   sourcesElement.append(group)
 }
 

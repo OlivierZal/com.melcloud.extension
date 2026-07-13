@@ -39,7 +39,53 @@ summary {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-/* The Homey select chevron is the affordance; hide the WebKit one */
-.source-combobox::-webkit-calendar-picker-indicator {
-  display: none;
+/* Custom combobox: select-look field, our own dropdown (iOS webviews
+   render neither the datalist arrow nor showPicker) */
+.combobox {
+  position: relative;
+}
+
+/* Thin chevron at the field's end, matching the Homey select */
+.combobox::after {
+  border-block-end: 0.15em solid currentColor;
+  border-inline-end: 0.15em solid currentColor;
+  block-size: 0.5em;
+  content: '';
+  inline-size: 0.5em;
+  inset-block-start: 50%;
+  inset-inline-end: 1.25em;
+  opacity: 0.6;
+  pointer-events: none;
+  position: absolute;
+  rotate: 45deg;
+  translate: 0 -70%;
+}
+
+.combobox-input {
+  inline-size: 100%;
+}
+
+.combobox-list {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5em;
+  box-shadow: 0 0.25em 0.75em rgb(0 0 0 / 15%);
+  inset-block-start: calc(100% + 0.25em);
+  inset-inline: 0;
+  list-style: none;
+  margin: 0;
+  max-block-size: 16em;
+  overflow-block: auto;
+  padding: 0.25em 0;
+  position: absolute;
+  z-index: 10;
+}
+
+.combobox-option {
+  cursor: pointer;
+  padding: 0.6em 1em;
+}
+
+.combobox-option:hover {
+  background: #f2f2f2;
 }
