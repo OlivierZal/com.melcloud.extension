@@ -24,6 +24,7 @@
       "true": "Ja"
     },
     "defaultSource": "Homey-vær (standard)",
+    "disabledSource": "Ikke juster",
     "enabled": "Hold innenfor 8 °C av utetemperaturen",
     "log": "Historikk",
     "notFound": "Først må du sette opp enhetene dine i MELCloud Homey-appen.\n\nVil du installere den?",

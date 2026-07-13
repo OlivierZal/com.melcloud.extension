@@ -29,6 +29,7 @@
     "notFound": "Du behöver först konfigurera dina enheter i MELCloud Homey-appen.\n\nVill du installera den?",
     "refresh": "Ladda om",
     "title": "Inställningar för MELCloud-tillägg",
-    "defaultSource": "Homey-väder (standard)"
+    "defaultSource": "Homey-väder (standard)",
+    "disabledSource": "Justera inte"
   }
 }

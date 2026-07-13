@@ -1,13 +1,14 @@
 import type Homey from 'homey/lib/HomeySettings'
 import { Temporal } from 'temporal-polyfill'
 
-import type {
-  AdjustableDevice,
-  HomeySettings,
-  OutdoorSources,
-  TemperatureListenerData,
-  TemperatureSensor,
-  TimestampedLog,
+import {
+  type AdjustableDevice,
+  type HomeySettings,
+  type OutdoorSources,
+  type TemperatureListenerData,
+  type TemperatureSensor,
+  type TimestampedLog,
+  DISABLED_SOURCE,
 } from '../types.mts'
 
 const LOG_RETENTION_DAYS = 6
@@ -273,7 +274,10 @@ const createSourceSelect = (
   const select = document.createElement('select')
   select.classList.add('homey-form-select')
   select.id = `source-${device.id}`
-  select.append(new Option(homey.__('settings.defaultSource'), ''))
+  select.append(
+    new Option(homey.__('settings.disabledSource'), DISABLED_SOURCE),
+    new Option(homey.__('settings.defaultSource'), ''),
+  )
   for (const { capabilityName, capabilityPath } of sensors) {
     select.append(new Option(capabilityName, capabilityPath))
   }

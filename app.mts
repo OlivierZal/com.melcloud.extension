@@ -15,6 +15,7 @@ import {
   type Names,
   type TemperatureListenerData,
   type TimestampedLog,
+  DISABLED_SOURCE,
   MEASURE_TEMPERATURE,
 } from './types.mts'
 
@@ -110,9 +111,11 @@ export default class MELCloudExtensionApp extends App {
       return
     }
     await Promise.all(
-      this.#melcloudDevices.map(async (device) =>
-        this.#listenToDevice(device, outdoorSources[device.id] ?? null),
-      ),
+      this.#melcloudDevices
+        .filter(({ id }) => (outdoorSources[id] ?? null) !== DISABLED_SOURCE)
+        .map(async (device) =>
+          this.#listenToDevice(device, outdoorSources[device.id] ?? null),
+        ),
     )
   }
 

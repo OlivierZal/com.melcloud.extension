@@ -26,8 +26,8 @@ const api = {
     await app.autoAdjustCooling(body)
   },
   /**
-   * Lists the MELCloud AC devices with their configured outdoor source
-   * (`null` when they follow the Homey weather default).
+   * Lists the MELCloud AC devices, sorted by name, with their configured
+   * outdoor source (`null` when they follow the Homey weather default).
    * @param options - Homey API context.
    * @param options.homey - Homey instance carrying the app.
    * @returns One entry per AC device, with its configured source.
@@ -39,11 +39,13 @@ const api = {
       throw new NotFoundError()
     }
     const outdoorSources = app.homey.settings.get('outdoorSources') ?? {}
-    return app.melcloudDevices.map(({ id, name }) => ({
-      id,
-      name,
-      outdoorSource: outdoorSources[id] ?? null,
-    }))
+    return app.melcloudDevices
+      .map(({ id, name }) => ({
+        id,
+        name,
+        outdoorSource: outdoorSources[id] ?? null,
+      }))
+      .toSorted((device1, device2) => device1.name.localeCompare(device2.name))
   },
   /**
    * Reads the language configured on the Homey.

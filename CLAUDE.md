@@ -73,9 +73,10 @@ to judge success.
 - The threshold (user comfort setpoint) is persisted per device id in
   the `thresholds` setting; reverting falls back to 0 °C if the stored
   entry disappeared.
-- Outdoor sources are per device (`outdoorSources` setting, null =
-  Homey weather); the legacy global `capabilityPath` is migrated to
-  every known AC device once, then unset.
+- Outdoor sources are per device (`outdoorSources` setting: null/absent
+  = Homey weather, `'none'` = the device is not adjusted at all); the
+  legacy global `capabilityPath` is migrated to every known AC device
+  once, then unset.
 - The Homey weather (home-screen temperature) is served by the LOCAL
   weather manager — `homey.api.get('/manager/weather/weather')`, covered
   by the app's `homey:manager:api` permission (homey-api does not wrap
