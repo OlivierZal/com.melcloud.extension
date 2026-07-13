@@ -2,7 +2,7 @@ import type MELCloudExtensionApp from '../app.mts'
 import { getErrorMessage } from '../lib/get-error-message.mts'
 import { OutdoorSource } from './outdoor-source.mts'
 
-const WEATHER_PATH = '/manager/weather/weather'
+const WEATHER_PATH = '/api/manager/weather/weather'
 // The Homey weather refreshes from Athom's cloud on an hourly-ish cadence
 const POLL_INTERVAL = 900_000
 
@@ -53,11 +53,17 @@ export class WeatherOutdoorSource extends OutdoorSource {
     })
   }
 
-  // A failed fetch reads as "no measurement": the targets fall back to
+  // Routed through the connected homey-api session: the app-side
+  // ManagerApi rejects with `Missing Session`, and homey-api ships no
+  // weather manager wrapper (absent from its local specification). A
+  // failed fetch reads as "no measurement": the targets fall back to
   // the user thresholds until the next poll succeeds.
   async #fetchTemperature(): Promise<unknown> {
     try {
-      const report: unknown = await this.app.homey.api.get(WEATHER_PATH)
+      const report = await this.app.api.call({
+        method: 'GET',
+        path: WEATHER_PATH,
+      })
       return readTemperature(report)
     } catch (error) {
       this.app.error(getErrorMessage(error))

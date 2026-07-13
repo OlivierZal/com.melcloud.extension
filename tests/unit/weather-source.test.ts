@@ -4,32 +4,43 @@ import type MELCloudExtensionApp from '../../app.mts'
 import type { MELCloudListener } from '../../listeners/melcloud.mts'
 import { WeatherOutdoorSource } from '../../listeners/weather-source.mts'
 import { mock } from '../helpers.ts'
-import { type MockHomey, createMockHomey, names } from '../mocks.ts'
+import { createApiCall, names } from '../mocks.ts'
 
 const POLL_INTERVAL = 900_000
 
 interface Harness {
+  readonly apiCall: ReturnType<typeof vi.fn>
   readonly app: MELCloudExtensionApp
   readonly error: ReturnType<typeof vi.fn>
-  readonly mockHomey: MockHomey
   readonly pushToUI: ReturnType<typeof vi.fn>
   readonly source: WeatherOutdoorSource
 }
 
 const createHarness = (): Harness => {
-  const mockHomey = createMockHomey()
+  const apiCall = createApiCall()
   const error = vi.fn<(...args: unknown[]) => void>()
   const pushToUI = vi.fn<(name: string, params?: unknown) => void>()
   const app = mock<MELCloudExtensionApp>({
+    api: { call: apiCall },
     error,
-    homey: mockHomey.homey,
+    homey: {
+      clearInterval: (interval: NodeJS.Timeout | null): void => {
+        if (interval !== null) {
+          clearInterval(interval)
+        }
+      },
+      setInterval: (
+        callback: () => void,
+        milliseconds: number,
+      ): NodeJS.Timeout => setInterval(callback, milliseconds),
+    },
     names,
     pushToUI,
   })
   return {
+    apiCall,
     app,
     error,
-    mockHomey,
     pushToUI,
     source: new WeatherOutdoorSource(app),
   }
@@ -55,9 +66,10 @@ describe(WeatherOutdoorSource, () => {
 
     await harness.source.attach(createSubscriber())
 
-    expect(harness.mockHomey.apiGet).toHaveBeenCalledWith(
-      '/manager/weather/weather',
-    )
+    expect(harness.apiCall).toHaveBeenCalledWith({
+      method: 'GET',
+      path: '/api/manager/weather/weather',
+    })
     expect(harness.source.value).toBe(30)
     expect(harness.source.name).toBe(names.homeyWeather)
     expect(harness.pushToUI).toHaveBeenCalledWith('created', {
@@ -70,7 +82,7 @@ describe(WeatherOutdoorSource, () => {
     const harness = createHarness()
     const subscriber = createSubscriber()
     await harness.source.attach(subscriber)
-    harness.mockHomey.apiGet.mockReturnValue({ temperatureCelsius: 35.5 })
+    harness.apiCall.mockReturnValue({ temperatureCelsius: 35.5 })
 
     await vi.advanceTimersByTimeAsync(POLL_INTERVAL)
 
@@ -94,12 +106,12 @@ describe(WeatherOutdoorSource, () => {
 
     await harness.source.attach(createSubscriber())
 
-    expect(harness.mockHomey.apiGet).toHaveBeenCalledTimes(1)
+    expect(harness.apiCall).toHaveBeenCalledTimes(1)
   })
 
   it('should read a malformed report as no measurement', async () => {
     const harness = createHarness()
-    harness.mockHomey.apiGet.mockReturnValue({ state: 'Cloudy' })
+    harness.apiCall.mockReturnValue({ state: 'Cloudy' })
 
     await harness.source.attach(createSubscriber())
 
@@ -108,7 +120,7 @@ describe(WeatherOutdoorSource, () => {
 
   it('should read a non-object report as no measurement', async () => {
     const harness = createHarness()
-    harness.mockHomey.apiGet.mockReturnValue('storm')
+    harness.apiCall.mockReturnValue('storm')
 
     await harness.source.attach(createSubscriber())
 
@@ -117,7 +129,7 @@ describe(WeatherOutdoorSource, () => {
 
   it('should log a failed fetch and read it as no measurement', async () => {
     const harness = createHarness()
-    harness.mockHomey.apiGet.mockRejectedValueOnce(new Error('offline'))
+    harness.apiCall.mockRejectedValueOnce(new Error('offline'))
 
     await harness.source.attach(createSubscriber())
 
@@ -129,12 +141,12 @@ describe(WeatherOutdoorSource, () => {
     const harness = createHarness()
     const subscriber = createSubscriber()
     await harness.source.attach(subscriber)
-    harness.mockHomey.apiGet.mockClear()
+    harness.apiCall.mockClear()
 
     harness.source.detach(subscriber)
     await vi.advanceTimersByTimeAsync(POLL_INTERVAL)
 
-    expect(harness.mockHomey.apiGet).toHaveBeenCalledTimes(0)
+    expect(harness.apiCall).toHaveBeenCalledTimes(0)
     expect(harness.pushToUI).toHaveBeenCalledWith('cleaned', {
       capability: names.temperature,
       name: names.homeyWeather,
@@ -152,11 +164,11 @@ describe(WeatherOutdoorSource, () => {
   it('should stop polling on destroy', async () => {
     const harness = createHarness()
     await harness.source.attach(createSubscriber())
-    harness.mockHomey.apiGet.mockClear()
+    harness.apiCall.mockClear()
 
     harness.source.destroy()
     await vi.advanceTimersByTimeAsync(POLL_INTERVAL)
 
-    expect(harness.mockHomey.apiGet).toHaveBeenCalledTimes(0)
+    expect(harness.apiCall).toHaveBeenCalledTimes(0)
   })
 })

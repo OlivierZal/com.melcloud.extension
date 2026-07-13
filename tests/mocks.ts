@@ -99,6 +99,11 @@ export interface MockDevicesManager {
   readonly manager: HomeyAPIV3Local.ManagerDevices
 }
 
+export const createApiCall = (): ReturnType<typeof vi.fn> =>
+  vi
+    .fn<(options: { method: string; path: string }) => unknown>()
+    .mockReturnValue({ temperatureCelsius: 30 })
+
 export const createMockDevicesManager = (
   mockDevices: readonly MockDevice[],
 ): MockDevicesManager => {
@@ -151,7 +156,6 @@ export const createMockDevicesManager = (
 }
 
 export interface MockHomey {
-  readonly apiGet: ReturnType<typeof vi.fn>
   readonly createNotification: ReturnType<typeof vi.fn>
   readonly eventHandlers: Map<string, (...args: unknown[]) => void>
   readonly homey: Homey.Homey
@@ -176,9 +180,6 @@ export const createMockHomey = ({
   const createNotification = vi
     .fn<(options: { excerpt: string }) => Promise<void>>()
     .mockResolvedValue()
-  const apiGet = vi
-    .fn<(uri: string) => unknown>()
-    .mockReturnValue({ temperatureCelsius: 30 })
   const realtime = vi.fn<(event: string, data: unknown) => void>()
   const translate = vi
     .fn<(key: string, params?: Record<string, unknown>) => string>()
@@ -195,7 +196,7 @@ export const createMockHomey = ({
     })
   const homey = mock<Homey.Homey>({
     __: translate,
-    api: { get: apiGet, realtime },
+    api: { realtime },
     i18n: { getLanguage: (): string => language },
     manifest: { version },
     notifications: { createNotification },
@@ -223,7 +224,6 @@ export const createMockHomey = ({
       setTimeout(callback, milliseconds),
   })
   return {
-    apiGet,
     createNotification,
     eventHandlers,
     homey,

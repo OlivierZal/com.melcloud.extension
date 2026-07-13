@@ -30,6 +30,7 @@
     "refresh": "Neu laden",
     "searchSource": "Nach einer Quelle suchen …",
     "title": "Einstellungen der MELCloud-Erweiterung",
-    "update": "Aktualisieren"
+    "update": "Aktualisieren",
+    "allDevices": "Alle Geräte"
   }
 }

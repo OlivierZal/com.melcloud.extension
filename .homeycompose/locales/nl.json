@@ -17,6 +17,7 @@
     "thermostatMode": "de modus"
   },
   "settings": {
+    "allDevices": "Alle apparaten",
     "autoAdjust": "Auto-afstellen airco-temperatuur",
     "boolean": {
       "false": "Nee",

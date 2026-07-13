@@ -17,6 +17,7 @@
     "thermostatMode": "der Modus"
   },
   "settings": {
+    "allDevices": "Alle Geräte",
     "autoAdjust": "Temperatur der Klimaanlage automatisch anpassen",
     "boolean": {
       "false": "Nein",

@@ -32,6 +32,7 @@
     "defaultSource": "Homey-vejr (standard)",
     "disabledSource": "Juster ikke",
     "searchSource": "Søg efter en kilde …",
-    "update": "Opdater"
+    "update": "Opdater",
+    "allDevices": "Alle enheder"
   }
 }

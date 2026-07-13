@@ -32,6 +32,7 @@
     "defaultSource": "Homey-weer (standaard)",
     "disabledSource": "Niet aanpassen",
     "searchSource": "Zoek een bron…",
-    "update": "Updaten"
+    "update": "Updaten",
+    "allDevices": "Alle apparaten"
   }
 }
