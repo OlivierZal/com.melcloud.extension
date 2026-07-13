@@ -213,6 +213,23 @@ describe(MELCloudExtensionApp, () => {
     expect(homeDevice.capabilityInstances.has('target_temperature')).toBe(true)
   })
 
+  it('should leave a device opted out with the disabled source alone', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    classicDevice.values.thermostat_mode = 'cool'
+    homeDevice.values.thermostat_mode = 'cool'
+    await createHarness([classicDevice, homeDevice], {
+      settings: {
+        isEnabled: true,
+        outdoorSources: { 'classic-1': 'none' },
+      },
+    })
+
+    await advancePastInit()
+
+    expect(classicDevice.capabilityInstances.size).toBe(0)
+    expect(homeDevice.capabilityInstances.has('target_temperature')).toBe(true)
+  })
+
   it('should persist the settings without listening when disabled', async () => {
     const { classicDevice } = createDevices()
     const { mockHomey } = await createHarness([classicDevice])

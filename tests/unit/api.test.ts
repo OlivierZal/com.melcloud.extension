@@ -113,24 +113,25 @@ describe('api', () => {
       ])
     })
 
-    it('should map the devices to their configured source', () => {
+    it('should map the devices to their configured source, sorted by name', () => {
       const { homey } = createHomeyContext({
         melcloudDevices: [classicDevice.device, homeDevice.device],
         settings: {
           outdoorSources: {
             'classic-1': 'classic-1:measure_temperature.outdoor',
+            'home-1': 'none',
           },
         },
         temperatureSensors: [],
       })
 
       expect(api.getAdjustableDevices({ homey })).toStrictEqual([
+        { id: 'home-1', name: 'Bedroom', outdoorSource: 'none' },
         {
           id: 'classic-1',
           name: 'Living room',
           outdoorSource: 'classic-1:measure_temperature.outdoor',
         },
-        { id: 'home-1', name: 'Bedroom', outdoorSource: null },
       ])
     })
   })

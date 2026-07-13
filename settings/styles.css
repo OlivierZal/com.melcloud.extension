@@ -26,3 +26,8 @@
 .log-message-listened {
   color: #0047ab;
 }
+
+summary {
+  cursor: pointer;
+  margin-block-end: 1em;
+}

@@ -34,8 +34,11 @@ export interface Names {
   readonly thermostatMode: string
 }
 
-// Per-device outdoor feed: a "deviceId:capabilityId" path, or null for
-// the Homey weather default.
+// Explicit per-device opt-out: the device is not adjusted at all
+export const DISABLED_SOURCE = 'none'
+
+// Per-device outdoor feed: a "deviceId:capabilityId" path, DISABLED_SOURCE
+// to leave the device alone, or null for the Homey weather default.
 export type OutdoorSources = Partial<Record<string, string | null>>
 
 export interface TemperatureListenerData {

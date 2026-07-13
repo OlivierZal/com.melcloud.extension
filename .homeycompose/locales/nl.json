@@ -24,6 +24,7 @@
       "true": "Ja"
     },
     "defaultSource": "Homey-weer (standaard)",
+    "disabledSource": "Niet aanpassen",
     "enabled": "Blijf binnen 8 °C van de buitentemperatuur",
     "log": "Overzicht",
     "notFound": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
