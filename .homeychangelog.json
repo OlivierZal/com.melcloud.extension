@@ -211,5 +211,20 @@
     "pl": "Lista źródeł przewija się teraz dotykiem, a typografia jest zgodna ze stroną.",
     "ru": "Список источников теперь прокручивается пальцем, а шрифт соответствует странице.",
     "sv": "Källistan rullas nu med fingret och typografin följer sidan."
+  },
+  "24.6.0": {
+    "ar": "إصلاح طقس Homey (درجة حرارة فارغة)، صف «جميع الأجهزة» للتهيئة الجماعية، وأزرار وحقل التفعيل مرئيان دائمًا.",
+    "da": "Homey-vejret rettet (tom temperatur), ny række «Alle enheder» til massekonfiguration, og knapper samt aktiveringsfelt altid synlige.",
+    "de": "Homey-Wetter repariert (leere Temperatur), neue Zeile «Alle Geräte» für die Massenkonfiguration, Schaltflächen und Aktivierungsfeld immer sichtbar.",
+    "en": "Fixed the Homey weather (null temperature), added an “All devices” row for bulk configuration, and made the buttons and enable field always visible.",
+    "es": "Corregido el tiempo de Homey (temperatura nula), nueva fila «Todos los dispositivos» para configurar en bloque, y botones y campo de activación siempre visibles.",
+    "fr": "Correction de la météo Homey (température nulle), nouvelle ligne « Tous les appareils » pour configurer en masse, et boutons et champ d'activation toujours visibles.",
+    "it": "Corretto il meteo di Homey (temperatura nulla), nuova riga «Tutti i dispositivi» per la configurazione in blocco, e pulsanti e campo di attivazione sempre visibili.",
+    "ko": "Homey 날씨 수정(온도 없음), 일괄 설정을 위한 “모든 장치” 행 추가, 버튼과 활성화 필드가 항상 표시됩니다.",
+    "nl": "Homey-weer hersteld (lege temperatuur), nieuwe rij “Alle apparaten” voor bulkconfiguratie, en knoppen en activeringsveld altijd zichtbaar.",
+    "no": "Homey-været fikset (tom temperatur), ny rad «Alle enheter» for massekonfigurasjon, og knapper og aktiveringsfelt alltid synlige.",
+    "pl": "Naprawiono pogodę Homey (pusta temperatura), nowy wiersz „Wszystkie urządzenia” do zbiorczej konfiguracji, a przyciski i pole aktywacji są zawsze widoczne.",
+    "ru": "Исправлена погода Homey (пустая температура), добавлена строка «Все устройства» для массовой настройки, кнопки и поле включения всегда видимы.",
+    "sv": "Homey-vädret fixat (tom temperatur), ny rad «Alla enheter» för massinställning, och knappar samt aktiveringsfält alltid synliga."
   }
 }
