@@ -1,3 +1,28 @@
 .is-disabled {
   pointer-events: none;
 }
+
+.log-row {
+  display: flex;
+  margin-block-end: 1em;
+}
+
+.log-time {
+  color: #888;
+  flex-shrink: 0;
+  margin-inline-end: 1em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.log-message-calculated {
+  color: #008000;
+}
+
+.log-message-error {
+  color: #e8000d;
+}
+
+.log-message-listened {
+  color: #0047ab;
+}

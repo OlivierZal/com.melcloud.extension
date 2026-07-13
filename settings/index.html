@@ -6,12 +6,12 @@
         <title>MELCloud Extension Settings</title>
         <link href="styles.css" rel="stylesheet">
         <script data-origin="settings" defer src="/homey.js"></script>
-        <script defer src="index.mjs"></script>
+        <script type="module" src="index.mjs"></script>
         <meta content="MELCloud extension settings" name="description">
     </head>
     <body>
         <header class="homey-header">
-            <h1 class="homey-title" data-i18n="settings.title"></h1>
+            <h1 class="homey-title" data-i18n="settings.title">MELCloud extension settings</h1>
         </header>
         <fieldset class="homey-form-fieldset">
             <legend class="homey-form-legend" data-i18n="settings.autoAdjust"></legend>
@@ -23,8 +23,8 @@
                     for="enabled"
                 ></label>
                 <select id="enabled" class="homey-form-select">
-                    <option data-i18n="settings.boolean.false" value="false"></option>
-                    <option data-i18n="settings.boolean.true" value="true"></option>
+                    <option data-i18n="settings.boolean.false" value="false">No</option>
+                    <option data-i18n="settings.boolean.true" value="true">Yes</option>
                 </select>
             </div>
             <div class="homey-form-group">
