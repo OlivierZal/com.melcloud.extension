@@ -94,5 +94,14 @@
     "nl": "Instellingenpagina afgestemd op de Homey-stijlbibliotheek.",
     "no": "Justert innstillingssiden etter Homey-stilbiblioteket.",
     "sv": "Inställningssidan anpassad till Homeys stilbibliotek."
+  },
+  "24.1.0": {
+    "da": "Indstillinger: sammenfoldelig konfiguration, enheder sorteret alfabetisk og ny mulighed for ikke at justere en enhed.",
+    "en": "Settings: collapsible configuration, devices sorted alphabetically, and a new per-device option to opt out of adjustment.",
+    "es": "Ajustes: configuración plegable, dispositivos ordenados alfabéticamente y nueva opción para no ajustar un dispositivo.",
+    "fr": "Réglages : configuration repliable, appareils triés par ordre alphabétique et nouvelle option « Ne pas activer » par appareil.",
+    "nl": "Instellingen: inklapbare configuratie, apparaten alfabetisch gesorteerd en een nieuwe optie om een apparaat niet aan te passen.",
+    "no": "Innstillinger: sammenleggbar konfigurasjon, enheter sortert alfabetisk og nytt valg for å ikke justere en enhet.",
+    "sv": "Inställningar: hopfällbar konfiguration, enheter sorterade i bokstavsordning och nytt alternativ för att inte justera en enhet."
   }
 }
