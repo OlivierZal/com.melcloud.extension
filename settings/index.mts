@@ -287,8 +287,6 @@ const createSourceSelect = (
   return select
 }
 
-// Homey design system idiom: the control nested inside its label
-// (same shape as the com.melcloud settings).
 const createSourceLabel = (
   device: AdjustableDevice,
   select: HTMLSelectElement,
@@ -297,11 +295,11 @@ const createSourceLabel = (
   label.classList.add('homey-form-label')
   label.htmlFor = select.id
   label.textContent = device.name
-  label.append(select)
   return label
 }
 
-// One form group per field, following the Homey design system
+// Homey Style Library idiom (settings pages, unlike widgets, use it):
+// one form group per field, the control a SIBLING after its label.
 const appendSourceRow = (
   homey: Homey,
   device: AdjustableDevice,
@@ -311,7 +309,7 @@ const appendSourceRow = (
   sourceSelects.set(device.id, select)
   const group = document.createElement('div')
   group.classList.add('homey-form-group')
-  group.append(createSourceLabel(device, select))
+  group.append(createSourceLabel(device, select), select)
   sourcesElement.append(group)
 }
 
