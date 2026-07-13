@@ -287,18 +287,32 @@ const createSourceSelect = (
   return select
 }
 
+// Homey design system idiom: the control nested inside its label
+// (same shape as the com.melcloud settings).
+const createSourceLabel = (
+  device: AdjustableDevice,
+  select: HTMLSelectElement,
+): HTMLLabelElement => {
+  const label = document.createElement('label')
+  label.classList.add('homey-form-label')
+  label.htmlFor = select.id
+  label.textContent = device.name
+  label.append(select)
+  return label
+}
+
+// One form group per field, following the Homey design system
 const appendSourceRow = (
   homey: Homey,
   device: AdjustableDevice,
   sensors: readonly TemperatureSensor[],
 ): void => {
-  const label = document.createElement('label')
-  label.classList.add('homey-form-label')
-  label.htmlFor = `source-${device.id}`
-  label.textContent = device.name
   const select = createSourceSelect(homey, device, sensors)
   sourceSelects.set(device.id, select)
-  sourcesElement.append(label, select)
+  const group = document.createElement('div')
+  group.classList.add('homey-form-group')
+  group.append(createSourceLabel(device, select))
+  sourcesElement.append(group)
 }
 
 const populateSources = async (homey: Homey): Promise<void> => {
