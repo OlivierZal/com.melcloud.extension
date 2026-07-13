@@ -112,5 +112,14 @@
     "nl": "Instellingen: autoaanvulveld boven elke bronkiezer.",
     "no": "Innstillinger: autofullføringsfelt over hver kildevelger.",
     "sv": "Inställningar: autokompletteringsfält ovanför varje källväljare."
+  },
+  "24.3.0": {
+    "da": "Indstillinger: konfigurationen foldes automatisk efter aktiveringstilstand, og knapperne er harmoniseret med MELCloud-appen.",
+    "en": "Settings: the configuration folds based on the enabled state, and the buttons match the MELCloud app.",
+    "es": "Ajustes: la configuración se pliega según el estado de activación y los botones coinciden con la aplicación MELCloud.",
+    "fr": "Réglages : la configuration se replie selon l'état d'activation et les boutons sont harmonisés avec l'app MELCloud.",
+    "nl": "Instellingen: de configuratie klapt in op basis van de activeringsstatus en de knoppen komen overeen met de MELCloud-app.",
+    "no": "Innstillinger: konfigurasjonen foldes etter aktiveringstilstanden, og knappene samsvarer med MELCloud-appen.",
+    "sv": "Inställningar: konfigurationen fälls ihop efter aktiveringsläget och knapparna matchar MELCloud-appen."
   }
 }
