@@ -32,10 +32,6 @@ summary {
   margin-block-end: 1em;
 }
 
-.source-search {
-  margin-block-end: 0.5em;
-}
-
 /* Two-column grid for button pairs */
 .container {
   display: grid;
