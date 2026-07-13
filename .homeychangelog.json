@@ -85,5 +85,14 @@
     "nl": "Uiterlijk van de instellingenpagina verbeterd.",
     "no": "Forbedret utseendet på innstillingssiden.",
     "sv": "Förbättrat utseendet på inställningssidan."
+  },
+  "24.0.2": {
+    "da": "Justeret indstillingssiden efter Homey-stilbiblioteket.",
+    "en": "Aligned the settings page with the Homey style library.",
+    "es": "Página de ajustes alineada con la biblioteca de estilos de Homey.",
+    "fr": "Alignement de la page de réglages sur la bibliothèque de styles Homey.",
+    "nl": "Instellingenpagina afgestemd op de Homey-stijlbibliotheek.",
+    "no": "Justert innstillingssiden etter Homey-stilbiblioteket.",
+    "sv": "Inställningssidan anpassad till Homeys stilbibliotek."
   }
 }
