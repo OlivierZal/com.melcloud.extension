@@ -226,5 +226,20 @@
     "pl": "Naprawiono pogodę Homey (pusta temperatura), nowy wiersz „Wszystkie urządzenia” do zbiorczej konfiguracji, a przyciski i pole aktywacji są zawsze widoczne.",
     "ru": "Исправлена погода Homey (пустая температура), добавлена строка «Все устройства» для массовой настройки, кнопки и поле включения всегда видимы.",
     "sv": "Homey-vädret fixat (tom temperatur), ny rad «Alla enheter» för massinställning, och knappar samt aktiveringsfält alltid synliga."
+  },
+  "24.6.1": {
+    "ar": "تحسين علامة الاختيار، وزر «إعادة تحميل» يستعيد الآن كل القيم المحفوظة دون طي القائمة.",
+    "da": "Forfinet flueben, og «Genindlæs» gendanner nu alle gemte værdier uden at folde listen sammen.",
+    "de": "Feineres Häkchen, und «Neu laden» stellt jetzt alle gespeicherten Werte wieder her, ohne die Liste einzuklappen.",
+    "en": "Refined checkmark, and Refresh now restores every saved value without folding the list.",
+    "es": "Marca de verificación refinada, y «Recargar» restaura ahora todos los valores guardados sin plegar la lista.",
+    "fr": "Coche affinée, et « Rafraîchir » restaure désormais toutes les valeurs enregistrées sans replier la liste.",
+    "it": "Segno di spunta rifinito, e «Ricarica» ora ripristina tutti i valori salvati senza richiudere l’elenco.",
+    "ko": "체크 표시를 다듬었고, ‘새로고침’이 이제 목록을 접지 않고 저장된 모든 값을 복원합니다.",
+    "nl": "Verfijnd vinkje, en “Herladen” herstelt nu alle opgeslagen waarden zonder de lijst in te klappen.",
+    "no": "Forfinet hake, og «Oppfrisk» gjenoppretter nå alle lagrede verdier uten å folde listen.",
+    "pl": "Dopracowany znacznik, a „Odśwież” przywraca teraz wszystkie zapisane wartości bez zwijania listy.",
+    "ru": "Галочка доработана, а «Загрузить» теперь восстанавливает все сохранённые значения, не сворачивая список.",
+    "sv": "Förfinad bock, och «Ladda om» återställer nu alla sparade värden utan att fälla ihop listan."
   }
 }
