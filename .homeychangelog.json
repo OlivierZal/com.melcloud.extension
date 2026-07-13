@@ -166,5 +166,20 @@
     "pl": "Naprawiono wybór źródła na telefonie: pełna lista rozwija się teraz po dotknięciu pola.",
     "ru": "Исправлен выбор источника на телефоне: полный список теперь раскрывается при касании поля.",
     "sv": "Fixade källväljaren på telefonen: hela listan fälls nu ut när fältet trycks."
+  },
+  "24.5.2": {
+    "ar": "قائمة المصادر قابلة للتمرير الآن وتعتمد مظهر قائمة النظام، مع علامة أمام الاختيار الحالي.",
+    "da": "Kildelisten kan nu rulles og har systemmenuens udseende, med et flueben ved det aktuelle valg.",
+    "de": "Die Quellenliste ist jetzt scrollbar und übernimmt das Aussehen des Systemmenüs, mit Häkchen an der aktuellen Auswahl.",
+    "en": "The source list now scrolls and adopts the system-menu look, with a checkmark on the current selection.",
+    "es": "La lista de fuentes ahora se desplaza y adopta el aspecto del menú del sistema, con una marca en la selección actual.",
+    "fr": "La liste des sources défile désormais et adopte l'apparence du menu système, avec une coche sur la sélection en cours.",
+    "it": "L'elenco delle fonti ora scorre e adotta l'aspetto del menu di sistema, con un segno di spunta sulla selezione corrente.",
+    "ko": "소스 목록이 이제 스크롤되며 시스템 메뉴 모양을 따르고, 현재 선택 항목에 체크 표시가 붙습니다.",
+    "nl": "De bronnenlijst scrolt nu en heeft de look van het systeemmenu, met een vinkje bij de huidige selectie.",
+    "no": "Kildelisten kan nå rulles og har systemmenyens utseende, med hake ved gjeldende valg.",
+    "pl": "Lista źródeł przewija się teraz i wygląda jak menu systemowe, ze znacznikiem przy bieżącym wyborze.",
+    "ru": "Список источников теперь прокручивается и выглядит как системное меню, с галочкой у текущего выбора.",
+    "sv": "Källistan rullar nu och har systemmenyns utseende, med en bock vid det aktuella valet."
   }
 }
