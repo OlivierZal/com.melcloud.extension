@@ -30,6 +30,7 @@
     "refresh": "Recargar",
     "title": "Configuración de la extensión para MELCloud",
     "defaultSource": "Tiempo de Homey (predeterminado)",
-    "disabledSource": "No ajustar"
+    "disabledSource": "No ajustar",
+    "searchSource": "Buscar una fuente…"
   }
 }

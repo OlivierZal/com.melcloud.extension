@@ -30,6 +30,7 @@
     "refresh": "Ladda om",
     "title": "Inställningar för MELCloud-tillägg",
     "defaultSource": "Homey-väder (standard)",
-    "disabledSource": "Justera inte"
+    "disabledSource": "Justera inte",
+    "searchSource": "Sök efter en källa …"
   }
 }

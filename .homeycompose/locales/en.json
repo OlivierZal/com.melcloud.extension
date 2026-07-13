@@ -29,6 +29,7 @@
     "log": "History",
     "notFound": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
     "refresh": "Refresh",
+    "searchSource": "Search for a source…",
     "title": "MELCloud extension settings"
   }
 }

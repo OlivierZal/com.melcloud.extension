@@ -30,6 +30,7 @@
     "refresh": "Genindlæs",
     "title": "Indstillinger for MELCloud-udvidelse",
     "defaultSource": "Homey-vejr (standard)",
-    "disabledSource": "Juster ikke"
+    "disabledSource": "Juster ikke",
+    "searchSource": "Søg efter en kilde …"
   }
 }

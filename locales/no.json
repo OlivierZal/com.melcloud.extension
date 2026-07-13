@@ -30,6 +30,7 @@
     "refresh": "Gjenta",
     "title": "Innstillinger for MELCloud-utvidelse",
     "defaultSource": "Homey-vær (standard)",
-    "disabledSource": "Ikke juster"
+    "disabledSource": "Ikke juster",
+    "searchSource": "Søk etter en kilde …"
   }
 }

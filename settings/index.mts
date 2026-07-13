@@ -106,7 +106,17 @@ const enabledElement = getSelectElement('enabled')
 const logsElement = getTableSectionElement('logs')
 const sourcesElement = getDivElement('sources')
 
+// Created here rather than in the static page: its options are fully
+// dynamic, and the settings webview is Homey's Chromium (datalist sits
+// below the html/use-baseline bar on paper only).
+const sourceOptionsElement = document.createElement('datalist')
+sourceOptionsElement.id = 'source_options'
+sourcesElement.after(sourceOptionsElement)
+
 const sourceSelects = new Map<string, HTMLSelectElement>()
+// Mirrors of the select options, shared by every autocomplete input
+const sourceNamesByValue = new Map<string, string>()
+const sourceValuesByName = new Map<string, string>()
 
 const setButtonsEnabled = (isEnabled: boolean): void => {
   for (const element of [applyElement, refreshElement]) {
@@ -266,6 +276,33 @@ const fetchAdjustableDevices = async (
   }
 }
 
+// Auto-enable when the user picks a different source (UX convenience)
+const enableAdjustment = (): void => {
+  if (enabledElement.value === 'false') {
+    enabledElement.value = 'true'
+  }
+}
+
+const registerSourceOption = (name: string, value: string): void => {
+  sourceNamesByValue.set(value, name)
+  sourceValuesByName.set(name.toLowerCase(), value)
+  sourceOptionsElement.append(new Option(name))
+}
+
+const populateSourceOptions = (
+  homey: Homey,
+  sensors: readonly TemperatureSensor[],
+): void => {
+  sourceOptionsElement.replaceChildren()
+  sourceNamesByValue.clear()
+  sourceValuesByName.clear()
+  registerSourceOption(homey.__('settings.disabledSource'), DISABLED_SOURCE)
+  registerSourceOption(homey.__('settings.defaultSource'), '')
+  for (const { capabilityName, capabilityPath } of sensors) {
+    registerSourceOption(capabilityName, capabilityPath)
+  }
+}
+
 const createSourceSelect = (
   homey: Homey,
   device: AdjustableDevice,
@@ -282,13 +319,39 @@ const createSourceSelect = (
     select.append(new Option(capabilityName, capabilityPath))
   }
   select.value = device.outdoorSource ?? ''
-  // Auto-enable when the user picks a different source (UX convenience)
-  select.addEventListener('change', () => {
-    if (enabledElement.value === 'false') {
-      enabledElement.value = 'true'
-    }
-  })
+  select.addEventListener('change', enableAdjustment)
   return select
+}
+
+// Autocomplete companion: a text input backed by the shared datalist.
+// A recognized name drives the select; anything else snaps back to the
+// select's current choice on change/blur.
+const createSourceSearch = (
+  homey: Homey,
+  device: AdjustableDevice,
+  select: HTMLSelectElement,
+): HTMLInputElement => {
+  const search = document.createElement('input')
+  search.classList.add('homey-form-input', 'source-search')
+  search.id = `search-${device.id}`
+  search.setAttribute('list', 'source_options')
+  search.placeholder = homey.__('settings.searchSource')
+  search.ariaLabel = `${device.name} — ${homey.__('settings.searchSource')}`
+  search.value = sourceNamesByValue.get(select.value) ?? ''
+  search.addEventListener('change', () => {
+    const value = sourceValuesByName.get(search.value.trim().toLowerCase())
+    if (value === undefined) {
+      search.value = sourceNamesByValue.get(select.value) ?? ''
+      return
+    }
+    select.value = value
+    search.value = sourceNamesByValue.get(value) ?? ''
+    enableAdjustment()
+  })
+  select.addEventListener('change', () => {
+    search.value = sourceNamesByValue.get(select.value) ?? ''
+  })
+  return search
 }
 
 const createSourceLabel = (
@@ -313,7 +376,11 @@ const appendSourceRow = (
   sourceSelects.set(device.id, select)
   const group = document.createElement('div')
   group.classList.add('homey-form-group')
-  group.append(createSourceLabel(device, select), select)
+  group.append(
+    createSourceLabel(device, select),
+    createSourceSearch(homey, device, select),
+    select,
+  )
   sourcesElement.append(group)
 }
 
@@ -322,6 +389,7 @@ const populateSources = async (homey: Homey): Promise<void> => {
     fetchAdjustableDevices(homey),
     fetchTemperatureSensors(homey),
   ])
+  populateSourceOptions(homey, sensors)
   sourceSelects.clear()
   sourcesElement.replaceChildren()
   for (const device of devices) {

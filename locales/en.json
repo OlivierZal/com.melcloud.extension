@@ -30,6 +30,7 @@
     "refresh": "Refresh",
     "title": "MELCloud extension settings",
     "defaultSource": "Homey weather (default)",
-    "disabledSource": "Do not adjust"
+    "disabledSource": "Do not adjust",
+    "searchSource": "Search for a source…"
   }
 }

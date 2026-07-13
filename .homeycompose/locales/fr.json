@@ -29,6 +29,7 @@
     "log": "Historique",
     "notFound": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
     "refresh": "Rafraîchir",
+    "searchSource": "Rechercher une source…",
     "title": "Paramètres de l'extension pour MELCloud"
   }
 }

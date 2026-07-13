@@ -30,6 +30,7 @@
     "refresh": "Rafraîchir",
     "title": "Paramètres de l'extension pour MELCloud",
     "defaultSource": "Météo Homey (par défaut)",
-    "disabledSource": "Ne pas activer"
+    "disabledSource": "Ne pas activer",
+    "searchSource": "Rechercher une source…"
   }
 }
