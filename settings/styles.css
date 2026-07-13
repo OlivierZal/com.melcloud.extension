@@ -38,3 +38,8 @@ summary {
   gap: var(--homey-su-2);
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+
+/* The Homey select chevron is the affordance; hide the WebKit one */
+.source-combobox::-webkit-calendar-picker-indicator {
+  display: none;
+}

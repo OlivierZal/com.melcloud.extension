@@ -12,6 +12,8 @@ import {
 } from '../types.mts'
 
 const LOG_RETENTION_DAYS = 6
+// Width of the select chevron zone at the field's end (logical inline-end)
+const ARROW_ZONE_PX = 40
 
 interface LogCategory {
   readonly icon: string
@@ -333,12 +335,40 @@ const createSourceInputElement = (
   device: AdjustableDevice,
 ): HTMLInputElement => {
   const input = document.createElement('input')
-  input.classList.add('homey-form-input')
+  // The select classes give the combobox the exact homey-form-select
+  // look, chevron included; the input class keeps the text affordances.
+  input.classList.add(
+    'homey-form-input',
+    'homey-form-select',
+    'source-combobox',
+  )
   input.id = `source-${device.id}`
   input.setAttribute('list', 'source_options')
   input.placeholder = homey.__('settings.searchSource')
   input.ariaLabel = `${device.name} — ${homey.__('settings.searchSource')}`
   return input
+}
+
+// Clicking the chevron zone expands the FULL list, select-style: the
+// field is emptied so the datalist popup shows unfiltered (a dismissal
+// restores the display on blur).
+const openFullList = (input: HTMLInputElement): void => {
+  input.value = ''
+  try {
+    input.showPicker()
+  } catch {
+    // Webviews without showPicker: focusing the emptied field drops the
+    // list down instead
+    input.focus()
+  }
+}
+
+const isInArrowZone = (input: HTMLInputElement, event: MouseEvent): boolean => {
+  const distance =
+    getComputedStyle(input).direction === 'rtl' ?
+      event.offsetX
+    : input.offsetWidth - event.offsetX
+  return distance <= ARROW_ZONE_PX
 }
 
 const createSourceInput = (
@@ -351,6 +381,15 @@ const createSourceInput = (
   input.value = sourceNamesByValue.get(initialValue) ?? ''
   input.addEventListener('change', () => {
     applySourceInput(input, device.id)
+  })
+  input.addEventListener('click', (event) => {
+    if (isInArrowZone(input, event)) {
+      openFullList(input)
+    }
+  })
+  input.addEventListener('blur', () => {
+    const current = sourceSelections.get(device.id) ?? ''
+    input.value = sourceNamesByValue.get(current) ?? ''
   })
   return input
 }
