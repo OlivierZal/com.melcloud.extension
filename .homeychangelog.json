@@ -241,5 +241,20 @@
     "pl": "Dopracowany znacznik, a „Odśwież” przywraca teraz wszystkie zapisane wartości bez zwijania listy.",
     "ru": "Галочка доработана, а «Загрузить» теперь восстанавливает все сохранённые значения, не сворачивая список.",
     "sv": "Förfinad bock, och «Ladda om» återställer nu alla sparade värden utan att fälla ihop listan."
+  },
+  "24.6.2": {
+    "ar": "لم يعد التمرير داخل القائمة يختار عنصرًا عن طريق الخطأ.",
+    "da": "Rulning i listen vælger ikke længere et punkt ved en fejl.",
+    "de": "Das Scrollen in der Liste wählt nicht mehr versehentlich einen Eintrag aus.",
+    "en": "Scrolling the list no longer picks an option by accident.",
+    "es": "Desplazar la lista ya no selecciona una opción por accidente.",
+    "fr": "Faire défiler la liste ne sélectionne plus une option par accident.",
+    "it": "Scorrere l’elenco non seleziona più un’opzione per errore.",
+    "ko": "목록을 스크롤해도 더 이상 실수로 옵션이 선택되지 않습니다.",
+    "nl": "Door de lijst scrollen selecteert niet langer per ongeluk een optie.",
+    "no": "Å rulle i listen velger ikke lenger et alternativ ved et uhell.",
+    "pl": "Przewijanie listy nie wybiera już przypadkowo opcji.",
+    "ru": "Прокрутка списка больше не выбирает пункт случайно.",
+    "sv": "Att rulla i listan väljer inte längre ett alternativ av misstag."
   }
 }
