@@ -76,5 +76,14 @@
     "nl": "Ondersteuning voor MELCloud Home-apparaten toegevoegd; elke airco kan nu zijn eigen buitentemperatuurbron volgen (Homey-weer als standaard).",
     "no": "Lagt til støtte for MELCloud Home-enheter; hvert klimaanlegg kan nå følge sin egen utetemperaturkilde (Homey-vær som standard).",
     "sv": "Lagt till stöd för MELCloud Home-enheter; varje luftkonditionering kan nu följa sin egen utomhustemperaturkälla (Homey-väder som standard)."
+  },
+  "24.0.1": {
+    "da": "Forbedret udseendet af indstillingssiden.",
+    "en": "Improved the settings page appearance.",
+    "es": "Mejorada la apariencia de la página de ajustes.",
+    "fr": "Amélioration de l'apparence de la page de réglages.",
+    "nl": "Uiterlijk van de instellingenpagina verbeterd.",
+    "no": "Forbedret utseendet på innstillingssiden.",
+    "sv": "Förbättrat utseendet på inställningssidan."
   }
 }
