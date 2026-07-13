@@ -11,6 +11,7 @@
   },
   "names": {
     "device": "El dispositivo",
+    "homeyWeather": "el tiempo de Homey",
     "outdoorTemperature": "La temperatura exterior",
     "temperature": "la temperatura",
     "thermostatMode": "el modo"
@@ -22,8 +23,8 @@
       "false": "No",
       "true": "Sí"
     },
-    "capabilities": "Temperatura exterior",
-    "enabled": "Mantener dentro de los 8\u00A0°C de la temperatura exterior",
+    "defaultSource": "Tiempo de Homey (predeterminado)",
+    "enabled": "Mantener dentro de los 8 °C de la temperatura exterior",
     "log": "Historial",
     "notFound": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
     "refresh": "Recargar",

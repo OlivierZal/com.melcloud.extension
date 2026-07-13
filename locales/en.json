@@ -13,7 +13,8 @@
     "device": "Device",
     "outdoorTemperature": "The outdoor temperature",
     "temperature": "the temperature",
-    "thermostatMode": "the mode"
+    "thermostatMode": "the mode",
+    "homeyWeather": "the Homey weather"
   },
   "settings": {
     "apply": "Apply to all air-to-air devices",
@@ -27,6 +28,7 @@
     "log": "History",
     "notFound": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
     "refresh": "Refresh",
-    "title": "MELCloud extension settings"
+    "title": "MELCloud extension settings",
+    "defaultSource": "Homey weather (default)"
   }
 }

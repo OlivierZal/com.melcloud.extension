@@ -29,6 +29,10 @@ declare module 'homey-api' {
     export class Capability {
       readonly id: string
 
+      readonly max?: number
+
+      readonly min?: number
+
       readonly title: string
     }
 

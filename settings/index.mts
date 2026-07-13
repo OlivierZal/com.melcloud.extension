@@ -1,24 +1,64 @@
 import type Homey from 'homey/lib/HomeySettings'
+import { Temporal } from 'temporal-polyfill'
 
 import type {
+  AdjustableDevice,
   HomeySettings,
+  OutdoorSources,
   TemperatureListenerData,
   TemperatureSensor,
   TimestampedLog,
 } from '../types.mts'
 
 const LOG_RETENTION_DAYS = 6
-const TIME_ZERO = 0
 
-const categories: Record<string, { icon: string; color?: string }> = {
-  calculated: { color: '#008000', icon: '🔢' },
+interface LogCategory {
+  readonly icon: string
+  readonly colorClass?: string
+}
+
+const errorCategory: LogCategory = {
+  colorClass: 'log-message-error',
+  icon: '⚠️',
+}
+
+const categories: Partial<Record<string, LogCategory>> = {
+  calculated: { colorClass: 'log-message-calculated', icon: '🔢' },
   cleaned: { icon: '🗑️' },
   cleanedAll: { icon: '🛑' },
   created: { icon: '🔊' },
-  error: { color: '#E8000D', icon: '⚠️' },
-  listened: { color: '#0047AB', icon: '👂' },
+  error: errorCategory,
+  listened: { colorClass: 'log-message-listened', icon: '👂' },
   reverted: { icon: '↩️' },
   saved: { icon: '☁️' },
+}
+
+/**
+ * Surfaces an error in the webview dev tools without blocking the caller:
+ * `reportError` where the webview provides it, an async rethrow otherwise.
+ */
+const surfaceError = (error: unknown): void => {
+  if (typeof reportError === 'function') {
+    reportError(error)
+    return
+  }
+  setTimeout(() => {
+    throw error instanceof Error ? error : (
+        new Error('Unhandled settings error', { cause: error })
+      )
+  }, 0)
+}
+
+/**
+ * Runs an async operation that shouldn't block. Rejections go to `onError`
+ * (default: `surfaceError`, which reports them in the webview dev tools).
+ */
+const fireAndForget = (
+  promise: Promise<unknown>,
+  onError: (error: unknown) => void = surfaceError,
+): void => {
+  // eslint-disable-next-line unicorn/prefer-await -- fire-and-forget: rejections route to onError without blocking the caller
+  promise.catch(onError)
 }
 
 // Promisifies Homey Settings API callbacks (error-first convention)
@@ -27,7 +67,7 @@ const homeyCallback = async <T,>(
 ): Promise<T> =>
   new Promise((resolve, reject) => {
     call((error, result) => {
-      if (error) {
+      if (error !== null) {
         reject(error)
         return
       }
@@ -53,53 +93,49 @@ const getButtonElement = (id: string): HTMLButtonElement =>
 const getSelectElement = (id: string): HTMLSelectElement =>
   getElement(id, HTMLSelectElement, 'select')
 
+const getDivElement = (id: string): HTMLDivElement =>
+  getElement(id, HTMLDivElement, 'div')
+
 const getTableSectionElement = (id: string): HTMLTableSectionElement =>
   getElement(id, HTMLTableSectionElement, 'table section')
 
 const applyElement = getButtonElement('apply')
 const refreshElement = getButtonElement('refresh')
-const capabilityPathElement = getSelectElement('capability_path')
 const enabledElement = getSelectElement('enabled')
 const logsElement = getTableSectionElement('logs')
+const sourcesElement = getDivElement('sources')
 
-let language = 'en'
+const sourceSelects = new Map<string, HTMLSelectElement>()
 
-const disableButtons = (value = true): void => {
+const setButtonsEnabled = (isEnabled: boolean): void => {
   for (const element of [applyElement, refreshElement]) {
-    if (value) {
-      element.classList.add('is-disabled')
-      continue
-    }
-    element.classList.remove('is-disabled')
+    element.classList.toggle('is-disabled', !isEnabled)
   }
-}
-
-const enableButtons = (value = true): void => {
-  disableButtons(!value)
 }
 
 const withDisablingButtons = async (
   action: () => Promise<void>,
 ): Promise<void> => {
-  disableButtons()
+  setButtonsEnabled(false)
   await action()
-  enableButtons()
+  setButtonsEnabled(true)
 }
 
+// The document language is the display locale: `fetchLanguage` overwrites
+// the html attribute's default with the Homey-configured language.
 const displayTime = (time: number): string =>
-  new Date(time).toLocaleString(language, {
-    hour: 'numeric',
-    minute: 'numeric',
-    weekday: 'short',
-  })
+  Temporal.Instant.fromEpochMilliseconds(time).toLocaleString(
+    document.documentElement.lang,
+    {
+      hour: 'numeric',
+      minute: 'numeric',
+      weekday: 'short',
+    },
+  )
 
 const createTimeElement = (time: number, icon: string): HTMLDivElement => {
   const timeElement = document.createElement('div')
-  timeElement.style.color = '#888'
-  timeElement.style.flexShrink = '0'
-  timeElement.style.marginRight = '1em'
-  timeElement.style.textAlign = 'center'
-  timeElement.style.whiteSpace = 'nowrap'
+  timeElement.classList.add('log-time')
   timeElement.append(
     document.createTextNode(displayTime(time)),
     document.createElement('br'),
@@ -110,83 +146,85 @@ const createTimeElement = (time: number, icon: string): HTMLDivElement => {
 
 const createMessageElement = (
   message: string,
-  color?: string,
+  colorClass?: string,
 ): HTMLDivElement => {
   const messageElement = document.createElement('div')
-  if (color !== undefined) {
-    messageElement.style.color = color
+  if (colorClass !== undefined) {
+    messageElement.classList.add(colorClass)
   }
   messageElement.textContent = message
   return messageElement
 }
 
 const displayLog = ({ category, message, time }: TimestampedLog): void => {
-  const newCategory = categories[category ?? 'error'] ?? categories['error']
-  if (newCategory) {
-    const { color, icon } = newCategory
-    const timeElement = createTimeElement(time, icon)
-    const messageElement = createMessageElement(message, color)
-    const rowElement = document.createElement('div')
-    rowElement.style.display = 'flex'
-    rowElement.style.marginBottom = '1em'
-    rowElement.append(timeElement, messageElement)
-    logsElement.insertBefore(rowElement, logsElement.firstChild)
-  }
+  const { colorClass, icon } = categories[category ?? 'error'] ?? errorCategory
+  const rowElement = document.createElement('div')
+  rowElement.classList.add('log-row')
+  rowElement.append(
+    createTimeElement(time, icon),
+    createMessageElement(message, colorClass),
+  )
+  logsElement.insertBefore(rowElement, logsElement.firstChild)
 }
 
-const getErrorMessage = (error: unknown): string =>
-  error instanceof Error ? error.message : String(error)
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) {
+    return error.message
+  }
+  return typeof error === 'string' ? error : JSON.stringify(error)
+}
 
 const handleTemperatureSensorsError = async (
   homey: Homey,
   errorMessage: string,
 ): Promise<void> => {
-  if (errorMessage === 'notFound') {
-    homey.confirm(
-      homey.__('settings.notFound'),
-      null,
-      async (error: Error | null, ok: boolean) => {
-        if (error) {
-          await homey.alert(error.message)
-          return
-        }
-        if (ok) {
-          await homey.openURL('https://homey.app/a/com.mecloud')
-        }
-      },
-    )
+  if (errorMessage !== 'notFound') {
+    await homey.alert(errorMessage)
     return
   }
-  await homey.alert(errorMessage)
+  const shouldInstall = await homeyCallback<boolean>((callback) => {
+    homey.confirm(homey.__('settings.notFound'), null, callback)
+  })
+  if (shouldInstall) {
+    await homey.openURL('https://homey.app/a/com.mecloud')
+  }
+}
+
+// Only show logs from the last LOG_RETENTION_DAYS (midnight cutoff)
+const getOldestDisplayableInstant = (): Temporal.Instant =>
+  Temporal.Now.zonedDateTimeISO()
+    .subtract({ days: LOG_RETENTION_DAYS })
+    .startOfDay()
+    .toInstant()
+
+const displayRetainedLogs = (logs: readonly TimestampedLog[]): void => {
+  if (logsElement.childElementCount > 0) {
+    return
+  }
+  const oldestInstant = getOldestDisplayableInstant()
+  const retainedLogs = logs
+    .filter(
+      ({ time }) =>
+        Temporal.Instant.compare(
+          Temporal.Instant.fromEpochMilliseconds(time),
+          oldestInstant,
+        ) >= 0,
+    )
+    .toReversed()
+  for (const log of retainedLogs) {
+    displayLog(log)
+  }
 }
 
 const handleSettings = (settings: HomeySettings): void => {
-  if (!logsElement.childElementCount) {
-    for (const log of (settings.lastLogs ?? [])
-      // Only show logs from the last LOG_RETENTION_DAYS (midnight cutoff)
-      .filter(({ time }) => {
-        const date = new Date(time)
-        const oldestDate = new Date()
-        oldestDate.setDate(oldestDate.getDate() - LOG_RETENTION_DAYS)
-        oldestDate.setHours(TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_ZERO)
-        return date >= oldestDate
-      })
-      .toReversed()) {
-      displayLog(log)
-    }
-  }
-  capabilityPathElement.value = settings.capabilityPath ?? ''
+  displayRetainedLogs(settings.lastLogs ?? [])
   enabledElement.value = String(settings.isEnabled === true)
 }
 
 const fetchLanguage = async (homey: Homey): Promise<void> => {
-  try {
-    const lang = await homeyCallback<string>((callback) => {
-      homey.api('GET', '/language', callback)
-    })
-    document.documentElement.lang = lang
-    language = lang
-  } catch {}
+  document.documentElement.lang = await homeyCallback<string>((callback) => {
+    homey.api('GET', '/language', callback)
+  })
 }
 
 const fetchHomeySettings = async (homey: Homey): Promise<void> =>
@@ -201,18 +239,89 @@ const fetchHomeySettings = async (homey: Homey): Promise<void> =>
     }
   })
 
-const getTemperatureSensors = async (homey: Homey): Promise<void> => {
+const fetchTemperatureSensors = async (
+  homey: Homey,
+): Promise<TemperatureSensor[]> => {
   try {
-    const devices = await homeyCallback<TemperatureSensor[]>((callback) => {
+    return await homeyCallback<TemperatureSensor[]>((callback) => {
       homey.api('GET', '/devices/sensors/temperature', callback)
     })
-    for (const { capabilityName, capabilityPath } of devices) {
-      capabilityPathElement.append(new Option(capabilityName, capabilityPath))
-    }
   } catch (error) {
     await handleTemperatureSensorsError(homey, getErrorMessage(error))
+    return []
   }
 }
+
+const fetchAdjustableDevices = async (
+  homey: Homey,
+): Promise<AdjustableDevice[]> => {
+  try {
+    return await homeyCallback<AdjustableDevice[]>((callback) => {
+      homey.api('GET', '/devices/adjustable', callback)
+    })
+  } catch (error) {
+    await handleTemperatureSensorsError(homey, getErrorMessage(error))
+    return []
+  }
+}
+
+const createSourceSelect = (
+  homey: Homey,
+  device: AdjustableDevice,
+  sensors: readonly TemperatureSensor[],
+): HTMLSelectElement => {
+  const select = document.createElement('select')
+  select.classList.add('homey-form-select')
+  select.id = `source-${device.id}`
+  select.append(new Option(homey.__('settings.defaultSource'), ''))
+  for (const { capabilityName, capabilityPath } of sensors) {
+    select.append(new Option(capabilityName, capabilityPath))
+  }
+  select.value = device.outdoorSource ?? ''
+  // Auto-enable when the user picks a different source (UX convenience)
+  select.addEventListener('change', () => {
+    if (enabledElement.value === 'false') {
+      enabledElement.value = 'true'
+    }
+  })
+  return select
+}
+
+const appendSourceRow = (
+  homey: Homey,
+  device: AdjustableDevice,
+  sensors: readonly TemperatureSensor[],
+): void => {
+  const label = document.createElement('label')
+  label.classList.add('homey-form-label')
+  label.htmlFor = `source-${device.id}`
+  label.textContent = device.name
+  const select = createSourceSelect(homey, device, sensors)
+  sourceSelects.set(device.id, select)
+  sourcesElement.append(label, select)
+}
+
+const populateSources = async (homey: Homey): Promise<void> => {
+  const [devices, sensors] = await Promise.all([
+    fetchAdjustableDevices(homey),
+    fetchTemperatureSensors(homey),
+  ])
+  sourceSelects.clear()
+  sourcesElement.replaceChildren()
+  for (const device of devices) {
+    appendSourceRow(homey, device, sensors)
+  }
+}
+
+const getSelectedSources = (): OutdoorSources =>
+  Object.fromEntries(
+    sourceSelects
+      .entries()
+      .map(([deviceId, select]) => [
+        deviceId,
+        select.value === '' ? null : select.value,
+      ]),
+  )
 
 const autoAdjustCooling = async (homey: Homey): Promise<void> =>
   withDisablingButtons(async () => {
@@ -222,8 +331,8 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
           'PUT',
           '/melcloud/cooling/auto_adjustment',
           {
-            capabilityPath: capabilityPathElement.value,
             isEnabled: enabledElement.value === 'true',
+            outdoorSources: getSelectedSources(),
           } satisfies TemperatureListenerData,
           callback,
         )
@@ -234,36 +343,25 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
   })
 
 const addEventListeners = (homey: Homey): void => {
-  // Auto-enable when the user selects a different sensor (UX convenience)
-  capabilityPathElement.addEventListener('change', () => {
-    if (enabledElement.value === 'false') {
-      enabledElement.value = 'true'
-    }
-  })
   refreshElement.addEventListener('click', () => {
-    fetchHomeySettings(homey).catch(() => {
-      //
-    })
+    fireAndForget(fetchHomeySettings(homey))
   })
   applyElement.addEventListener('click', () => {
-    autoAdjustCooling(homey).catch(() => {
-      //
-    })
+    fireAndForget(autoAdjustCooling(homey))
   })
   homey.on('log', displayLog)
 }
 
-/*
- * Must be a function declaration (not an arrow): homey.js looks up
- * `onHomeyReady` by name on the global object, and only function
- * declarations are hoisted into the global scope of a classic script.
- */
-// @ts-expect-error: read by another script in `./index.html`
-// eslint-disable-next-line func-style
-async function onHomeyReady(homey: Homey): Promise<void> {
-  await fetchLanguage(homey)
-  await getTemperatureSensors(homey)
+const onHomeyReady = async (homey: Homey): Promise<void> => {
+  try {
+    await fetchLanguage(homey)
+  } catch {
+    // Non-critical: the log timestamps fall back to English formatting
+  }
+  await populateSources(homey)
   await fetchHomeySettings(homey)
   addEventListeners(homey)
   homey.ready()
 }
+
+Object.assign(globalThis, { onHomeyReady })

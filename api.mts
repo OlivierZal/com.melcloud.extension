@@ -1,21 +1,21 @@
 import type { Homey } from 'homey/lib/Homey'
 
+import { NotFoundError } from './lib/errors.mts'
 import {
+  type AdjustableDevice,
   type TemperatureListenerData,
   type TemperatureSensor,
   MEASURE_TEMPERATURE,
   OUTDOOR_TEMPERATURE,
 } from './types.mts'
 
-class AtaDeviceNotFoundError extends Error {
-  public override name = 'AtaDeviceNotFoundError'
-
-  public constructor() {
-    super('notFound')
-  }
-}
-
 const api = {
+  /**
+   * Starts or restarts automatic cooling adjustment from the settings UI.
+   * @param options - Homey API context.
+   * @param options.body - Selected outdoor source and enablement flag.
+   * @param options.homey - Homey instance carrying the app.
+   */
   async autoAdjustCooling({
     body,
     homey: { app },
@@ -25,18 +25,49 @@ const api = {
   }): Promise<void> {
     await app.autoAdjustCooling(body)
   },
+  /**
+   * Lists the MELCloud AC devices with their configured outdoor source
+   * (`null` when they follow the Homey weather default).
+   * @param options - Homey API context.
+   * @param options.homey - Homey instance carrying the app.
+   * @returns One entry per AC device, with its configured source.
+   * @throws NotFoundError when no MELCloud AC device is paired yet.
+   */
+  getAdjustableDevices({ homey }: { homey: Homey }): AdjustableDevice[] {
+    const { app } = homey
+    if (app.melcloudDevices.length === 0) {
+      throw new NotFoundError()
+    }
+    const outdoorSources = app.homey.settings.get('outdoorSources') ?? {}
+    return app.melcloudDevices.map(({ id, name }) => ({
+      id,
+      name,
+      outdoorSource: outdoorSources[id] ?? null,
+    }))
+  },
+  /**
+   * Reads the language configured on the Homey.
+   * @param options - Homey API context.
+   * @param options.homey - Homey instance carrying the i18n manager.
+   * @returns The BCP-47 language tag (e.g. `en`, `fr`).
+   */
   getLanguage({ homey: { i18n } }: { homey: Homey }): string {
     return i18n.getLanguage()
   },
-  getTemperatureSensors({
-    homey: {
-      app: { melcloudDevices, temperatureSensors },
-    },
-  }: {
-    homey: Homey
-  }): TemperatureSensor[] {
-    if (!melcloudDevices.length) {
-      throw new AtaDeviceNotFoundError()
+  /**
+   * Lists the temperature capabilities selectable as outdoor source,
+   * sorted by display name. MELCloud AC devices only expose their
+   * outdoor temperature (when they report one): their indoor readings
+   * are adjustment targets, not sensor candidates.
+   * @param options - Homey API context.
+   * @param options.homey - Homey instance carrying the app.
+   * @returns The selectable sensors.
+   * @throws NotFoundError when no MELCloud AC device is paired yet.
+   */
+  getTemperatureSensors({ homey }: { homey: Homey }): TemperatureSensor[] {
+    const { melcloudDevices, temperatureSensors } = homey.app
+    if (melcloudDevices.length === 0) {
+      throw new NotFoundError()
     }
     return temperatureSensors
       .flatMap((device) => {
@@ -44,25 +75,17 @@ const api = {
         const capabilities = Object.values(capabilitiesObj ?? {}).filter(
           ({ id }) => id.startsWith(MEASURE_TEMPERATURE),
         )
-
-        /*
-         * For MELCloud devices, only expose the outdoor temperature sensor
-         * (not all temperature capabilities) to simplify the settings UI
-         */
-        const isMelcloudDevice = melcloudDevices.includes(device)
-        const outdoorCapability =
-          isMelcloudDevice ?
-            capabilities.find(({ id }) => id === OUTDOOR_TEMPERATURE)
-          : undefined
-        return (outdoorCapability ? [outdoorCapability] : capabilities).map(
-          ({ id, title }): TemperatureSensor => ({
-            capabilityName: `${deviceName} - ${title}`,
-            capabilityPath: `${deviceId}:${id}`,
-          }),
-        )
+        const selectable =
+          melcloudDevices.includes(device) ?
+            capabilities.filter(({ id }) => id === OUTDOOR_TEMPERATURE)
+          : capabilities
+        return selectable.map(({ id, title }): TemperatureSensor => ({
+          capabilityName: `${deviceName} - ${title}`,
+          capabilityPath: `${deviceId}:${id}`,
+        }))
       })
-      .toSorted(({ capabilityName: name1 }, { capabilityName: name2 }) =>
-        name1.localeCompare(name2),
+      .toSorted((sensor1, sensor2) =>
+        sensor1.capabilityName.localeCompare(sensor2.capabilityName),
       )
   },
 }

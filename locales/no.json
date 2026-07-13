@@ -13,7 +13,8 @@
     "device": "Enheten",
     "outdoorTemperature": "Utetemperaturen",
     "temperature": "temperaturen",
-    "thermostatMode": "modus"
+    "thermostatMode": "modus",
+    "homeyWeather": "Homey-været"
   },
   "settings": {
     "apply": "Bruk på alle luft-til-luft enheter",
@@ -27,6 +28,7 @@
     "log": "Historikk",
     "notFound": "Først må du sette opp enhetene dine i MELCloud Homey-appen.\n\nVil du installere den?",
     "refresh": "Gjenta",
-    "title": "Innstillinger for MELCloud-utvidelse"
+    "title": "Innstillinger for MELCloud-utvidelse",
+    "defaultSource": "Homey-vær (standard)"
   }
 }

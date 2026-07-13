@@ -13,7 +13,8 @@
     "device": "Het apparaat",
     "outdoorTemperature": "De buitentemperatuur",
     "temperature": "de temperatuur",
-    "thermostatMode": "de modus"
+    "thermostatMode": "de modus",
+    "homeyWeather": "het Homey-weer"
   },
   "settings": {
     "apply": "Toepassen op alle lucht-lucht apparaten",
@@ -27,6 +28,7 @@
     "log": "Overzicht",
     "notFound": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
     "refresh": "Herladen",
-    "title": "Instellingen van de MELCloud-extensie"
+    "title": "Instellingen van de MELCloud-extensie",
+    "defaultSource": "Homey-weer (standaard)"
   }
 }

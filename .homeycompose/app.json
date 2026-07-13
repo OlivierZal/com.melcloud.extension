@@ -4,6 +4,10 @@
       "method": "PUT",
       "path": "/melcloud/cooling/auto_adjustment"
     },
+    "getAdjustableDevices": {
+      "method": "GET",
+      "path": "/devices/adjustable"
+    },
     "getLanguage": {
       "method": "GET",
       "path": "/language"

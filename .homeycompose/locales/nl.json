@@ -11,6 +11,7 @@
   },
   "names": {
     "device": "Het apparaat",
+    "homeyWeather": "het Homey-weer",
     "outdoorTemperature": "De buitentemperatuur",
     "temperature": "de temperatuur",
     "thermostatMode": "de modus"
@@ -22,8 +23,8 @@
       "false": "Nee",
       "true": "Ja"
     },
-    "capabilities": "Buitentemperatuur",
-    "enabled": "Blijf binnen 8\u00A0°C van de buitentemperatuur",
+    "defaultSource": "Homey-weer (standaard)",
+    "enabled": "Blijf binnen 8 °C van de buitentemperatuur",
     "log": "Overzicht",
     "notFound": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
     "refresh": "Herladen",

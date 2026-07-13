@@ -1,53 +1,42 @@
-// eslint-disable-next-line import-x/no-extraneous-dependencies
-import Homey from 'homey'
-
 import { HomeyAPIV3Local } from 'homey-api'
+import { Temporal } from 'temporal-polyfill'
 
+import type { OutdoorSource } from './listeners/outdoor-source.mts'
 import { changelog } from './files.mts'
+import { fireAndForget } from './lib/fire-and-forget.mts'
+import { getErrorMessage } from './lib/get-error-message.mts'
+import { type Homey, App } from './lib/homey.mts'
+import { CapabilityOutdoorSource } from './listeners/capability-source.mts'
 import { ListenerError } from './listeners/error.mts'
 import { MELCloudListener } from './listeners/melcloud.mts'
-import { OutdoorTemperatureListener } from './listeners/outdoor-temperature.mts'
+import { WeatherOutdoorSource } from './listeners/weather-source.mts'
 import {
   type ListenerParams,
+  type Names,
   type TemperatureListenerData,
   type TimestampedLog,
   MEASURE_TEMPERATURE,
-  OUTDOOR_TEMPERATURE,
 } from './types.mts'
 
-MELCloudListener.setOutdoorTemperatureListener(OutdoorTemperatureListener)
-
-// Driver ID from the MELCloud Homey app (the typo "mecloud" is the actual app ID)
-const MELCLOUD_DRIVER_ID = 'homey:app:com.mecloud:melcloud'
+// The MELCloud app id is com.mecloud (historical typo). AC units come from
+// its Classic ATA driver and its MELCloud Home ATA driver.
+const ATA_DRIVER_IDS = new Set([
+  'homey:app:com.mecloud:home-melcloud',
+  'homey:app:com.mecloud:melcloud',
+])
 
 const MAX_LOGS = 100
 const INIT_DELAY = 1000
 const NOTIFICATION_DELAY = 10_000
 
-const getErrorMessage = (error: unknown): string =>
-  error instanceof Error ? error.message : String(error)
+// Registry key for the shared Homey-weather source (devices configured
+// on a capability use their "deviceId:capabilityId" path as key)
+const WEATHER_SOURCE_KEY = 'homey:weather'
 
-/*
- * Main Homey app: discovers MELCloud AC devices and outdoor temperature
- * sensors, then manages automatic cooling adjustment listeners.
- */
-// eslint-disable-next-line import-x/no-named-as-default-member
-export default class MELCloudExtensionApp extends Homey.App {
-  declare public homey: Homey.Homey
-
-  public readonly names = Object.fromEntries(
-    ['device', 'outdoorTemperature', 'temperature', 'thermostatMode'].map(
-      (name) => [name, this.homey.__(`names.${name}`)],
-    ),
-  )
-
-  readonly #melcloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
-
-  readonly #temperatureSensors: HomeyAPIV3Local.ManagerDevices.Device[] = []
-
-  #api!: HomeyAPIV3Local
-
-  #initTimeout: NodeJS.Timeout | null = null
+// Main Homey app: discovers MELCloud AC devices and outdoor temperature
+// sensors, then manages automatic cooling adjustment listeners.
+export default class MELCloudExtensionApp extends App {
+  declare public readonly homey: Homey.Homey
 
   public get api(): HomeyAPIV3Local {
     return this.#api
@@ -57,9 +46,31 @@ export default class MELCloudExtensionApp extends Homey.App {
     return this.#melcloudDevices
   }
 
+  public get names(): Names {
+    return {
+      device: this.homey.__('names.device'),
+      homeyWeather: this.homey.__('names.homeyWeather'),
+      outdoorTemperature: this.homey.__('names.outdoorTemperature'),
+      temperature: this.homey.__('names.temperature'),
+      thermostatMode: this.homey.__('names.thermostatMode'),
+    }
+  }
+
   public get temperatureSensors(): HomeyAPIV3Local.ManagerDevices.Device[] {
     return this.#temperatureSensors
   }
+
+  #api!: HomeyAPIV3Local
+
+  readonly #deviceListeners: MELCloudListener[] = []
+
+  #initTimeout: NodeJS.Timeout | null = null
+
+  readonly #melcloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
+
+  readonly #sources = new Map<string, OutdoorSource>()
+
+  readonly #temperatureSensors: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
   public override async onInit(): Promise<void> {
     this.#api = await HomeyAPIV3Local.createAppAPI({ homey: this.homey })
@@ -72,8 +83,8 @@ export default class MELCloudExtensionApp extends Homey.App {
       this.#init()
     })
     this.homey.on('unload', () => {
-      this.#destroyListeners().catch(() => {
-        //
+      fireAndForget(this.#destroyListeners(), (error) => {
+        this.error(getErrorMessage(error))
       })
     })
     this.#createNotification()
@@ -83,23 +94,126 @@ export default class MELCloudExtensionApp extends Homey.App {
     await this.#destroyListeners()
   }
 
-  /*
-   * Starts or restarts automatic cooling adjustment. Destroys existing
-   * listeners first, then creates new ones from the provided or stored settings.
-   */
+  // Starts or restarts automatic cooling adjustment. Destroys existing
+  // listeners first, then creates one listener per AC device from the
+  // provided or stored per-device outdoor sources. A device whose source
+  // fails to validate is reported and skipped; the others keep running.
   public async autoAdjustCooling(
     temperatureListenerData?: TemperatureListenerData,
   ): Promise<void> {
-    const { capabilityPath, isEnabled } = temperatureListenerData ?? {
-      capabilityPath: this.homey.settings.get('capabilityPath') ?? ':',
-      isEnabled: this.homey.settings.get('isEnabled') === true,
-    }
+    const { isEnabled, outdoorSources } =
+      temperatureListenerData ?? this.#getStoredListenerData()
     await this.#destroyListeners()
+    this.homey.settings.set('isEnabled', isEnabled)
+    this.homey.settings.set('outdoorSources', outdoorSources)
+    if (!isEnabled) {
+      return
+    }
+    await Promise.all(
+      this.#melcloudDevices.map(async (device) =>
+        this.#listenToDevice(device, outdoorSources[device.id] ?? null),
+      ),
+    )
+  }
+
+  // Parses "category.messageId" (e.g. "error.notFound") into a log entry
+  // and broadcasts it to the settings UI via realtime events.
+  public pushToUI(name: string, params?: ListenerParams): void {
+    const [messageId = '', category] = name.split('.').toReversed()
+    const translated = this.homey.__(`log.${messageId}`, params)
+    const newLog: TimestampedLog = {
+      category: category ?? messageId,
+      // Fix i18n grammar: "de el" → "del" (Spanish), "de le" → "du" (French)
+      message: (translated === '' ? messageId : translated)
+        .replaceAll(/de el /giv, 'del ')
+        .replaceAll(/de le /giv, 'du '),
+      time: Temporal.Now.instant().epochMilliseconds,
+    }
+    this.homey.api.realtime('log', newLog)
+    this.#persistLog(newLog)
+  }
+
+  #createNotification(): void {
+    const { homey } = this
+    const {
+      manifest: { version },
+      notifications,
+      settings,
+    } = homey
+    if (settings.get('notifiedVersion') === version) {
+      return
+    }
+    const changelogByVersion = changelog as Record<
+      string,
+      Record<string, string>
+    >
+    const versionChangelog = changelogByVersion[version] ?? {}
+    const excerpt = versionChangelog[homey.i18n.getLanguage()]
+    if (excerpt === undefined) {
+      return
+    }
+    homey.setTimeout(async () => {
+      try {
+        await notifications.createNotification({ excerpt })
+        settings.set('notifiedVersion', version)
+      } catch {
+        // Non-critical: notification display is best-effort
+      }
+    }, NOTIFICATION_DELAY)
+  }
+
+  async #destroyListeners(): Promise<void> {
+    this.pushToUI('cleanedAll')
+    await Promise.all(
+      this.#deviceListeners.map(async (listener) => listener.destroy()),
+    )
+    this.#deviceListeners.length = 0
+    for (const source of this.#sources.values()) {
+      source.destroy()
+    }
+    this.#sources.clear()
+  }
+
+  async #getSource(sourcePath: string | null): Promise<OutdoorSource> {
+    const key = sourcePath ?? WEATHER_SOURCE_KEY
+    const existing = this.#sources.get(key)
+    if (existing !== undefined) {
+      return existing
+    }
+    const source =
+      sourcePath === null ?
+        new WeatherOutdoorSource(this)
+      : await CapabilityOutdoorSource.create(this, sourcePath)
+    this.#sources.set(key, source)
+    return source
+  }
+
+  #getStoredListenerData(): TemperatureListenerData {
+    return {
+      isEnabled: this.homey.settings.get('isEnabled') === true,
+      outdoorSources: this.homey.settings.get('outdoorSources') ?? {},
+    }
+  }
+
+  // Debounces device list reload: rapid device.create/delete events
+  // are coalesced into a single init after INIT_DELAY.
+  #init(): void {
+    this.homey.clearTimeout(this.#initTimeout)
+    this.#initTimeout = this.homey.setTimeout(async () => {
+      await this.#loadDevices()
+      await this.autoAdjustCooling()
+    }, INIT_DELAY)
+  }
+
+  async #listenToDevice(
+    device: HomeyAPIV3Local.ManagerDevices.Device,
+    sourcePath: string | null,
+  ): Promise<void> {
     try {
-      await OutdoorTemperatureListener.create(this, {
-        capabilityPath,
-        isEnabled,
-      })
+      const source = await this.#getSource(sourcePath)
+      const listener = new MELCloudListener(this, device, source)
+      this.#deviceListeners.push(listener)
+      await listener.listenToThermostatMode()
     } catch (error) {
       if (error instanceof ListenerError) {
         this.pushToUI(error.message, error.cause)
@@ -109,91 +223,15 @@ export default class MELCloudExtensionApp extends Homey.App {
     }
   }
 
-  /*
-   * Parses "category.messageId" (e.g. "error.notFound") into a log entry
-   * and broadcasts it to the settings UI via realtime events
-   */
-  public pushToUI(name: string, params?: ListenerParams): void {
-    const [messageId, category = messageId] = name.split('.').toReversed()
-    if (messageId !== undefined) {
-      const newLog: TimestampedLog = {
-        category,
-
-        /* Fix i18n grammar: "de el" → "del" (Spanish), "de le" → "du" (French) */
-        message: (this.homey.__(`log.${messageId}`, params) || messageId)
-          .replaceAll(/de el /giu, 'del ')
-          .replaceAll(/de le /giu, 'du '),
-        time: Date.now(),
-      }
-      this.homey.api.realtime('log', newLog)
-      const lastLogs = this.homey.settings.get('lastLogs') ?? []
-      lastLogs.unshift(newLog)
-      if (lastLogs.length > MAX_LOGS) {
-        lastLogs.length = MAX_LOGS
-      }
-      this.homey.settings.set('lastLogs', lastLogs)
-    }
-  }
-
-  #createNotification(): void {
-    const { homey } = this
-    const {
-      i18n,
-      manifest: { version },
-      notifications,
-      settings,
-    } = homey
-    if (settings.get('notifiedVersion') !== version) {
-      const { [version]: versionChangelog } = changelog
-      const language = i18n.getLanguage()
-      const excerpt = versionChangelog?.[language]
-      if (excerpt !== undefined) {
-        homey.setTimeout(async () => {
-          try {
-            await notifications.createNotification({ excerpt })
-            settings.set('notifiedVersion', version)
-          } catch {}
-        }, NOTIFICATION_DELAY)
-      }
-    }
-  }
-
-  async #destroyListeners(): Promise<void> {
-    this.pushToUI('cleanedAll')
-    await MELCloudListener.destroy()
-    await OutdoorTemperatureListener.destroy()
-  }
-
-  /*
-   * Debounces device list reload: rapid device.create/delete events
-   * are coalesced into a single init after INIT_DELAY
-   */
-  #init(): void {
-    this.homey.clearTimeout(this.#initTimeout)
-    this.#initTimeout = this.homey.setTimeout(async () => {
-      await this.#loadDevices()
-      await this.autoAdjustCooling()
-    }, INIT_DELAY)
-  }
-
-  /*
-   * Categorizes all Homey devices into MELCloud AC units and
-   * temperature sensors, and auto-selects a default outdoor sensor.
-   */
+  // Categorizes all Homey devices into MELCloud AC units and temperature
+  // sensors. Devices without an explicit source use the Homey weather.
   async #loadDevices(): Promise<void> {
     this.#melcloudDevices.length = 0
     this.#temperatureSensors.length = 0
     const devices = await this.#api.devices.getDevices()
     for (const device of Object.values(devices)) {
-      if (device.driverId === MELCLOUD_DRIVER_ID) {
+      if (ATA_DRIVER_IDS.has(device.driverId)) {
         this.#melcloudDevices.push(device)
-        // Default to the first MELCloud device's outdoor temperature sensor
-        if (this.homey.settings.get('capabilityPath') === null) {
-          this.homey.settings.set(
-            'capabilityPath',
-            `${device.id}:${OUTDOOR_TEMPERATURE}`,
-          )
-        }
       }
       if (
         device.capabilities.some((capability) =>
@@ -203,5 +241,33 @@ export default class MELCloudExtensionApp extends Homey.App {
         this.#temperatureSensors.push(device)
       }
     }
+    this.#migrateLegacySource()
+  }
+
+  // Older versions stored one global outdoor source: seed every known AC
+  // device with it once, then drop the legacy key.
+  #migrateLegacySource(): void {
+    const legacyPath = this.homey.settings.get('capabilityPath')
+    if (typeof legacyPath !== 'string') {
+      return
+    }
+    if ((this.homey.settings.get('outdoorSources') ?? null) === null) {
+      this.homey.settings.set(
+        'outdoorSources',
+        Object.fromEntries(
+          this.#melcloudDevices.map(({ id }) => [id, legacyPath]),
+        ),
+      )
+    }
+    this.homey.settings.unset('capabilityPath')
+  }
+
+  #persistLog(newLog: TimestampedLog): void {
+    const lastLogs = this.homey.settings.get('lastLogs') ?? []
+    lastLogs.unshift(newLog)
+    if (lastLogs.length > MAX_LOGS) {
+      lastLogs.length = MAX_LOGS
+    }
+    this.homey.settings.set('lastLogs', lastLogs)
   }
 }

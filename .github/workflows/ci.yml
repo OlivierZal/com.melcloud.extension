@@ -1,0 +1,58 @@
+concurrency:
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ci-${{ github.ref }}
+jobs:
+  check:
+    name: Check
+    permissions:
+      contents: read
+      packages: read
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-node-and-install
+        with:
+          npm-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format
+    timeout-minutes: 15
+  test:
+    # Coverage (with its 100% thresholds) only runs on the Node 22 leg —
+    # the Homey runtime version. The `latest` leg is non-blocking so a
+    # brand-new Node release cannot red the pipeline without any repo
+    # change. SonarCloud analyzes this repo in automatic-analysis mode
+    # (no CI step): switching to CI-based analysis requires disabling it
+    # and adding SONAR_TOKEN (see com.melcloud's ci.yml for the step).
+    continue-on-error: ${{ matrix.node-version == 'latest' }}
+    name: Test (Node ${{ matrix.node-version }})
+    permissions:
+      contents: read
+      packages: read
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-node-and-install
+        with:
+          node-version: ${{ matrix.node-version }}
+          npm-token: ${{ secrets.GITHUB_TOKEN }}
+      - if: matrix.node-version == 22
+        run: npm test -- --coverage
+      - if: matrix.node-version != 22
+        run: npm test
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22, latest, 'lts/*']
+    timeout-minutes: 20
+name: CI
+on:
+  merge_group: {}
+  pull_request: {}
+  push:
+    branches: [main]
+permissions: {}

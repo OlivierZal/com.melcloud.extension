@@ -15,6 +15,7 @@ declare module 'homey' {
       key: T,
       value: HomeySettings[T],
     ) => void
+    unset: (key: keyof HomeySettings) => void
   }
 }
 
