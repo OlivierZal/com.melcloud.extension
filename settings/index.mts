@@ -373,15 +373,34 @@ const createComboboxInput = (
   return input
 }
 
+// A finger that scrolled the list must not pick the option it lands
+// on: iOS still fires a click after a small drag, which once switched
+// every device to 'Do not adjust' silently
+const DRAG_SLOP_PX = 10
+const dragOrigins = new WeakMap<
+  HTMLUListElement,
+  { clientX: number; clientY: number }
+>()
+
+const isDragClick = (list: HTMLUListElement, event: MouseEvent): boolean => {
+  const origin = dragOrigins.get(list)
+  return (
+    origin !== undefined &&
+    (Math.abs(event.clientX - origin.clientX) > DRAG_SLOP_PX ||
+      Math.abs(event.clientY - origin.clientY) > DRAG_SLOP_PX)
+  )
+}
+
 interface RenderOptionsParams {
   readonly filter: string
+  readonly list: HTMLUListElement
   readonly selectedValue: string
   readonly onPick: (option: SourceOption) => void
 }
 
 const createOptionItem = (
   option: SourceOption,
-  { onPick, selectedValue }: RenderOptionsParams,
+  { list, onPick, selectedValue }: RenderOptionsParams,
 ): HTMLLIElement => {
   const item = document.createElement('li')
   item.classList.add('combobox-option')
@@ -393,7 +412,10 @@ const createOptionItem = (
   )
   item.textContent = option.name
   // click, not pointerdown: a touch drag must scroll the list, not pick
-  item.addEventListener('click', () => {
+  item.addEventListener('click', (event) => {
+    if (isDragClick(list, event)) {
+      return
+    }
     onPick(option)
   })
   return item
@@ -418,6 +440,9 @@ const createSourceList = (): HTMLUListElement => {
   list.classList.add('combobox-list')
   list.setAttribute('role', 'listbox')
   list.hidden = true
+  list.addEventListener('pointerdown', (event) => {
+    dragOrigins.set(list, { clientX: event.clientX, clientY: event.clientY })
+  })
   return list
 }
 
@@ -444,6 +469,7 @@ const openList = (
   closeOpenCombobox()
   renderOptions(parts.list, {
     filter: '',
+    list: parts.list,
     onPick,
     selectedValue: config.getValue(),
   })
@@ -482,6 +508,7 @@ const wireCombobox = (parts: ComboboxParts, config: ComboboxConfig): void => {
     }
     renderOptions(list, {
       filter: input.value,
+      list,
       onPick: pick,
       selectedValue: config.getValue(),
     })
