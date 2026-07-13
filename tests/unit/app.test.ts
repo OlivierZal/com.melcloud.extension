@@ -8,6 +8,7 @@ import { assertDefined } from '../helpers.ts'
 import {
   type MockDevice,
   type MockHomey,
+  createApiCall,
   createMockDevice,
   createMockDevicesManager,
   createMockHomey,
@@ -39,6 +40,7 @@ const NOTIFICATION_DELAY = 10_000
 const LATEST_VERSION = Object.keys(changelog).at(-1) ?? ''
 
 interface Harness {
+  readonly apiCall: ReturnType<typeof vi.fn>
   readonly app: MELCloudExtensionApp
   readonly manager: ReturnType<typeof createMockDevicesManager>
   readonly mockHomey: MockHomey
@@ -100,11 +102,15 @@ const createHarness = async (
 ): Promise<Harness> => {
   const manager = createMockDevicesManager(mockDevices)
   const mockHomey = createMockHomey({ settings, version })
-  createAppAPIMock.mockResolvedValue({ devices: manager.manager })
+  const apiCall = createApiCall()
+  createAppAPIMock.mockResolvedValue({
+    call: apiCall,
+    devices: manager.manager,
+  })
   const app = new MELCloudExtensionApp()
   Object.assign(app, { homey: mockHomey.homey })
   await app.onInit()
-  return { app, manager, mockHomey }
+  return { apiCall, app, manager, mockHomey }
 }
 
 const advancePastInit = async (): Promise<void> => {
@@ -144,13 +150,16 @@ describe(MELCloudExtensionApp, () => {
   it('should adjust a Home-only account via the Homey weather by default', async () => {
     const { homeDevice } = createDevices()
     homeDevice.values.thermostat_mode = 'cool'
-    const { mockHomey } = await createHarness([homeDevice], {
+    const { apiCall } = await createHarness([homeDevice], {
       settings: { isEnabled: true },
     })
 
     await advancePastInit()
 
-    expect(mockHomey.apiGet).toHaveBeenCalledWith('/manager/weather/weather')
+    expect(apiCall).toHaveBeenCalledWith({
+      method: 'GET',
+      path: '/api/manager/weather/weather',
+    })
     expect(homeDevice.capabilityInstances.has('target_temperature')).toBe(true)
     expect(
       homeDevice.capabilityInstances.get('target_temperature')?.setValue,
@@ -159,7 +168,7 @@ describe(MELCloudExtensionApp, () => {
 
   it('should start auto-adjustment on the configured capability when enabled', async () => {
     const { classicDevice } = createDevices()
-    const { mockHomey } = await createHarness([classicDevice], {
+    const { apiCall } = await createHarness([classicDevice], {
       settings: {
         isEnabled: true,
         outdoorSources: {
@@ -174,7 +183,7 @@ describe(MELCloudExtensionApp, () => {
     expect(classicDevice.capabilityInstances.has('target_temperature')).toBe(
       true,
     )
-    expect(mockHomey.apiGet).toHaveBeenCalledTimes(0)
+    expect(apiCall).toHaveBeenCalledTimes(0)
   })
 
   it('should keep adjusting the other devices when one source is invalid', async () => {
@@ -200,13 +209,13 @@ describe(MELCloudExtensionApp, () => {
     const { classicDevice, homeDevice } = createDevices()
     classicDevice.values.thermostat_mode = 'cool'
     homeDevice.values.thermostat_mode = 'cool'
-    const { mockHomey } = await createHarness([classicDevice, homeDevice], {
+    const { apiCall } = await createHarness([classicDevice, homeDevice], {
       settings: { isEnabled: true },
     })
 
     await advancePastInit()
 
-    expect(mockHomey.apiGet).toHaveBeenCalledTimes(1)
+    expect(apiCall).toHaveBeenCalledTimes(1)
     expect(classicDevice.capabilityInstances.has('target_temperature')).toBe(
       true,
     )

@@ -32,6 +32,7 @@
     "defaultSource": "Météo Homey (par défaut)",
     "disabledSource": "Ne pas activer",
     "searchSource": "Rechercher une source…",
-    "update": "Mettre à jour"
+    "update": "Mettre à jour",
+    "allDevices": "Tous les appareils"
   }
 }

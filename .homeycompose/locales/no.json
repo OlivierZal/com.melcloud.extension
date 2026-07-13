@@ -17,6 +17,7 @@
     "thermostatMode": "modus"
   },
   "settings": {
+    "allDevices": "Alle enheter",
     "autoAdjust": "Autojuster aircondition-temperaturen",
     "boolean": {
       "false": "Nei",

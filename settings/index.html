@@ -6,7 +6,7 @@
         <title>MELCloud Extension Settings</title>
         <link href="styles.css?v=57751eb7" rel="stylesheet">
         <script data-origin="settings" defer src="/homey.js"></script>
-        <script type="module" src="index.mjs?v=3f9437bd"></script>
+        <script type="module" src="index.mjs?v=01e91646"></script>
         <meta content="MELCloud extension settings" name="description">
     </head>
     <body>
@@ -16,37 +16,39 @@
         <details id="configuration">
             <summary class="homey-form-legend" data-i18n="settings.autoAdjust">Auto-adjust air conditioning temperature</summary>
             <fieldset class="homey-form-fieldset">
-                <div class="homey-form-group">
-                    <label
-                        class="homey-form-label"
-                        aria-label="Enabled"
-                        data-i18n="settings.enabled"
-                        for="enabled"
-                    ></label>
-                    <select id="enabled" class="homey-form-select">
-                        <option data-i18n="settings.boolean.false" value="false">No</option>
-                        <option data-i18n="settings.boolean.true" value="true">Yes</option>
-                    </select>
-                </div>
                 <div id="sources"></div>
-                <div class="container">
-                    <button
-                        id="refresh"
-                        type="button"
-                        class="homey-button-secondary-shadow"
-                        aria-label="Refresh"
-                        data-i18n="settings.refresh"
-                    >Refresh</button>
-                    <button
-                        id="apply"
-                        type="button"
-                        class="homey-button-danger-shadow"
-                        aria-label="Update"
-                        data-i18n="settings.update"
-                    >Update</button>
-                </div>
             </fieldset>
         </details>
+        <fieldset class="homey-form-fieldset">
+            <div class="container">
+                <button
+                    id="refresh"
+                    type="button"
+                    class="homey-button-secondary-shadow"
+                    aria-label="Refresh"
+                    data-i18n="settings.refresh"
+                >Refresh</button>
+                <button
+                    id="apply"
+                    type="button"
+                    class="homey-button-danger-shadow"
+                    aria-label="Update"
+                    data-i18n="settings.update"
+                >Update</button>
+            </div>
+            <div class="homey-form-group">
+                <label
+                    class="homey-form-label"
+                    aria-label="Enabled"
+                    data-i18n="settings.enabled"
+                    for="enabled"
+                ></label>
+                <select id="enabled" class="homey-form-select">
+                    <option data-i18n="settings.boolean.false" value="false">No</option>
+                    <option data-i18n="settings.boolean.true" value="true">Yes</option>
+                </select>
+            </div>
+        </fieldset>
         <fieldset class="homey-form-fieldset">
             <legend class="homey-form-legend" data-i18n="settings.log"></legend>
             <table class="homey-form-group" aria-label="Log">

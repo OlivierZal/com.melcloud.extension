@@ -32,6 +32,7 @@
     "defaultSource": "Tiempo de Homey (predeterminado)",
     "disabledSource": "No ajustar",
     "searchSource": "Buscar una fuente…",
-    "update": "Actualizar"
+    "update": "Actualizar",
+    "allDevices": "Todos los dispositivos"
   }
 }

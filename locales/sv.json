@@ -32,6 +32,7 @@
     "defaultSource": "Homey-väder (standard)",
     "disabledSource": "Justera inte",
     "searchSource": "Sök efter en källa …",
-    "update": "Uppdatera"
+    "update": "Uppdatera",
+    "allDevices": "Alla enheter"
   }
 }

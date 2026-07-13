@@ -327,9 +327,40 @@ const populateSourceOptions = (
   }
 }
 
-const createSourceInputElement = (
+// Sentinel displayed as an empty field when the devices diverge — it
+// can never match a real option, so no checkmark shows either
+const MIXED_SELECTION = '\u{0}'
+
+const sourceInputs = new Map<string, HTMLInputElement>()
+const bulkInputHolder: { input: HTMLInputElement | null } = { input: null }
+
+const commonSelection = (): string => {
+  const values = new Set(sourceSelections.values())
+  const [first] = values
+  return values.size === 1 && first !== undefined ? first : MIXED_SELECTION
+}
+
+const refreshDisplays = (): void => {
+  for (const [deviceId, input] of sourceInputs) {
+    input.value =
+      sourceNamesByValue.get(sourceSelections.get(deviceId) ?? '') ?? ''
+  }
+  if (bulkInputHolder.input !== null) {
+    bulkInputHolder.input.value =
+      sourceNamesByValue.get(commonSelection()) ?? ''
+  }
+}
+
+interface ComboboxConfig {
+  readonly id: string
+  readonly label: string
+  readonly getValue: () => string
+  readonly setValue: (value: string) => void
+}
+
+const createComboboxInput = (
   homey: Homey,
-  device: AdjustableDevice,
+  config: ComboboxConfig,
 ): HTMLInputElement => {
   const input = document.createElement('input')
   input.type = 'text'
@@ -337,17 +368,12 @@ const createSourceInputElement = (
   // summoning the keyboard; a second tap switches to typing mode.
   input.inputMode = 'none'
   input.classList.add('homey-form-input', 'combobox-input')
-  input.id = `source-${device.id}`
+  input.id = `source-${config.id}`
   input.setAttribute('role', 'combobox')
   input.setAttribute('aria-expanded', 'false')
   input.placeholder = homey.__('settings.searchSource')
-  input.ariaLabel = `${device.name} — ${homey.__('settings.searchSource')}`
+  input.ariaLabel = `${config.label} — ${homey.__('settings.searchSource')}`
   return input
-}
-
-const displaySelection = (input: HTMLInputElement, deviceId: string): void => {
-  const current = sourceSelections.get(deviceId) ?? ''
-  input.value = sourceNamesByValue.get(current) ?? ''
 }
 
 interface RenderOptionsParams {
@@ -403,36 +429,39 @@ interface ComboboxParts {
   readonly list: HTMLUListElement
 }
 
-const closeList = ({ input, list }: ComboboxParts, deviceId: string): void => {
+const closeList = (
+  { input, list }: ComboboxParts,
+  config: ComboboxConfig,
+): void => {
   list.hidden = true
   input.setAttribute('aria-expanded', 'false')
   input.inputMode = 'none'
-  displaySelection(input, deviceId)
+  input.value = sourceNamesByValue.get(config.getValue()) ?? ''
 }
 
 const openList = (
   parts: ComboboxParts,
-  deviceId: string,
+  config: ComboboxConfig,
   onPick: (option: SourceOption) => void,
 ): void => {
   closeOpenCombobox()
   renderOptions(parts.list, {
     filter: '',
     onPick,
-    selectedValue: sourceSelections.get(deviceId) ?? '',
+    selectedValue: config.getValue(),
   })
   parts.list.hidden = false
   parts.input.setAttribute('aria-expanded', 'true')
   parts.list.querySelector('.is-selected')?.scrollIntoView({ block: 'nearest' })
   openCombobox.close = (): void => {
-    closeList(parts, deviceId)
+    closeList(parts, config)
   }
 }
 
-const wireCombobox = (parts: ComboboxParts, device: AdjustableDevice): void => {
+const wireCombobox = (parts: ComboboxParts, config: ComboboxConfig): void => {
   const { input, list } = parts
   const pick = (option: SourceOption): void => {
-    sourceSelections.set(device.id, option.value)
+    config.setValue(option.value)
     enableAdjustment()
     closeOpenCombobox()
     input.blur()
@@ -441,7 +470,7 @@ const wireCombobox = (parts: ComboboxParts, device: AdjustableDevice): void => {
   // clicking again summons the keyboard to filter by typing
   input.addEventListener('click', () => {
     if (list.hidden === true) {
-      openList(parts, device.id, pick)
+      openList(parts, config, pick)
       return
     }
     if (input.inputMode === 'none') {
@@ -452,54 +481,101 @@ const wireCombobox = (parts: ComboboxParts, device: AdjustableDevice): void => {
   })
   input.addEventListener('input', () => {
     if (list.hidden === true) {
-      openList(parts, device.id, pick)
+      openList(parts, config, pick)
     }
     renderOptions(list, {
       filter: input.value,
       onPick: pick,
-      selectedValue: sourceSelections.get(device.id) ?? '',
+      selectedValue: config.getValue(),
     })
   })
 }
 
-const createSourceCombobox = (
+const createCombobox = (
   homey: Homey,
-  device: AdjustableDevice,
-): HTMLDivElement => {
-  const input = createSourceInputElement(homey, device)
+  config: ComboboxConfig,
+): { element: HTMLDivElement; input: HTMLInputElement } => {
+  const input = createComboboxInput(homey, config)
   const list = createSourceList()
-  sourceSelections.set(device.id, device.outdoorSource ?? '')
-  displaySelection(input, device.id)
-  wireCombobox({ input, list }, device)
-  const combobox = document.createElement('div')
-  combobox.classList.add('combobox')
-  combobox.append(input, list)
-  return combobox
+  input.value = sourceNamesByValue.get(config.getValue()) ?? ''
+  wireCombobox({ input, list }, config)
+  const element = document.createElement('div')
+  element.classList.add('combobox')
+  element.append(input, list)
+  return { element, input }
 }
 
-const createSourceLabel = (
-  device: AdjustableDevice,
+const createComboboxLabel = (
+  text: string,
   input: HTMLInputElement,
 ): HTMLLabelElement => {
   const label = document.createElement('label')
   label.classList.add('homey-form-label')
   label.htmlFor = input.id
-  label.textContent = device.name
+  label.textContent = text
   return label
 }
 
 // Homey Style Library idiom (settings pages, unlike widgets, use it):
 // one form group per field, the control a SIBLING after its label.
-const appendSourceRow = (homey: Homey, device: AdjustableDevice): void => {
-  const combobox = createSourceCombobox(homey, device)
-  const input = combobox.querySelector('input')
+const appendComboboxRow = (
+  homey: Homey,
+  config: ComboboxConfig,
+): HTMLInputElement => {
+  const { element, input } = createCombobox(homey, config)
   const group = document.createElement('div')
   group.classList.add('homey-form-group')
-  if (input !== null) {
-    group.append(createSourceLabel(device, input))
-  }
-  group.append(combobox)
+  group.append(createComboboxLabel(config.label, input), element)
   sourcesElement.append(group)
+  return input
+}
+
+const appendDeviceRow = (homey: Homey, device: AdjustableDevice): void => {
+  const input = appendComboboxRow(homey, {
+    id: device.id,
+    label: device.name,
+    getValue: (): string => sourceSelections.get(device.id) ?? '',
+    setValue: (value): void => {
+      sourceSelections.set(device.id, value)
+      refreshDisplays()
+    },
+  })
+  sourceInputs.set(device.id, input)
+}
+
+// Bulk row: one pick applies the source to every device below
+const appendBulkRow = (homey: Homey): void => {
+  bulkInputHolder.input = appendComboboxRow(homey, {
+    getValue: commonSelection,
+    id: 'all',
+    label: homey.__('settings.allDevices'),
+    setValue: (value): void => {
+      for (const deviceId of sourceSelections.keys()) {
+        sourceSelections.set(deviceId, value)
+      }
+      refreshDisplays()
+    },
+  })
+}
+
+const resetSources = (): void => {
+  sourceSelections.clear()
+  sourceInputs.clear()
+  bulkInputHolder.input = null
+  sourcesElement.replaceChildren()
+}
+
+const appendSourceRows = (
+  homey: Homey,
+  devices: readonly AdjustableDevice[],
+): void => {
+  if (devices.length > 0) {
+    appendBulkRow(homey)
+  }
+  for (const device of devices) {
+    appendDeviceRow(homey, device)
+  }
+  refreshDisplays()
 }
 
 const populateSources = async (homey: Homey): Promise<void> => {
@@ -508,11 +584,11 @@ const populateSources = async (homey: Homey): Promise<void> => {
     fetchTemperatureSensors(homey),
   ])
   populateSourceOptions(homey, sensors)
-  sourceSelections.clear()
-  sourcesElement.replaceChildren()
+  resetSources()
   for (const device of devices) {
-    appendSourceRow(homey, device)
+    sourceSelections.set(device.id, device.outdoorSource ?? '')
   }
+  appendSourceRows(homey, devices)
 }
 
 const getSelectedSources = (): OutdoorSources =>

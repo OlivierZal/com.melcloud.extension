@@ -78,10 +78,12 @@ to judge success.
   legacy global `capabilityPath` is migrated to every known AC device
   once, then unset.
 - The Homey weather (home-screen temperature) is served by the LOCAL
-  weather manager — `homey.api.get('/manager/weather/weather')`, covered
-  by the app's `homey:manager:api` permission (homey-api does not wrap
-  it). Read `temperatureCelsius`, not `temperature` (unit-dependent);
-  poll it (no push events), readings are sanitized by
+  weather manager. Route it through the connected homey-api session's
+  generic `call({method, path: '/api/manager/weather/weather'})`: the
+  app-side `homey.api.get` rejects with `Missing Session`, and homey-api
+  ships no weather manager wrapper (absent from its local
+  specification). Read `temperatureCelsius`, not `temperature`
+  (unit-dependent); poll it (no push events), readings are sanitized by
   `lib/to-temperature.mts` (anything non-finite reads as null, never
   0/NaN).
 

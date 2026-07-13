@@ -6,6 +6,8 @@ declare module 'homey-api' {
       homey: Homey
       debug?: ((...args: unknown[]) => void) | null
     }): Promise<HomeyAPIV3Local>
+
+    call(options: { method: string; path: string }): Promise<unknown>
   }
 
   export namespace HomeyAPIV3Local {
