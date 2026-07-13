@@ -151,5 +151,20 @@
     "pl": "Wybór źródła wygląda teraz dokładnie jak pole wyboru Homey, ze strzałką rozwijającą wszystkie wartości.",
     "ru": "Выбор источника теперь выглядит в точности как поле выбора Homey, со стрелкой, раскрывающей все значения.",
     "sv": "Källväljaren ser nu ut exakt som Homeys urvalsfält, med en pil som fäller ut alla värden."
+  },
+  "24.5.1": {
+    "ar": "إصلاح منتقي المصدر على الهاتف: القائمة الكاملة تنسدل الآن عند النقر على الحقل.",
+    "da": "Rettet kildevælgeren på telefonen: hele listen foldes nu ud, når der trykkes på feltet.",
+    "de": "Quellenauswahl am Telefon repariert: Die vollständige Liste klappt jetzt beim Antippen des Feldes auf.",
+    "en": "Fixed the source picker on the phone: the full list now drops down when tapping the field.",
+    "es": "Corregido el selector de fuente en el teléfono: la lista completa se despliega al tocar el campo.",
+    "fr": "Correction du sélecteur de source sur téléphone : la liste complète se déroule désormais au toucher du champ.",
+    "it": "Corretto il selettore di fonte sul telefono: ora l’elenco completo si apre toccando il campo.",
+    "ko": "휴대폰에서 소스 선택기를 수정했습니다. 이제 필드를 탭하면 전체 목록이 펼쳐집니다.",
+    "nl": "Bronkiezer op de telefoon hersteld: de volledige lijst klapt nu uit bij het aantikken van het veld.",
+    "no": "Fikset kildevelgeren på telefonen: hele listen foldes nå ut når feltet trykkes.",
+    "pl": "Naprawiono wybór źródła na telefonie: pełna lista rozwija się teraz po dotknięciu pola.",
+    "ru": "Исправлен выбор источника на телефоне: полный список теперь раскрывается при касании поля.",
+    "sv": "Fixade källväljaren på telefonen: hela listan fälls nu ut när fältet trycks."
   }
 }
