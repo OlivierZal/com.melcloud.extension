@@ -118,8 +118,8 @@ to judge success.
   Copilot reviews every PR — answer every comment, verify its claims
   against sources before acting, and resolve the thread once settled.
 - Homey App Store releases: write the user-facing changelog entry into
-  `.homeychangelog.json` under the NEW version key (all 7 locales:
-  da/en/es/fr/nl/no/sv), bump `version` in `.homeycompose/app.json`,
+  `.homeychangelog.json` under the NEW version key (all 13 locales —
+  the com.melcloud set), bump `version` in `.homeycompose/app.json`,
   align `package.json` via `npm version X.Y.Z --no-git-tag-version`,
   run `homey:validate` to regenerate `app.json`, and land it all
   through a PR. Then tag `vX.Y.Z` and publish a GitHub release:

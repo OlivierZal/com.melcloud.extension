@@ -1,0 +1,35 @@
+{
+  "log": {
+    "calculated": "حساب درجة حرارة __name__: __value__ (من الحد __threshold__ ودرجة الحرارة الخارجية __outdoorTemperature__)",
+    "cleaned": "إزالة المستمع لـ __capability__ في __name__",
+    "cleanedAll": "إزالة جميع المستمعين",
+    "created": "إنشاء مستمع لـ __capability__ في __name__",
+    "listened": "الاستماع إلى __capability__ في __name__: __value__",
+    "notFound": "__type__ `__idOrName__` غير موجود",
+    "reverted": "استعادة درجة حرارة __name__: __value__",
+    "saved": "حفظ درجة حرارة __name__: __value__"
+  },
+  "names": {
+    "device": "الجهاز",
+    "homeyWeather": "طقس Homey",
+    "outdoorTemperature": "درجة الحرارة الخارجية",
+    "temperature": "درجة الحرارة",
+    "thermostatMode": "الوضع"
+  },
+  "settings": {
+    "autoAdjust": "ضبط درجة حرارة مكيف الهواء تلقائيًا",
+    "boolean": {
+      "false": "لا",
+      "true": "نعم"
+    },
+    "defaultSource": "طقس Homey (افتراضي)",
+    "disabledSource": "عدم الضبط",
+    "enabled": "الإبقاء ضمن 8 °C من درجة الحرارة الخارجية",
+    "log": "السجل",
+    "notFound": "قم أولاً بإعداد أجهزتك في تطبيق MELCloud على Homey.\n\nهل تريد تثبيته؟",
+    "refresh": "إعادة تحميل",
+    "searchSource": "ابحث عن مصدر…",
+    "title": "إعدادات امتداد MELCloud",
+    "update": "تحديث"
+  }
+}

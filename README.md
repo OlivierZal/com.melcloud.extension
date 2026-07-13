@@ -31,7 +31,7 @@ Why?
 
 ## Supported languages
 
-Danish, Dutch, English, French, Norwegian, Spanish, Swedish.
+Arabic, Danish, Dutch, English, French, German, Italian, Korean, Norwegian, Polish, Russian, Spanish, Swedish.
 
 ## Development
 
