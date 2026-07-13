@@ -121,5 +121,20 @@
     "nl": "Instellingen: de configuratie klapt in op basis van de activeringsstatus en de knoppen komen overeen met de MELCloud-app.",
     "no": "Innstillinger: konfigurasjonen foldes etter aktiveringstilstanden, og knappene samsvarer med MELCloud-appen.",
     "sv": "Inställningar: konfigurationen fälls ihop efter aktiveringsläget och knapparna matchar MELCloud-appen."
+  },
+  "24.4.0": {
+    "ar": "إضافة جميع لغات Homey ودمج منتقي المصدر في حقل واحد بالإكمال التلقائي.",
+    "da": "Tilføjet alle Homey-sprog og samlet kildevælgeren i ét autofuldførelsesfelt.",
+    "de": "Alle Homey-Sprachen hinzugefügt und die Quellenauswahl in ein einziges Autovervollständigungsfeld zusammengeführt.",
+    "en": "Added all Homey languages and merged the source picker into a single autocomplete field.",
+    "es": "Añadidos todos los idiomas de Homey y unificado el selector de fuente en un único campo con autocompletado.",
+    "fr": "Ajout de toutes les langues de Homey et fusion du sélecteur de source en un seul champ à autocomplétion.",
+    "it": "Aggiunte tutte le lingue di Homey e unificato il selettore di fonte in un unico campo con completamento automatico.",
+    "ko": "모든 Homey 언어를 추가하고 소스 선택기를 하나의 자동 완성 필드로 통합했습니다.",
+    "nl": "Alle Homey-talen toegevoegd en de bronkiezer samengevoegd tot één autoaanvulveld.",
+    "no": "Lagt til alle Homey-språk og slått kildevelgeren sammen til ett autofullføringsfelt.",
+    "pl": "Dodano wszystkie języki Homey i połączono wybór źródła w jedno pole z autouzupełnianiem.",
+    "ru": "Добавлены все языки Homey, а выбор источника объединён в одно поле с автозаполнением.",
+    "sv": "Lagt till alla Homey-språk och slagit ihop källväljaren till ett autokompletteringsfält."
   }
 }
