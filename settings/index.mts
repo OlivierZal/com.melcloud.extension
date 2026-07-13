@@ -328,7 +328,7 @@ const applySourceInput = (input: HTMLInputElement, deviceId: string): void => {
   enableAdjustment()
 }
 
-const createSourceInput = (
+const createSourceInputElement = (
   homey: Homey,
   device: AdjustableDevice,
 ): HTMLInputElement => {
@@ -338,6 +338,14 @@ const createSourceInput = (
   input.setAttribute('list', 'source_options')
   input.placeholder = homey.__('settings.searchSource')
   input.ariaLabel = `${device.name} — ${homey.__('settings.searchSource')}`
+  return input
+}
+
+const createSourceInput = (
+  homey: Homey,
+  device: AdjustableDevice,
+): HTMLInputElement => {
+  const input = createSourceInputElement(homey, device)
   const initialValue = device.outdoorSource ?? ''
   sourceSelections.set(device.id, initialValue)
   input.value = sourceNamesByValue.get(initialValue) ?? ''
