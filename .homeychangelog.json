@@ -196,5 +196,20 @@
     "pl": "Lista źródeł otwiera się teraz bez klawiatury (drugie dotknięcie, aby filtrować), a strona ustawień odświeża się niezawodnie po aktualizacjach.",
     "ru": "Список источников теперь открывается без клавиатуры (второе касание — для фильтрации), а страница настроек надёжно обновляется после обновлений.",
     "sv": "Källistan öppnas nu utan tangentbordet (tryck igen för att filtrera) och inställningssidan uppdateras tillförlitligt efter uppgraderingar."
+  },
+  "24.5.4": {
+    "ar": "قائمة المصادر تتمرر الآن باللمس، والخط موحّد مع الصفحة.",
+    "da": "Kildelisten kan nu rulles med fingeren, og skriften følger siden.",
+    "de": "Die Quellenliste lässt sich jetzt per Fingerwisch scrollen, und die Schrift folgt der Seite.",
+    "en": "The source list now scrolls by touch, and the typography follows the page.",
+    "es": "La lista de fuentes ahora se desplaza con el dedo y la tipografía sigue a la página.",
+    "fr": "La liste des sources défile désormais au doigt et la typographie suit celle de la page.",
+    "it": "L'elenco delle fonti ora scorre con il dito e la tipografia segue la pagina.",
+    "ko": "소스 목록이 이제 터치로 스크롤되며 글꼴이 페이지와 일치합니다.",
+    "nl": "De bronnenlijst scrolt nu met een veegbeweging en de typografie volgt de pagina.",
+    "no": "Kildelisten kan nå rulles med fingeren, og typografien følger siden.",
+    "pl": "Lista źródeł przewija się teraz dotykiem, a typografia jest zgodna ze stroną.",
+    "ru": "Список источников теперь прокручивается пальцем, а шрифт соответствует странице.",
+    "sv": "Källistan rullas nu med fingret och typografin följer sidan."
   }
 }
