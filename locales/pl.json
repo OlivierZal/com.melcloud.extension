@@ -1,0 +1,35 @@
+{
+  "log": {
+    "calculated": "Obliczanie temperatury __name__: __value__ (na podstawie progu __threshold__ i temperatury zewnętrznej __outdoorTemperature__)",
+    "cleaned": "Usuwanie nasłuchu dla __capability__ urządzenia __name__",
+    "cleanedAll": "Usuwanie wszystkich nasłuchów",
+    "created": "Tworzenie nasłuchu dla __capability__ urządzenia __name__",
+    "listened": "Nasłuchiwanie __capability__ urządzenia __name__: __value__",
+    "notFound": "Nie znaleziono: __type__ `__idOrName__`",
+    "reverted": "Przywracanie temperatury __name__: __value__",
+    "saved": "Zapisywanie temperatury __name__: __value__"
+  },
+  "names": {
+    "device": "Urządzenie",
+    "homeyWeather": "pogoda Homey",
+    "outdoorTemperature": "Temperatura zewnętrzna",
+    "temperature": "temperatura",
+    "thermostatMode": "tryb"
+  },
+  "settings": {
+    "autoAdjust": "Automatycznie dostosowuj temperaturę klimatyzacji",
+    "boolean": {
+      "false": "Nie",
+      "true": "Tak"
+    },
+    "defaultSource": "Pogoda Homey (domyślnie)",
+    "disabledSource": "Nie dostosowuj",
+    "enabled": "Utrzymuj w granicach 8 °C od temperatury zewnętrznej",
+    "log": "Historia",
+    "notFound": "Najpierw skonfiguruj urządzenia w aplikacji MELCloud dla Homey.\n\nCzy chcesz ją zainstalować?",
+    "refresh": "Odśwież",
+    "searchSource": "Szukaj źródła…",
+    "title": "Ustawienia rozszerzenia MELCloud",
+    "update": "Aktualizuj"
+  }
+}

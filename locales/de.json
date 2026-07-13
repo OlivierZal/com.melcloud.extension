@@ -1,0 +1,35 @@
+{
+  "log": {
+    "calculated": "Berechnung der Temperatur von __name__: __value__ (aus dem Schwellenwert __threshold__ und der Außentemperatur __outdoorTemperature__)",
+    "cleaned": "Listener für __capability__ von __name__ wird entfernt",
+    "cleanedAll": "Alle Listener werden entfernt",
+    "created": "Listener für __capability__ von __name__ wird erstellt",
+    "listened": "__capability__ von __name__ wird überwacht: __value__",
+    "notFound": "__type__ `__idOrName__` nicht gefunden",
+    "reverted": "Temperatur von __name__ wird zurückgesetzt: __value__",
+    "saved": "Temperatur von __name__ wird gespeichert: __value__"
+  },
+  "names": {
+    "device": "Gerät",
+    "homeyWeather": "das Homey-Wetter",
+    "outdoorTemperature": "Die Außentemperatur",
+    "temperature": "die Temperatur",
+    "thermostatMode": "der Modus"
+  },
+  "settings": {
+    "autoAdjust": "Temperatur der Klimaanlage automatisch anpassen",
+    "boolean": {
+      "false": "Nein",
+      "true": "Ja"
+    },
+    "defaultSource": "Homey-Wetter (Standard)",
+    "disabledSource": "Nicht anpassen",
+    "enabled": "Innerhalb von 8 °C der Außentemperatur halten",
+    "log": "Verlauf",
+    "notFound": "Richten Sie zuerst Ihre Geräte in der MELCloud-Homey-App ein.\n\nMöchten Sie sie installieren?",
+    "refresh": "Neu laden",
+    "searchSource": "Nach einer Quelle suchen …",
+    "title": "Einstellungen der MELCloud-Erweiterung",
+    "update": "Aktualisieren"
+  }
+}

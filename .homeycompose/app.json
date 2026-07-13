@@ -37,12 +37,18 @@
     }
   },
   "description": {
+    "ar": "اضبط درجة حرارة مكيف الهواء تلقائيًا",
     "da": "Juster automatisk temperaturen på din aircondition",
+    "de": "Passen Sie die Temperatur Ihrer Klimaanlage automatisch an",
     "en": "Automatically adjust the temperature of your air conditioning",
     "es": "Ajuste automático de la temperatura de su aire acondicionado",
     "fr": "Ajustez automatiquement la température de votre climatisation",
+    "it": "Regola automaticamente la temperatura del climatizzatore",
+    "ko": "에어컨 온도를 자동으로 조절하세요",
     "nl": "Stel automatisch de temperatuur van uw airco af",
     "no": "Juster automatisk temperaturen på din aircondition",
+    "pl": "Automatycznie dostosowuj temperaturę klimatyzacji",
+    "ru": "Автоматически регулируйте температуру кондиционера",
     "sv": "Justera automatiskt temperaturen på din luftkonditionering"
   },
   "esm": true,
@@ -54,12 +60,18 @@
     "xlarge": "/assets/images/xlarge.jpg"
   },
   "name": {
+    "ar": "امتداد MELCloud",
     "da": "MELCloud-udvidelse",
+    "de": "MELCloud-Erweiterung",
     "en": "MELCloud extension",
     "es": "Extensión para MELCloud",
     "fr": "Extension pour MELCloud",
+    "it": "Estensione per MELCloud",
+    "ko": "MELCloud 확장",
     "nl": "MELCloud-extensie",
     "no": "MELCloud-utvidelse",
+    "pl": "Rozszerzenie MELCloud",
+    "ru": "Расширение MELCloud",
     "sv": "MELCloud-tillägg"
   },
   "permissions": [
@@ -72,6 +84,14 @@
   "source": "https://github.com/OlivierZal/com.melcloud.extension",
   "support": "https://github.com/OlivierZal/com.melcloud.extension/issues",
   "tags": {
+    "ar": [
+      "melcloud",
+      "mitsubishi",
+      "تكييف الهواء",
+      "مضخة حرارة",
+      "مكيف هواء",
+      "هواء إلى هواء"
+    ],
     "da": [
       "aircondition",
       "klimaanlæg",
@@ -79,6 +99,14 @@
       "melcloud",
       "mitsubishi",
       "varmepumpe"
+    ],
+    "de": [
+      "klimaanlage",
+      "klimatisierung",
+      "luft luft",
+      "melcloud",
+      "mitsubishi",
+      "wärmepumpe"
     ],
     "en": [
       "air conditioner",
@@ -105,6 +133,21 @@
       "mitsubishi",
       "pompe à chaleur"
     ],
+    "it": [
+      "aria aria",
+      "climatizzatore",
+      "climatizzazione",
+      "melcloud",
+      "mitsubishi",
+      "pompa di calore"
+    ],
+    "ko": [
+      "melcloud",
+      "mitsubishi",
+      "공기 대 공기",
+      "에어컨",
+      "히트펌프"
+    ],
     "nl": [
       "airco",
       "airconditioner",
@@ -121,6 +164,22 @@
       "melcloud",
       "mitsubishi",
       "varmepumpe"
+    ],
+    "pl": [
+      "klimatyzacja",
+      "klimatyzator",
+      "melcloud",
+      "mitsubishi",
+      "pompa ciepła",
+      "powietrze powietrze"
+    ],
+    "ru": [
+      "melcloud",
+      "mitsubishi",
+      "воздух воздух",
+      "кондиционер",
+      "кондиционирование",
+      "тепловой насос"
     ],
     "sv": [
       "luft till luft",

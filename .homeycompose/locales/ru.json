@@ -1,0 +1,35 @@
+{
+  "log": {
+    "calculated": "Расчёт температуры __name__: __value__ (из порога __threshold__ и наружной температуры __outdoorTemperature__)",
+    "cleaned": "Удаление слушателя __capability__ у __name__",
+    "cleanedAll": "Удаление всех слушателей",
+    "created": "Создание слушателя __capability__ у __name__",
+    "listened": "Отслеживание __capability__ у __name__: __value__",
+    "notFound": "Не найдено: __type__ `__idOrName__`",
+    "reverted": "Восстановление температуры __name__: __value__",
+    "saved": "Сохранение температуры __name__: __value__"
+  },
+  "names": {
+    "device": "Устройство",
+    "homeyWeather": "погода Homey",
+    "outdoorTemperature": "Наружная температура",
+    "temperature": "температура",
+    "thermostatMode": "режим"
+  },
+  "settings": {
+    "autoAdjust": "Автоматически регулировать температуру кондиционера",
+    "boolean": {
+      "false": "Нет",
+      "true": "Да"
+    },
+    "defaultSource": "Погода Homey (по умолчанию)",
+    "disabledSource": "Не регулировать",
+    "enabled": "Держать в пределах 8 °C от наружной температуры",
+    "log": "История",
+    "notFound": "Сначала настройте устройства в приложении MELCloud для Homey.\n\nУстановить его?",
+    "refresh": "Загрузить",
+    "searchSource": "Поиск источника…",
+    "title": "Настройки расширения MELCloud",
+    "update": "Обновить"
+  }
+}
