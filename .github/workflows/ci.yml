@@ -20,13 +20,16 @@ jobs:
       - run: npm run format
     timeout-minutes: 15
   test:
-    # Coverage (with its 100% thresholds) only runs on the Node 22 leg —
-    # the Homey runtime version. The `latest` leg is non-blocking so a
-    # brand-new Node release cannot red the pipeline without any repo
-    # change. SonarCloud analyzes this repo in automatic-analysis mode
-    # (no CI step): switching to CI-based analysis requires disabling it
-    # and adding SONAR_TOKEN (see com.melcloud's ci.yml for the step).
+    # Coverage (with its 100% thresholds) and the Sonar upload only run on
+    # the Node 22 leg — the Homey runtime version. The `latest` leg is
+    # non-blocking so a brand-new Node release cannot red the pipeline
+    # without any repo change.
     continue-on-error: ${{ matrix.node-version == 'latest' }}
+    env:
+      # Job-level so the step `if` can gate on it (the secrets context is
+      # not available in step conditions): the Sonar upload self-arms the
+      # moment the SONAR_TOKEN secret exists.
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     name: Test (Node ${{ matrix.node-version }})
     permissions:
       contents: read
@@ -35,6 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: ./.github/actions/setup-node-and-install
         with:
@@ -44,6 +48,8 @@ jobs:
         run: npm test -- --coverage
       - if: matrix.node-version != 22
         run: npm test
+      - if: matrix.node-version == 22 && env.SONAR_TOKEN != '' && (github.event_name == 'push' || (github.event.pull_request.user.login != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository))
+        uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e
     strategy:
       fail-fast: false
       matrix:

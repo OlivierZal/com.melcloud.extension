@@ -45,7 +45,14 @@ to judge success.
   melcloud.mts only imports the source as a type — no runtime cycle.
 - `settings/index.mts` — browser-side settings UI, bundled by esbuild
   into `settings/index.mjs` (ES module). `onHomeyReady` is exposed via
-  `Object.assign(globalThis, { onHomeyReady })`.
+  `Object.assign(globalThis, { onHomeyReady })`. Settings pages and
+  widgets do NOT style the same way: settings follow the Homey Style
+  Library (`homey-form-*`/`homey-button-*`; in a `homey-form-group` the
+  control is a SIBLING after its label — see
+  custom-views/html-and-css-styling in the Homey docs), while widgets
+  get injected CSS variables and their own class set. Do not copy
+  markup across the two, nor from com.melcloud's settings (which nest
+  controls inside labels).
 - `homey-api-override.d.ts` — ambient module declaration for the
   homey-api surface actually used; `homey-override.d.ts` types the app
   settings. `lib/homey.mts` re-exports the runtime-provided `homey` SDK
@@ -123,7 +130,7 @@ to judge success.
   `.homeychangelog.json`.
 - Store submissions: a rejected version number cannot be resubmitted —
   bump the patch version.
-- Sonar: this repo runs SonarCloud in automatic-analysis mode (no CI
-  step — the two modes conflict). To get coverage on Sonar, disable
-  automatic analysis on sonarcloud.io, add the `SONAR_TOKEN` secret,
-  and restore the scan step from com.melcloud's ci.yml.
+- Sonar: the CI upload step self-arms on the `SONAR_TOKEN` secret (a
+  job-level env gate — the secrets context is not valid in step `if`).
+  Adding the secret requires disabling automatic analysis on
+  sonarcloud.io first (the two modes conflict).
