@@ -136,5 +136,20 @@
     "pl": "Dodano wszystkie języki Homey i połączono wybór źródła w jedno pole z autouzupełnianiem.",
     "ru": "Добавлены все языки Homey, а выбор источника объединён в одно поле с автозаполнением.",
     "sv": "Lagt till alla Homey-språk och slagit ihop källväljaren till ett autokompletteringsfält."
+  },
+  "24.5.0": {
+    "ar": "يبدو منتقي المصدر الآن مطابقًا تمامًا لحقل اختيار Homey، مع سهم لعرض جميع القيم.",
+    "da": "Kildevælgeren ligner nu Homey-valgfeltet til punkt og prikke, med en pil til at vise alle værdier.",
+    "de": "Die Quellenauswahl sieht jetzt exakt wie das Homey-Auswahlfeld aus, mit Pfeil zum Aufklappen aller Werte.",
+    "en": "The source picker now looks exactly like the Homey select field, with an arrow expanding all values.",
+    "es": "El selector de fuente ahora es idéntico al campo de selección de Homey, con una flecha que despliega todos los valores.",
+    "fr": "Le sélecteur de source ressemble désormais en tout point au champ de sélection Homey, avec la flèche déroulant toutes les valeurs.",
+    "it": "Il selettore di fonte ora è identico al campo di selezione di Homey, con una freccia che espande tutti i valori.",
+    "ko": "소스 선택기가 이제 Homey 선택 필드와 똑같아졌으며, 화살표로 모든 값을 펼칠 수 있습니다.",
+    "nl": "De bronkiezer ziet er nu precies uit als het Homey-selectieveld, met een pijl die alle waarden uitklapt.",
+    "no": "Kildevelgeren ser nå ut som Homey-valgfeltet på alle måter, med en pil som viser alle verdier.",
+    "pl": "Wybór źródła wygląda teraz dokładnie jak pole wyboru Homey, ze strzałką rozwijającą wszystkie wartości.",
+    "ru": "Выбор источника теперь выглядит в точности как поле выбора Homey, со стрелкой, раскрывающей все значения.",
+    "sv": "Källväljaren ser nu ut exakt som Homeys urvalsfält, med en pil som fäller ut alla värden."
   }
 }
