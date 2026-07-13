@@ -67,5 +67,14 @@
     "nl": "Bijgewerkt voor compatibiliteit met Node.js 22 en later.",
     "no": "Oppdatert for kompatibilitet med Node.js 22 og senere.",
     "sv": "Uppdaterad för kompatibilitet med Node.js 22 och senare."
+  },
+  "24.0.0": {
+    "da": "Tilføjet understøttelse af MELCloud Home-enheder; hvert klimaanlæg kan nu følge sin egen udetemperaturkilde (Homey-vejr som standard).",
+    "en": "Added support for MELCloud Home devices; each air conditioner can now follow its own outdoor temperature source (Homey weather by default).",
+    "es": "Añadida compatibilidad con dispositivos MELCloud Home; cada aire acondicionado puede seguir ahora su propia fuente de temperatura exterior (tiempo de Homey por defecto).",
+    "fr": "Ajout de la prise en charge des appareils MELCloud Home ; chaque climatiseur peut désormais suivre sa propre source de température extérieure (météo Homey par défaut).",
+    "nl": "Ondersteuning voor MELCloud Home-apparaten toegevoegd; elke airco kan nu zijn eigen buitentemperatuurbron volgen (Homey-weer als standaard).",
+    "no": "Lagt til støtte for MELCloud Home-enheter; hvert klimaanlegg kan nå følge sin egen utetemperaturkilde (Homey-vær som standard).",
+    "sv": "Lagt till stöd för MELCloud Home-enheter; varje luftkonditionering kan nu följa sin egen utomhustemperaturkälla (Homey-väder som standard)."
   }
 }
