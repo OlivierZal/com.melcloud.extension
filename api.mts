@@ -2,6 +2,7 @@ import type { Homey } from 'homey/lib/Homey'
 
 import { NotFoundError } from './lib/errors.mts'
 import {
+  type AdjustableDevice,
   type TemperatureListenerData,
   type TemperatureSensor,
   MEASURE_TEMPERATURE,
@@ -23,6 +24,26 @@ const api = {
     homey: Homey
   }): Promise<void> {
     await app.autoAdjustCooling(body)
+  },
+  /**
+   * Lists the MELCloud AC devices with their configured outdoor source
+   * (`null` when they follow the Homey weather default).
+   * @param options - Homey API context.
+   * @param options.homey - Homey instance carrying the app.
+   * @returns One entry per AC device, with its configured source.
+   * @throws NotFoundError when no MELCloud AC device is paired yet.
+   */
+  getAdjustableDevices({ homey }: { homey: Homey }): AdjustableDevice[] {
+    const { app } = homey
+    if (app.melcloudDevices.length === 0) {
+      throw new NotFoundError()
+    }
+    const outdoorSources = app.homey.settings.get('outdoorSources') ?? {}
+    return app.melcloudDevices.map(({ id, name }) => ({
+      id,
+      name,
+      outdoorSource: outdoorSources[id] ?? null,
+    }))
   },
   /**
    * Reads the language configured on the Homey.

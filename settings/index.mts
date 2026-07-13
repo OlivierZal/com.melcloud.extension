@@ -2,7 +2,9 @@ import type Homey from 'homey/lib/HomeySettings'
 import { Temporal } from 'temporal-polyfill'
 
 import type {
+  AdjustableDevice,
   HomeySettings,
+  OutdoorSources,
   TemperatureListenerData,
   TemperatureSensor,
   TimestampedLog,
@@ -91,14 +93,19 @@ const getButtonElement = (id: string): HTMLButtonElement =>
 const getSelectElement = (id: string): HTMLSelectElement =>
   getElement(id, HTMLSelectElement, 'select')
 
+const getDivElement = (id: string): HTMLDivElement =>
+  getElement(id, HTMLDivElement, 'div')
+
 const getTableSectionElement = (id: string): HTMLTableSectionElement =>
   getElement(id, HTMLTableSectionElement, 'table section')
 
 const applyElement = getButtonElement('apply')
 const refreshElement = getButtonElement('refresh')
-const capabilityPathElement = getSelectElement('capability_path')
 const enabledElement = getSelectElement('enabled')
 const logsElement = getTableSectionElement('logs')
+const sourcesElement = getDivElement('sources')
+
+const sourceSelects = new Map<string, HTMLSelectElement>()
 
 const setButtonsEnabled = (isEnabled: boolean): void => {
   for (const element of [applyElement, refreshElement]) {
@@ -211,7 +218,6 @@ const displayRetainedLogs = (logs: readonly TimestampedLog[]): void => {
 
 const handleSettings = (settings: HomeySettings): void => {
   displayRetainedLogs(settings.lastLogs ?? [])
-  capabilityPathElement.value = settings.capabilityPath ?? ''
   enabledElement.value = String(settings.isEnabled === true)
 }
 
@@ -246,12 +252,76 @@ const fetchTemperatureSensors = async (
   }
 }
 
-const populateTemperatureSensors = async (homey: Homey): Promise<void> => {
-  const sensors = await fetchTemperatureSensors(homey)
-  for (const { capabilityName, capabilityPath } of sensors) {
-    capabilityPathElement.append(new Option(capabilityName, capabilityPath))
+const fetchAdjustableDevices = async (
+  homey: Homey,
+): Promise<AdjustableDevice[]> => {
+  try {
+    return await homeyCallback<AdjustableDevice[]>((callback) => {
+      homey.api('GET', '/devices/adjustable', callback)
+    })
+  } catch (error) {
+    await handleTemperatureSensorsError(homey, getErrorMessage(error))
+    return []
   }
 }
+
+const createSourceSelect = (
+  homey: Homey,
+  device: AdjustableDevice,
+  sensors: readonly TemperatureSensor[],
+): HTMLSelectElement => {
+  const select = document.createElement('select')
+  select.classList.add('homey-form-select')
+  select.id = `source-${device.id}`
+  select.append(new Option(homey.__('settings.defaultSource'), ''))
+  for (const { capabilityName, capabilityPath } of sensors) {
+    select.append(new Option(capabilityName, capabilityPath))
+  }
+  select.value = device.outdoorSource ?? ''
+  // Auto-enable when the user picks a different source (UX convenience)
+  select.addEventListener('change', () => {
+    if (enabledElement.value === 'false') {
+      enabledElement.value = 'true'
+    }
+  })
+  return select
+}
+
+const appendSourceRow = (
+  homey: Homey,
+  device: AdjustableDevice,
+  sensors: readonly TemperatureSensor[],
+): void => {
+  const label = document.createElement('label')
+  label.classList.add('homey-form-label')
+  label.htmlFor = `source-${device.id}`
+  label.textContent = device.name
+  const select = createSourceSelect(homey, device, sensors)
+  sourceSelects.set(device.id, select)
+  sourcesElement.append(label, select)
+}
+
+const populateSources = async (homey: Homey): Promise<void> => {
+  const [devices, sensors] = await Promise.all([
+    fetchAdjustableDevices(homey),
+    fetchTemperatureSensors(homey),
+  ])
+  sourceSelects.clear()
+  sourcesElement.replaceChildren()
+  for (const device of devices) {
+    appendSourceRow(homey, device, sensors)
+  }
+}
+
+const getSelectedSources = (): OutdoorSources =>
+  Object.fromEntries(
+    sourceSelects
+      .entries()
+      .map(([deviceId, select]) => [
+        deviceId,
+        select.value === '' ? null : select.value,
+      ]),
+  )
 
 const autoAdjustCooling = async (homey: Homey): Promise<void> =>
   withDisablingButtons(async () => {
@@ -261,8 +331,8 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
           'PUT',
           '/melcloud/cooling/auto_adjustment',
           {
-            capabilityPath: capabilityPathElement.value,
             isEnabled: enabledElement.value === 'true',
+            outdoorSources: getSelectedSources(),
           } satisfies TemperatureListenerData,
           callback,
         )
@@ -273,12 +343,6 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
   })
 
 const addEventListeners = (homey: Homey): void => {
-  // Auto-enable when the user selects a different sensor (UX convenience)
-  capabilityPathElement.addEventListener('change', () => {
-    if (enabledElement.value === 'false') {
-      enabledElement.value = 'true'
-    }
-  })
   refreshElement.addEventListener('click', () => {
     fireAndForget(fetchHomeySettings(homey))
   })
@@ -294,7 +358,7 @@ const onHomeyReady = async (homey: Homey): Promise<void> => {
   } catch {
     // Non-critical: the log timestamps fall back to English formatting
   }
-  await populateTemperatureSensors(homey)
+  await populateSources(homey)
   await fetchHomeySettings(homey)
   addEventListeners(homey)
   homey.ready()

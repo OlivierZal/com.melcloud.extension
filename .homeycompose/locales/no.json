@@ -11,6 +11,7 @@
   },
   "names": {
     "device": "Enheten",
+    "homeyWeather": "Homey-været",
     "outdoorTemperature": "Utetemperaturen",
     "temperature": "temperaturen",
     "thermostatMode": "modus"
@@ -22,8 +23,8 @@
       "false": "Nei",
       "true": "Ja"
     },
-    "capabilities": "Utetemperatur",
-    "enabled": "Hold innenfor 8\u00A0°C av utetemperaturen",
+    "defaultSource": "Homey-vær (standard)",
+    "enabled": "Hold innenfor 8 °C av utetemperaturen",
     "log": "Historikk",
     "notFound": "Først må du sette opp enhetene dine i MELCloud Homey-appen.\n\nVil du installere den?",
     "refresh": "Gjenta",

@@ -35,10 +35,13 @@ to judge success.
   `home-melcloud`; the app id `com.mecloud` is a historical typo) and
   the temperature sensors, debounces device events, and owns the
   `OutdoorTemperatureListener` instance.
-- `listeners/` — instance-based: `OutdoorTemperatureListener` owns the
-  registry of `MELCloudListener`s and injects itself into each one (no
-  static cross-references; melcloud.mts only imports the outdoor
-  listener as a type, so there is no runtime cycle).
+- `listeners/` — instance-based. Each `MELCloudListener` is bound to an
+  `OutdoorSource` (per-device setting): `CapabilityOutdoorSource` (a
+  "deviceId:capabilityId" path watched through a capability instance) or
+  the shared `WeatherOutdoorSource` default. Sources hold their cooling
+  subscribers: watching starts with the first `attach` (single-flight —
+  concurrent attaches await one start) and stops with the last `detach`.
+  melcloud.mts only imports the source as a type — no runtime cycle.
 - `settings/index.mts` — browser-side settings UI, bundled by esbuild
   into `settings/index.mjs` (ES module). `onHomeyReady` is exposed via
   `Object.assign(globalThis, { onHomeyReady })`.
@@ -62,6 +65,16 @@ to judge success.
 - The threshold (user comfort setpoint) is persisted per device id in
   the `thresholds` setting; reverting falls back to 0 °C if the stored
   entry disappeared.
+- Outdoor sources are per device (`outdoorSources` setting, null =
+  Homey weather); the legacy global `capabilityPath` is migrated to
+  every known AC device once, then unset.
+- The Homey weather (home-screen temperature) is served by the LOCAL
+  weather manager — `homey.api.get('/manager/weather/weather')`, covered
+  by the app's `homey:manager:api` permission (homey-api does not wrap
+  it). Read `temperatureCelsius`, not `temperature` (unit-dependent);
+  poll it (no push events), readings are sanitized by
+  `lib/to-temperature.mts` (anything non-finite reads as null, never
+  0/NaN).
 
 ## Lint doctrine
 

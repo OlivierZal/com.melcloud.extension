@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type MELCloudExtensionApp from '../../app.mts'
-import type { OutdoorTemperatureListener } from '../../listeners/outdoor-temperature.mts'
+import type { OutdoorSource } from '../../listeners/outdoor-source.mts'
 import type { HomeySettings } from '../../types.mts'
 import { MELCloudListener } from '../../listeners/melcloud.mts'
 import { assertDefined, mock } from '../helpers.ts'
@@ -9,11 +9,11 @@ import { type MockDevice, createMockDevice, names } from '../mocks.ts'
 
 interface Harness {
   readonly app: MELCloudExtensionApp
+  readonly attach: ReturnType<typeof vi.fn>
+  readonly detach: ReturnType<typeof vi.fn>
   readonly listener: MELCloudListener
   readonly mockDevice: MockDevice
-  readonly outdoorListener: OutdoorTemperatureListener
   readonly pushToUI: ReturnType<typeof vi.fn>
-  readonly releaseWhenIdle: ReturnType<typeof vi.fn>
   readonly settingsStore: Partial<HomeySettings>
 }
 
@@ -45,7 +45,8 @@ const createHarness = ({
   })
   const settingsStore: Partial<HomeySettings> = {}
   const pushToUI = vi.fn<(name: string, params?: unknown) => void>()
-  const releaseWhenIdle = vi.fn<(excludedDeviceId: string) => void>()
+  const attach = vi.fn<() => Promise<void>>().mockResolvedValue()
+  const detach = vi.fn<(listener: MELCloudListener) => void>()
   const app = mock<MELCloudExtensionApp>({
     api: {
       devices: {
@@ -71,21 +72,19 @@ const createHarness = ({
     names,
     pushToUI,
   })
-  const outdoorListener = mock<OutdoorTemperatureListener>({
-    listenToOutdoorTemperature: vi
-      .fn<() => Promise<void>>()
-      .mockResolvedValue(),
-    releaseWhenIdle,
+  const source = mock<OutdoorSource>({
+    attach,
+    detach,
     value: outdoorTemperature,
   })
-  const listener = new MELCloudListener(app, mockDevice.device, outdoorListener)
+  const listener = new MELCloudListener(app, mockDevice.device, source)
   return {
     app,
+    attach,
+    detach,
     listener,
     mockDevice,
-    outdoorListener,
     pushToUI,
-    releaseWhenIdle,
     settingsStore,
   }
 }
@@ -109,9 +108,7 @@ describe(MELCloudListener, () => {
 
     await harness.listener.listenToThermostatMode()
 
-    expect(
-      harness.outdoorListener.listenToOutdoorTemperature,
-    ).toHaveBeenCalledTimes(1)
+    expect(harness.attach).toHaveBeenCalledWith(harness.listener)
     expect(harness.settingsStore.thresholds).toStrictEqual({ 'ac-1': 23 })
     expect(
       getInstance(harness, 'target_temperature').setValue,
@@ -231,9 +228,7 @@ describe(MELCloudListener, () => {
     await getInstance(harness, 'thermostat_mode').listener('cool')
 
     expect(getInstance(harness, 'target_temperature')).toBe(firstInstance)
-    expect(
-      harness.outdoorListener.listenToOutdoorTemperature,
-    ).toHaveBeenCalledTimes(1)
+    expect(harness.attach).toHaveBeenCalledTimes(1)
   })
 
   it('should revert to the default temperature when the stored threshold disappeared', async () => {
@@ -262,7 +257,7 @@ describe(MELCloudListener, () => {
       capabilityId: 'target_temperature',
       value: 23,
     })
-    expect(harness.releaseWhenIdle).toHaveBeenCalledWith('ac-1')
+    expect(harness.detach).toHaveBeenCalledWith(harness.listener)
   })
 
   it('should report the device as missing when the revert fails', async () => {
@@ -304,6 +299,14 @@ describe(MELCloudListener, () => {
       capabilityId: 'target_temperature',
       value: 23,
     })
+  })
+
+  it('should ignore recalculations while not monitoring', async () => {
+    const harness = createHarness()
+
+    await harness.listener.setTargetTemperature()
+
+    expect(harness.pushToUI).toHaveBeenCalledTimes(0)
   })
 
   it('should stay destroyable before any listening started', async () => {

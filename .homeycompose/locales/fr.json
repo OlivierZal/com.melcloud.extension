@@ -1,16 +1,17 @@
 {
   "log": {
-    "calculated": "Calcul de la température de __name__\u00A0: __value__ (à partir du seuil __threshold__ et de la température extérieure __outdoorTemperature__)",
+    "calculated": "Calcul de la température de __name__ : __value__ (à partir du seuil __threshold__ et de la température extérieure __outdoorTemperature__)",
     "cleaned": "Nettoyage de l'écouteur pour __capability__ de __name__",
     "cleanedAll": "Nettoyage de tous les écouteurs",
     "created": "Création d'un écouteur pour __capability__ de __name__",
-    "listened": "Écoute de __capability__ de __name__\u00A0: __value__",
+    "listened": "Écoute de __capability__ de __name__ : __value__",
     "notFound": "__type__ `__idOrName__` introuvable",
-    "reverted": "Rétablissement de la température de __name__\u00A0: __value__",
-    "saved": "Enregistrement de la température de __name__\u00A0: __value__"
+    "reverted": "Rétablissement de la température de __name__ : __value__",
+    "saved": "Enregistrement de la température de __name__ : __value__"
   },
   "names": {
     "device": "L'appareil",
+    "homeyWeather": "la météo Homey",
     "outdoorTemperature": "La température extérieure",
     "temperature": "la température",
     "thermostatMode": "le mode"
@@ -22,8 +23,8 @@
       "false": "Non",
       "true": "Oui"
     },
-    "capabilities": "Température extérieure",
-    "enabled": "Maintenir à moins de 8\u00A0°C de la température extérieure",
+    "defaultSource": "Météo Homey (par défaut)",
+    "enabled": "Maintenir à moins de 8 °C de la température extérieure",
     "log": "Historique",
     "notFound": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.\n\nVoulez-vous l'installer ?",
     "refresh": "Rafraîchir",

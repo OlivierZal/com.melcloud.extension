@@ -141,49 +141,30 @@ describe(MELCloudExtensionApp, () => {
     ])
   })
 
-  it('should default the outdoor source to a device reporting one', async () => {
-    const { classicDevice, homeDevice } = createDevices()
-    const { mockHomey } = await createHarness([homeDevice, classicDevice])
-
-    await advancePastInit()
-
-    expect(mockHomey.settingsStore.capabilityPath).toBe(
-      'classic-1:measure_temperature.outdoor',
-    )
-  })
-
-  it('should leave the outdoor source unset on a Home-only account', async () => {
+  it('should adjust a Home-only account via the Homey weather by default', async () => {
     const { homeDevice } = createDevices()
-    const { mockHomey } = await createHarness([homeDevice])
-
-    await advancePastInit()
-
-    expect(mockHomey.settingsStore.capabilityPath).toBeUndefined()
-
-    const lastLogs = mockHomey.settingsStore.lastLogs ?? []
-
-    expect(lastLogs.some(({ category }) => category === 'error')).toBe(true)
-  })
-
-  it('should keep a stored outdoor source untouched', async () => {
-    const { classicDevice } = createDevices()
-    const { mockHomey } = await createHarness([classicDevice], {
-      settings: { capabilityPath: 'classic-1:measure_temperature.outdoor' },
+    homeDevice.values.thermostat_mode = 'cool'
+    const { mockHomey } = await createHarness([homeDevice], {
+      settings: { isEnabled: true },
     })
 
     await advancePastInit()
 
-    expect(mockHomey.settingsStore.capabilityPath).toBe(
-      'classic-1:measure_temperature.outdoor',
-    )
+    expect(mockHomey.apiGet).toHaveBeenCalledWith('/manager/weather/weather')
+    expect(homeDevice.capabilityInstances.has('target_temperature')).toBe(true)
+    expect(
+      homeDevice.capabilityInstances.get('target_temperature')?.setValue,
+    ).toHaveBeenCalledWith(22)
   })
 
-  it('should start auto-adjustment when enabled', async () => {
+  it('should start auto-adjustment on the configured capability when enabled', async () => {
     const { classicDevice } = createDevices()
-    await createHarness([classicDevice], {
+    const { mockHomey } = await createHarness([classicDevice], {
       settings: {
-        capabilityPath: 'classic-1:measure_temperature.outdoor',
         isEnabled: true,
+        outdoorSources: {
+          'classic-1': 'classic-1:measure_temperature.outdoor',
+        },
       },
     })
 
@@ -193,6 +174,86 @@ describe(MELCloudExtensionApp, () => {
     expect(classicDevice.capabilityInstances.has('target_temperature')).toBe(
       true,
     )
+    expect(mockHomey.apiGet).toHaveBeenCalledTimes(0)
+  })
+
+  it('should keep adjusting the other devices when one source is invalid', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    homeDevice.values.thermostat_mode = 'cool'
+    const { mockHomey } = await createHarness([classicDevice, homeDevice], {
+      settings: {
+        isEnabled: true,
+        outdoorSources: { 'classic-1': 'missing:capability' },
+      },
+    })
+
+    await advancePastInit()
+
+    const lastLogs = mockHomey.settingsStore.lastLogs ?? []
+
+    expect(lastLogs.some(({ category }) => category === 'error')).toBe(true)
+    expect(classicDevice.capabilityInstances.has('thermostat_mode')).toBe(false)
+    expect(homeDevice.capabilityInstances.has('target_temperature')).toBe(true)
+  })
+
+  it('should share one weather source across the devices using it', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    classicDevice.values.thermostat_mode = 'cool'
+    homeDevice.values.thermostat_mode = 'cool'
+    const { mockHomey } = await createHarness([classicDevice, homeDevice], {
+      settings: { isEnabled: true },
+    })
+
+    await advancePastInit()
+
+    expect(mockHomey.apiGet).toHaveBeenCalledTimes(1)
+    expect(classicDevice.capabilityInstances.has('target_temperature')).toBe(
+      true,
+    )
+    expect(homeDevice.capabilityInstances.has('target_temperature')).toBe(true)
+  })
+
+  it('should persist the settings without listening when disabled', async () => {
+    const { classicDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice])
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.isEnabled).toBe(false)
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({})
+    expect(classicDevice.capabilityInstances.size).toBe(0)
+  })
+
+  it('should migrate the legacy global source to every AC device', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice, homeDevice], {
+      settings: { capabilityPath: 'classic-1:measure_temperature.outdoor' },
+    })
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.capabilityPath).toBeUndefined()
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': 'classic-1:measure_temperature.outdoor',
+      'home-1': 'classic-1:measure_temperature.outdoor',
+    })
+  })
+
+  it('should drop the legacy source when per-device sources already exist', async () => {
+    const { classicDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice], {
+      settings: {
+        capabilityPath: 'classic-1:measure_temperature.outdoor',
+        outdoorSources: { 'classic-1': null },
+      },
+    })
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.capabilityPath).toBeUndefined()
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': null,
+    })
   })
 
   it('should coalesce rapid device events into one reload', async () => {
@@ -216,8 +277,10 @@ describe(MELCloudExtensionApp, () => {
     const { classicDevice } = createDevices()
     const { manager, mockHomey } = await createHarness([classicDevice], {
       settings: {
-        capabilityPath: 'classic-1:measure_temperature.outdoor',
         isEnabled: true,
+        outdoorSources: {
+          'classic-1': 'classic-1:measure_temperature.outdoor',
+        },
       },
     })
     manager.getCapabilityValue.mockRejectedValueOnce(new Error('api_down'))
@@ -343,8 +406,10 @@ describe(MELCloudExtensionApp, () => {
     const { classicDevice } = createDevices()
     const { app, mockHomey } = await createHarness([classicDevice], {
       settings: {
-        capabilityPath: 'classic-1:measure_temperature.outdoor',
         isEnabled: true,
+        outdoorSources: {
+          'classic-1': 'classic-1:measure_temperature.outdoor',
+        },
       },
     })
     await advancePastInit()
@@ -382,6 +447,7 @@ describe(MELCloudExtensionApp, () => {
 
     expect(app.names).toStrictEqual({
       device: 'names.device',
+      homeyWeather: 'names.homeyWeather',
       outdoorTemperature: 'names.outdoorTemperature',
       temperature: 'names.temperature',
       thermostatMode: 'names.thermostatMode',

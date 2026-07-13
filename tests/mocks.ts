@@ -7,6 +7,7 @@ import { mock } from './helpers.ts'
 
 export const names: Names = {
   device: 'Device',
+  homeyWeather: 'the Homey weather',
   outdoorTemperature: 'The outdoor temperature',
   temperature: 'the temperature',
   thermostatMode: 'the mode',
@@ -150,6 +151,7 @@ export const createMockDevicesManager = (
 }
 
 export interface MockHomey {
+  readonly apiGet: ReturnType<typeof vi.fn>
   readonly createNotification: ReturnType<typeof vi.fn>
   readonly eventHandlers: Map<string, (...args: unknown[]) => void>
   readonly homey: Homey.Homey
@@ -157,6 +159,7 @@ export interface MockHomey {
   readonly setSetting: ReturnType<typeof vi.fn>
   readonly settingsStore: Partial<HomeySettings>
   readonly translate: ReturnType<typeof vi.fn>
+  readonly unsetSetting: ReturnType<typeof vi.fn>
 }
 
 export const createMockHomey = ({
@@ -173,6 +176,9 @@ export const createMockHomey = ({
   const createNotification = vi
     .fn<(options: { excerpt: string }) => Promise<void>>()
     .mockResolvedValue()
+  const apiGet = vi
+    .fn<(uri: string) => unknown>()
+    .mockReturnValue({ temperatureCelsius: 30 })
   const realtime = vi.fn<(event: string, data: unknown) => void>()
   const translate = vi
     .fn<(key: string, params?: Record<string, unknown>) => string>()
@@ -182,15 +188,26 @@ export const createMockHomey = ({
     .mockImplementation((key, value) => {
       Object.assign(settingsStore, { [key]: value })
     })
+  const unsetSetting = vi
+    .fn<(key: keyof HomeySettings) => void>()
+    .mockImplementation((key) => {
+      Reflect.deleteProperty(settingsStore, key)
+    })
   const homey = mock<Homey.Homey>({
     __: translate,
-    api: { realtime },
+    api: { get: apiGet, realtime },
     i18n: { getLanguage: (): string => language },
     manifest: { version },
     notifications: { createNotification },
     settings: {
       set: setSetting,
+      unset: unsetSetting,
       get: (key: keyof HomeySettings): unknown => settingsStore[key] ?? null,
+    },
+    clearInterval: (interval: NodeJS.Timeout | null): void => {
+      if (interval !== null) {
+        clearInterval(interval)
+      }
     },
     clearTimeout: (timeout: NodeJS.Timeout | null): void => {
       if (timeout !== null) {
@@ -200,10 +217,13 @@ export const createMockHomey = ({
     on: (event: string, callback: (...args: unknown[]) => void): void => {
       eventHandlers.set(event, callback)
     },
+    setInterval: (callback: () => void, milliseconds: number): NodeJS.Timeout =>
+      setInterval(callback, milliseconds),
     setTimeout: (callback: () => void, milliseconds: number): NodeJS.Timeout =>
       setTimeout(callback, milliseconds),
   })
   return {
+    apiGet,
     createNotification,
     eventHandlers,
     homey,
@@ -211,5 +231,6 @@ export const createMockHomey = ({
     setSetting,
     settingsStore,
     translate,
+    unsetSetting,
   }
 }

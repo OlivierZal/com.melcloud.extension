@@ -1,11 +1,18 @@
 export const MEASURE_TEMPERATURE = 'measure_temperature'
 export const OUTDOOR_TEMPERATURE = 'measure_temperature.outdoor'
 
+export interface AdjustableDevice {
+  readonly id: string
+  readonly name: string
+  readonly outdoorSource: string | null
+}
+
 export interface HomeySettings {
   readonly capabilityPath?: string | null
   readonly isEnabled?: boolean | null
   readonly lastLogs?: TimestampedLog[] | null
   readonly notifiedVersion?: string | null
+  readonly outdoorSources?: OutdoorSources | null
   readonly thresholds?: Thresholds | null
 }
 
@@ -21,14 +28,19 @@ export interface ListenerParams {
 
 export interface Names {
   readonly device: string
+  readonly homeyWeather: string
   readonly outdoorTemperature: string
   readonly temperature: string
   readonly thermostatMode: string
 }
 
+// Per-device outdoor feed: a "deviceId:capabilityId" path, or null for
+// the Homey weather default.
+export type OutdoorSources = Partial<Record<string, string | null>>
+
 export interface TemperatureListenerData {
-  readonly capabilityPath: string
   readonly isEnabled: boolean
+  readonly outdoorSources: OutdoorSources
 }
 
 export interface TemperatureSensor {

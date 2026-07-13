@@ -13,7 +13,7 @@ A [Homey](https://homey.app/) app extending the [MELCloud app](https://homey.app
 
 ## Introduction
 
-This app auto-adjusts the target temperature of your air-to-air devices — paired through either a MELCloud (classic) or a MELCloud Home account — to keep cooling within 8 °C of the outdoor temperature.
+This app auto-adjusts the target temperature of your air-to-air devices — paired through either a MELCloud (classic) or a MELCloud Home account — to keep cooling within 8 °C of the outdoor temperature. Each device gets its own outdoor source: the weather at your Homey's location by default, or any temperature capability you pick (useful when your units are not all in the same place).
 
 Why?
 
