@@ -103,5 +103,14 @@
     "nl": "Instellingen: inklapbare configuratie, apparaten alfabetisch gesorteerd en een nieuwe optie om een apparaat niet aan te passen.",
     "no": "Innstillinger: sammenleggbar konfigurasjon, enheter sortert alfabetisk og nytt valg for å ikke justere en enhet.",
     "sv": "Inställningar: hopfällbar konfiguration, enheter sorterade i bokstavsordning och nytt alternativ för att inte justera en enhet."
+  },
+  "24.2.0": {
+    "da": "Indstillinger: autofuldførelsesfelt over hver kildevælger.",
+    "en": "Settings: autocomplete field above each source selector.",
+    "es": "Ajustes: campo de autocompletado sobre cada selector de fuente.",
+    "fr": "Réglages : champ d'autocomplétion au-dessus de chaque sélecteur de source.",
+    "nl": "Instellingen: autoaanvulveld boven elke bronkiezer.",
+    "no": "Innstillinger: autofullføringsfelt over hver kildevelger.",
+    "sv": "Inställningar: autokompletteringsfält ovanför varje källväljare."
   }
 }
