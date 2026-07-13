@@ -29,6 +29,7 @@
     "log": "Historikk",
     "notFound": "Først må du sette opp enhetene dine i MELCloud Homey-appen.\n\nVil du installere den?",
     "refresh": "Gjenta",
+    "searchSource": "Søk etter en kilde …",
     "title": "Innstillinger for MELCloud-utvidelse"
   }
 }

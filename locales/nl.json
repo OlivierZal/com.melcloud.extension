@@ -30,6 +30,7 @@
     "refresh": "Herladen",
     "title": "Instellingen van de MELCloud-extensie",
     "defaultSource": "Homey-weer (standaard)",
-    "disabledSource": "Niet aanpassen"
+    "disabledSource": "Niet aanpassen",
+    "searchSource": "Zoek een bron…"
   }
 }

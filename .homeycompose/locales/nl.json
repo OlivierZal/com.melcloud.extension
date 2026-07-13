@@ -29,6 +29,7 @@
     "log": "Overzicht",
     "notFound": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
     "refresh": "Herladen",
+    "searchSource": "Zoek een bron…",
     "title": "Instellingen van de MELCloud-extensie"
   }
 }
