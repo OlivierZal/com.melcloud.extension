@@ -117,8 +117,10 @@ const sourceOptionsElement = document.createElement('datalist')
 sourceOptionsElement.id = 'source_options'
 sourcesElement.after(sourceOptionsElement)
 
-const sourceSelects = new Map<string, HTMLSelectElement>()
-// Mirrors of the select options, shared by every autocomplete input
+// One combobox per device: the shared datalist provides both the full
+// dropdown (side arrow / focus) and the as-you-type filtering; the
+// current value lives here, keyed by device id.
+const sourceSelections = new Map<string, string>()
 const sourceNamesByValue = new Map<string, string>()
 const sourceValuesByName = new Map<string, string>()
 
@@ -310,84 +312,67 @@ const populateSourceOptions = (
   }
 }
 
-const createSourceSelect = (
-  homey: Homey,
-  device: AdjustableDevice,
-  sensors: readonly TemperatureSensor[],
-): HTMLSelectElement => {
-  const select = document.createElement('select')
-  select.classList.add('homey-form-select')
-  select.id = `source-${device.id}`
-  select.append(
-    new Option(homey.__('settings.disabledSource'), DISABLED_SOURCE),
-    new Option(homey.__('settings.defaultSource'), ''),
-  )
-  for (const { capabilityName, capabilityPath } of sensors) {
-    select.append(new Option(capabilityName, capabilityPath))
+// Single combobox: a text input backed by the shared datalist — the
+// side arrow (or focusing the empty field) drops the full list down,
+// typing filters it. A recognized name (case-insensitive) becomes the
+// selection; anything else snaps back to the current one.
+const applySourceInput = (input: HTMLInputElement, deviceId: string): void => {
+  const value = sourceValuesByName.get(input.value.trim().toLowerCase())
+  if (value === undefined) {
+    const current = sourceSelections.get(deviceId) ?? ''
+    input.value = sourceNamesByValue.get(current) ?? ''
+    return
   }
-  select.value = device.outdoorSource ?? ''
-  select.addEventListener('change', enableAdjustment)
-  return select
+  sourceSelections.set(deviceId, value)
+  input.value = sourceNamesByValue.get(value) ?? ''
+  enableAdjustment()
 }
 
-// Autocomplete companion: a text input backed by the shared datalist.
-// A recognized name drives the select; anything else snaps back to the
-// select's current choice on change/blur.
-const createSourceSearch = (
+const createSourceInputElement = (
   homey: Homey,
   device: AdjustableDevice,
-  select: HTMLSelectElement,
 ): HTMLInputElement => {
-  const search = document.createElement('input')
-  search.classList.add('homey-form-input', 'source-search')
-  search.id = `search-${device.id}`
-  search.setAttribute('list', 'source_options')
-  search.placeholder = homey.__('settings.searchSource')
-  search.ariaLabel = `${device.name} — ${homey.__('settings.searchSource')}`
-  search.value = sourceNamesByValue.get(select.value) ?? ''
-  search.addEventListener('change', () => {
-    const value = sourceValuesByName.get(search.value.trim().toLowerCase())
-    if (value === undefined) {
-      search.value = sourceNamesByValue.get(select.value) ?? ''
-      return
-    }
-    select.value = value
-    search.value = sourceNamesByValue.get(value) ?? ''
-    enableAdjustment()
+  const input = document.createElement('input')
+  input.classList.add('homey-form-input')
+  input.id = `source-${device.id}`
+  input.setAttribute('list', 'source_options')
+  input.placeholder = homey.__('settings.searchSource')
+  input.ariaLabel = `${device.name} — ${homey.__('settings.searchSource')}`
+  return input
+}
+
+const createSourceInput = (
+  homey: Homey,
+  device: AdjustableDevice,
+): HTMLInputElement => {
+  const input = createSourceInputElement(homey, device)
+  const initialValue = device.outdoorSource ?? ''
+  sourceSelections.set(device.id, initialValue)
+  input.value = sourceNamesByValue.get(initialValue) ?? ''
+  input.addEventListener('change', () => {
+    applySourceInput(input, device.id)
   })
-  select.addEventListener('change', () => {
-    search.value = sourceNamesByValue.get(select.value) ?? ''
-  })
-  return search
+  return input
 }
 
 const createSourceLabel = (
   device: AdjustableDevice,
-  select: HTMLSelectElement,
+  input: HTMLInputElement,
 ): HTMLLabelElement => {
   const label = document.createElement('label')
   label.classList.add('homey-form-label')
-  label.htmlFor = select.id
+  label.htmlFor = input.id
   label.textContent = device.name
   return label
 }
 
 // Homey Style Library idiom (settings pages, unlike widgets, use it):
 // one form group per field, the control a SIBLING after its label.
-const appendSourceRow = (
-  homey: Homey,
-  device: AdjustableDevice,
-  sensors: readonly TemperatureSensor[],
-): void => {
-  const select = createSourceSelect(homey, device, sensors)
-  sourceSelects.set(device.id, select)
+const appendSourceRow = (homey: Homey, device: AdjustableDevice): void => {
+  const input = createSourceInput(homey, device)
   const group = document.createElement('div')
   group.classList.add('homey-form-group')
-  group.append(
-    createSourceLabel(device, select),
-    createSourceSearch(homey, device, select),
-    select,
-  )
+  group.append(createSourceLabel(device, input), input)
   sourcesElement.append(group)
 }
 
@@ -397,21 +382,18 @@ const populateSources = async (homey: Homey): Promise<void> => {
     fetchTemperatureSensors(homey),
   ])
   populateSourceOptions(homey, sensors)
-  sourceSelects.clear()
+  sourceSelections.clear()
   sourcesElement.replaceChildren()
   for (const device of devices) {
-    appendSourceRow(homey, device, sensors)
+    appendSourceRow(homey, device)
   }
 }
 
 const getSelectedSources = (): OutdoorSources =>
   Object.fromEntries(
-    sourceSelects
+    sourceSelections
       .entries()
-      .map(([deviceId, select]) => [
-        deviceId,
-        select.value === '' ? null : select.value,
-      ]),
+      .map(([deviceId, value]) => [deviceId, value === '' ? null : value]),
   )
 
 const autoAdjustCooling = async (homey: Homey): Promise<void> =>
