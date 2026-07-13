@@ -181,5 +181,20 @@
     "pl": "Lista źródeł przewija się teraz i wygląda jak menu systemowe, ze znacznikiem przy bieżącym wyborze.",
     "ru": "Список источников теперь прокручивается и выглядит как системное меню, с галочкой у текущего выбора.",
     "sv": "Källistan rullar nu och har systemmenyns utseende, med en bock vid det aktuella valet."
+  },
+  "24.5.3": {
+    "ar": "فتح قائمة المصادر دون إظهار لوحة المفاتيح (نقرة ثانية للتصفية)، وتحديث صفحة الإعدادات بشكل موثوق بعد الترقيات.",
+    "da": "Kildelisten åbner nu uden tastaturet (andet tryk for at filtrere), og indstillingssiden opdateres pålideligt efter opgraderinger.",
+    "de": "Die Quellenliste öffnet jetzt ohne Tastatur (zweites Tippen zum Filtern), und die Einstellungsseite aktualisiert sich nach Updates zuverlässig.",
+    "en": "The source list now opens without the keyboard (tap again to filter), and the settings page refreshes reliably after upgrades.",
+    "es": "La lista de fuentes se abre ahora sin el teclado (segundo toque para filtrar) y la página de ajustes se actualiza de forma fiable tras las actualizaciones.",
+    "fr": "La liste des sources s'ouvre désormais sans le clavier (second appui pour filtrer) et la page de réglages se rafraîchit de façon fiable après mise à jour.",
+    "it": "L'elenco delle fonti ora si apre senza la tastiera (secondo tocco per filtrare) e la pagina delle impostazioni si aggiorna in modo affidabile dopo gli aggiornamenti.",
+    "ko": "소스 목록이 이제 키보드 없이 열리며(필터링하려면 한 번 더 탭), 설정 페이지가 업그레이드 후 안정적으로 새로고침됩니다.",
+    "nl": "De bronnenlijst opent nu zonder het toetsenbord (tik nogmaals om te filteren) en de instellingenpagina ververst betrouwbaar na updates.",
+    "no": "Kildelisten åpnes nå uten tastaturet (trykk igjen for å filtrere), og innstillingssiden oppdateres pålitelig etter oppgraderinger.",
+    "pl": "Lista źródeł otwiera się teraz bez klawiatury (drugie dotknięcie, aby filtrować), a strona ustawień odświeża się niezawodnie po aktualizacjach.",
+    "ru": "Список источников теперь открывается без клавиатуры (второе касание — для фильтрации), а страница настроек надёжно обновляется после обновлений.",
+    "sv": "Källistan öppnas nu utan tangentbordet (tryck igen för att filtrera) och inställningssidan uppdateras tillförlitligt efter uppgraderingar."
   }
 }
