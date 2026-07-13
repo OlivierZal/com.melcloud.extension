@@ -116,7 +116,11 @@ to judge success.
   run `homey:validate` to regenerate `app.json`, and land it all
   through a PR. Then tag `vX.Y.Z` and publish a GitHub release:
   `publish.yml` fires on release-published (environment `homey`,
-  `HOMEY_PAT`) and pushes to the App Store.
+  `HOMEY_PAT`) and pushes to the App Store. Fallback when the secret is
+  stale (`The access token provided is invalid`): `homey app publish`
+  from an authenticated CLI — answer NO to the version prompt (a yes
+  bumps and rewrites app.json) and let the changelog come from
+  `.homeychangelog.json`.
 - Store submissions: a rejected version number cannot be resubmitted —
   bump the patch version.
 - Sonar: this repo runs SonarCloud in automatic-analysis mode (no CI
