@@ -96,8 +96,16 @@ summary {
   background: #f2f2f2;
 }
 
+/* Thin stroke checkmark, same pen as the field chevron */
 .combobox-option.is-selected::before {
-  content: '✓';
+  block-size: 0.55em;
+  border-block-end: 0.15em solid currentColor;
+  border-inline-end: 0.15em solid currentColor;
+  content: '';
+  inline-size: 0.3em;
+  inset-block-start: 50%;
   inset-inline-start: 1em;
   position: absolute;
+  rotate: 45deg;
+  translate: 0 -65%;
 }
