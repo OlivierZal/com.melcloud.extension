@@ -119,5 +119,7 @@ to judge success.
   `HOMEY_PAT`) and pushes to the App Store.
 - Store submissions: a rejected version number cannot be resubmitted —
   bump the patch version.
-- Sonar: the CI upload step is gated on the `SONAR_TOKEN` secret; add
-  the secret to enable coverage on SonarCloud.
+- Sonar: this repo runs SonarCloud in automatic-analysis mode (no CI
+  step — the two modes conflict). To get coverage on Sonar, disable
+  automatic analysis on sonarcloud.io, add the `SONAR_TOKEN` secret,
+  and restore the scan step from com.melcloud's ci.yml.
