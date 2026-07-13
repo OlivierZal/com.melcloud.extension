@@ -34,7 +34,8 @@ to judge success.
   matches BOTH dialects: Classic `melcloud` and MELCloud Home
   `home-melcloud`; the app id `com.mecloud` is a historical typo) and
   the temperature sensors, debounces device events, and owns the
-  `OutdoorTemperatureListener` instance.
+  per-device `MELCloudListener`s plus the shared `OutdoorSource`
+  registry.
 - `listeners/` — instance-based. Each `MELCloudListener` is bound to an
   `OutdoorSource` (per-device setting): `CapabilityOutdoorSource` (a
   "deviceId:capabilityId" path watched through a capability instance) or
