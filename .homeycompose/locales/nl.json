@@ -17,7 +17,6 @@
     "thermostatMode": "de modus"
   },
   "settings": {
-    "apply": "Toepassen op alle lucht-lucht apparaten",
     "autoAdjust": "Auto-afstellen airco-temperatuur",
     "boolean": {
       "false": "Nee",
@@ -30,6 +29,7 @@
     "notFound": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
     "refresh": "Herladen",
     "searchSource": "Zoek een bron…",
-    "title": "Instellingen van de MELCloud-extensie"
+    "title": "Instellingen van de MELCloud-extensie",
+    "update": "Updaten"
   }
 }

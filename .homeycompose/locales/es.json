@@ -17,7 +17,6 @@
     "thermostatMode": "el modo"
   },
   "settings": {
-    "apply": "Aplicar a todos los dispositivos aire-aire",
     "autoAdjust": "Autoajustar la temperatura del aire acondicionado",
     "boolean": {
       "false": "No",
@@ -30,6 +29,7 @@
     "notFound": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
     "refresh": "Recargar",
     "searchSource": "Buscar una fuente…",
-    "title": "Configuración de la extensión para MELCloud"
+    "title": "Configuración de la extensión para MELCloud",
+    "update": "Actualizar"
   }
 }

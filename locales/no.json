@@ -31,6 +31,7 @@
     "title": "Innstillinger for MELCloud-utvidelse",
     "defaultSource": "Homey-vær (standard)",
     "disabledSource": "Ikke juster",
-    "searchSource": "Søk etter en kilde …"
+    "searchSource": "Søk etter en kilde …",
+    "update": "Oppdater"
   }
 }
