@@ -333,6 +333,9 @@ const createSourceInputElement = (
 ): HTMLInputElement => {
   const input = document.createElement('input')
   input.type = 'text'
+  // Select-like on touch devices: the first tap drops the list without
+  // summoning the keyboard; a second tap switches to typing mode.
+  input.inputMode = 'none'
   input.classList.add('homey-form-input', 'combobox-input')
   input.id = `source-${device.id}`
   input.setAttribute('role', 'combobox')
@@ -404,6 +407,7 @@ interface ComboboxParts {
 const closeList = ({ input, list }: ComboboxParts, deviceId: string): void => {
   list.hidden = true
   input.setAttribute('aria-expanded', 'false')
+  input.inputMode = 'none'
   displaySelection(input, deviceId)
 }
 
@@ -420,7 +424,6 @@ const openList = (
   })
   parts.list.hidden = false
   parts.input.setAttribute('aria-expanded', 'true')
-  parts.input.select()
   openCombobox.close = (): void => {
     closeList(parts, deviceId)
   }
@@ -434,10 +437,17 @@ const wireCombobox = (parts: ComboboxParts, device: AdjustableDevice): void => {
     closeOpenCombobox()
     input.blur()
   }
-  // Clicking anywhere in the field drops the FULL list, select-style
+  // Clicking anywhere in the field drops the FULL list, select-style;
+  // clicking again summons the keyboard to filter by typing
   input.addEventListener('click', () => {
     if (list.hidden === true) {
       openList(parts, device.id, pick)
+      return
+    }
+    if (input.inputMode === 'none') {
+      input.inputMode = 'text'
+      input.blur()
+      input.focus()
     }
   })
   input.addEventListener('input', () => {
