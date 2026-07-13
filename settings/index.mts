@@ -347,29 +347,44 @@ const displaySelection = (input: HTMLInputElement, deviceId: string): void => {
   input.value = sourceNamesByValue.get(current) ?? ''
 }
 
+interface RenderOptionsParams {
+  readonly filter: string
+  readonly selectedValue: string
+  readonly onPick: (option: SourceOption) => void
+}
+
+const createOptionItem = (
+  option: SourceOption,
+  { onPick, selectedValue }: RenderOptionsParams,
+): HTMLLIElement => {
+  const item = document.createElement('li')
+  item.classList.add('combobox-option')
+  item.classList.toggle('is-selected', option.value === selectedValue)
+  item.setAttribute('role', 'option')
+  item.setAttribute(
+    'aria-selected',
+    option.value === selectedValue ? 'true' : 'false',
+  )
+  item.textContent = option.name
+  // pointerdown beats the input blur, so picking commits first
+  item.addEventListener('pointerdown', (event) => {
+    event.preventDefault()
+    onPick(option)
+  })
+  return item
+}
+
 const renderOptions = (
   list: HTMLUListElement,
-  filter: string,
-  onPick: (option: SourceOption) => void,
+  params: RenderOptionsParams,
 ): void => {
-  const needle = filter.trim().toLowerCase()
+  const needle = params.filter.trim().toLowerCase()
   const matches =
     needle === '' ? sourceOptions : (
       sourceOptions.filter(({ name }) => name.toLowerCase().includes(needle))
     )
   list.replaceChildren(
-    ...matches.map((option) => {
-      const item = document.createElement('li')
-      item.classList.add('combobox-option')
-      item.setAttribute('role', 'option')
-      item.textContent = option.name
-      // pointerdown beats the input blur, so picking commits first
-      item.addEventListener('pointerdown', (event) => {
-        event.preventDefault()
-        onPick(option)
-      })
-      return item
-    }),
+    ...matches.map((option) => createOptionItem(option, params)),
   )
 }
 
@@ -398,7 +413,11 @@ const openList = (
   onPick: (option: SourceOption) => void,
 ): void => {
   closeOpenCombobox()
-  renderOptions(parts.list, '', onPick)
+  renderOptions(parts.list, {
+    filter: '',
+    onPick,
+    selectedValue: sourceSelections.get(deviceId) ?? '',
+  })
   parts.list.hidden = false
   parts.input.setAttribute('aria-expanded', 'true')
   parts.input.select()
@@ -425,7 +444,11 @@ const wireCombobox = (parts: ComboboxParts, device: AdjustableDevice): void => {
     if (list.hidden === true) {
       openList(parts, device.id, pick)
     }
-    renderOptions(list, input.value, pick)
+    renderOptions(list, {
+      filter: input.value,
+      onPick: pick,
+      selectedValue: sourceSelections.get(device.id) ?? '',
+    })
   })
 }
 
