@@ -273,18 +273,18 @@
     "sv": "Inställningar grupperade per byggnad, sidan omorganiserad med historiken överst och relativa tidsstämplar."
   },
   "24.7.1": {
-    "ar": "تتبع الإعدادات الآن إعادة تسمية مباني MELCloud عند التحديث.",
-    "da": "Indstillingerne følger nu omdøbning af MELCloud-bygninger ved opdatering.",
-    "de": "Die Einstellungen folgen nun Umbenennungen von MELCloud-Gebäuden beim Aktualisieren.",
-    "en": "Settings now follow MELCloud building renames on refresh.",
-    "es": "Los ajustes ahora siguen los cambios de nombre de los edificios de MELCloud al actualizar.",
-    "fr": "Les réglages suivent désormais les renommages de bâtiments MELCloud au rafraîchissement.",
-    "it": "Le impostazioni ora seguono le ridenominazioni degli edifici MELCloud all’aggiornamento.",
-    "ko": "이제 설정이 새로 고침 시 MELCloud 건물 이름 변경을 반영합니다.",
-    "nl": "De instellingen volgen nu hernoemingen van MELCloud-gebouwen bij het vernieuwen.",
-    "no": "Innstillingene følger nå navneendringer på MELCloud-bygninger ved oppdatering.",
-    "pl": "Ustawienia uwzględniają teraz zmiany nazw budynków MELCloud przy odświeżaniu.",
-    "ru": "Настройки теперь отражают переименования зданий MELCloud при обновлении.",
-    "sv": "Inställningarna följer nu namnbyten på MELCloud-byggnader vid uppdatering."
+    "ar": "أصبحت الإعدادات تتبع إعادة تسمية مباني MELCloud عند التحديث، ولم يعد بإمكان الصفحة أن تظل عالقة في التحميل.",
+    "da": "Indstillingerne følger nu omdøbning af MELCloud-bygninger ved opdatering, og siden kan ikke længere sidde fast under indlæsning.",
+    "de": "Die Einstellungen folgen nun Umbenennungen von MELCloud-Gebäuden beim Aktualisieren, und die Seite kann nicht mehr beim Laden hängen bleiben.",
+    "en": "Settings now follow MELCloud building renames on refresh, and the page can no longer get stuck loading.",
+    "es": "Los ajustes ahora siguen los cambios de nombre de los edificios de MELCloud al actualizar, y la página ya no puede quedarse cargando.",
+    "fr": "Les réglages suivent désormais les renommages de bâtiments MELCloud au rafraîchissement, et la page ne peut plus rester bloquée en chargement.",
+    "it": "Le impostazioni ora seguono le ridenominazioni degli edifici MELCloud all'aggiornamento e la pagina non può più bloccarsi in caricamento.",
+    "ko": "이제 설정이 새로 고침 시 MELCloud 건물 이름 변경을 반영하며, 페이지가 더 이상 로딩 중에 멈추지 않습니다.",
+    "nl": "De instellingen volgen nu hernoemingen van MELCloud-gebouwen bij het vernieuwen, en de pagina kan niet langer blijven hangen tijdens het laden.",
+    "no": "Innstillingene følger nå navneendringer på MELCloud-bygninger ved oppdatering, og siden kan ikke lenger bli sittende fast under lasting.",
+    "pl": "Ustawienia uwzględniają teraz zmiany nazw budynków MELCloud przy odświeżaniu, a strona nie może już utknąć podczas ładowania.",
+    "ru": "Настройки теперь отражают переименования зданий MELCloud при обновлении, а страница больше не может зависнуть при загрузке.",
+    "sv": "Inställningarna följer nu namnbyten på MELCloud-byggnader vid uppdatering, och sidan kan inte längre fastna vid inläsning."
   }
 }
