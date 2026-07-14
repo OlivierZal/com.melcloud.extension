@@ -778,13 +778,12 @@ const run = async (homey: Homey): Promise<void> => {
 
 // A timed-out load may still be hung inside `withBusyButtons` — release
 // the controls (and orphan that run's busy claim) so the retry is
-// actually clickable.
-const reportInitFailure = async (
-  homey: Homey,
-  error: unknown,
-): Promise<void> => {
+// actually clickable. Fire-and-forget on the alert keeps `start()`
+// non-throwing: a rejected alert must not trip the HTML loader's catch
+// (double `ready()`, second generic alert).
+const reportInitFailure = (homey: Homey, error: unknown): void => {
   releaseBusyButtons()
-  await homey.alert(getErrorMessage(error))
+  fireAndForget(homey.alert(getErrorMessage(error)))
 }
 
 /**
@@ -812,6 +811,6 @@ export const start = async (homey: Homey): Promise<void> => {
     homey.ready()
   }
   if (hasInitFailed) {
-    await reportInitFailure(homey, initError)
+    reportInitFailure(homey, initError)
   }
 }
