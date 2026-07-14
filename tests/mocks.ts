@@ -32,6 +32,7 @@ export const createMockDevice = ({
   capabilitiesOptions = {},
   driverId,
   id,
+  melcloudId,
   name,
   values = {},
 }: {
@@ -42,6 +43,7 @@ export const createMockDevice = ({
   readonly capabilitiesOptions?: Readonly<
     Record<string, { max?: number; min?: number }>
   >
+  readonly melcloudId?: string
   readonly values?: Record<string, boolean | number | string | null>
 }): MockDevice => {
   const capabilityInstances = new Map<string, MockCapabilityInstance>()
@@ -63,6 +65,7 @@ export const createMockDevice = ({
         },
       ]),
     ),
+    data: { id: melcloudId ?? id },
     driverId,
     id,
     name,
@@ -156,6 +159,7 @@ export const createMockDevicesManager = (
 }
 
 export interface MockHomey {
+  readonly apiAppGet: ReturnType<typeof vi.fn>
   readonly createNotification: ReturnType<typeof vi.fn>
   readonly eventHandlers: Map<string, (...args: unknown[]) => void>
   readonly homey: Homey.Homey
@@ -180,6 +184,7 @@ export const createMockHomey = ({
   const createNotification = vi
     .fn<(options: { excerpt: string }) => Promise<void>>()
     .mockResolvedValue()
+  const apiAppGet = vi.fn<(path: string) => unknown>().mockReturnValue([])
   const realtime = vi.fn<(event: string, data: unknown) => void>()
   const translate = vi
     .fn<(key: string, params?: Record<string, unknown>) => string>()
@@ -196,7 +201,12 @@ export const createMockHomey = ({
     })
   const homey = mock<Homey.Homey>({
     __: translate,
-    api: { realtime },
+    api: {
+      realtime,
+      getApiApp: (): { get: (path: string) => unknown } => ({
+        get: apiAppGet,
+      }),
+    },
     i18n: { getLanguage: (): string => language },
     manifest: { version },
     notifications: { createNotification },
@@ -224,6 +234,7 @@ export const createMockHomey = ({
       setTimeout(callback, milliseconds),
   })
   return {
+    apiAppGet,
     createNotification,
     eventHandlers,
     homey,

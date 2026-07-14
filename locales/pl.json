@@ -22,15 +22,17 @@
       "false": "Nie",
       "true": "Tak"
     },
-    "defaultSource": "Pogoda Homey (domyślnie)",
+    "defaultSource": "Pogoda Homey",
     "disabledSource": "Nie dostosowuj",
     "enabled": "Utrzymuj w granicach 8 °C od temperatury zewnętrznej",
     "log": "Historia",
-    "notFound": "Najpierw skonfiguruj urządzenia w aplikacji MELCloud dla Homey.\n\nCzy chcesz ją zainstalować?",
+    "notFound": "Najpierw skonfiguruj urządzenia w aplikacji MELCloud dla Homey.",
     "refresh": "Odśwież",
     "searchSource": "Szukaj źródła…",
     "title": "Ustawienia rozszerzenia MELCloud",
     "update": "Aktualizuj",
-    "allDevices": "Wszystkie urządzenia"
+    "allDevices": "Wszystkie urządzenia",
+    "install": "Zainstaluj aplikację MELCloud",
+    "configuration": "Konfiguracja"
   }
 }

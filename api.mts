@@ -1,8 +1,9 @@
 import type { Homey } from 'homey/lib/Homey'
 
 import { NotFoundError } from './lib/errors.mts'
+import { groupAdjustableDevices } from './lib/group-devices.mts'
 import {
-  type AdjustableDevice,
+  type AdjustableGroup,
   type TemperatureListenerData,
   type TemperatureSensor,
   MEASURE_TEMPERATURE,
@@ -26,26 +27,26 @@ const api = {
     await app.autoAdjustCooling(body)
   },
   /**
-   * Lists the MELCloud AC devices, sorted by name, with their configured
-   * outdoor source (`null` when they follow the Homey weather default).
+   * Lists the settings rows: one named group per MELCloud building
+   * (com.melcloud's inter-app grouping), unmatched devices trailing in
+   * an unnamed group, or a single unnamed flat group when no grouping
+   * is available. Devices carry their configured outdoor source
+   * (`null` when they follow the Homey weather default).
    * @param options - Homey API context.
    * @param options.homey - Homey instance carrying the app.
-   * @returns One entry per AC device, with its configured source.
+   * @returns The groups, sorted by name, devices sorted within.
    * @throws NotFoundError when no MELCloud AC device is paired yet.
    */
-  getAdjustableDevices({ homey }: { homey: Homey }): AdjustableDevice[] {
+  getAdjustableGroups({ homey }: { homey: Homey }): AdjustableGroup[] {
     const { app } = homey
     if (app.melcloudDevices.length === 0) {
       throw new NotFoundError()
     }
-    const outdoorSources = app.homey.settings.get('outdoorSources') ?? {}
-    return app.melcloudDevices
-      .map(({ id, name }) => ({
-        id,
-        name,
-        outdoorSource: outdoorSources[id] ?? null,
-      }))
-      .toSorted((device1, device2) => device1.name.localeCompare(device2.name))
+    return groupAdjustableDevices(
+      app.melcloudDevices,
+      app.homey.settings.get('outdoorSources') ?? {},
+      app.deviceGroups,
+    )
   },
   /**
    * Reads the language configured on the Homey.

@@ -7,6 +7,19 @@ export interface AdjustableDevice {
   readonly outdoorSource: string | null
 }
 
+// One settings row: a named MELCloud building driving all its devices,
+// or the flat per-device fallback when no grouping is available
+export interface AdjustableGroup {
+  readonly devices: readonly AdjustableDevice[]
+  readonly name: string | null
+}
+
+// Payload served by com.melcloud's /device_groups endpoint
+export type DeviceGroups = readonly {
+  readonly deviceIds: readonly string[]
+  readonly name: string
+}[]
+
 export interface HomeySettings {
   readonly capabilityPath?: string | null
   readonly isEnabled?: boolean | null

@@ -26,13 +26,15 @@
     "capabilities": "Utomhustemperatur",
     "enabled": "Håll inom 8 °C från utomhustemperaturen",
     "log": "Historik",
-    "notFound": "Du behöver först konfigurera dina enheter i MELCloud Homey-appen.\n\nVill du installera den?",
+    "notFound": "Du behöver först konfigurera dina enheter i MELCloud Homey-appen.",
     "refresh": "Ladda om",
     "title": "Inställningar för MELCloud-tillägg",
-    "defaultSource": "Homey-väder (standard)",
+    "defaultSource": "Homey-väder",
     "disabledSource": "Justera inte",
     "searchSource": "Sök efter en källa …",
     "update": "Uppdatera",
-    "allDevices": "Alla enheter"
+    "allDevices": "Alla enheter",
+    "install": "Installera MELCloud-appen",
+    "configuration": "Konfiguration"
   }
 }

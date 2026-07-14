@@ -127,6 +127,38 @@ describe(MELCloudExtensionApp, () => {
     vi.clearAllMocks()
   })
 
+  it('should expose the building grouping fetched from com.melcloud', async () => {
+    const { classicDevice } = createDevices()
+    const groups = [{ deviceIds: ['classic-1'], name: 'Domicile' }]
+    const { app, mockHomey } = await createHarness([classicDevice])
+    mockHomey.apiAppGet.mockReturnValue(groups)
+
+    await advancePastInit()
+
+    expect(mockHomey.apiAppGet).toHaveBeenCalledWith('/device_groups')
+    expect(app.deviceGroups).toStrictEqual(groups)
+  })
+
+  it('should read an off-shape grouping payload as no grouping', async () => {
+    const { classicDevice } = createDevices()
+    const { app, mockHomey } = await createHarness([classicDevice])
+    mockHomey.apiAppGet.mockReturnValue('nonsense')
+
+    await advancePastInit()
+
+    expect(app.deviceGroups).toBeNull()
+  })
+
+  it('should read a failed grouping fetch as no grouping', async () => {
+    const { classicDevice } = createDevices()
+    const { app, mockHomey } = await createHarness([classicDevice])
+    mockHomey.apiAppGet.mockRejectedValue(new Error('not_installed'))
+
+    await advancePastInit()
+
+    expect(app.deviceGroups).toBeNull()
+  })
+
   it('should classify Classic and Home AC devices as adjustable', async () => {
     const { classicDevice, homeDevice, sensorDevice } = createDevices()
     const { app } = await createHarness([

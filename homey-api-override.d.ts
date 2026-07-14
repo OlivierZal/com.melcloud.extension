@@ -43,6 +43,8 @@ declare module 'homey-api' {
 
       readonly capabilitiesObj: Record<string, Capability> | null
 
+      readonly data: { readonly id?: unknown }
+
       readonly driverId: string
 
       readonly id: string

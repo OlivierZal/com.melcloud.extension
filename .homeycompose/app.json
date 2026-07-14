@@ -4,9 +4,9 @@
       "method": "PUT",
       "path": "/melcloud/cooling/auto_adjustment"
     },
-    "getAdjustableDevices": {
+    "getAdjustableGroups": {
       "method": "GET",
-      "path": "/devices/adjustable"
+      "path": "/devices/groups"
     },
     "getLanguage": {
       "method": "GET",
@@ -75,6 +75,7 @@
     "sv": "MELCloud-tillägg"
   },
   "permissions": [
+    "homey:app:com.mecloud",
     "homey:manager:api"
   ],
   "platforms": [

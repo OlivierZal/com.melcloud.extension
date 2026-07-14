@@ -1,3 +1,4 @@
+import type ApiApp from 'homey/lib/ApiApp'
 import { HomeyAPIV3Local } from 'homey-api'
 import { Temporal } from 'temporal-polyfill'
 
@@ -6,11 +7,13 @@ import { changelog } from './files.mts'
 import { fireAndForget } from './lib/fire-and-forget.mts'
 import { getErrorMessage } from './lib/get-error-message.mts'
 import { type Homey, App } from './lib/homey.mts'
+import { toDeviceGroups } from './lib/to-device-groups.mts'
 import { CapabilityOutdoorSource } from './listeners/capability-source.mts'
 import { ListenerError } from './listeners/error.mts'
 import { MELCloudListener } from './listeners/melcloud.mts'
 import { WeatherOutdoorSource } from './listeners/weather-source.mts'
 import {
+  type DeviceGroups,
   type ListenerParams,
   type Names,
   type TemperatureListenerData,
@@ -21,9 +24,10 @@ import {
 
 // The MELCloud app id is com.mecloud (historical typo). AC units come from
 // its Classic ATA driver and its MELCloud Home ATA driver.
+const MELCLOUD_APP_ID = 'com.mecloud'
 const ATA_DRIVER_IDS = new Set([
-  'homey:app:com.mecloud:home-melcloud',
-  'homey:app:com.mecloud:melcloud',
+  `homey:app:${MELCLOUD_APP_ID}:home-melcloud`,
+  `homey:app:${MELCLOUD_APP_ID}:melcloud`,
 ])
 
 const MAX_LOGS = 100
@@ -41,6 +45,10 @@ export default class MELCloudExtensionApp extends App {
 
   public get api(): HomeyAPIV3Local {
     return this.#api
+  }
+
+  public get deviceGroups(): DeviceGroups | null {
+    return this.#deviceGroups
   }
 
   public get melcloudDevices(): HomeyAPIV3Local.ManagerDevices.Device[] {
@@ -63,9 +71,13 @@ export default class MELCloudExtensionApp extends App {
 
   #api!: HomeyAPIV3Local
 
+  #deviceGroups: DeviceGroups | null = null
+
   readonly #deviceListeners: MELCloudListener[] = []
 
   #initTimeout: NodeJS.Timeout | null = null
+
+  #melcloudApp!: ApiApp
 
   readonly #melcloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
@@ -74,6 +86,7 @@ export default class MELCloudExtensionApp extends App {
   readonly #temperatureSensors: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
   public override async onInit(): Promise<void> {
+    this.#melcloudApp = this.homey.api.getApiApp(MELCLOUD_APP_ID)
     this.#api = await HomeyAPIV3Local.createAppAPI({ homey: this.homey })
     await this.#api.devices.connect()
     this.#init()
@@ -177,6 +190,18 @@ export default class MELCloudExtensionApp extends App {
     this.#sources.clear()
   }
 
+  // Building grouping served by com.melcloud's inter-app API; anything
+  // off (older app version, not installed, bad payload) reads as "no
+  // grouping" and the settings fall back to the per-device list.
+  async #fetchDeviceGroups(): Promise<DeviceGroups | null> {
+    try {
+      const payload: unknown = await this.#melcloudApp.get('/device_groups')
+      return toDeviceGroups(payload)
+    } catch {
+      return null
+    }
+  }
+
   async #getSource(sourcePath: string | null): Promise<OutdoorSource> {
     const key = sourcePath ?? WEATHER_SOURCE_KEY
     const existing = this.#sources.get(key)
@@ -244,6 +269,7 @@ export default class MELCloudExtensionApp extends App {
         this.#temperatureSensors.push(device)
       }
     }
+    this.#deviceGroups = await this.#fetchDeviceGroups()
     this.#migrateLegacySource()
   }
 
