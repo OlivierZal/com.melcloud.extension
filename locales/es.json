@@ -26,7 +26,7 @@
     "capabilities": "Temperatura exterior",
     "enabled": "Mantener dentro de los 8 °C de la temperatura exterior",
     "log": "Historial",
-    "notFound": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
+    "notFound": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.",
     "refresh": "Recargar",
     "title": "Configuración de la extensión para MELCloud",
     "defaultSource": "Tiempo de Homey",

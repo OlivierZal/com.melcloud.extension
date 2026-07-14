@@ -26,7 +26,7 @@
     "disabledSource": "عدم الضبط",
     "enabled": "الإبقاء ضمن 8 °C من درجة الحرارة الخارجية",
     "log": "السجل",
-    "notFound": "قم أولاً بإعداد أجهزتك في تطبيق MELCloud على Homey.\n\nهل تريد تثبيته؟",
+    "notFound": "قم أولاً بإعداد أجهزتك في تطبيق MELCloud على Homey.",
     "refresh": "إعادة تحميل",
     "searchSource": "ابحث عن مصدر…",
     "title": "إعدادات امتداد MELCloud",

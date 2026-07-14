@@ -26,7 +26,7 @@
     "disabledSource": "Nie dostosowuj",
     "enabled": "Utrzymuj w granicach 8 °C od temperatury zewnętrznej",
     "log": "Historia",
-    "notFound": "Najpierw skonfiguruj urządzenia w aplikacji MELCloud dla Homey.\n\nCzy chcesz ją zainstalować?",
+    "notFound": "Najpierw skonfiguruj urządzenia w aplikacji MELCloud dla Homey.",
     "refresh": "Odśwież",
     "searchSource": "Szukaj źródła…",
     "title": "Ustawienia rozszerzenia MELCloud",

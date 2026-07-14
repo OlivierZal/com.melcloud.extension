@@ -29,7 +29,7 @@
     "enabled": "Innerhalb von 8 °C der Außentemperatur halten",
     "install": "MELCloud-App installieren",
     "log": "Verlauf",
-    "notFound": "Richten Sie zuerst Ihre Geräte in der MELCloud-Homey-App ein.\n\nMöchten Sie sie installieren?",
+    "notFound": "Richten Sie zuerst Ihre Geräte in der MELCloud-Homey-App ein.",
     "refresh": "Neu laden",
     "searchSource": "Nach einer Quelle suchen …",
     "title": "Einstellungen der MELCloud-Erweiterung",

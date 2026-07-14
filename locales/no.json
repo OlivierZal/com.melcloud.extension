@@ -26,7 +26,7 @@
     "capabilities": "Utetemperatur",
     "enabled": "Hold innenfor 8 °C av utetemperaturen",
     "log": "Historikk",
-    "notFound": "Først må du sette opp enhetene dine i MELCloud Homey-appen.\n\nVil du installere den?",
+    "notFound": "Først må du sette opp enhetene dine i MELCloud Homey-appen.",
     "refresh": "Gjenta",
     "title": "Innstillinger for MELCloud-utvidelse",
     "defaultSource": "Homey-vær",

@@ -151,10 +151,14 @@ const serializeState = (): string =>
     [...sourceSelections].toSorted(([id1], [id2]) => id1.localeCompare(id2)),
   ])
 
+// Requests in flight lock BOTH buttons: `updateDirty` folds the busy
+// flag in so a combobox pick mid-request cannot re-enable Update.
+const busyState: { value: boolean } = { value: false }
+
 const updateDirty = (): void => {
   applyElement.classList.toggle(
     'is-disabled',
-    serializeState() === savedState.value,
+    busyState.value || serializeState() === savedState.value,
   )
 }
 
@@ -166,16 +170,15 @@ const resetSavedState = (): void => {
 // Busy buttons only grey out (com.melcloud behavior): the style
 // library's `is-loading` spinner shifts the label sideways.
 const setButtonsBusy = (areBusy: boolean): void => {
-  for (const element of [applyElement, refreshElement]) {
-    element.classList.toggle('is-disabled', areBusy)
-  }
+  busyState.value = areBusy
+  refreshElement.classList.toggle('is-disabled', areBusy)
+  updateDirty()
 }
 
 const withBusyButtons = async (action: () => Promise<void>): Promise<void> => {
   setButtonsBusy(true)
   await action()
   setButtonsBusy(false)
-  updateDirty()
 }
 
 // The document language is the display locale: `fetchLanguage` overwrites
