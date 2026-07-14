@@ -23,9 +23,10 @@
       "false": "No",
       "true": "Sí"
     },
-    "defaultSource": "Tiempo de Homey (predeterminado)",
+    "defaultSource": "Tiempo de Homey",
     "disabledSource": "No ajustar",
     "enabled": "Mantener dentro de los 8 °C de la temperatura exterior",
+    "install": "Instalar la aplicación MELCloud",
     "log": "Historial",
     "notFound": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
     "refresh": "Recargar",

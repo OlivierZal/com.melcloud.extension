@@ -29,10 +29,11 @@
     "notFound": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.\n\n¿Deseas instalarla?",
     "refresh": "Recargar",
     "title": "Configuración de la extensión para MELCloud",
-    "defaultSource": "Tiempo de Homey (predeterminado)",
+    "defaultSource": "Tiempo de Homey",
     "disabledSource": "No ajustar",
     "searchSource": "Buscar una fuente…",
     "update": "Actualizar",
-    "allDevices": "Todos los dispositivos"
+    "allDevices": "Todos los dispositivos",
+    "install": "Instalar la aplicación MELCloud"
   }
 }

@@ -3,6 +3,7 @@ import { Temporal } from 'temporal-polyfill'
 
 import {
   type AdjustableDevice,
+  type AdjustableGroup,
   type HomeySettings,
   type OutdoorSources,
   type TemperatureListenerData,
@@ -100,11 +101,9 @@ const getDivElement = (id: string): HTMLDivElement =>
 const getTableSectionElement = (id: string): HTMLTableSectionElement =>
   getElement(id, HTMLTableSectionElement, 'table section')
 
-const getDetailsElement = (id: string): HTMLDetailsElement =>
-  getElement(id, HTMLDetailsElement, 'details')
-
 const applyElement = getButtonElement('apply')
-const configurationElement = getDetailsElement('configuration')
+const emptyElement = getDivElement('empty_state')
+const installElement = getButtonElement('install')
 const refreshElement = getButtonElement('refresh')
 const enabledElement = getSelectElement('enabled')
 const logsElement = getTableSectionElement('logs')
@@ -115,10 +114,11 @@ interface SourceOption {
   readonly value: string
 }
 
-// One custom combobox per device (iOS webviews render neither the
-// datalist arrow nor showPicker, so the dropdown is ours): clicking the
-// field drops the FULL list select-style, typing filters it, and the
-// current value lives here, keyed by device id.
+// One custom combobox per building (per device without grouping): the
+// dropdown is ours because iOS webviews render neither the datalist
+// arrow nor showPicker. The current value lives here, keyed by device
+// id — the storage unit stays the device even when a building row
+// drives several of them at once.
 const sourceOptions: SourceOption[] = []
 const sourceSelections = new Map<string, string>()
 const sourceNamesByValue = new Map<string, string>()
@@ -141,37 +141,80 @@ document.addEventListener('pointerdown', (event) => {
   closeOpenCombobox()
 })
 
-const setButtonsEnabled = (isEnabled: boolean): void => {
+// "Update" only means something once the form diverges from the last
+// saved state — the snapshot greys it out otherwise.
+const savedState: { value: string } = { value: '' }
+
+const serializeState = (): string =>
+  JSON.stringify([
+    enabledElement.value,
+    [...sourceSelections].toSorted(([id1], [id2]) => id1.localeCompare(id2)),
+  ])
+
+const updateDirty = (): void => {
+  applyElement.classList.toggle(
+    'is-disabled',
+    serializeState() === savedState.value,
+  )
+}
+
+const resetSavedState = (): void => {
+  savedState.value = serializeState()
+  updateDirty()
+}
+
+const setButtonsBusy = (areBusy: boolean): void => {
   for (const element of [applyElement, refreshElement]) {
-    element.classList.toggle('is-disabled', !isEnabled)
+    element.classList.toggle('is-disabled', areBusy)
+    element.classList.toggle('is-loading', areBusy)
   }
 }
 
-const withDisablingButtons = async (
-  action: () => Promise<void>,
-): Promise<void> => {
-  setButtonsEnabled(false)
+const withBusyButtons = async (action: () => Promise<void>): Promise<void> => {
+  setButtonsBusy(true)
   await action()
-  setButtonsEnabled(true)
+  setButtonsBusy(false)
+  updateDirty()
 }
 
 // The document language is the display locale: `fetchLanguage` overwrites
 // the html attribute's default with the Homey-configured language.
-const displayTime = (time: number): string =>
+const absoluteTime = (time: number): string =>
   Temporal.Instant.fromEpochMilliseconds(time).toLocaleString(
     document.documentElement.lang,
     {
+      day: 'numeric',
       hour: 'numeric',
       minute: 'numeric',
-      weekday: 'short',
+      month: 'long',
+      weekday: 'long',
     },
   )
+
+const MINUTE_MS = 60_000
+const HOUR_MS = 3_600_000
+const DAY_MS = 86_400_000
+
+const relativeTime = (time: number): string => {
+  const elapsed = time - Temporal.Now.instant().epochMilliseconds
+  const format = new Intl.RelativeTimeFormat(document.documentElement.lang, {
+    numeric: 'auto',
+  })
+  if (Math.abs(elapsed) < HOUR_MS) {
+    return format.format(Math.round(elapsed / MINUTE_MS), 'minute')
+  }
+  if (Math.abs(elapsed) < DAY_MS) {
+    return format.format(Math.round(elapsed / HOUR_MS), 'hour')
+  }
+  return format.format(Math.round(elapsed / DAY_MS), 'day')
+}
 
 const createTimeElement = (time: number, icon: string): HTMLDivElement => {
   const timeElement = document.createElement('div')
   timeElement.classList.add('log-time')
+  timeElement.title = absoluteTime(time)
   timeElement.append(
-    document.createTextNode(displayTime(time)),
+    document.createTextNode(relativeTime(time)),
     document.createElement('br'),
     document.createTextNode(icon),
   )
@@ -190,7 +233,33 @@ const createMessageElement = (
   return messageElement
 }
 
-const displayLog = ({ category, message, time }: TimestampedLog): void => {
+// One separator above each day's logs (newest day on top)
+const topDay: { value: string | null } = { value: null }
+
+const dayOf = (time: number): string =>
+  Temporal.Instant.fromEpochMilliseconds(time)
+    .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+    .toPlainDate()
+    .toString()
+
+const createDayElement = (time: number): HTMLDivElement => {
+  const dayElement = document.createElement('div')
+  dayElement.classList.add('log-day')
+  dayElement.textContent = Temporal.Instant.fromEpochMilliseconds(
+    time,
+  ).toLocaleString(document.documentElement.lang, {
+    day: 'numeric',
+    month: 'long',
+    weekday: 'long',
+  })
+  return dayElement
+}
+
+const createLogRow = ({
+  category,
+  message,
+  time,
+}: TimestampedLog): HTMLDivElement => {
   const { colorClass, icon } = categories[category ?? 'error'] ?? errorCategory
   const rowElement = document.createElement('div')
   rowElement.classList.add('log-row')
@@ -198,7 +267,23 @@ const displayLog = ({ category, message, time }: TimestampedLog): void => {
     createTimeElement(time, icon),
     createMessageElement(message, colorClass),
   )
+  return rowElement
+}
+
+const displayLog = (log: TimestampedLog): void => {
+  const rowElement = createLogRow(log)
+  const day = dayOf(log.time)
+  if (day === topDay.value) {
+    // Below the day separator sitting on top
+    logsElement.insertBefore(
+      rowElement,
+      logsElement.firstChild?.nextSibling ?? null,
+    )
+    return
+  }
+  topDay.value = day
   logsElement.insertBefore(rowElement, logsElement.firstChild)
+  logsElement.insertBefore(createDayElement(log.time), rowElement)
 }
 
 const getErrorMessage = (error: unknown): string => {
@@ -206,22 +291,6 @@ const getErrorMessage = (error: unknown): string => {
     return error.message
   }
   return typeof error === 'string' ? error : JSON.stringify(error)
-}
-
-const handleTemperatureSensorsError = async (
-  homey: Homey,
-  errorMessage: string,
-): Promise<void> => {
-  if (errorMessage !== 'notFound') {
-    await homey.alert(errorMessage)
-    return
-  }
-  const shouldInstall = await homeyCallback<boolean>((callback) => {
-    homey.confirm(homey.__('settings.notFound'), null, callback)
-  })
-  if (shouldInstall) {
-    await homey.openURL('https://homey.app/a/com.mecloud')
-  }
 }
 
 // Only show logs from the last LOG_RETENTION_DAYS (midnight cutoff)
@@ -261,17 +330,19 @@ const fetchLanguage = async (homey: Homey): Promise<void> => {
   })
 }
 
-const fetchHomeySettings = async (homey: Homey): Promise<void> =>
-  withDisablingButtons(async () => {
-    try {
-      const settings = await homeyCallback<HomeySettings>((callback) => {
-        homey.get(callback)
-      })
-      handleSettings(settings)
-    } catch (error) {
-      await homey.alert(getErrorMessage(error))
-    }
-  })
+const fetchHomeySettings = async (homey: Homey): Promise<void> => {
+  try {
+    const settings = await homeyCallback<HomeySettings>((callback) => {
+      homey.get(callback)
+    })
+    handleSettings(settings)
+  } catch (error) {
+    await homey.alert(getErrorMessage(error))
+  }
+}
+
+const isNotFound = (error: unknown): boolean =>
+  getErrorMessage(error) === 'notFound'
 
 const fetchTemperatureSensors = async (
   homey: Homey,
@@ -281,20 +352,24 @@ const fetchTemperatureSensors = async (
       homey.api('GET', '/devices/sensors/temperature', callback)
     })
   } catch (error) {
-    await handleTemperatureSensorsError(homey, getErrorMessage(error))
+    if (!isNotFound(error)) {
+      await homey.alert(getErrorMessage(error))
+    }
     return []
   }
 }
 
-const fetchAdjustableDevices = async (
+const fetchAdjustableGroups = async (
   homey: Homey,
-): Promise<AdjustableDevice[]> => {
+): Promise<AdjustableGroup[]> => {
   try {
-    return await homeyCallback<AdjustableDevice[]>((callback) => {
-      homey.api('GET', '/devices/adjustable', callback)
+    return await homeyCallback<AdjustableGroup[]>((callback) => {
+      homey.api('GET', '/devices/groups', callback)
     })
   } catch (error) {
-    await handleTemperatureSensorsError(homey, getErrorMessage(error))
+    if (!isNotFound(error)) {
+      await homey.alert(getErrorMessage(error))
+    }
     return []
   }
 }
@@ -304,6 +379,7 @@ const enableAdjustment = (): void => {
   if (enabledElement.value === 'false') {
     enabledElement.value = 'true'
   }
+  updateDirty()
 }
 
 const registerSourceOption = (name: string, value: string): void => {
@@ -328,24 +404,12 @@ const populateSourceOptions = (
 // can never match a real option, so no checkmark shows either
 const MIXED_SELECTION = '\u{0}'
 
-const sourceInputs = new Map<string, HTMLInputElement>()
-const bulkInputHolder: { input: HTMLInputElement | null } = { input: null }
-
-const commonSelection = (): string => {
-  const values = new Set(sourceSelections.values())
+const commonSelectionOf = (deviceIds: readonly string[]): string => {
+  const values = new Set(
+    deviceIds.map((deviceId) => sourceSelections.get(deviceId) ?? ''),
+  )
   const [first] = values
   return values.size === 1 && first !== undefined ? first : MIXED_SELECTION
-}
-
-const refreshDisplays = (): void => {
-  for (const [deviceId, input] of sourceInputs) {
-    input.value =
-      sourceNamesByValue.get(sourceSelections.get(deviceId) ?? '') ?? ''
-  }
-  if (bulkInputHolder.input !== null) {
-    bulkInputHolder.input.value =
-      sourceNamesByValue.get(commonSelection()) ?? ''
-  }
 }
 
 interface ComboboxConfig {
@@ -542,77 +606,74 @@ const createComboboxLabel = (
 
 // Homey Style Library idiom (settings pages, unlike widgets, use it):
 // one form group per field, the control a SIBLING after its label.
-const appendComboboxRow = (
-  homey: Homey,
-  config: ComboboxConfig,
-): HTMLInputElement => {
+const appendComboboxRow = (homey: Homey, config: ComboboxConfig): void => {
   const { element, input } = createCombobox(homey, config)
   const group = document.createElement('div')
   group.classList.add('homey-form-group')
   group.append(createComboboxLabel(config.label, input), element)
   sourcesElement.append(group)
-  return input
+}
+
+// One row drives every device of the building; devices without a
+// building (no grouping available) get one row each.
+const appendGroupRow = (
+  homey: Homey,
+  group: AdjustableGroup,
+  index: number,
+): void => {
+  const deviceIds = group.devices.map(({ id }) => id)
+  appendComboboxRow(homey, {
+    id: `group-${String(index)}`,
+    label: group.name ?? '',
+    getValue: (): string => commonSelectionOf(deviceIds),
+    setValue: (value): void => {
+      for (const deviceId of deviceIds) {
+        sourceSelections.set(deviceId, value)
+      }
+    },
+  })
 }
 
 const appendDeviceRow = (homey: Homey, device: AdjustableDevice): void => {
-  const input = appendComboboxRow(homey, {
+  appendComboboxRow(homey, {
     id: device.id,
     label: device.name,
     getValue: (): string => sourceSelections.get(device.id) ?? '',
     setValue: (value): void => {
       sourceSelections.set(device.id, value)
-      refreshDisplays()
     },
   })
-  sourceInputs.set(device.id, input)
-}
-
-// Bulk row: one pick applies the source to every device below
-const appendBulkRow = (homey: Homey): void => {
-  bulkInputHolder.input = appendComboboxRow(homey, {
-    getValue: commonSelection,
-    id: 'all',
-    label: homey.__('settings.allDevices'),
-    setValue: (value): void => {
-      for (const deviceId of sourceSelections.keys()) {
-        sourceSelections.set(deviceId, value)
-      }
-      refreshDisplays()
-    },
-  })
-}
-
-const resetSources = (): void => {
-  sourceSelections.clear()
-  sourceInputs.clear()
-  bulkInputHolder.input = null
-  sourcesElement.replaceChildren()
 }
 
 const appendSourceRows = (
   homey: Homey,
-  devices: readonly AdjustableDevice[],
+  groups: readonly AdjustableGroup[],
 ): void => {
-  if (devices.length > 0) {
-    appendBulkRow(homey)
+  for (const [index, group] of groups.entries()) {
+    if (group.name === null) {
+      for (const device of group.devices) {
+        appendDeviceRow(homey, device)
+      }
+      continue
+    }
+    appendGroupRow(homey, group, index)
   }
-  for (const device of devices) {
-    appendDeviceRow(homey, device)
-  }
-  refreshDisplays()
 }
 
 const populateSources = async (homey: Homey): Promise<void> => {
-  const [devices, sensors] = await Promise.all([
-    fetchAdjustableDevices(homey),
+  const [groups, sensors] = await Promise.all([
+    fetchAdjustableGroups(homey),
     fetchTemperatureSensors(homey),
   ])
   populateSourceOptions(homey, sensors)
-  resetSources()
+  sourceSelections.clear()
+  sourcesElement.replaceChildren()
+  const devices = groups.flatMap((group) => group.devices)
   for (const device of devices) {
     sourceSelections.set(device.id, device.outdoorSource ?? '')
   }
-  appendSourceRows(homey, devices)
+  appendSourceRows(homey, groups)
+  emptyElement.hidden = devices.length > 0
 }
 
 const getSelectedSources = (): OutdoorSources =>
@@ -623,7 +684,7 @@ const getSelectedSources = (): OutdoorSources =>
   )
 
 const autoAdjustCooling = async (homey: Homey): Promise<void> =>
-  withDisablingButtons(async () => {
+  withBusyButtons(async () => {
     try {
       await homeyCallback<undefined>((callback) => {
         homey.api(
@@ -636,17 +697,20 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
           callback,
         )
       })
+      resetSavedState()
     } catch (error) {
       await homey.alert(getErrorMessage(error))
     }
   })
 
 // Refresh restores every value to the last saved state (the stored
-// enable flag and per-device sources) without touching the fold
-const refreshAll = async (homey: Homey): Promise<void> => {
-  await populateSources(homey)
-  await fetchHomeySettings(homey)
-}
+// enable flag and per-device sources)
+const refreshAll = async (homey: Homey): Promise<void> =>
+  withBusyButtons(async () => {
+    await populateSources(homey)
+    await fetchHomeySettings(homey)
+    resetSavedState()
+  })
 
 const addEventListeners = (homey: Homey): void => {
   refreshElement.addEventListener('click', () => {
@@ -654,6 +718,10 @@ const addEventListeners = (homey: Homey): void => {
   })
   applyElement.addEventListener('click', () => {
     fireAndForget(autoAdjustCooling(homey))
+  })
+  enabledElement.addEventListener('change', updateDirty)
+  installElement.addEventListener('click', () => {
+    fireAndForget(homey.openURL('https://homey.app/a/com.mecloud'))
   })
   homey.on('log', displayLog)
 }
@@ -664,12 +732,7 @@ const onHomeyReady = async (homey: Homey): Promise<void> => {
   } catch {
     // Non-critical: the log timestamps fall back to English formatting
   }
-  await populateSources(homey)
-  await fetchHomeySettings(homey)
-  // Not adjusting yet: surface the configuration; already running:
-  // fold it away so the history is one glance away. Initial load only —
-  // a refresh must not undo a manual fold or unfold.
-  configurationElement.open = enabledElement.value === 'false'
+  await refreshAll(homey)
   addEventListeners(homey)
   homey.ready()
 }

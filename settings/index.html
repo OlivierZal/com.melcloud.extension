@@ -4,22 +4,30 @@
         <meta charset="utf-8">
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <title>MELCloud Extension Settings</title>
-        <link href="styles.css?v=7bf682fa" rel="stylesheet">
+        <link href="styles.css?v=8f0058bd" rel="stylesheet">
         <script data-origin="settings" defer src="/homey.js"></script>
-        <script type="module" src="index.mjs?v=1b7e93f4"></script>
+        <script type="module" src="index.mjs?v=89c17d79"></script>
         <meta content="MELCloud extension settings" name="description">
     </head>
     <body>
         <header class="homey-header">
             <h1 class="homey-title" data-i18n="settings.title">MELCloud extension settings</h1>
         </header>
-        <details id="configuration">
-            <summary class="homey-form-legend" data-i18n="settings.autoAdjust">Auto-adjust air conditioning temperature</summary>
-            <fieldset class="homey-form-fieldset">
-                <div id="sources"></div>
-            </fieldset>
-        </details>
         <fieldset class="homey-form-fieldset">
+            <legend class="homey-form-legend" data-i18n="settings.autoAdjust">Auto-adjust air conditioning temperature</legend>
+            <div id="sources"></div>
+            <div id="empty_state" hidden>
+                <p data-i18n="settings.notFound">First, you need to set up your devices in the MELCloud Homey app.</p>
+                <button
+                    id="install"
+                    type="button"
+                    class="homey-button-primary-full"
+                    aria-label="Install"
+                    data-i18n="settings.install"
+                >Install the MELCloud app</button>
+            </div>
+        </fieldset>
+        <fieldset class="homey-form-fieldset actions">
             <div class="homey-form-group">
                 <label
                     class="homey-form-label"

@@ -22,7 +22,7 @@
       "false": "لا",
       "true": "نعم"
     },
-    "defaultSource": "طقس Homey (افتراضي)",
+    "defaultSource": "طقس Homey",
     "disabledSource": "عدم الضبط",
     "enabled": "الإبقاء ضمن 8 °C من درجة الحرارة الخارجية",
     "log": "السجل",
@@ -31,6 +31,7 @@
     "searchSource": "ابحث عن مصدر…",
     "title": "إعدادات امتداد MELCloud",
     "update": "تحديث",
-    "allDevices": "جميع الأجهزة"
+    "allDevices": "جميع الأجهزة",
+    "install": "تثبيت تطبيق MELCloud"
   }
 }

@@ -22,7 +22,7 @@
       "false": "Нет",
       "true": "Да"
     },
-    "defaultSource": "Погода Homey (по умолчанию)",
+    "defaultSource": "Погода Homey",
     "disabledSource": "Не регулировать",
     "enabled": "Держать в пределах 8 °C от наружной температуры",
     "log": "История",
@@ -31,6 +31,7 @@
     "searchSource": "Поиск источника…",
     "title": "Настройки расширения MELCloud",
     "update": "Обновить",
-    "allDevices": "Все устройства"
+    "allDevices": "Все устройства",
+    "install": "Установить приложение MELCloud"
   }
 }

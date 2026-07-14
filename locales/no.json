@@ -29,10 +29,11 @@
     "notFound": "Først må du sette opp enhetene dine i MELCloud Homey-appen.\n\nVil du installere den?",
     "refresh": "Gjenta",
     "title": "Innstillinger for MELCloud-utvidelse",
-    "defaultSource": "Homey-vær (standard)",
+    "defaultSource": "Homey-vær",
     "disabledSource": "Ikke juster",
     "searchSource": "Søk etter en kilde …",
     "update": "Oppdater",
-    "allDevices": "Alle enheter"
+    "allDevices": "Alle enheter",
+    "install": "Installer MELCloud-appen"
   }
 }

@@ -23,9 +23,10 @@
       "false": "لا",
       "true": "نعم"
     },
-    "defaultSource": "طقس Homey (افتراضي)",
+    "defaultSource": "طقس Homey",
     "disabledSource": "عدم الضبط",
     "enabled": "الإبقاء ضمن 8 °C من درجة الحرارة الخارجية",
+    "install": "تثبيت تطبيق MELCloud",
     "log": "السجل",
     "notFound": "قم أولاً بإعداد أجهزتك في تطبيق MELCloud على Homey.\n\nهل تريد تثبيته؟",
     "refresh": "إعادة تحميل",

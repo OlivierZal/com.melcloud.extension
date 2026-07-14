@@ -29,10 +29,11 @@
     "notFound": "First, you need to set up your devices in the MELCloud Homey app.\n\nDo you want to install it?",
     "refresh": "Refresh",
     "title": "MELCloud extension settings",
-    "defaultSource": "Homey weather (default)",
+    "defaultSource": "Homey weather",
     "disabledSource": "Do not adjust",
     "searchSource": "Search for a source…",
     "update": "Update",
-    "allDevices": "All devices"
+    "allDevices": "All devices",
+    "install": "Install the MELCloud app"
   }
 }

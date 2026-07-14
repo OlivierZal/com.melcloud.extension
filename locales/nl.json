@@ -29,10 +29,11 @@
     "notFound": "Je moet eerst je apparaten instellen in de MELCloud Homey app.\n\nWil je deze installeren?",
     "refresh": "Herladen",
     "title": "Instellingen van de MELCloud-extensie",
-    "defaultSource": "Homey-weer (standaard)",
+    "defaultSource": "Homey-weer",
     "disabledSource": "Niet aanpassen",
     "searchSource": "Zoek een bron…",
     "update": "Updaten",
-    "allDevices": "Alle apparaten"
+    "allDevices": "Alle apparaten",
+    "install": "Installeer de MELCloud-app"
   }
 }

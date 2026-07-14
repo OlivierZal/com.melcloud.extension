@@ -29,10 +29,11 @@
     "notFound": "Du skal først konfigurere dine enheder i MELCloud Homey-appen.\n\nØnsker du at installere den?",
     "refresh": "Genindlæs",
     "title": "Indstillinger for MELCloud-udvidelse",
-    "defaultSource": "Homey-vejr (standard)",
+    "defaultSource": "Homey-vejr",
     "disabledSource": "Juster ikke",
     "searchSource": "Søg efter en kilde …",
     "update": "Opdater",
-    "allDevices": "Alle enheder"
+    "allDevices": "Alle enheder",
+    "install": "Installér MELCloud-appen"
   }
 }

@@ -16,6 +16,7 @@ const classicDevice = createMockDevice({
   ],
   driverId: 'homey:app:com.mecloud:melcloud',
   id: 'classic-1',
+  melcloudId: '1',
   name: 'Living room',
 })
 
@@ -23,6 +24,7 @@ const homeDevice = createMockDevice({
   capabilities: ['measure_temperature', 'target_temperature'],
   driverId: 'homey:app:com.mecloud:home-melcloud',
   id: 'home-1',
+  melcloudId: 'home-melcloud-1',
   name: 'Bedroom',
 })
 
@@ -34,12 +36,14 @@ const sensorDevice = createMockDevice({
 })
 
 const createHomeyContext = ({
+  deviceGroups = null,
   melcloudDevices,
   settings = {},
   temperatureSensors,
 }: {
   readonly melcloudDevices: MELCloudExtensionApp['melcloudDevices']
   readonly temperatureSensors: MELCloudExtensionApp['temperatureSensors']
+  readonly deviceGroups?: MELCloudExtensionApp['deviceGroups']
   readonly settings?: Partial<HomeySettings>
 }): { autoAdjustCooling: ReturnType<typeof vi.fn>; homey: Homey } => {
   const autoAdjustCooling = vi
@@ -48,6 +52,7 @@ const createHomeyContext = ({
   const homey = mock<Homey>({
     app: mock<MELCloudExtensionApp>({
       autoAdjustCooling,
+      deviceGroups,
       homey: {
         settings: {
           get: (key: keyof HomeySettings): unknown => settings[key] ?? null,
@@ -92,45 +97,123 @@ describe('api', () => {
     })
   })
 
-  describe('getAdjustableDevices', () => {
+  describe('getAdjustableGroups', () => {
     it('should throw when no MELCloud AC device is paired', () => {
       const { homey } = createHomeyContext({
         melcloudDevices: [],
         temperatureSensors: [],
       })
 
-      expect(() => api.getAdjustableDevices({ homey })).toThrow('notFound')
+      expect(() => api.getAdjustableGroups({ homey })).toThrow('notFound')
     })
 
-    it('should default to the Homey weather when nothing is stored', () => {
-      const { homey } = createHomeyContext({
-        melcloudDevices: [homeDevice.device],
-        temperatureSensors: [],
-      })
-
-      expect(api.getAdjustableDevices({ homey })).toStrictEqual([
-        { id: 'home-1', name: 'Bedroom', outdoorSource: null },
-      ])
-    })
-
-    it('should map the devices to their configured source, sorted by name', () => {
+    it('should fall back to a single flat group without grouping', () => {
       const { homey } = createHomeyContext({
         melcloudDevices: [classicDevice.device, homeDevice.device],
         settings: {
-          outdoorSources: {
-            'classic-1': 'classic-1:measure_temperature.outdoor',
-            'home-1': 'none',
-          },
+          outdoorSources: { 'home-1': 'none' },
         },
         temperatureSensors: [],
       })
 
-      expect(api.getAdjustableDevices({ homey })).toStrictEqual([
-        { id: 'home-1', name: 'Bedroom', outdoorSource: 'none' },
+      expect(api.getAdjustableGroups({ homey })).toStrictEqual([
         {
-          id: 'classic-1',
-          name: 'Living room',
-          outdoorSource: 'classic-1:measure_temperature.outdoor',
+          devices: [
+            { id: 'home-1', name: 'Bedroom', outdoorSource: 'none' },
+            { id: 'classic-1', name: 'Living room', outdoorSource: null },
+          ],
+          name: null,
+        },
+      ])
+    })
+
+    it('should group by building, merging same-name buildings across dialects', () => {
+      const { homey } = createHomeyContext({
+        deviceGroups: [
+          { deviceIds: ['1'], name: 'Domicile' },
+          { deviceIds: ['home-melcloud-1'], name: 'Domicile' },
+        ],
+        melcloudDevices: [classicDevice.device, homeDevice.device],
+        temperatureSensors: [],
+      })
+
+      expect(api.getAdjustableGroups({ homey })).toStrictEqual([
+        {
+          devices: [
+            { id: 'home-1', name: 'Bedroom', outdoorSource: null },
+            { id: 'classic-1', name: 'Living room', outdoorSource: null },
+          ],
+          name: 'Domicile',
+        },
+      ])
+    })
+
+    it('should leave a device without a usable join id unmatched', () => {
+      const bareDevice = createMockDevice({
+        driverId: 'homey:app:com.mecloud:melcloud',
+        id: 'bare-1',
+        name: 'Bare',
+      })
+      Object.assign(bareDevice.device, { data: {} })
+      const { homey } = createHomeyContext({
+        deviceGroups: [{ deviceIds: ['bare-1'], name: 'Domicile' }],
+        melcloudDevices: [bareDevice.device],
+        temperatureSensors: [],
+      })
+
+      expect(api.getAdjustableGroups({ homey })).toStrictEqual([
+        {
+          devices: [{ id: 'bare-1', name: 'Bare', outdoorSource: null }],
+          name: null,
+        },
+      ])
+    })
+
+    it('should sort named groups alphabetically', () => {
+      const { homey } = createHomeyContext({
+        deviceGroups: [
+          { deviceIds: ['1'], name: 'Maison B' },
+          { deviceIds: ['home-melcloud-1'], name: 'Maison A' },
+        ],
+        melcloudDevices: [classicDevice.device, homeDevice.device],
+        temperatureSensors: [],
+      })
+
+      expect(
+        api.getAdjustableGroups({ homey }).map(({ name }) => name),
+      ).toStrictEqual(['Maison A', 'Maison B'])
+    })
+
+    it('should trail the unnamed group behind a later-inserted named one', () => {
+      const { homey } = createHomeyContext({
+        deviceGroups: [{ deviceIds: ['1'], name: 'Domicile' }],
+        melcloudDevices: [classicDevice.device, homeDevice.device],
+        temperatureSensors: [],
+      })
+
+      expect(
+        api.getAdjustableGroups({ homey }).map(({ name }) => name),
+      ).toStrictEqual(['Domicile', null])
+    })
+
+    it('should trail unmatched devices in an unnamed group', () => {
+      const { homey } = createHomeyContext({
+        deviceGroups: [{ deviceIds: ['1'], name: 'Domicile' }],
+        // Unmatched device first: the unnamed group must still trail
+        melcloudDevices: [homeDevice.device, classicDevice.device],
+        temperatureSensors: [],
+      })
+
+      expect(api.getAdjustableGroups({ homey })).toStrictEqual([
+        {
+          devices: [
+            { id: 'classic-1', name: 'Living room', outdoorSource: null },
+          ],
+          name: 'Domicile',
+        },
+        {
+          devices: [{ id: 'home-1', name: 'Bedroom', outdoorSource: null }],
+          name: null,
         },
       ])
     })

@@ -36,6 +36,22 @@ to judge success.
   the temperature sensors, debounces device events, and owns the
   per-device `MELCloudListener`s plus the shared `OutdoorSource`
   registry.
+- Device grouping — com.melcloud exposes `GET /device_groups`
+  (`[{ deviceIds, name }]`, one entry per MELCloud building, both
+  dialects, sorted by name). The extension declares the
+  `homey:app:com.mecloud` permission and calls the endpoint through
+  `this.homey.api.getApiApp('com.mecloud')` when (re)loading devices.
+  Any failure or off-shape payload (com.melcloud missing or too old)
+  reads as "no grouping" (`null`, sanitized by
+  `lib/to-device-groups.mts`) and the settings fall back to one row
+  per device. The join key is `String(device.data.id)` — the MELCloud
+  id com.melcloud writes at pairing (Classic numeric DeviceID, Home
+  uuid); same-name buildings across dialects merge into one group and
+  unmatched devices trail in an unnamed group
+  (`lib/group-devices.mts`). The settings UI renders ONE select per
+  building and fans the pick out to every device of the group before
+  the PUT; storage stays per device (`outdoorSources`), listeners
+  unchanged.
 - `listeners/` — instance-based. Each `MELCloudListener` is bound to an
   `OutdoorSource` (per-device setting): `CapabilityOutdoorSource` (a
   "deviceId:capabilityId" path watched through a capability instance) or
@@ -116,6 +132,10 @@ to judge success.
 
 ## Repo process
 
+- DESIGN PHASE (since 2026-07-11, until Olivier lifts it): iterate on
+  `design/*` branches with dev-installs only — no PR merges, no tags,
+  no releases, no App Store publishes. This also covers the paired
+  com.melcloud branch serving `/device_groups`.
 - `main` is protected (PRs only, squash merges); CI must be green.
   Copilot reviews every PR — answer every comment, verify its claims
   against sources before acting, and resolve the thread once settled.

@@ -23,9 +23,10 @@
       "false": "Nein",
       "true": "Ja"
     },
-    "defaultSource": "Homey-Wetter (Standard)",
+    "defaultSource": "Homey-Wetter",
     "disabledSource": "Nicht anpassen",
     "enabled": "Innerhalb von 8 °C der Außentemperatur halten",
+    "install": "MELCloud-App installieren",
     "log": "Verlauf",
     "notFound": "Richten Sie zuerst Ihre Geräte in der MELCloud-Homey-App ein.\n\nMöchten Sie sie installieren?",
     "refresh": "Neu laden",
