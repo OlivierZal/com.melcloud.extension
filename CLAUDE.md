@@ -60,8 +60,20 @@ to judge success.
   concurrent attaches await one start) and stops with the last `detach`.
   melcloud.mts only imports the source as a type — no runtime cycle.
 - `settings/index.mts` — browser-side settings UI, bundled by esbuild
-  into `settings/index.mjs` (ES module). `onHomeyReady` is exposed via
-  `Object.assign(globalThis, { onHomeyReady })`. Settings pages and
+  into `settings/index.mjs` (ES module). Webview lifecycle (mirrors
+  com.melcloud): the HTML declares the docs' canonical global
+  `function onHomeyReady(homey)` inline — it must exist at parse time,
+  the SDK dispatches on its own schedule and a bundle only exists after
+  its fetch — whose body `import()`s the bundle and hands the instance
+  to its exported `start(homey)`; the inline `.catch` ends the overlay
+  even when the bundle itself fails to load. Init work is time-bounded
+  (10 s) and `homey.ready()` fires in a `finally`; `start` is
+  non-throwing by construction (failure alerts go through
+  `fireAndForget`). `scripts/bundle.mjs` stamps every local asset
+  reference — attributes and the inline `import()` alike — with a
+  content hash (`?v=`): phone webviews cache assets across app
+  versions. Webview code sticks to es2020-era runtime APIs (esbuild
+  lowers syntax only). Settings pages and
   widgets do NOT style the same way: settings follow the Homey Style
   Library (`homey-form-*`/`homey-button-*`; in a `homey-form-group` the
   control is a SIBLING after its label — see
