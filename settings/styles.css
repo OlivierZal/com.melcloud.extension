@@ -105,12 +105,14 @@
   translate: 0 -65%;
 }
 
-/* The action bar stays reachable while the building list scrolls */
+/* Floating action bar: last in the page, so it stays pinned over the
+   viewport bottom while everything above it scrolls */
 .actions {
   background: #fff;
-  border-block-start: 1px solid #e0e0e0;
+  box-shadow: 0 -0.25em 1em rgb(0 0 0 / 10%);
   inset-block-end: 0;
-  padding-block-end: env(safe-area-inset-bottom);
+  margin-block-end: 0;
+  padding-block: 0.75em calc(0.75em + env(safe-area-inset-bottom));
   position: sticky;
   z-index: 5;
 }
