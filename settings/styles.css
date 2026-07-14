@@ -2,15 +2,22 @@
   pointer-events: none;
 }
 
+/* Shared two-column grid: every row's time cell takes the width of the
+   longest one, so the messages align across rows whatever the relative
+   time's length ("il y a 1 heure" vs "il y a 13 heures"). */
+#logs {
+  column-gap: 1em;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  row-gap: 1em;
+}
+
 .log-row {
-  display: flex;
-  margin-block-end: 1em;
+  display: contents;
 }
 
 .log-time {
   color: #888;
-  flex-shrink: 0;
-  margin-inline-end: 1em;
   text-align: center;
   white-space: nowrap;
 }
@@ -108,5 +115,6 @@
 .log-day {
   color: #888;
   font-weight: 600;
+  grid-column: 1 / -1;
   padding-block: 0.5em;
 }

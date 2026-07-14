@@ -39,11 +39,9 @@ const files = new Set(
 let stamped = html
 for (const file of files) {
   const hash = await hashOf(`settings/${file}`)
+  const escaped = file.replaceAll('.', String.raw`\.`)
   stamped = stamped.replaceAll(
-    new RegExp(
-      `${file.replaceAll('.', String.raw`\.`)}(?:\\?v=[0-9a-f]+)?`,
-      'gu',
-    ),
+    new RegExp(String.raw`${escaped}(?:\?v=[0-9a-f]+)?`, 'gu'),
     `${file}?v=${hash}`,
   )
 }
