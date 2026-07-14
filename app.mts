@@ -149,6 +149,17 @@ export default class MELCloudExtensionApp extends App {
     this.#persistLog(newLog)
   }
 
+  // Building grouping served by com.melcloud's inter-app API; anything
+  // off (older app version, not installed, bad payload) reads as "no
+  // grouping" and the settings fall back to the per-device list.
+  // Re-read on demand — a memory-served lookup in com.melcloud since
+  // 45.2.0 — so the settings page follows building renames without an
+  // app restart.
+  public async refreshDeviceGroups(): Promise<DeviceGroups | null> {
+    this.#deviceGroups = await this.#fetchDeviceGroups()
+    return this.#deviceGroups
+  }
+
   #createNotification(): void {
     const { homey } = this
     const {
@@ -190,9 +201,6 @@ export default class MELCloudExtensionApp extends App {
     this.#sources.clear()
   }
 
-  // Building grouping served by com.melcloud's inter-app API; anything
-  // off (older app version, not installed, bad payload) reads as "no
-  // grouping" and the settings fall back to the per-device list.
   async #fetchDeviceGroups(): Promise<DeviceGroups | null> {
     try {
       const payload: unknown = await this.#melcloudApp.get('/device_groups')
@@ -269,7 +277,7 @@ export default class MELCloudExtensionApp extends App {
         this.#temperatureSensors.push(device)
       }
     }
-    this.#deviceGroups = await this.#fetchDeviceGroups()
+    await this.refreshDeviceGroups()
     this.#migrateLegacySource()
   }
 

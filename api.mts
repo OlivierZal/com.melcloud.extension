@@ -30,14 +30,21 @@ const api = {
    * Lists the settings rows: one named group per MELCloud building
    * (com.melcloud's inter-app grouping), unmatched devices trailing in
    * an unnamed group, or a single unnamed flat group when no grouping
-   * is available. Devices carry their configured outdoor source
-   * (`null` when they follow the Homey weather default).
+   * is available. The grouping is re-read from com.melcloud on every
+   * call (a memory-served lookup there since 45.2.0), so a building
+   * rename shows up on the next settings refresh. Devices carry their
+   * configured outdoor source (`null` when they follow the Homey
+   * weather default).
    * @param options - Homey API context.
    * @param options.homey - Homey instance carrying the app.
    * @returns The groups, sorted by name, devices sorted within.
    * @throws NotFoundError when no MELCloud AC device is paired yet.
    */
-  getAdjustableGroups({ homey }: { homey: Homey }): AdjustableGroup[] {
+  async getAdjustableGroups({
+    homey,
+  }: {
+    homey: Homey
+  }): Promise<AdjustableGroup[]> {
     const { app } = homey
     if (app.melcloudDevices.length === 0) {
       throw new NotFoundError()
@@ -45,7 +52,7 @@ const api = {
     return groupAdjustableDevices(
       app.melcloudDevices,
       app.homey.settings.get('outdoorSources') ?? {},
-      app.deviceGroups,
+      await app.refreshDeviceGroups(),
     )
   },
   /**
