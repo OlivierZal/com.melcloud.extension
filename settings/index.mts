@@ -12,13 +12,6 @@ import {
   DISABLED_SOURCE,
 } from '../types.mts'
 
-declare global {
-  // Resolved by the inline bootstrap the settings HTML registers at parse
-  // time (see the <script> in the page head) with the instance the SDK
-  // hands to onHomeyReady — the declaration IS that parse boundary.
-  var homeyReady: Promise<Homey>
-}
-
 // Give slow transports a real chance while keeping the loading overlay
 // finite: past this point the page surfaces the failure instead.
 const INIT_TIMEOUT_MS = 10_000
@@ -158,16 +151,6 @@ const closeOpenCombobox = (): void => {
   openCombobox.close?.()
   openCombobox.close = null
 }
-
-document.addEventListener('pointerdown', (event) => {
-  if (
-    event.target instanceof Element &&
-    event.target.closest('.combobox') !== null
-  ) {
-    return
-  }
-  closeOpenCombobox()
-})
 
 // "Update" only means something once the form diverges from the last
 // saved state — the snapshot greys it out otherwise.
@@ -748,6 +731,16 @@ const refreshAll = async (homey: Homey): Promise<void> =>
   })
 
 const addEventListeners = (homey: Homey): void => {
+  // Any pointer press outside a combobox dismisses the open one.
+  document.addEventListener('pointerdown', (event) => {
+    if (
+      event.target instanceof Element &&
+      event.target.closest('.combobox') !== null
+    ) {
+      return
+    }
+    closeOpenCombobox()
+  })
   refreshElement.addEventListener('click', () => {
     fireAndForget(refreshAll(homey))
   })
@@ -770,15 +763,16 @@ const run = async (homey: Homey): Promise<void> => {
   await refreshAll(homey)
 }
 
-// `ready()` always fires — an unbounded await here would hold Homey's
-// loading overlay open forever on a single hung or failed call. The
-// failure alert waits until after `ready()`: an alert raised while the
-// overlay is still up never gets seen.
-const start = async (): Promise<void> => {
-  // The SDK calls onHomeyReady on its own schedule — possibly before this
-  // module has even been fetched — hence the await on the bootstrap's
-  // promise rather than a callback defined here.
-  const homey = await globalThis.homeyReady
+/**
+ * Page entry point, invoked by the HTML's canonical `onHomeyReady` once
+ * the SDK has dispatched (see the inline script in the page head).
+ * `ready()` always fires — an unbounded await here would hold Homey's
+ * loading overlay open forever on a single hung or failed call. The
+ * failure alert waits until after `ready()`: an alert raised while the
+ * overlay is still up never gets seen.
+ * @param homey - The Homey instance handed to `onHomeyReady`.
+ */
+export const start = async (homey: Homey): Promise<void> => {
   // Listeners before the data load: the Refresh button is the retry
   // affordance when the initial load fails or times out, so it must work
   // regardless of how `run` ends.
@@ -798,6 +792,3 @@ const start = async (): Promise<void> => {
     await homey.alert(getErrorMessage(initError))
   }
 }
-
-// eslint-disable-next-line unicorn/prefer-top-level-await -- a top-level await would need an es2022 bundle target and could deadlock: the module would suspend on `homeyReady` while the SDK may wait for module evaluation before dispatching it
-fireAndForget(start())
