@@ -776,7 +776,6 @@ const run = async (homey: Homey): Promise<void> => {
     // Non-critical: the log timestamps fall back to English formatting
   }
   await refreshAll(homey)
-  addEventListeners(homey)
 }
 
 // `ready()` always fires — an unbounded await here would hold Homey's
@@ -785,6 +784,10 @@ const run = async (homey: Homey): Promise<void> => {
 // overlay is still up never gets seen.
 const start = async (): Promise<void> => {
   const homey = await resolveHomey()
+  // Listeners before the data load: the Refresh button is the retry
+  // affordance when the initial load fails or times out, so it must work
+  // regardless of how `run` ends.
+  addEventListeners(homey)
   let initError: unknown = null
   try {
     await withInitTimeout(run(homey))
@@ -794,6 +797,9 @@ const start = async (): Promise<void> => {
     homey.ready()
   }
   if (initError !== null) {
+    // A timed-out load may still be hung inside `withBusyButtons` —
+    // release the controls so the retry is actually clickable.
+    setButtonsBusy(false)
     await homey.alert(getErrorMessage(initError))
   }
 }
