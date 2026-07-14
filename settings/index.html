@@ -4,9 +4,16 @@
         <meta charset="utf-8">
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <title>MELCloud Extension Settings</title>
+        <script>
+            // Registered at parse time: the Homey SDK may dispatch
+            // onHomeyReady before the module bundle below has loaded.
+            window.homeyReady = new Promise((resolve) => {
+                window.onHomeyReady = resolve
+            })
+        </script>
         <link href="styles.css?v=12811196" rel="stylesheet">
         <script data-origin="settings" defer src="/homey.js"></script>
-        <script type="module" src="index.mjs?v=44b3ed39"></script>
+        <script type="module" src="index.mjs?v=f1f15a34"></script>
         <meta content="MELCloud extension settings" name="description">
     </head>
     <body>

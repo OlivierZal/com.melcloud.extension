@@ -12,6 +12,45 @@ import {
   DISABLED_SOURCE,
 } from '../types.mts'
 
+declare global {
+  // Resolved by the inline bootstrap the settings HTML registers at
+  // parse time (see the <script> in the page head).
+  var homeyReady: Promise<unknown>
+}
+
+// Give slow transports a real chance while keeping the loading overlay
+// finite: past this point the page surfaces the failure instead.
+const INIT_TIMEOUT_MS = 10_000
+
+// The Homey SDK calls `onHomeyReady` on its own schedule — possibly
+// before this module has been fetched and evaluated, so the handler must
+// exist at HTML parse time. The inline bootstrap registers it and exposes
+// the instance through `globalThis.homeyReady`; this is the module-side
+// await.
+const resolveHomey = async (): Promise<Homey> =>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- the SDK hands an untyped instance to onHomeyReady; this is that same parse boundary
+  (await globalThis.homeyReady) as Homey
+
+// Bounds the init chain: `Homey.ready()` must always end the loading
+// overlay, so a hung transport call cannot be allowed to hold it open
+// forever. The underlying work is not cancelled — a late success simply
+// repaints over the degraded state.
+const withInitTimeout = async <T,>(work: Promise<T>): Promise<T> => {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  try {
+    return await Promise.race([
+      work,
+      new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => {
+          reject(new Error('Timed out while loading data from the app'))
+        }, INIT_TIMEOUT_MS)
+      }),
+    ])
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 const LOG_RETENTION_DAYS = 6
 
 interface LogCategory {
@@ -730,7 +769,7 @@ const addEventListeners = (homey: Homey): void => {
   homey.on('log', displayLog)
 }
 
-const onHomeyReady = async (homey: Homey): Promise<void> => {
+const run = async (homey: Homey): Promise<void> => {
   try {
     await fetchLanguage(homey)
   } catch {
@@ -738,7 +777,26 @@ const onHomeyReady = async (homey: Homey): Promise<void> => {
   }
   await refreshAll(homey)
   addEventListeners(homey)
-  homey.ready()
 }
 
-Object.assign(globalThis, { onHomeyReady })
+// `ready()` always fires — an unbounded await here would hold Homey's
+// loading overlay open forever on a single hung or failed call. The
+// failure alert waits until after `ready()`: an alert raised while the
+// overlay is still up never gets seen.
+const start = async (): Promise<void> => {
+  const homey = await resolveHomey()
+  let initError: unknown = null
+  try {
+    await withInitTimeout(run(homey))
+  } catch (error) {
+    initError = error
+  } finally {
+    homey.ready()
+  }
+  if (initError !== null) {
+    await homey.alert(getErrorMessage(initError))
+  }
+}
+
+// eslint-disable-next-line unicorn/prefer-top-level-await -- a top-level await would need an es2022 bundle target and could deadlock: the module would suspend on `homeyReady` while the SDK may wait for module evaluation before dispatching it
+fireAndForget(start())
