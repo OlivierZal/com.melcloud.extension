@@ -132,10 +132,9 @@ to judge success.
 
 ## Repo process
 
-- DESIGN PHASE (since 2026-07-11, until Olivier lifts it): iterate on
+- Design phases (on Olivier's call, start and end): iterate on
   `design/*` branches with dev-installs only — no PR merges, no tags,
-  no releases, no App Store publishes. This also covers the paired
-  com.melcloud branch serving `/device_groups`.
+  no releases, no App Store publishes until he lifts the pause.
 - `main` is protected (PRs only, squash merges); CI must be green.
   Copilot reviews every PR — answer every comment, verify its claims
   against sources before acting, and resolve the thread once settled.
