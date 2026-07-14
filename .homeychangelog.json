@@ -256,5 +256,20 @@
     "pl": "Przewijanie listy nie wybiera już przypadkowo opcji.",
     "ru": "Прокрутка списка больше не выбирает пункт случайно.",
     "sv": "Att rulla i listan väljer inte längre ett alternativ av misstag."
+  },
+  "24.7.0": {
+    "ar": "تم تجميع الإعدادات حسب المبنى، وأعيد تنظيم الصفحة مع السجل في الأعلى، وأصبحت الطوابع الزمنية نسبية.",
+    "da": "Indstillinger grupperet efter bygning, siden er omorganiseret med historikken øverst og relative tidsstempler.",
+    "de": "Einstellungen nach Gebäude gruppiert, Seite mit dem Verlauf zuoberst neu geordnet und relative Zeitangaben.",
+    "en": "Settings are now grouped by building, the page starts with the history, and log timestamps are relative.",
+    "es": "Ajustes agrupados por edificio, página reorganizada con el historial arriba y marcas de tiempo relativas.",
+    "fr": "Réglages regroupés par bâtiment, page réorganisée avec l'historique en tête et horodatages relatifs.",
+    "it": "Impostazioni raggruppate per edificio, pagina riorganizzata con la cronologia in alto e orari relativi.",
+    "ko": "설정이 건물별로 그룹화되고 페이지 상단에 기록이 표시되며 타임스탬프가 상대 시간으로 표시됩니다.",
+    "nl": "Instellingen gegroepeerd per gebouw, pagina herschikt met de geschiedenis bovenaan en relatieve tijdstempels.",
+    "no": "Innstillinger gruppert etter bygning, siden er omorganisert med historikken øverst og relative tidsstempler.",
+    "pl": "Ustawienia pogrupowane według budynku, strona z historią na górze i względnymi znacznikami czasu.",
+    "ru": "Настройки сгруппированы по зданиям, страница начинается с истории, отметки времени стали относительными.",
+    "sv": "Inställningar grupperade per byggnad, sidan omorganiserad med historiken överst och relativa tidsstämplar."
   }
 }

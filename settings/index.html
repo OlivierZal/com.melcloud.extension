@@ -6,7 +6,7 @@
         <title>MELCloud Extension Settings</title>
         <link href="styles.css?v=12811196" rel="stylesheet">
         <script data-origin="settings" defer src="/homey.js"></script>
-        <script type="module" src="index.mjs?v=2814290c"></script>
+        <script type="module" src="index.mjs?v=44b3ed39"></script>
         <meta content="MELCloud extension settings" name="description">
     </head>
     <body>
@@ -43,9 +43,12 @@
         </fieldset>
         <fieldset class="homey-form-fieldset">
             <legend class="homey-form-legend" data-i18n="settings.log"></legend>
-            <table class="homey-form-group" aria-label="Log">
-                <tbody id="logs"></tbody>
-            </table>
+            <div
+                id="logs"
+                class="homey-form-group"
+                aria-label="Log"
+                role="log"
+            ></div>
         </fieldset>
         <fieldset class="homey-form-fieldset">
             <legend class="homey-form-legend" data-i18n="settings.configuration">Configuration</legend>
