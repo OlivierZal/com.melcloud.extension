@@ -13,23 +13,15 @@ import {
 } from '../types.mts'
 
 declare global {
-  // Resolved by the inline bootstrap the settings HTML registers at
-  // parse time (see the <script> in the page head).
-  var homeyReady: Promise<unknown>
+  // Resolved by the inline bootstrap the settings HTML registers at parse
+  // time (see the <script> in the page head) with the instance the SDK
+  // hands to onHomeyReady — the declaration IS that parse boundary.
+  var homeyReady: Promise<Homey>
 }
 
 // Give slow transports a real chance while keeping the loading overlay
 // finite: past this point the page surfaces the failure instead.
 const INIT_TIMEOUT_MS = 10_000
-
-// The Homey SDK calls `onHomeyReady` on its own schedule — possibly
-// before this module has been fetched and evaluated, so the handler must
-// exist at HTML parse time. The inline bootstrap registers it and exposes
-// the instance through `globalThis.homeyReady`; this is the module-side
-// await.
-const resolveHomey = async (): Promise<Homey> =>
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- the SDK hands an untyped instance to onHomeyReady; this is that same parse boundary
-  (await globalThis.homeyReady) as Homey
 
 // Bounds the init chain: `Homey.ready()` must always end the loading
 // overlay, so a hung transport call cannot be allowed to hold it open
@@ -783,7 +775,10 @@ const run = async (homey: Homey): Promise<void> => {
 // failure alert waits until after `ready()`: an alert raised while the
 // overlay is still up never gets seen.
 const start = async (): Promise<void> => {
-  const homey = await resolveHomey()
+  // The SDK calls onHomeyReady on its own schedule — possibly before this
+  // module has even been fetched — hence the await on the bootstrap's
+  // promise rather than a callback defined here.
+  const homey = await globalThis.homeyReady
   // Listeners before the data load: the Refresh button is the retry
   // affordance when the initial load fails or times out, so it must work
   // regardless of how `run` ends.
