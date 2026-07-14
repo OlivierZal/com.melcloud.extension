@@ -59,6 +59,9 @@ const createHomeyContext = ({
         },
       },
       melcloudDevices,
+      refreshDeviceGroups: vi
+        .fn<MELCloudExtensionApp['refreshDeviceGroups']>()
+        .mockResolvedValue(deviceGroups),
       temperatureSensors,
     }),
     i18n: { getLanguage: (): string => 'fr' },
@@ -98,16 +101,18 @@ describe('api', () => {
   })
 
   describe('getAdjustableGroups', () => {
-    it('should throw when no MELCloud AC device is paired', () => {
+    it('should throw when no MELCloud AC device is paired', async () => {
       const { homey } = createHomeyContext({
         melcloudDevices: [],
         temperatureSensors: [],
       })
 
-      expect(() => api.getAdjustableGroups({ homey })).toThrow('notFound')
+      await expect(api.getAdjustableGroups({ homey })).rejects.toThrow(
+        'notFound',
+      )
     })
 
-    it('should fall back to a single flat group without grouping', () => {
+    it('should fall back to a single flat group without grouping', async () => {
       const { homey } = createHomeyContext({
         melcloudDevices: [classicDevice.device, homeDevice.device],
         settings: {
@@ -116,7 +121,7 @@ describe('api', () => {
         temperatureSensors: [],
       })
 
-      expect(api.getAdjustableGroups({ homey })).toStrictEqual([
+      await expect(api.getAdjustableGroups({ homey })).resolves.toStrictEqual([
         {
           devices: [
             { id: 'home-1', name: 'Bedroom', outdoorSource: 'none' },
@@ -127,7 +132,7 @@ describe('api', () => {
       ])
     })
 
-    it('should group by building, merging same-name buildings across dialects', () => {
+    it('should group by building, merging same-name buildings across dialects', async () => {
       const { homey } = createHomeyContext({
         deviceGroups: [
           { deviceIds: ['1'], name: 'Domicile' },
@@ -137,7 +142,7 @@ describe('api', () => {
         temperatureSensors: [],
       })
 
-      expect(api.getAdjustableGroups({ homey })).toStrictEqual([
+      await expect(api.getAdjustableGroups({ homey })).resolves.toStrictEqual([
         {
           devices: [
             { id: 'home-1', name: 'Bedroom', outdoorSource: null },
@@ -148,7 +153,7 @@ describe('api', () => {
       ])
     })
 
-    it('should leave a device without a usable join id unmatched', () => {
+    it('should leave a device without a usable join id unmatched', async () => {
       const bareDevice = createMockDevice({
         driverId: 'homey:app:com.mecloud:melcloud',
         id: 'bare-1',
@@ -161,7 +166,7 @@ describe('api', () => {
         temperatureSensors: [],
       })
 
-      expect(api.getAdjustableGroups({ homey })).toStrictEqual([
+      await expect(api.getAdjustableGroups({ homey })).resolves.toStrictEqual([
         {
           devices: [{ id: 'bare-1', name: 'Bare', outdoorSource: null }],
           name: null,
@@ -169,7 +174,7 @@ describe('api', () => {
       ])
     })
 
-    it('should sort named groups alphabetically', () => {
+    it('should sort named groups alphabetically', async () => {
       const { homey } = createHomeyContext({
         deviceGroups: [
           { deviceIds: ['1'], name: 'Maison B' },
@@ -179,24 +184,27 @@ describe('api', () => {
         temperatureSensors: [],
       })
 
-      expect(
-        api.getAdjustableGroups({ homey }).map(({ name }) => name),
-      ).toStrictEqual(['Maison A', 'Maison B'])
+      const groups = await api.getAdjustableGroups({ homey })
+
+      expect(groups.map(({ name }) => name)).toStrictEqual([
+        'Maison A',
+        'Maison B',
+      ])
     })
 
-    it('should trail the unnamed group behind a later-inserted named one', () => {
+    it('should trail the unnamed group behind a later-inserted named one', async () => {
       const { homey } = createHomeyContext({
         deviceGroups: [{ deviceIds: ['1'], name: 'Domicile' }],
         melcloudDevices: [classicDevice.device, homeDevice.device],
         temperatureSensors: [],
       })
 
-      expect(
-        api.getAdjustableGroups({ homey }).map(({ name }) => name),
-      ).toStrictEqual(['Domicile', null])
+      const groups = await api.getAdjustableGroups({ homey })
+
+      expect(groups.map(({ name }) => name)).toStrictEqual(['Domicile', null])
     })
 
-    it('should trail unmatched devices in an unnamed group', () => {
+    it('should trail unmatched devices in an unnamed group', async () => {
       const { homey } = createHomeyContext({
         deviceGroups: [{ deviceIds: ['1'], name: 'Domicile' }],
         // Unmatched device first: the unnamed group must still trail
@@ -204,7 +212,7 @@ describe('api', () => {
         temperatureSensors: [],
       })
 
-      expect(api.getAdjustableGroups({ homey })).toStrictEqual([
+      await expect(api.getAdjustableGroups({ homey })).resolves.toStrictEqual([
         {
           devices: [
             { id: 'classic-1', name: 'Living room', outdoorSource: null },

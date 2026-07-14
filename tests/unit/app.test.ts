@@ -139,6 +139,27 @@ describe(MELCloudExtensionApp, () => {
     expect(app.deviceGroups).toStrictEqual(groups)
   })
 
+  it('should re-read the grouping on demand, following a rename', async () => {
+    const { classicDevice } = createDevices()
+    const { app, mockHomey } = await createHarness([classicDevice])
+    mockHomey.apiAppGet.mockReturnValue([
+      { deviceIds: ['classic-1'], name: 'Domicile' },
+    ])
+
+    await advancePastInit()
+
+    mockHomey.apiAppGet.mockReturnValue([
+      { deviceIds: ['classic-1'], name: 'Nouvelle maison' },
+    ])
+
+    await expect(app.refreshDeviceGroups()).resolves.toStrictEqual([
+      { deviceIds: ['classic-1'], name: 'Nouvelle maison' },
+    ])
+    expect(app.deviceGroups).toStrictEqual([
+      { deviceIds: ['classic-1'], name: 'Nouvelle maison' },
+    ])
+  })
+
   it('should read an off-shape grouping payload as no grouping', async () => {
     const { classicDevice } = createDevices()
     const { app, mockHomey } = await createHarness([classicDevice])

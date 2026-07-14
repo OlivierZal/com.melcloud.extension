@@ -271,5 +271,20 @@
     "pl": "Ustawienia pogrupowane według budynku, strona z historią na górze i względnymi znacznikami czasu.",
     "ru": "Настройки сгруппированы по зданиям, страница начинается с истории, отметки времени стали относительными.",
     "sv": "Inställningar grupperade per byggnad, sidan omorganiserad med historiken överst och relativa tidsstämplar."
+  },
+  "24.7.1": {
+    "ar": "تتبع الإعدادات الآن إعادة تسمية مباني MELCloud عند التحديث.",
+    "da": "Indstillingerne følger nu omdøbning af MELCloud-bygninger ved opdatering.",
+    "de": "Die Einstellungen folgen nun Umbenennungen von MELCloud-Gebäuden beim Aktualisieren.",
+    "en": "Settings now follow MELCloud building renames on refresh.",
+    "es": "Los ajustes ahora siguen los cambios de nombre de los edificios de MELCloud al actualizar.",
+    "fr": "Les réglages suivent désormais les renommages de bâtiments MELCloud au rafraîchissement.",
+    "it": "Le impostazioni ora seguono le ridenominazioni degli edifici MELCloud all’aggiornamento.",
+    "ko": "이제 설정이 새로 고침 시 MELCloud 건물 이름 변경을 반영합니다.",
+    "nl": "De instellingen volgen nu hernoemingen van MELCloud-gebouwen bij het vernieuwen.",
+    "no": "Innstillingene følger nå navneendringer på MELCloud-bygninger ved oppdatering.",
+    "pl": "Ustawienia uwzględniają teraz zmiany nazw budynków MELCloud przy odświeżaniu.",
+    "ru": "Настройки теперь отражают переименования зданий MELCloud при обновлении.",
+    "sv": "Inställningarna följer nu namnbyten på MELCloud-byggnader vid uppdatering."
   }
 }
