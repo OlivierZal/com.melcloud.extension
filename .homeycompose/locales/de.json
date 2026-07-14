@@ -23,6 +23,7 @@
       "false": "Nein",
       "true": "Ja"
     },
+    "configuration": "Konfiguration",
     "defaultSource": "Homey-Wetter",
     "disabledSource": "Nicht anpassen",
     "enabled": "Innerhalb von 8 °C der Außentemperatur halten",

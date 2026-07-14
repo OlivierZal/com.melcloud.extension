@@ -23,6 +23,7 @@
       "false": "Nee",
       "true": "Ja"
     },
+    "configuration": "Configuratie",
     "defaultSource": "Homey-weer",
     "disabledSource": "Niet aanpassen",
     "enabled": "Blijf binnen 8 °C van de buitentemperatuur",

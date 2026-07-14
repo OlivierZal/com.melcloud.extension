@@ -34,6 +34,7 @@
     "searchSource": "Zoek een bron…",
     "update": "Updaten",
     "allDevices": "Alle apparaten",
-    "install": "Installeer de MELCloud-app"
+    "install": "Installeer de MELCloud-app",
+    "configuration": "Configuratie"
   }
 }

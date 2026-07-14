@@ -23,6 +23,7 @@
       "false": "Nei",
       "true": "Ja"
     },
+    "configuration": "Konfigurasjon",
     "defaultSource": "Homey-vær",
     "disabledSource": "Ikke juster",
     "enabled": "Hold innenfor 8 °C av utetemperaturen",

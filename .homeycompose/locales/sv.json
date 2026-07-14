@@ -23,6 +23,7 @@
       "false": "Nej",
       "true": "Ja"
     },
+    "configuration": "Konfiguration",
     "defaultSource": "Homey-väder",
     "disabledSource": "Justera inte",
     "enabled": "Håll inom 8 °C från utomhustemperaturen",

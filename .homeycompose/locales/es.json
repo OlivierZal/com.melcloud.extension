@@ -23,6 +23,7 @@
       "false": "No",
       "true": "Sí"
     },
+    "configuration": "Configuración",
     "defaultSource": "Tiempo de Homey",
     "disabledSource": "No ajustar",
     "enabled": "Mantener dentro de los 8 °C de la temperatura exterior",

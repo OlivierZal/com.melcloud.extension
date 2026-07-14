@@ -34,6 +34,7 @@
     "searchSource": "Sök efter en källa …",
     "update": "Uppdatera",
     "allDevices": "Alla enheter",
-    "install": "Installera MELCloud-appen"
+    "install": "Installera MELCloud-appen",
+    "configuration": "Konfiguration"
   }
 }

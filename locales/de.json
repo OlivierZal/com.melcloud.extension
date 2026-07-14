@@ -32,6 +32,7 @@
     "title": "Einstellungen der MELCloud-Erweiterung",
     "update": "Aktualisieren",
     "allDevices": "Alle Geräte",
-    "install": "MELCloud-App installieren"
+    "install": "MELCloud-App installieren",
+    "configuration": "Konfiguration"
   }
 }

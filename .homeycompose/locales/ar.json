@@ -23,6 +23,7 @@
       "false": "لا",
       "true": "نعم"
     },
+    "configuration": "التكوين",
     "defaultSource": "طقس Homey",
     "disabledSource": "عدم الضبط",
     "enabled": "الإبقاء ضمن 8 °C من درجة الحرارة الخارجية",

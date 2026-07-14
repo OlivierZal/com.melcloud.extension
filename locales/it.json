@@ -32,6 +32,7 @@
     "title": "Impostazioni dell'estensione MELCloud",
     "update": "Aggiorna",
     "allDevices": "Tutti i dispositivi",
-    "install": "Installa l'app MELCloud"
+    "install": "Installa l'app MELCloud",
+    "configuration": "Configurazione"
   }
 }

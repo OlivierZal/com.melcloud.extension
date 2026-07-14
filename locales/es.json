@@ -34,6 +34,7 @@
     "searchSource": "Buscar una fuente…",
     "update": "Actualizar",
     "allDevices": "Todos los dispositivos",
-    "install": "Instalar la aplicación MELCloud"
+    "install": "Instalar la aplicación MELCloud",
+    "configuration": "Configuración"
   }
 }

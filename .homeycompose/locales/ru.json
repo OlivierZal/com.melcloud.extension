@@ -23,6 +23,7 @@
       "false": "Нет",
       "true": "Да"
     },
+    "configuration": "Конфигурация",
     "defaultSource": "Погода Homey",
     "disabledSource": "Не регулировать",
     "enabled": "Держать в пределах 8 °C от наружной температуры",

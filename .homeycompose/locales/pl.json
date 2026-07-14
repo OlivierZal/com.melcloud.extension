@@ -23,6 +23,7 @@
       "false": "Nie",
       "true": "Tak"
     },
+    "configuration": "Konfiguracja",
     "defaultSource": "Pogoda Homey",
     "disabledSource": "Nie dostosowuj",
     "enabled": "Utrzymuj w granicach 8 °C od temperatury zewnętrznej",

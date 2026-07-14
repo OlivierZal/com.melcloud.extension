@@ -101,9 +101,6 @@ const getDivElement = (id: string): HTMLDivElement =>
 const getTableSectionElement = (id: string): HTMLTableSectionElement =>
   getElement(id, HTMLTableSectionElement, 'table section')
 
-const getFieldsetElement = (id: string): HTMLFieldSetElement =>
-  getElement(id, HTMLFieldSetElement, 'fieldset')
-
 const applyElement = getButtonElement('apply')
 const emptyElement = getDivElement('empty_state')
 const installElement = getButtonElement('install')
@@ -111,8 +108,6 @@ const refreshElement = getButtonElement('refresh')
 const enabledElement = getSelectElement('enabled')
 const logsElement = getTableSectionElement('logs')
 const sourcesElement = getDivElement('sources')
-const logSection = getFieldsetElement('log_section')
-const sourcesSection = getFieldsetElement('sources_section')
 
 interface SourceOption {
   readonly name: string
@@ -163,21 +158,9 @@ const updateDirty = (): void => {
   )
 }
 
-// When auto-adjust is on, monitoring comes first: the log section
-// moves above the configuration. Only the SAVED enable state reorders
-// the page — toggling the select does not reshuffle it mid-edit.
-const orderSections = (): void => {
-  if (enabledElement.value === 'true') {
-    document.body.insertBefore(logSection, sourcesSection)
-    return
-  }
-  document.body.insertBefore(sourcesSection, logSection)
-}
-
 const resetSavedState = (): void => {
   savedState.value = serializeState()
   updateDirty()
-  orderSections()
 }
 
 // Busy buttons only grey out (com.melcloud behavior): the style

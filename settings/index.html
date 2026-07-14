@@ -4,36 +4,17 @@
         <meta charset="utf-8">
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <title>MELCloud Extension Settings</title>
-        <link href="styles.css?v=d7998b4a" rel="stylesheet">
+        <link href="styles.css?v=12811196" rel="stylesheet">
         <script data-origin="settings" defer src="/homey.js"></script>
-        <script type="module" src="index.mjs?v=2670a3a3"></script>
+        <script type="module" src="index.mjs?v=d9d83136"></script>
         <meta content="MELCloud extension settings" name="description">
     </head>
     <body>
         <header class="homey-header">
             <h1 class="homey-title" data-i18n="settings.title">MELCloud extension settings</h1>
         </header>
-        <fieldset id="sources_section" class="homey-form-fieldset">
+        <fieldset class="homey-form-fieldset">
             <legend class="homey-form-legend" data-i18n="settings.autoAdjust">Auto-adjust air conditioning temperature</legend>
-            <div id="sources"></div>
-            <div id="empty_state" hidden>
-                <p data-i18n="settings.notFound">First, you need to set up your devices in the MELCloud Homey app.</p>
-                <button
-                    id="install"
-                    type="button"
-                    class="homey-button-primary-full"
-                    aria-label="Install"
-                    data-i18n="settings.install"
-                >Install the MELCloud app</button>
-            </div>
-        </fieldset>
-        <fieldset id="log_section" class="homey-form-fieldset">
-            <legend class="homey-form-legend" data-i18n="settings.log"></legend>
-            <table class="homey-form-group" aria-label="Log">
-                <tbody id="logs"></tbody>
-            </table>
-        </fieldset>
-        <fieldset class="homey-form-fieldset actions">
             <div class="homey-form-group">
                 <label
                     class="homey-form-label"
@@ -61,6 +42,26 @@
                     aria-label="Update"
                     data-i18n="settings.update"
                 >Update</button>
+            </div>
+        </fieldset>
+        <fieldset class="homey-form-fieldset">
+            <legend class="homey-form-legend" data-i18n="settings.log"></legend>
+            <table class="homey-form-group" aria-label="Log">
+                <tbody id="logs"></tbody>
+            </table>
+        </fieldset>
+        <fieldset class="homey-form-fieldset">
+            <legend class="homey-form-legend" data-i18n="settings.configuration">Configuration</legend>
+            <div id="sources"></div>
+            <div id="empty_state" hidden>
+                <p data-i18n="settings.notFound">First, you need to set up your devices in the MELCloud Homey app.</p>
+                <button
+                    id="install"
+                    type="button"
+                    class="homey-button-primary-full"
+                    aria-label="Install"
+                    data-i18n="settings.install"
+                >Install the MELCloud app</button>
             </div>
         </fieldset>
     </body>

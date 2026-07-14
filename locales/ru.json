@@ -32,6 +32,7 @@
     "title": "Настройки расширения MELCloud",
     "update": "Обновить",
     "allDevices": "Все устройства",
-    "install": "Установить приложение MELCloud"
+    "install": "Установить приложение MELCloud",
+    "configuration": "Конфигурация"
   }
 }

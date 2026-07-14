@@ -105,18 +105,6 @@
   translate: 0 -65%;
 }
 
-/* Floating action bar: last in the page, so it stays pinned over the
-   viewport bottom while everything above it scrolls */
-.actions {
-  background: #fff;
-  box-shadow: 0 -0.25em 1em rgb(0 0 0 / 10%);
-  inset-block-end: 0;
-  margin-block-end: 0;
-  padding-block: 0.75em calc(0.75em + env(safe-area-inset-bottom));
-  position: sticky;
-  z-index: 5;
-}
-
 .log-day {
   color: #888;
   font-weight: 600;

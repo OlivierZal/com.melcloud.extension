@@ -23,6 +23,7 @@
       "false": "No",
       "true": "Sì"
     },
+    "configuration": "Configurazione",
     "defaultSource": "Meteo di Homey",
     "disabledSource": "Non regolare",
     "enabled": "Mantieni entro 8 °C dalla temperatura esterna",

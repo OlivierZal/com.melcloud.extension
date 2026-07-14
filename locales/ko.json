@@ -32,6 +32,7 @@
     "title": "MELCloud 확장 설정",
     "update": "업데이트",
     "allDevices": "모든 장치",
-    "install": "MELCloud 앱 설치"
+    "install": "MELCloud 앱 설치",
+    "configuration": "구성"
   }
 }
