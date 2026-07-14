@@ -12,6 +12,30 @@ import {
   DISABLED_SOURCE,
 } from '../types.mts'
 
+// Give slow transports a real chance while keeping the loading overlay
+// finite: past this point the page surfaces the failure instead.
+const INIT_TIMEOUT_MS = 10_000
+
+// Bounds the init chain: `Homey.ready()` must always end the loading
+// overlay, so a hung transport call cannot be allowed to hold it open
+// forever. The underlying work is not cancelled — a late success simply
+// repaints over the degraded state.
+const withInitTimeout = async <T,>(work: Promise<T>): Promise<T> => {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  try {
+    return await Promise.race([
+      work,
+      new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => {
+          reject(new Error('Timed out while loading data from the app'))
+        }, INIT_TIMEOUT_MS)
+      }),
+    ])
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 const LOG_RETENTION_DAYS = 6
 
 interface LogCategory {
@@ -128,16 +152,6 @@ const closeOpenCombobox = (): void => {
   openCombobox.close = null
 }
 
-document.addEventListener('pointerdown', (event) => {
-  if (
-    event.target instanceof Element &&
-    event.target.closest('.combobox') !== null
-  ) {
-    return
-  }
-  closeOpenCombobox()
-})
-
 // "Update" only means something once the form diverges from the last
 // saved state — the snapshot greys it out otherwise.
 const savedState: { value: string } = { value: '' }
@@ -172,12 +186,25 @@ const setButtonsBusy = (areBusy: boolean): void => {
   updateDirty()
 }
 
+// Generation-tokened: a hung action force-released by the init timeout
+// must not clear (or re-set) the busy state a later, live action owns.
+const busyGeneration = { value: 0 }
+
+const releaseBusyButtons = (): void => {
+  busyGeneration.value += 1
+  setButtonsBusy(false)
+}
+
 const withBusyButtons = async (action: () => Promise<void>): Promise<void> => {
+  busyGeneration.value += 1
+  const generation = busyGeneration.value
   setButtonsBusy(true)
   try {
     await action()
   } finally {
-    setButtonsBusy(false)
+    if (generation === busyGeneration.value) {
+      setButtonsBusy(false)
+    }
   }
 }
 
@@ -717,6 +744,16 @@ const refreshAll = async (homey: Homey): Promise<void> =>
   })
 
 const addEventListeners = (homey: Homey): void => {
+  // Any pointer press outside a combobox dismisses the open one.
+  document.addEventListener('pointerdown', (event) => {
+    if (
+      event.target instanceof Element &&
+      event.target.closest('.combobox') !== null
+    ) {
+      return
+    }
+    closeOpenCombobox()
+  })
   refreshElement.addEventListener('click', () => {
     fireAndForget(refreshAll(homey))
   })
@@ -730,15 +767,50 @@ const addEventListeners = (homey: Homey): void => {
   homey.on('log', displayLog)
 }
 
-const onHomeyReady = async (homey: Homey): Promise<void> => {
+const run = async (homey: Homey): Promise<void> => {
   try {
     await fetchLanguage(homey)
   } catch {
     // Non-critical: the log timestamps fall back to English formatting
   }
   await refreshAll(homey)
-  addEventListeners(homey)
-  homey.ready()
 }
 
-Object.assign(globalThis, { onHomeyReady })
+// A timed-out load may still be hung inside `withBusyButtons` — release
+// the controls (and orphan that run's busy claim) so the retry is
+// actually clickable. Fire-and-forget on the alert keeps `start()`
+// non-throwing: a rejected alert must not trip the HTML loader's catch
+// (double `ready()`, second generic alert).
+const reportInitFailure = (homey: Homey, error: unknown): void => {
+  releaseBusyButtons()
+  fireAndForget(homey.alert(getErrorMessage(error)))
+}
+
+/**
+ * Page entry point, invoked by the HTML's canonical `onHomeyReady` once
+ * the SDK has dispatched (see the inline script in the page head).
+ * `ready()` always fires — an unbounded await here would hold Homey's
+ * loading overlay open forever on a single hung or failed call. The
+ * failure alert waits until after `ready()`: an alert raised while the
+ * overlay is still up never gets seen.
+ * @param homey - The Homey instance handed to `onHomeyReady`.
+ */
+export const start = async (homey: Homey): Promise<void> => {
+  // Listeners before the data load: the Refresh button is the retry
+  // affordance when the initial load fails or times out, so it must work
+  // regardless of how `run` ends.
+  addEventListeners(homey)
+  let initError: unknown
+  let hasInitFailed = false
+  try {
+    await withInitTimeout(run(homey))
+  } catch (error) {
+    initError = error
+    hasInitFailed = true
+  } finally {
+    homey.ready()
+  }
+  if (hasInitFailed) {
+    reportInitFailure(homey, initError)
+  }
+}

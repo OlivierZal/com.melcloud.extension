@@ -17,6 +17,7 @@
     "homeyWeather": "Homey-vädret"
   },
   "settings": {
+    "allDevices": "Alla enheter",
     "apply": "Tillämpa på alla luft-till-luft enheter",
     "autoAdjust": "Autojustera luftkonditioneringstemperaturen",
     "boolean": {
@@ -24,17 +25,17 @@
       "true": "Ja"
     },
     "capabilities": "Utomhustemperatur",
+    "configuration": "Konfiguration",
+    "defaultSource": "Homey-väder",
+    "disabledSource": "Justera inte",
     "enabled": "Håll inom 8 °C från utomhustemperaturen",
+    "install": "Installera MELCloud-appen",
+    "loadFailed": "Inläsningen misslyckades",
     "log": "Historik",
     "notFound": "Du behöver först konfigurera dina enheter i MELCloud Homey-appen.",
     "refresh": "Ladda om",
-    "title": "Inställningar för MELCloud-tillägg",
-    "defaultSource": "Homey-väder",
-    "disabledSource": "Justera inte",
     "searchSource": "Sök efter en källa …",
-    "update": "Uppdatera",
-    "allDevices": "Alla enheter",
-    "install": "Installera MELCloud-appen",
-    "configuration": "Konfiguration"
+    "title": "Inställningar för MELCloud-tillägg",
+    "update": "Uppdatera"
   }
 }
