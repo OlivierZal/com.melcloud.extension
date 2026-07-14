@@ -98,15 +98,12 @@ const getSelectElement = (id: string): HTMLSelectElement =>
 const getDivElement = (id: string): HTMLDivElement =>
   getElement(id, HTMLDivElement, 'div')
 
-const getTableSectionElement = (id: string): HTMLTableSectionElement =>
-  getElement(id, HTMLTableSectionElement, 'table section')
-
 const applyElement = getButtonElement('apply')
 const emptyElement = getDivElement('empty_state')
 const installElement = getButtonElement('install')
 const refreshElement = getButtonElement('refresh')
 const enabledElement = getSelectElement('enabled')
-const logsElement = getTableSectionElement('logs')
+const logsElement = getDivElement('logs')
 const sourcesElement = getDivElement('sources')
 
 interface SourceOption {
@@ -177,8 +174,11 @@ const setButtonsBusy = (areBusy: boolean): void => {
 
 const withBusyButtons = async (action: () => Promise<void>): Promise<void> => {
   setButtonsBusy(true)
-  await action()
-  setButtonsBusy(false)
+  try {
+    await action()
+  } finally {
+    setButtonsBusy(false)
+  }
 }
 
 // The document language is the display locale: `fetchLanguage` overwrites
