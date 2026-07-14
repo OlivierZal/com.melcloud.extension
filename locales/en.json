@@ -17,6 +17,7 @@
     "homeyWeather": "the Homey weather"
   },
   "settings": {
+    "allDevices": "All devices",
     "apply": "Apply to all air-to-air devices",
     "autoAdjust": "Auto-adjust air conditioning temperature",
     "boolean": {
@@ -24,17 +25,17 @@
       "true": "Yes"
     },
     "capabilities": "Outdoor temperature",
+    "configuration": "Configuration",
+    "defaultSource": "Homey weather",
+    "disabledSource": "Do not adjust",
     "enabled": "Keep within 8 °C of the outdoor temperature",
+    "install": "Install the MELCloud app",
+    "loadFailed": "Loading failed",
     "log": "History",
     "notFound": "First, you need to set up your devices in the MELCloud Homey app.",
     "refresh": "Refresh",
-    "title": "MELCloud extension settings",
-    "defaultSource": "Homey weather",
-    "disabledSource": "Do not adjust",
     "searchSource": "Search for a source…",
-    "update": "Update",
-    "allDevices": "All devices",
-    "install": "Install the MELCloud app",
-    "configuration": "Configuration"
+    "title": "MELCloud extension settings",
+    "update": "Update"
   }
 }

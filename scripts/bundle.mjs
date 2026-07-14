@@ -19,7 +19,9 @@ await build({
 
 // Cache-bust the static references: the phone webviews cache settings
 // assets across app versions, so a content hash per file forces a refetch
-// exactly when a file changes.
+// exactly when a file changes. Every occurrence of a local reference —
+// attributes and the inline entry's dynamic import alike — gets the same
+// stamp (a modulepreload only helps when its URL matches the import's).
 const hashOf = async (path) => {
   const content = await readFile(path)
   return createHash('sha256').update(content).digest('hex').slice(0, 8)
@@ -27,15 +29,24 @@ const hashOf = async (path) => {
 
 const htmlPath = 'settings/index.html'
 const html = await readFile(htmlPath, 'utf8')
-const stamped = html
-  .replace(
-    /index\.mjs(?:\?v=[0-9a-f]+)?/u,
-    `index.mjs?v=${await hashOf('settings/index.mjs')}`,
+const files = new Set(
+  [
+    ...html.matchAll(
+      /(?:href="|src="|import\('\.\/)(?<file>[^"':?/][^"':?]*)(?:\?v=[0-9a-f]+)?["')]/gu,
+    ),
+  ].map((match) => match.groups.file),
+)
+let stamped = html
+for (const file of files) {
+  const hash = await hashOf(`settings/${file}`)
+  stamped = stamped.replaceAll(
+    new RegExp(
+      `${file.replaceAll('.', String.raw`\.`)}(?:\\?v=[0-9a-f]+)?`,
+      'gu',
+    ),
+    `${file}?v=${hash}`,
   )
-  .replace(
-    /styles\.css(?:\?v=[0-9a-f]+)?/u,
-    `styles.css?v=${await hashOf('settings/styles.css')}`,
-  )
+}
 if (stamped !== html) {
   await writeFile(htmlPath, stamped)
 }

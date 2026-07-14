@@ -17,22 +17,23 @@
     "thermostatMode": "режим"
   },
   "settings": {
+    "allDevices": "Все устройства",
     "autoAdjust": "Автоматически регулировать температуру кондиционера",
     "boolean": {
       "false": "Нет",
       "true": "Да"
     },
+    "configuration": "Конфигурация",
     "defaultSource": "Погода Homey",
     "disabledSource": "Не регулировать",
     "enabled": "Держать в пределах 8 °C от наружной температуры",
+    "install": "Установить приложение MELCloud",
+    "loadFailed": "Не удалось загрузить",
     "log": "История",
     "notFound": "Сначала настройте устройства в приложении MELCloud для Homey.",
     "refresh": "Загрузить",
     "searchSource": "Поиск источника…",
     "title": "Настройки расширения MELCloud",
-    "update": "Обновить",
-    "allDevices": "Все устройства",
-    "install": "Установить приложение MELCloud",
-    "configuration": "Конфигурация"
+    "update": "Обновить"
   }
 }

@@ -186,12 +186,25 @@ const setButtonsBusy = (areBusy: boolean): void => {
   updateDirty()
 }
 
+// Generation-tokened: a hung action force-released by the init timeout
+// must not clear (or re-set) the busy state a later, live action owns.
+const busyGeneration = { value: 0 }
+
+const releaseBusyButtons = (): void => {
+  busyGeneration.value += 1
+  setButtonsBusy(false)
+}
+
 const withBusyButtons = async (action: () => Promise<void>): Promise<void> => {
+  busyGeneration.value += 1
+  const generation = busyGeneration.value
   setButtonsBusy(true)
   try {
     await action()
   } finally {
-    setButtonsBusy(false)
+    if (generation === busyGeneration.value) {
+      setButtonsBusy(false)
+    }
   }
 }
 
@@ -763,6 +776,17 @@ const run = async (homey: Homey): Promise<void> => {
   await refreshAll(homey)
 }
 
+// A timed-out load may still be hung inside `withBusyButtons` — release
+// the controls (and orphan that run's busy claim) so the retry is
+// actually clickable.
+const reportInitFailure = async (
+  homey: Homey,
+  error: unknown,
+): Promise<void> => {
+  releaseBusyButtons()
+  await homey.alert(getErrorMessage(error))
+}
+
 /**
  * Page entry point, invoked by the HTML's canonical `onHomeyReady` once
  * the SDK has dispatched (see the inline script in the page head).
@@ -777,18 +801,17 @@ export const start = async (homey: Homey): Promise<void> => {
   // affordance when the initial load fails or times out, so it must work
   // regardless of how `run` ends.
   addEventListeners(homey)
-  let initError: unknown = null
+  let initError: unknown
+  let hasInitFailed = false
   try {
     await withInitTimeout(run(homey))
   } catch (error) {
     initError = error
+    hasInitFailed = true
   } finally {
     homey.ready()
   }
-  if (initError !== null) {
-    // A timed-out load may still be hung inside `withBusyButtons` —
-    // release the controls so the retry is actually clickable.
-    setButtonsBusy(false)
-    await homey.alert(getErrorMessage(initError))
+  if (hasInitFailed) {
+    await reportInitFailure(homey, initError)
   }
 }

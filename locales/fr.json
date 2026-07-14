@@ -17,6 +17,7 @@
     "homeyWeather": "la météo Homey"
   },
   "settings": {
+    "allDevices": "Tous les appareils",
     "apply": "Appliquer à tous les appareils air-air",
     "autoAdjust": "Auto-ajuster la température de la climatisation",
     "boolean": {
@@ -24,17 +25,17 @@
       "true": "Oui"
     },
     "capabilities": "Température extérieure",
+    "configuration": "Configuration",
+    "defaultSource": "Météo Homey",
+    "disabledSource": "Ne pas activer",
     "enabled": "Maintenir à moins de 8 °C de la température extérieure",
+    "install": "Installer l'app MELCloud",
+    "loadFailed": "Le chargement a échoué",
     "log": "Historique",
     "notFound": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.",
     "refresh": "Rafraîchir",
-    "title": "Paramètres de l'extension pour MELCloud",
-    "defaultSource": "Météo Homey",
-    "disabledSource": "Ne pas activer",
     "searchSource": "Rechercher une source…",
-    "update": "Mettre à jour",
-    "allDevices": "Tous les appareils",
-    "install": "Installer l'app MELCloud",
-    "configuration": "Configuration"
+    "title": "Paramètres de l'extension pour MELCloud",
+    "update": "Mettre à jour"
   }
 }

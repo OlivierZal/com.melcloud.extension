@@ -17,22 +17,23 @@
     "thermostatMode": "la modalità"
   },
   "settings": {
+    "allDevices": "Tutti i dispositivi",
     "autoAdjust": "Regola automaticamente la temperatura del climatizzatore",
     "boolean": {
       "false": "No",
       "true": "Sì"
     },
+    "configuration": "Configurazione",
     "defaultSource": "Meteo di Homey",
     "disabledSource": "Non regolare",
     "enabled": "Mantieni entro 8 °C dalla temperatura esterna",
+    "install": "Installa l'app MELCloud",
+    "loadFailed": "Caricamento non riuscito",
     "log": "Cronologia",
     "notFound": "Prima configura i tuoi dispositivi nell'app MELCloud per Homey.",
     "refresh": "Ricarica",
     "searchSource": "Cerca una fonte…",
     "title": "Impostazioni dell'estensione MELCloud",
-    "update": "Aggiorna",
-    "allDevices": "Tutti i dispositivi",
-    "install": "Installa l'app MELCloud",
-    "configuration": "Configurazione"
+    "update": "Aggiorna"
   }
 }

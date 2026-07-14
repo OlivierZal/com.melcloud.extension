@@ -17,22 +17,23 @@
     "thermostatMode": "모드"
   },
   "settings": {
+    "allDevices": "모든 장치",
     "autoAdjust": "에어컨 온도 자동 조절",
     "boolean": {
       "false": "아니요",
       "true": "예"
     },
+    "configuration": "구성",
     "defaultSource": "Homey 날씨",
     "disabledSource": "조절하지 않음",
     "enabled": "외부 온도와 8 °C 이내로 유지",
+    "install": "MELCloud 앱 설치",
+    "loadFailed": "로드에 실패했습니다",
     "log": "기록",
     "notFound": "먼저 MELCloud Homey 앱에서 장치를 설정하세요.",
     "refresh": "새로고침",
     "searchSource": "소스 검색…",
     "title": "MELCloud 확장 설정",
-    "update": "업데이트",
-    "allDevices": "모든 장치",
-    "install": "MELCloud 앱 설치",
-    "configuration": "구성"
+    "update": "업데이트"
   }
 }

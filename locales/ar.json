@@ -17,22 +17,23 @@
     "thermostatMode": "الوضع"
   },
   "settings": {
+    "allDevices": "جميع الأجهزة",
     "autoAdjust": "ضبط درجة حرارة مكيف الهواء تلقائيًا",
     "boolean": {
       "false": "لا",
       "true": "نعم"
     },
+    "configuration": "التكوين",
     "defaultSource": "طقس Homey",
     "disabledSource": "عدم الضبط",
     "enabled": "الإبقاء ضمن 8 °C من درجة الحرارة الخارجية",
+    "install": "تثبيت تطبيق MELCloud",
+    "loadFailed": "فشل التحميل",
     "log": "السجل",
     "notFound": "قم أولاً بإعداد أجهزتك في تطبيق MELCloud على Homey.",
     "refresh": "إعادة تحميل",
     "searchSource": "ابحث عن مصدر…",
     "title": "إعدادات امتداد MELCloud",
-    "update": "تحديث",
-    "allDevices": "جميع الأجهزة",
-    "install": "تثبيت تطبيق MELCloud",
-    "configuration": "التكوين"
+    "update": "تحديث"
   }
 }
