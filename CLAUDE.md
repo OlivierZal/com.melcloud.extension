@@ -132,6 +132,12 @@ to judge success.
   (PascalCase) and Homey's `__` translation method.
 - Ambient `*.d.ts` files have a scoped carve-out (script parse,
   namespace-merged classes) — also documented in the config.
+- A config-level `'off'` with a one-line reason is not a disable: it
+  is the triage ledger for opt-in rules that were evaluated and
+  refused (tool-ownership overlap, platform floor, absent domain).
+  Disables suppress an adopted rule; ledger entries record a verdict —
+  re-evaluate one when its stated reason expires (target bump, new
+  tooling).
 - Zero-warning policy: every enabled rule is at `error`.
 - Test doubles are SYNC where the real API is async (the caller's
   `await` handles both): `mockImplementation(async …)` without an await
