@@ -288,18 +288,18 @@
     "sv": "Inställningarna följer nu namnbyten på MELCloud-byggnader vid uppdatering, och sidan kan inte längre fastna vid inläsning."
   },
   "24.7.2": {
-    "ar": "تشخيصات أفضل عند فشل تحميل صفحة الإعدادات.",
-    "da": "Bedre diagnostik når indstillingssiden ikke kan indlæses.",
-    "de": "Bessere Diagnose, wenn die Einstellungsseite nicht lädt.",
-    "en": "Better diagnostics when the settings page fails to load.",
-    "es": "Mejores diagnósticos cuando la página de ajustes no carga.",
-    "fr": "Meilleurs diagnostics lorsque la page de réglages ne se charge pas.",
-    "it": "Diagnostica migliore quando la pagina delle impostazioni non si carica.",
-    "ko": "설정 페이지 로드에 실패할 때의 진단 기능이 개선되었습니다.",
-    "nl": "Betere diagnostiek wanneer de instellingenpagina niet laadt.",
-    "no": "Bedre diagnostikk når innstillingssiden ikke lastes.",
-    "pl": "Lepsza diagnostyka, gdy strona ustawień się nie ładuje.",
-    "ru": "Улучшена диагностика, когда страница настроек не загружается.",
-    "sv": "Bättre diagnostik när inställningssidan inte laddas."
+    "ar": "إصلاح فشل تحميل صفحة الإعدادات على أندرويد.",
+    "da": "Retter indstillingssiden, der ikke kunne indlæses på Android.",
+    "de": "Behebt das Nichtladen der Einstellungsseite auf Android.",
+    "en": "Fixes the settings page failing to load on Android.",
+    "es": "Corrige la página de ajustes que no cargaba en Android.",
+    "fr": "Corrige la page de réglages qui ne se chargeait pas sur Android.",
+    "it": "Corregge la pagina delle impostazioni che non si caricava su Android.",
+    "ko": "Android에서 설정 페이지가 로드되지 않던 문제를 수정했습니다.",
+    "nl": "Verhelpt de instellingenpagina die niet laadde op Android.",
+    "no": "Fikser innstillingssiden som ikke lastet på Android.",
+    "pl": "Naprawia stronę ustawień, która nie ładowała się na Androidzie.",
+    "ru": "Исправлена загрузка страницы настроек на Android.",
+    "sv": "Åtgärdar inställningssidan som inte laddades på Android."
   }
 }
