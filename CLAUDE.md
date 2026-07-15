@@ -21,6 +21,20 @@ Run the FULL suite before any push — CI runs all of it:
 - `npm run build` — esbuild bundle (`scripts/bundle.mjs`) + `tsc` emit.
   `settings/index.mjs` is a gitignored build output, never checked in;
   the Homey CLI regenerates it on validate/install/run.
+- Cache-busting `?v=` — the build also stamps every local asset reference
+  in the tracked `settings/index.html` with a content hash (`?v=<hash>`),
+  so phone webviews (which cache assets across app versions) refetch an
+  asset exactly when its bytes change. **Never hand-edit a `?v=` or bump
+  it "for a release": it is a content hash, not a version** — the build
+  sets it, and it moves automatically iff the asset content changes
+  (identical bytes → identical hash → no diff; a release that touches no
+  settings asset leaves every `?v=` untouched, which is correct). Because
+  the HTML is committed, any change to a bundled settings source
+  (`settings/index.mts`, `settings/styles.css`) must be followed by
+  `npm run build` and a commit of the re-stamped HTML. The mandatory
+  pre-push suite runs the build, so following it keeps the stamp in sync;
+  skipping it ships a stale `?v=` and phones keep serving the old cached
+  bundle — the exact staleness `?v=` exists to prevent.
 - `npm run homey:validate` — Homey validation at publish level; may
   rewrite files (locales), re-stage if it does.
 - `npm run homey:start` — `homey app run --remote` for on-device testing.
