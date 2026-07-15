@@ -440,7 +440,7 @@ const commonSelectionOf = (deviceIds: readonly string[]): string => {
     deviceIds.map((deviceId) => sourceSelections.get(deviceId) ?? ''),
   )
   const [first] = values
-  return values.size === 1 && first !== undefined ? first : MIXED_SELECTION
+  return first !== undefined && values.size === 1 ? first : MIXED_SELECTION
 }
 
 interface ComboboxConfig {

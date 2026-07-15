@@ -33,14 +33,14 @@ export class CapabilityOutdoorSource extends OutdoorSource {
     app: MELCloudExtensionApp,
     capabilityPath: string,
   ): Promise<CapabilityOutdoorSource> {
-    const [deviceId = '', capabilityId = ''] = capabilityPath.split(':')
+    const [deviceId = '', capabilityId = ''] = capabilityPath.split(':', 2)
     const device = await this.#getDevice(app, deviceId)
     if (device.capabilitiesObj?.[capabilityId] === undefined) {
       throw new ListenerError('error.notFound', {
         cause: { idOrName: capabilityId, type: app.names.outdoorTemperature },
       })
     }
-    return new this(app, device, capabilityId)
+    return new CapabilityOutdoorSource(app, device, capabilityId)
   }
 
   static async #getDevice(

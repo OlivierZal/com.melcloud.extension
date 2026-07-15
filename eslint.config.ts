@@ -725,17 +725,37 @@ const config = defineConfig([
       ],
       'symbol-description': 'error',
       'unicode-bom': 'error',
+      // Config-driven comment vocabulary with no invariant to encode.
+      'unicorn/comment-content': 'off',
       // Owned by `@typescript-eslint/naming-convention` for variables,
       // parameters and class properties (identical prefix set).
       'unicorn/consistent-boolean-name': 'off',
       // Owned by `perfectionist/sort-classes`.
       'unicorn/consistent-class-member-order': 'off',
+      'unicorn/consistent-destructuring': 'error',
+      'unicorn/consistent-function-style': [
+        'error',
+        {
+          default: 'arrow-function',
+        },
+      ],
       'unicorn/custom-error-definition': 'error',
+      // Owned by `@typescript-eslint/naming-convention`.
+      'unicorn/id-match': 'off',
       // Vocabulary opt-out: the abbreviation renames it forces
       // (`args` -> `arguments_`, ...) fight the domain naming.
       'unicorn/name-replacements': 'off',
       // Owned by `import-x/no-anonymous-default-export`.
       'unicorn/no-anonymous-default-export': 'off',
+      'unicorn/no-array-front-mutation': 'error',
+      // Doc-comment formatting is owned by the jsdoc plugin (the house
+      // style keeps the `*` line prefix).
+      'unicorn/no-asterisk-prefix-in-documentation-comments': 'off',
+      // Owned by `@typescript-eslint/naming-convention`.
+      'unicorn/no-keyword-prefix': 'off',
+      // House comments wrap prose at print width; the heuristic reads
+      // those wraps as unfinished sentences.
+      'unicorn/no-manually-wrapped-comments': 'off',
       // Owned by `import-x/no-named-default` (imports; the export
       // form it also covers is unused here).
       'unicorn/no-named-default': 'off',
@@ -749,16 +769,36 @@ const config = defineConfig([
       'unicorn/no-null': 'off',
       // Owned by `@typescript-eslint/no-unnecessary-boolean-literal-compare`.
       'unicorn/no-unnecessary-boolean-comparison': 'off',
+      'unicorn/no-unreadable-new-expression': 'error',
       // The settings page runs in the Homey webview: DOM rules apply.
       'unicorn/no-unsafe-dom-html': 'error',
       'unicorn/no-unused-properties': 'error',
       'unicorn/prefer-dispose': 'error',
-      'unicorn/prefer-dom-node-html-methods': 'error',
+      // Requires Node.js 24 (`Error.isError`).
+      'unicorn/prefer-error-is-error': 'off',
       'unicorn/prefer-import-meta-properties': 'error',
+      // Requires Node.js 24 (`Iterator.concat`).
+      'unicorn/prefer-iterator-concat': 'off',
+      // Stricter than the v72 default: varying-base member accesses stay
+      // reported so the shared shape is factored out.
+      'unicorn/prefer-minimal-ternary': [
+        'error',
+        {
+          checkVaryingBase: true,
+        },
+      ],
+      // Requires Node.js 24 (`RegExp.escape`).
+      'unicorn/prefer-regexp-escape': 'off',
+      'unicorn/prefer-short-arrow-method': 'error',
       // Owned by `@typescript-eslint/prefer-string-starts-ends-with`.
       'unicorn/prefer-string-starts-ends-with': 'off',
       'unicorn/prefer-temporal': 'error',
+      // Requires Node.js 24 (`Uint8Array#toBase64`) and old iOS webview
+      // engines besides.
+      'unicorn/prefer-uint8array-base64': 'off',
       'unicorn/require-post-message-target-origin': 'error',
+      // Config-driven string vocabulary with no invariant to encode.
+      'unicorn/string-content': 'off',
       'unicorn/try-complexity': 'error',
       'use-isnan': [
         'error',
@@ -858,6 +898,7 @@ const config = defineConfig([
     language: 'html/html',
     plugins: {
       html,
+      unicorn,
     },
     rules: {
       'html/class-spacing': 'error',
@@ -901,6 +942,15 @@ const config = defineConfig([
       'html/require-meta-viewport': 'error',
       'html/sort-attrs': 'error',
       'html/svg-require-viewbox': 'error',
+      'unicorn/expiring-todo-comments': 'error',
+      'unicorn/no-empty-file': 'error',
+      'unicorn/no-invalid-file-input-accept': 'error',
+      // The referenced module bundle is a gitignored build output (CI
+      // lints without building); its existence is guaranteed harder by
+      // scripts/bundle.mjs, which hashes every local reference and
+      // throws when one is missing.
+      'unicorn/no-missing-local-resource': 'off',
+      'unicorn/text-encoding-identifier-case': 'error',
     },
   },
   {
@@ -928,6 +978,9 @@ const config = defineConfig([
     extends: [css.configs.recommended],
     files: ['**/*.css'],
     language: 'css/css',
+    plugins: {
+      unicorn,
+    },
     rules: {
       'css/no-invalid-properties': [
         'error',
@@ -945,12 +998,22 @@ const config = defineConfig([
           available: 'newly',
         },
       ],
+      'unicorn/expiring-todo-comments': 'error',
+      'unicorn/no-empty-file': 'error',
+      'unicorn/no-missing-local-resource': 'error',
+      'unicorn/no-shorthand-property-overrides': 'error',
+      'unicorn/no-transition-all': 'error',
+      'unicorn/prefer-explicit-viewport-units': 'error',
+      'unicorn/text-encoding-identifier-case': 'error',
     },
   },
   {
     extends: [markdown.configs.recommended],
     files: ['**/*.md'],
     language: 'markdown/gfm',
+    plugins: {
+      unicorn,
+    },
     rules: {
       'markdown/fenced-code-meta': 'error',
       'markdown/no-bare-urls': 'error',
@@ -986,6 +1049,9 @@ const config = defineConfig([
           checkMissingCells: true,
         },
       ],
+      'unicorn/expiring-todo-comments': 'error',
+      'unicorn/no-empty-file': 'error',
+      'unicorn/no-missing-local-resource': 'error',
     },
   },
   {
@@ -1105,6 +1171,7 @@ const config = defineConfig([
       'vitest/prefer-expect-assertions': [
         'error',
         {
+          disallowHasAssertions: true,
           onlyFunctionsWithExpectInCallback: true,
           onlyFunctionsWithExpectInLoop: true,
         },
