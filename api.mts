@@ -10,6 +10,15 @@ import {
   OUTDOOR_TEMPERATURE,
 } from './types.mts'
 
+// Diagnostics breadcrumb: the settings webview is otherwise invisible in
+// diagnostic reports (its routes are all local IPC / inter-app reads, no
+// MELCloud round-trip to log), which would make "settings fail to load"
+// reports undecidable — no line = the page's JS never ran; lines without
+// a completed sequence = where it stopped. Mirrors com.melcloud.
+const logSettingsRoute = (app: Homey['app'], route: string): void => {
+  app.log({ dataType: 'Settings page', route })
+}
+
 const api = {
   /**
    * Starts or restarts automatic cooling adjustment from the settings UI.
@@ -46,6 +55,7 @@ const api = {
     homey: Homey
   }): Promise<AdjustableGroup[]> {
     const { app } = homey
+    logSettingsRoute(app, '/devices/groups')
     if (app.melcloudDevices.length === 0) {
       throw new NotFoundError()
     }
@@ -61,8 +71,10 @@ const api = {
    * @param options.homey - Homey instance carrying the i18n manager.
    * @returns The BCP-47 language tag (e.g. `en`, `fr`).
    */
-  getLanguage: ({ homey: { i18n } }: { homey: Homey }): string =>
-    i18n.getLanguage(),
+  getLanguage: ({ homey: { app, i18n } }: { homey: Homey }): string => {
+    logSettingsRoute(app, '/language')
+    return i18n.getLanguage()
+  },
   /**
    * Lists the temperature capabilities selectable as outdoor source,
    * sorted by display name. MELCloud AC devices only expose their
@@ -75,6 +87,7 @@ const api = {
    */
   getTemperatureSensors({ homey }: { homey: Homey }): TemperatureSensor[] {
     const { melcloudDevices, temperatureSensors } = homey.app
+    logSettingsRoute(homey.app, '/devices/sensors/temperature')
     if (melcloudDevices.length === 0) {
       throw new NotFoundError()
     }
