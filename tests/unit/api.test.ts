@@ -72,19 +72,6 @@ const createHomeyContext = ({
 }
 
 describe('api', () => {
-  describe('logWebviewBoot', () => {
-    it('should log the boot failure body via app.error', () => {
-      const { homey } = createHomeyContext({
-        melcloudDevices: [],
-        temperatureSensors: [],
-      })
-
-      api.logWebviewBoot({ body: { message: 'boom' }, homey })
-
-      expect(homey.app.error).toHaveBeenCalledTimes(1)
-    })
-  })
-
   describe('getLanguage', () => {
     it('should return the Homey language', () => {
       const { homey } = createHomeyContext({

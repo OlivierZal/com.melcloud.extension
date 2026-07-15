@@ -4,5 +4,5 @@
 /coverage/
 /env.json
 node_modules/
-/settings/index.mjs
+/settings/index.js
 /.claude/

@@ -110,15 +110,6 @@ const api = {
         sensor1.capabilityName.localeCompare(sensor2.capabilityName),
       )
   },
-  logWebviewBoot: ({
-    body,
-    homey: { app },
-  }: {
-    body: unknown
-    homey: Homey
-  }): void => {
-    app.error('Settings webview boot failed:', JSON.stringify(body))
-  },
 }
 
 export default api
