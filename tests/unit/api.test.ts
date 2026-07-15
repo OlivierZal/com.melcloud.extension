@@ -53,6 +53,7 @@ const createHomeyContext = ({
     app: mock<MELCloudExtensionApp>({
       autoAdjustCooling,
       deviceGroups,
+      error: vi.fn<(...args: readonly unknown[]) => void>(),
       homey: {
         settings: {
           get: (key: keyof HomeySettings): unknown => settings[key] ?? null,
@@ -71,6 +72,19 @@ const createHomeyContext = ({
 }
 
 describe('api', () => {
+  describe('logWebviewBoot', () => {
+    it('should log the boot failure body via app.error', () => {
+      const { homey } = createHomeyContext({
+        melcloudDevices: [],
+        temperatureSensors: [],
+      })
+
+      api.logWebviewBoot({ body: { message: 'boom' }, homey })
+
+      expect(homey.app.error).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('getLanguage', () => {
     it('should return the Homey language', () => {
       const { homey } = createHomeyContext({

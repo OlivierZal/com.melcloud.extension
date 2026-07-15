@@ -13,6 +13,7 @@
                     .then((module) => module.start(homey))
                     .catch((error) => {
                         globalThis.reportError?.(error)
+                        homey.api('POST', '/boot-error', { message: String((error && error.message) || error || ''), name: String((error && error.name) || ''), stack: String((error && error.stack) || '') }, () => {})
                         homey.ready()
                         homey
                             .alert(homey.__('settings.loadFailed'))
