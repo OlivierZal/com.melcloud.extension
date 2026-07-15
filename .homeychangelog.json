@@ -301,5 +301,20 @@
     "pl": "Lepsza diagnostyka, gdy strona ustawień się nie ładuje.",
     "ru": "Улучшена диагностика, когда страница настроек не загружается.",
     "sv": "Bättre diagnostik när inställningssidan inte laddas."
+  },
+  "24.7.3": {
+    "ar": "إصلاح فشل تحميل صفحة الإعدادات.",
+    "da": "Retter indstillingssiden, der ikke kunne indlæses.",
+    "de": "Behebt das Nichtladen der Einstellungsseite.",
+    "en": "Fixes the settings page failing to load.",
+    "es": "Corrige la página de ajustes que no cargaba.",
+    "fr": "Corrige la page de réglages qui ne se chargeait pas.",
+    "it": "Corregge la pagina delle impostazioni che non si caricava.",
+    "ko": "설정 페이지가 로드되지 않던 문제를 수정했습니다.",
+    "nl": "Verhelpt de instellingenpagina die niet laadde.",
+    "no": "Fikser innstillingssiden som ikke lastet.",
+    "pl": "Naprawia stronę ustawień, która się nie ładowała.",
+    "ru": "Исправлена загрузка страницы настроек.",
+    "sv": "Åtgärdar inställningssidan som inte laddades."
   }
 }

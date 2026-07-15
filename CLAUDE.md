@@ -74,20 +74,30 @@ to judge success.
   concurrent attaches await one start) and stops with the last `detach`.
   melcloud.mts only imports the source as a type — no runtime cycle.
 - `settings/index.mts` — browser-side settings UI, bundled by esbuild
-  into `settings/index.mjs` (ES module). Webview lifecycle (mirrors
-  com.melcloud): the HTML declares the docs' canonical global
-  `function onHomeyReady(homey)` inline — it must exist at parse time,
-  the SDK dispatches on its own schedule and a bundle only exists after
-  its fetch — whose body `import()`s the bundle and hands the instance
-  to its exported `start(homey)`; the inline `.catch` ends the overlay
-  even when the bundle itself fails to load. Init work is time-bounded
-  (10 s) and `homey.ready()` fires in a `finally`; `start` is
+  into `settings/index.js` as a CLASSIC IIFE (`format: 'iife'`,
+  `globalName: MELCloudWebview`), loaded via `<script defer src>` — NOT
+  an ES module (mirrors com.melcloud). Only the JS module loader fails:
+  `import()` / `<script type=module>` stall on a COLD webview open
+  against Homey's local origin (the #1404 spinner), while classic
+  resource fetches — the stylesheet, a classic `<script src>` — load
+  cold. The HTML declares the docs' canonical global
+  `function onHomeyReady(homey)` inline (it must exist at parse time),
+  which polls `globalThis.MELCloudWebview` and calls its `start(homey)`.
+  `defer` (as in com.melcloud) is the right fit for an app bundle that
+  reads the DOM — ordered, after `<body>` parses, before
+  DOMContentLoaded — and here it is doubly required: this entry does DOM
+  lookups at module top level, which `defer` makes safe. The poll's 10 s
+  timeout still ends the overlay if the script failed to load. Init work is separately
+  time-bounded (10 s) with `homey.ready()` in a `finally`; `start` is
   non-throwing by construction (failure alerts go through
   `fireAndForget`). `scripts/bundle.mjs` stamps every local asset
-  reference — attributes and the inline `import()` alike — with a
-  content hash (`?v=`): phone webviews cache assets across app
-  versions. Webview code sticks to es2020-era runtime APIs (esbuild
-  lowers syntax only). Settings pages and
+  reference — only inside an attribute/import context, never a comment —
+  with a content hash (`?v=`): phone webviews cache assets across app
+  versions. NEVER load the bundle as an ES module: `import()` failed to
+  fetch on Android and a static `<script type=module>` spun every webview
+  forever on a cold open (both shipped and reverted in com.melcloud —
+  see its CLAUDE.md). Webview code sticks to es2020-era runtime APIs
+  (esbuild lowers syntax only). Settings pages and
   widgets do NOT style the same way: settings follow the Homey Style
   Library (`homey-form-*`/`homey-button-*`; in a `homey-form-group` the
   control is a SIBLING after its label — see

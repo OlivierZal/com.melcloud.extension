@@ -122,6 +122,8 @@ const getSelectElement = (id: string): HTMLSelectElement =>
 const getDivElement = (id: string): HTMLDivElement =>
   getElement(id, HTMLDivElement, 'div')
 
+// Safe at module load: the bundle is a `defer` classic script, so it runs
+// only after <body> is parsed (see settings/index.html).
 const applyElement = getButtonElement('apply')
 const emptyElement = getDivElement('empty_state')
 const installElement = getButtonElement('install')
