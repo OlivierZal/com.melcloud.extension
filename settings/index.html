@@ -9,7 +9,7 @@
             // needs this global at parse time. The page logic lives in the
             // module bundle; a failed bundle load still ends the overlay.
             function onHomeyReady(homey) {
-                import('./index.mjs?v=d726f7cf')
+                import('./index.mjs?v=c3315fb2')
                     .then((module) => module.start(homey))
                     .catch((error) => {
                         globalThis.reportError?.(error)
@@ -23,7 +23,7 @@
             }
         </script>
         <link href="styles.css?v=364176a1" rel="stylesheet">
-        <link href="index.mjs?v=d726f7cf" rel="modulepreload">
+        <link href="index.mjs?v=c3315fb2" rel="modulepreload">
         <script data-origin="settings" defer src="/homey.js"></script>
         <meta content="MELCloud extension settings" name="description">
     </head>

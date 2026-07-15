@@ -15,7 +15,9 @@ describe(ListenerError, () => {
   })
 
   it('should default to no cause', () => {
-    expect(new ListenerError('error.notFound').cause).toBeUndefined()
+    const error = new ListenerError('error.notFound')
+
+    expect(error.cause).toBeUndefined()
   })
 })
 

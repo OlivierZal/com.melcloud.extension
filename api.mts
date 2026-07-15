@@ -61,9 +61,8 @@ const api = {
    * @param options.homey - Homey instance carrying the i18n manager.
    * @returns The BCP-47 language tag (e.g. `en`, `fr`).
    */
-  getLanguage({ homey: { i18n } }: { homey: Homey }): string {
-    return i18n.getLanguage()
-  },
+  getLanguage: ({ homey: { i18n } }: { homey: Homey }): string =>
+    i18n.getLanguage(),
   /**
    * Lists the temperature capabilities selectable as outdoor source,
    * sorted by display name. MELCloud AC devices only expose their

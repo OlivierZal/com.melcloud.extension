@@ -301,10 +301,9 @@ export default class MELCloudExtensionApp extends App {
 
   #persistLog(newLog: TimestampedLog): void {
     const lastLogs = this.homey.settings.get('lastLogs') ?? []
-    lastLogs.unshift(newLog)
-    if (lastLogs.length > MAX_LOGS) {
-      lastLogs.length = MAX_LOGS
-    }
-    this.homey.settings.set('lastLogs', lastLogs)
+    this.homey.settings.set(
+      'lastLogs',
+      [newLog, ...lastLogs].slice(0, MAX_LOGS),
+    )
   }
 }
