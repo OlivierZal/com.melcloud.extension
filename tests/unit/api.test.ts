@@ -58,6 +58,7 @@ const createHomeyContext = ({
           get: (key: keyof HomeySettings): unknown => settings[key] ?? null,
         },
       },
+      log: vi.fn<(...args: readonly unknown[]) => void>(),
       melcloudDevices,
       refreshDeviceGroups: vi
         .fn<MELCloudExtensionApp['refreshDeviceGroups']>()
