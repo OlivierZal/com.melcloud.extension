@@ -286,5 +286,20 @@
     "pl": "Ustawienia uwzględniają teraz zmiany nazw budynków MELCloud przy odświeżaniu, a strona nie może już utknąć podczas ładowania.",
     "ru": "Настройки теперь отражают переименования зданий MELCloud при обновлении, а страница больше не может зависнуть при загрузке.",
     "sv": "Inställningarna följer nu namnbyten på MELCloud-byggnader vid uppdatering, och sidan kan inte längre fastna vid inläsning."
+  },
+  "24.7.2": {
+    "ar": "تشخيصات أفضل عند فشل تحميل صفحة الإعدادات.",
+    "da": "Bedre diagnostik når indstillingssiden ikke kan indlæses.",
+    "de": "Bessere Diagnose, wenn die Einstellungsseite nicht lädt.",
+    "en": "Better diagnostics when the settings page fails to load.",
+    "es": "Mejores diagnósticos cuando la página de ajustes no carga.",
+    "fr": "Meilleurs diagnostics lorsque la page de réglages ne se charge pas.",
+    "it": "Diagnostica migliore quando la pagina delle impostazioni non si carica.",
+    "ko": "설정 페이지 로드에 실패할 때의 진단 기능이 개선되었습니다.",
+    "nl": "Betere diagnostiek wanneer de instellingenpagina niet laadt.",
+    "no": "Bedre diagnostikk når innstillingssiden ikke lastes.",
+    "pl": "Lepsza diagnostyka, gdy strona ustawień się nie ładuje.",
+    "ru": "Улучшена диагностика, когда страница настроек не загружается.",
+    "sv": "Bättre diagnostik när inställningssidan inte laddas."
   }
 }

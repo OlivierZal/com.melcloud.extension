@@ -15,6 +15,10 @@
     "getTemperatureSensors": {
       "method": "GET",
       "path": "/devices/sensors/temperature"
+    },
+    "logWebviewBoot": {
+      "method": "POST",
+      "path": "/boot-error"
     }
   },
   "author": {
@@ -190,5 +194,5 @@
       "värmepump"
     ]
   },
-  "version": "24.7.1"
+  "version": "24.7.2"
 }
