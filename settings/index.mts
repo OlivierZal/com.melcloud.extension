@@ -12,6 +12,12 @@ import {
   DISABLED_SOURCE,
 } from '../types.mts'
 
+declare global {
+  // Resolved by the page's inline bootstrap with the instance the SDK
+  // hands to onHomeyReady (see the <script> in the settings <head>).
+  var homeyReady: Promise<unknown>
+}
+
 // Give slow transports a real chance while keeping the loading overlay
 // finite: past this point the page surfaces the failure instead.
 const INIT_TIMEOUT_MS = 10_000
@@ -787,15 +793,15 @@ const reportInitFailure = (homey: Homey, error: unknown): void => {
 }
 
 /**
- * Page entry point, invoked by the HTML's canonical `onHomeyReady` once
- * the SDK has dispatched (see the inline script in the page head).
+ * Page entry point, run once the SDK hands over Homey through the
+ * parse-time bootstrap in the page head (see `boot` below).
  * `ready()` always fires — an unbounded await here would hold Homey's
  * loading overlay open forever on a single hung or failed call. The
  * failure alert waits until after `ready()`: an alert raised while the
  * overlay is still up never gets seen.
  * @param homey - The Homey instance handed to `onHomeyReady`.
  */
-export const start = async (homey: Homey): Promise<void> => {
+const start = async (homey: Homey): Promise<void> => {
   // Listeners before the data load: the Refresh button is the retry
   // affordance when the initial load fails or times out, so it must work
   // regardless of how `run` ends.
@@ -814,3 +820,18 @@ export const start = async (homey: Homey): Promise<void> => {
     reportInitFailure(homey, initError)
   }
 }
+
+// Entry module: the SDK hands over Homey via the parse-time bootstrap in
+// the page <head>. This file boots on that handoff rather than exporting
+// a start() for the HTML to call, because the bundle now loads as a
+// parser-discovered static <script type="module"> (a JS-initiated dynamic
+// import fails to fetch on Android against Homey's local origin) and a
+// static module can only self-boot.
+const boot = async (): Promise<void> => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- the SDK passes an untyped instance to onHomeyReady; this is that parse boundary
+  const homey = (await globalThis.homeyReady) as Homey
+  await start(homey)
+}
+
+// eslint-disable-next-line unicorn/prefer-top-level-await -- a top-level await would force an es2022 bundle target; esbuild then emits private fields natively instead of lowering them, breaking the older webview engines this static-load change exists to keep working
+fireAndForget(boot())

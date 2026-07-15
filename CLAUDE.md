@@ -75,19 +75,30 @@ to judge success.
   melcloud.mts only imports the source as a type — no runtime cycle.
 - `settings/index.mts` — browser-side settings UI, bundled by esbuild
   into `settings/index.mjs` (ES module). Webview lifecycle (mirrors
-  com.melcloud): the HTML declares the docs' canonical global
-  `function onHomeyReady(homey)` inline — it must exist at parse time,
-  the SDK dispatches on its own schedule and a bundle only exists after
-  its fetch — whose body `import()`s the bundle and hands the instance
-  to its exported `start(homey)`; the inline `.catch` ends the overlay
-  even when the bundle itself fails to load. Init work is time-bounded
-  (10 s) and `homey.ready()` fires in a `finally`; `start` is
-  non-throwing by construction (failure alerts go through
+  com.melcloud): the SDK dispatches `onHomeyReady` on its own schedule,
+  before the bundle has loaded, so the HTML registers the handler in a
+  parse-time inline bootstrap that resolves `globalThis.homeyReady`. The
+  bundle loads as a **parser-discovered static
+  `<script type="module" src>`**, NOT a JS-initiated dynamic `import()`:
+  on Android the dynamic import fails to fetch against Homey's local
+  `.homeylocal.com` origin while parser-discovered resources (the
+  stylesheet) load — diagnosed from a com.melcloud v45.2.4 boot-error
+  report. A static module can only self-boot, so the entry module ends
+  with `fireAndForget(boot())` where `boot` awaits `globalThis.homeyReady`
+  and calls the (now non-exported) `start`. Two documented disables are
+  the honest cost: the SDK-handoff cast (parse boundary) and
+  `unicorn/prefer-top-level-await` — a top-level await would force an
+  es2022 target, and esbuild would then emit private fields natively
+  instead of lowering them, breaking older webview engines. The
+  `<script onerror>` posts a boot failure to `/boot-error` and ends the
+  overlay if the bundle itself fails to load; init work is otherwise
+  time-bounded (10 s) with `homey.ready()` in a `finally`, and `start`
+  is non-throwing by construction (failure alerts go through
   `fireAndForget`). `scripts/bundle.mjs` stamps every local asset
-  reference — attributes and the inline `import()` alike — with a
-  content hash (`?v=`): phone webviews cache assets across app
-  versions. Webview code sticks to es2020-era runtime APIs (esbuild
-  lowers syntax only). Settings pages and
+  reference (the stylesheet `href`, the module `src`) with a content
+  hash (`?v=`): phone webviews cache assets across app versions. Webview
+  code sticks to es2020-era runtime APIs (esbuild lowers syntax only).
+  Settings pages and
   widgets do NOT style the same way: settings follow the Homey Style
   Library (`homey-form-*`/`homey-button-*`; in a `homey-form-group` the
   control is a SIBLING after its label — see

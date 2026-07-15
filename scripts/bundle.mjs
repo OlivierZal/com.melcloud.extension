@@ -19,9 +19,10 @@ await build({
 
 // Cache-bust the static references: the phone webviews cache settings
 // assets across app versions, so a content hash per file forces a refetch
-// exactly when a file changes. Every occurrence of a local reference —
-// attributes and the inline entry's dynamic import alike — gets the same
-// stamp (a modulepreload only helps when its URL matches the import's).
+// exactly when a file changes. Local files referenced from attributes —
+// the stylesheet `href` and the static module script `src` — get the same
+// stamp on every occurrence (the regex also covers a bare `import('./…')`,
+// none currently in the page).
 const hashOf = async (path) => {
   const content = await readFile(path)
   return createHash('sha256').update(content).digest('hex').slice(0, 8)
