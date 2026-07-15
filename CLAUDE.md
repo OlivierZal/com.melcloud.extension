@@ -83,10 +83,11 @@ to judge success.
   cold. The HTML declares the docs' canonical global
   `function onHomeyReady(homey)` inline (it must exist at parse time),
   which polls `globalThis.MELCloudWebview` and calls its `start(homey)`.
-  `defer` (not com.melcloud's `async`) is deliberate: this entry does
-  DOM lookups at module top level, and `defer` runs the bundle only
-  after `<body>` parses, so they are safe; the poll's 10 s timeout still
-  ends the overlay if the script failed to load. Init work is separately
+  `defer` (as in com.melcloud) is the right fit for an app bundle that
+  reads the DOM — ordered, after `<body>` parses, before
+  DOMContentLoaded — and here it is doubly required: this entry does DOM
+  lookups at module top level, which `defer` makes safe. The poll's 10 s
+  timeout still ends the overlay if the script failed to load. Init work is separately
   time-bounded (10 s) with `homey.ready()` in a `finally`; `start` is
   non-throwing by construction (failure alerts go through
   `fireAndForget`). `scripts/bundle.mjs` stamps every local asset
