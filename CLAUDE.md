@@ -15,6 +15,13 @@ Run the FULL suite before any push — CI runs all of it:
 - `npm run lint` / `npm run lint:fix` — ESLint (also lints CSS, HTML,
   JSON, YAML and Markdown via the language plugins).
 - `npm run typecheck` — `tsc` from `@typescript/native` (TypeScript 7).
+  The classic `typescript` devDependency stays pinned to the newest line
+  typescript-eslint supports (`~6.0.x`; its peer range excludes TS 7):
+  it exists ONLY for typescript-eslint's type-aware linting — and as the
+  Homey CLI's `usesTypeScript` gate, whose mere PRESENCE makes the CLI
+  run `npm run build` at packaging (removing it would ship bundle-less
+  packages again). Dependabot ignores its majors; move the pin when
+  typescript-eslint announces TypeScript 7 support.
 - `npm test` / `npm run test:coverage` — vitest; backend coverage is at
   100% (branches included), keep it there. `settings/` is browser glue
   and excluded.
