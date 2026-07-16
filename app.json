@@ -16,6 +16,10 @@
     "getTemperatureSensors": {
       "method": "GET",
       "path": "/devices/sensors/temperature"
+    },
+    "logWebviewBoot": {
+      "method": "POST",
+      "path": "/boot-error"
     }
   },
   "author": {

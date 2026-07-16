@@ -96,8 +96,17 @@ to judge success.
   versions. NEVER load the bundle as an ES module: `import()` failed to
   fetch on Android and a static `<script type=module>` spun every webview
   forever on a cold open (both shipped and reverted in com.melcloud —
-  see its CLAUDE.md). Webview code sticks to es2020-era runtime APIs
-  (esbuild lowers syntax only). Settings pages and
+  see its CLAUDE.md). Phone webviews also cache the HTML ITSELF across
+  app versions (proven on com.melcloud), so shipped bundle filenames are
+  a COMPAT CONTRACT: `scripts/bundle.mjs` builds the entry twice —
+  `index.js` (IIFE) for the current HTML, `index.mjs` (ESM) for every
+  cached ESM-era HTML, which is why the entry keeps `export const
+start`. Never rename or drop a shipped bundle filename; add alongside.
+  When the bundle still fails to boot, the `onHomeyReady` poll's timeout
+  beacon POSTs the `userAgent` plus a `fetch` probe of the bundle to
+  `/boot-error` (`app.error`) before degrading, distinguishing a fetch
+  failure from a parse-or-runtime crash (pre-es2020 engines). Webview
+  code sticks to es2020-era runtime APIs (esbuild lowers syntax only). Settings pages and
   widgets do NOT style the same way: settings follow the Homey Style
   Library (`homey-form-*`/`homey-button-*`; in a `homey-form-group` the
   control is a SIBLING after its label — see
