@@ -19,8 +19,14 @@ Run the FULL suite before any push — CI runs all of it:
   100% (branches included), keep it there. `settings/` is browser glue
   and excluded.
 - `npm run build` — esbuild bundle (`scripts/bundle.mjs`) + `tsc` emit.
-  `settings/index.mjs` is a gitignored build output, never checked in;
-  the Homey CLI regenerates it on validate/install/run.
+  `settings/index.{js,mjs}` are gitignored build outputs, never checked
+  in. The Homey CLI does NOT regenerate them — its pre-process runs only
+  its own TypeScript compile and copies everything else as-is (proven on
+  com.melcloud). Anything that packs the app ships whatever bundles sit
+  in the working tree: local installs work because the pre-push suite has
+  built them, and publish.yml MUST run `build:assets` before the publish
+  action — a store package without it 404s the settings script (the
+  com.melcloud #1404 root cause).
 - Cache-busting `?v=` — the build also stamps every local asset reference
   in the tracked `settings/index.html` with a content hash (`?v=<hash>`),
   so phone webviews (which cache assets across app versions) refetch an
