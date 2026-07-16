@@ -194,8 +194,16 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
   `design/*` branches with dev-installs only — no PR merges, no tags,
   no releases, no App Store publishes until he lifts the pause.
 - `main` is protected (PRs only, squash merges); CI must be green.
-  Copilot reviews every PR — answer every comment, verify its claims
-  against sources before acting, and resolve the thread once settled.
+- After every push, monitor the triggered pipelines to completion — the
+  PR checks after a push, the publish run after a release tag — and act
+  on the outcome: rerun transient infra failures (a SonarCloud 504 is
+  not a finding), fix real ones. Work is not done while its pipeline is
+  red or unwatched.
+- Copilot reviews every PR, and every review thread (Copilot or human)
+  must end RESOLVED: with a code change when the point holds, or with a
+  reasoned reply when it does not — verify claims against sources
+  before acting either way. Resolve the thread once settled; none left
+  dangling.
 - Homey App Store releases: write the user-facing changelog entry into
   `.homeychangelog.json` under the NEW version key (all 13 locales —
   the com.melcloud set), bump `version` in `.homeycompose/app.json`,
