@@ -6,22 +6,35 @@
         <title>MELCloud Extension Settings</title>
         <script>
             // The page bundle loads as a classic defer script, not an ES
-            // module: module fetches (import()/type=module) stall on a
-            // cold webview open against Homey's local origin (the #1404
-            // spinner), while classic resource fetches — like the
-            // stylesheet — load cold. defer runs it after <body> parses
-            // (so the entry's top-level DOM lookups are safe) and before
-            // onHomeyReady; the poll then hands the instance to the
-            // bundle's start, or the timeout ends the overlay if it
-            // failed to load.
+            // module: a static module script stalls the whole boot on a
+            // cold webview open (a stalled module fetch also blocks
+            // onHomeyReady — proven on-device on com.melcloud), while
+            // classic scripts, like the stylesheet, load cold. defer runs
+            // it after <body> parses (so the entry's top-level DOM
+            // lookups are safe) and before onHomeyReady; the poll keeps
+            // the boot bounded — it hands the instance to the bundle's
+            // start, or reports why and ends the overlay if it failed to
+            // load.
             function onHomeyReady(homey) {
                 const deadline = Date.now() + 10000
                 const waitForBundle = () => {
                     if (globalThis.MELCloudWebview) {
                         globalThis.MELCloudWebview.start(homey)
                     } else if (Date.now() > deadline) {
-                        homey.ready()
-                        homey.alert(homey.__('settings.loadFailed')).catch(() => {})
+                        // Boot beacon: the bundle never booted — report WHY
+                        // before degrading. A 200 probe with no global means
+                        // the script fetched but failed to parse/run (old
+                        // engine); a probe error means the fetch itself
+                        // fails on this device.
+                        const script = document.querySelector('script[src*="index.js"]')
+                        const report = (probe) => {
+                            homey.api('POST', '/boot-error', { message: 'The settings bundle did not boot within 10s', name: 'BootTimeout', probe, stack: '', userAgent: navigator.userAgent }, () => {})
+                            homey.ready()
+                            homey.alert(homey.__('settings.loadFailed')).catch(() => {})
+                        }
+                        fetch(script ? script.src : 'index.js')
+                            .then((response) => { report('fetch ' + String(response.status)) })
+                            .catch((error) => { report('fetch failed: ' + String(error)) })
                     } else {
                         setTimeout(waitForBundle, 50)
                     }
@@ -29,8 +42,8 @@
                 waitForBundle()
             }
         </script>
-        <link href="styles.css?v=364176a1" rel="stylesheet">
-        <script defer src="index.js?v=f0e64b85"></script>
+        <link href="styles.css" rel="stylesheet">
+        <script defer src="index.js"></script>
         <script data-origin="settings" defer src="/homey.js"></script>
         <meta content="MELCloud extension settings" name="description">
     </head>
