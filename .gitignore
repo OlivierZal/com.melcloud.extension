@@ -5,4 +5,5 @@
 /env.json
 node_modules/
 /settings/index.js
+/settings/index.mjs
 /.claude/

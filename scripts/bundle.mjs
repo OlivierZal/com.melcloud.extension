@@ -14,17 +14,36 @@ import { build } from 'esbuild'
 // The IIFE global the page's inline `onHomeyReady` reads `start` from.
 const GLOBAL_NAME = 'MELCloudWebview'
 
-await build({
+const sharedOptions = {
   bundle: true,
   entryPoints: ['settings/index.mts'],
-  format: 'iife',
-  globalName: GLOBAL_NAME,
   legalComments: 'none',
   logLevel: 'info',
   minify: true,
-  outfile: 'settings/index.js',
   target: ['es2020'],
-})
+}
+
+// The entry builds TWICE. Phone webviews cache the HTML itself across app
+// versions (proven on com.melcloud: a cached dynamic-import HTML
+// requesting index.mjs against an app shipping only index.js → 404 →
+// "Loading failed"), so previously-shipped bundle filenames are a compat
+// contract: index.js serves the current classic-defer HTML, index.mjs
+// keeps every cached ESM-era HTML working (their import('./index.mjs')
+// finds the exported `start`). Never rename or drop a shipped bundle
+// filename — add alongside instead.
+await Promise.all([
+  build({
+    ...sharedOptions,
+    format: 'iife',
+    globalName: GLOBAL_NAME,
+    outfile: 'settings/index.js',
+  }),
+  build({
+    ...sharedOptions,
+    format: 'esm',
+    outfile: 'settings/index.mjs',
+  }),
+])
 
 // Cache-bust the static references: the phone webviews cache settings
 // assets across app versions, so a content hash per file forces a refetch
