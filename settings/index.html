@@ -6,14 +6,15 @@
         <title>MELCloud Extension Settings</title>
         <script>
             // The page bundle loads as a classic defer script, not an ES
-            // module: module fetches (import()/type=module) stall on a
-            // cold webview open against Homey's local origin (the #1404
-            // spinner), while classic resource fetches — like the
-            // stylesheet — load cold. defer runs it after <body> parses
-            // (so the entry's top-level DOM lookups are safe) and before
-            // onHomeyReady; the poll then hands the instance to the
-            // bundle's start, or the timeout ends the overlay if it
-            // failed to load.
+            // module: a static module script stalls the whole boot on a
+            // cold webview open (a stalled module fetch also blocks
+            // onHomeyReady — proven on-device on com.melcloud), while
+            // classic scripts, like the stylesheet, load cold. defer runs
+            // it after <body> parses (so the entry's top-level DOM
+            // lookups are safe) and before onHomeyReady; the poll keeps
+            // the boot bounded — it hands the instance to the bundle's
+            // start, or reports why and ends the overlay if it failed to
+            // load.
             function onHomeyReady(homey) {
                 const deadline = Date.now() + 10000
                 const waitForBundle = () => {
@@ -41,8 +42,8 @@
                 waitForBundle()
             }
         </script>
-        <link href="styles.css?v=364176a1" rel="stylesheet">
-        <script defer src="index.js?v=f0e64b85"></script>
+        <link href="styles.css" rel="stylesheet">
+        <script defer src="index.js"></script>
         <script data-origin="settings" defer src="/homey.js"></script>
         <meta content="MELCloud extension settings" name="description">
     </head>

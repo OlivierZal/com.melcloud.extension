@@ -18,31 +18,26 @@ Run the FULL suite before any push — CI runs all of it:
 - `npm test` / `npm run test:coverage` — vitest; backend coverage is at
   100% (branches included), keep it there. `settings/` is browser glue
   and excluded.
-- `npm run build` — esbuild bundle (`scripts/bundle.mjs`) + `tsc` emit.
-  `settings/index.{js,mjs}` are gitignored build outputs, never checked
-  in. The Homey CLI runs `npm run build` when it detects TypeScript —
-  but only AFTER its pre-process copy into `.homeybuild`: the tsc emit
-  lands in `.homeybuild` and ships, while esbuild's outputs land in the
-  SOURCE tree too late to be copied (proven on com.melcloud — the #1404
-  root cause: store installs 404 the bundles). Local installs work
-  because the pre-push suite builds the bundles before the copy.
-  publish.yml therefore runs `build:assets` before the publish action
-  (the same pre-copy pattern as the local flow) and asserts both bundle
-  formats exist.
-- Cache-busting `?v=` — the build also stamps every local asset reference
-  in the tracked `settings/index.html` with a content hash (`?v=<hash>`),
-  so phone webviews (which cache assets across app versions) refetch an
-  asset exactly when its bytes change. **Never hand-edit a `?v=` or bump
-  it "for a release": it is a content hash, not a version** — the build
-  sets it, and it moves automatically iff the asset content changes
-  (identical bytes → identical hash → no diff; a release that touches no
-  settings asset leaves every `?v=` untouched, which is correct). Because
-  the HTML is committed, any change to a bundled settings source
-  (`settings/index.mts`, `settings/styles.css`) must be followed by
-  `npm run build` and a commit of the re-stamped HTML. The mandatory
-  pre-push suite runs the build, so following it keeps the stamp in sync;
-  skipping it ships a stale `?v=` and phones keep serving the old cached
-  bundle — the exact staleness `?v=` exists to prevent.
+- `npm run build` — esbuild bundle (`scripts/bundle.mjs`) + `tsc`
+  emit, BOTH into `.homeybuild`. The Homey CLI runs `npm run build`
+  when it detects TypeScript — but only AFTER its pre-process copy into
+  `.homeybuild`, so the source tree stays sources-only and everything
+  the package needs must be emitted there: tsc does it via `outDir`,
+  and `bundle.mjs` emits the settings bundles there too (its former
+  source-tree outfiles landed too late to be copied — the com.melcloud
+  #1404 root cause: store installs 404'd the bundles). The CLI's own
+  build invocation is therefore sufficient for install, run, validate
+  and publish alike; a standalone suite run (no `.homeybuild` page
+  copy) still proves the bundles compile.
+- Cache-busting `?v=` — a PACKAGE-TIME transform: `bundle.mjs` stamps
+  every local asset reference of the `.homeybuild` page copy with a
+  content hash (`?v=<hash>`), so phone webviews (which cache assets
+  across app versions) refetch an asset exactly when its bytes change.
+  The committed source HTML carries NO stamps — never hand-add a `?v=`
+  there, and nothing needs re-committing when a settings source changes
+  (the old re-stamp-and-commit dance is gone). Stamps exist only in the
+  packaged app, and only within attribute/import reference contexts,
+  never comments.
 - `npm run homey:validate` — Homey validation at publish level; may
   rewrite files (locales), re-stage if it does.
 - `npm run homey:start` — `homey app run --remote` for on-device testing.
@@ -101,10 +96,14 @@ to judge success.
   `fireAndForget`). `scripts/bundle.mjs` stamps every local asset
   reference — only inside an attribute/import context, never a comment —
   with a content hash (`?v=`): phone webviews cache assets across app
-  versions. NEVER load the bundle as an ES module: `import()` failed to
-  fetch on Android and a static `<script type=module>` spun every webview
-  forever on a cold open (both shipped and reverted in com.melcloud —
-  see its CLAUDE.md). Phone webviews also cache the HTML ITSELF across
+  versions. Never load the bundle as a STATIC `<script type=module>`:
+  it stalls the whole boot on a cold open (shipped and reverted in
+  com.melcloud, proven on-device there). Dynamic `import()` is merely
+  unnecessary, not broken — its supposed Android fetch failures were
+  com.melcloud #1404's missing-bundle 404s — but do not churn the
+  loading mechanism without new on-device evidence: classic `defer`
+  carries the bounded boot plus beacon. Phone webviews also cache the
+  HTML ITSELF across
   app versions (proven on com.melcloud), so shipped bundle filenames are
   a COMPAT CONTRACT: `scripts/bundle.mjs` builds the entry twice —
   `index.js` (IIFE) for the current HTML, `index.mjs` (ESM) for every
