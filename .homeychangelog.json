@@ -318,18 +318,18 @@
     "sv": "Åtgärdar inställningssidan som inte laddades."
   },
   "24.7.4": {
-    "ar": "أصبح قسم الإعداد الآن في أعلى الإعدادات ويُطوى عند تفعيل الضبط.",
-    "da": "Konfigurationssektionen ligger nu øverst i indstillingerne og foldes sammen, når justeringen er aktiveret.",
-    "de": "Der Konfigurationsbereich steht jetzt oben in den Einstellungen und klappt zu, sobald die Anpassung aktiviert ist.",
-    "en": "The configuration section now sits at the top of the settings and folds away once adjustment is enabled.",
-    "es": "La sección de configuración ahora está en la parte superior de los ajustes y se pliega cuando el ajuste está activado.",
-    "fr": "La section Configuration est désormais en haut des réglages et se replie une fois l'ajustement activé.",
-    "it": "La sezione di configurazione ora è in cima alle impostazioni e si richiude quando la regolazione è attiva.",
-    "ko": "구성 섹션이 설정 상단으로 이동했으며, 조정이 활성화되면 접힙니다.",
-    "nl": "De configuratiesectie staat nu bovenaan de instellingen en klapt in zodra de aanpassing is ingeschakeld.",
-    "no": "Konfigurasjonsdelen ligger nå øverst i innstillingene og foldes sammen når justeringen er aktivert.",
-    "pl": "Sekcja konfiguracji znajduje się teraz na górze ustawień i zwija się, gdy regulacja jest włączona.",
-    "ru": "Раздел конфигурации теперь находится вверху настроек и сворачивается, когда регулировка включена.",
-    "sv": "Konfigurationsavsnittet ligger nu överst i inställningarna och fälls ihop när justeringen är aktiverad."
+    "ar": "أصبح قسم الإعداد الآن في أعلى الإعدادات وقابلاً للطي — يبدأ مطويًا عندما يكون الضبط مفعلاً.",
+    "da": "Konfigurationssektionen ligger nu øverst i indstillingerne og kan foldes sammen — den starter foldet, når justeringen allerede er aktiveret.",
+    "de": "Der Konfigurationsbereich steht jetzt oben in den Einstellungen und ist einklappbar — er startet eingeklappt, wenn die Anpassung bereits aktiviert ist.",
+    "en": "The configuration section now sits at the top of the settings, collapsible — starting folded when adjustment is already enabled.",
+    "es": "La sección de configuración ahora está en la parte superior de los ajustes y es plegable: empieza plegada cuando el ajuste ya está activado.",
+    "fr": "La section Configuration est désormais en haut des réglages et repliable — repliée à l'ouverture lorsque l'ajustement est déjà activé.",
+    "it": "La sezione di configurazione ora è in cima alle impostazioni ed è richiudibile: si apre richiusa quando la regolazione è già attiva.",
+    "ko": "구성 섹션이 설정 상단으로 이동했으며 접을 수 있습니다 — 조정이 이미 활성화된 경우 접힌 상태로 시작합니다.",
+    "nl": "De configuratiesectie staat nu bovenaan de instellingen en is inklapbaar — ingeklapt bij openen wanneer de aanpassing al is ingeschakeld.",
+    "no": "Konfigurasjonsdelen ligger nå øverst i innstillingene og kan foldes sammen — den starter sammenfoldet når justeringen allerede er aktivert.",
+    "pl": "Sekcja konfiguracji znajduje się teraz na górze ustawień i można ją zwijać — otwiera się zwinięta, gdy regulacja jest już włączona.",
+    "ru": "Раздел конфигурации теперь находится вверху настроек и сворачивается — при открытии он свёрнут, если регулировка уже включена.",
+    "sv": "Konfigurationsavsnittet ligger nu överst i inställningarna och är hopfällbart — det öppnas hopfällt när justeringen redan är aktiverad."
   }
 }

@@ -120,7 +120,11 @@
 }
 
 /* The collapsible configuration panel: the summary doubles as the
-   fieldset legend, so it needs the click affordance a legend lacks. */
+   fieldset legend, but Homey's style library sizes legends through the
+   `legend` element, not the class — restate the title scale here, plus
+   the click affordance a legend lacks. */
 summary.homey-form-legend {
   cursor: pointer;
+  font-size: 1.75em;
+  font-weight: 700;
 }

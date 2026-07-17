@@ -731,16 +731,6 @@ const getSelectedSources = (): OutdoorSources =>
       .map(([deviceId, value]) => [deviceId, value === '' ? null : value]),
   )
 
-// Post-Update bookkeeping: snapshot the saved state, and — when the
-// adjustment was just enabled — fold the configuration away, mirroring
-// the collapsed state the page opens with when already enabled.
-const handleUpdateApplied = (): void => {
-  resetSavedState()
-  if (enabledElement.value === 'true') {
-    configurationElement.open = false
-  }
-}
-
 const autoAdjustCooling = async (homey: Homey): Promise<void> =>
   withBusyButtons(async () => {
     try {
@@ -755,7 +745,7 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
           callback,
         )
       })
-      handleUpdateApplied()
+      resetSavedState()
     } catch (error) {
       await homey.alert(getErrorMessage(error))
     }
