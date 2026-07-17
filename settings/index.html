@@ -51,6 +51,25 @@
         <header class="homey-header">
             <h1 class="homey-title" data-i18n="settings.title">MELCloud extension settings</h1>
         </header>
+        <!-- Collapsible: opens folded when adjustment is already enabled
+            (the tuning is done), expanded otherwise (setup pending). -->
+        <details id="configuration" class="homey-form-fieldset">
+            <summary
+                id="configuration_summary"
+                class="homey-form-legend"
+                data-i18n="settings.configuration"
+            >Configuration</summary>
+            <div id="sources"></div>
+            <div id="empty_state" hidden>
+                <p data-i18n="settings.notFound">First, you need to set up your devices in the MELCloud Homey app.</p>
+                <button
+                    id="install"
+                    type="button"
+                    class="homey-button-primary-full"
+                    data-i18n="settings.install"
+                >Install the MELCloud app</button>
+            </div>
+        </details>
         <fieldset class="homey-form-fieldset">
             <legend class="homey-form-legend" data-i18n="settings.autoAdjust">Auto-adjust air conditioning temperature</legend>
             <div class="homey-form-group">
@@ -87,19 +106,6 @@
                 aria-label="Log"
                 role="log"
             ></div>
-        </fieldset>
-        <fieldset class="homey-form-fieldset">
-            <legend class="homey-form-legend" data-i18n="settings.configuration">Configuration</legend>
-            <div id="sources"></div>
-            <div id="empty_state" hidden>
-                <p data-i18n="settings.notFound">First, you need to set up your devices in the MELCloud Homey app.</p>
-                <button
-                    id="install"
-                    type="button"
-                    class="homey-button-primary-full"
-                    data-i18n="settings.install"
-                >Install the MELCloud app</button>
-            </div>
         </fieldset>
     </body>
 </html>

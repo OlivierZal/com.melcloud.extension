@@ -124,11 +124,29 @@ const getDivElement = (id: string): HTMLDivElement =>
 
 // Safe at module load: the bundle is a `defer` classic script, so it runs
 // only after <body> is parsed (see settings/index.html).
+const getDetailsElement = (id: string): HTMLDetailsElement =>
+  getElement(id, HTMLDetailsElement, 'details')
+
 const applyElement = getButtonElement('apply')
 const emptyElement = getDivElement('empty_state')
 const installElement = getButtonElement('install')
 const refreshElement = getButtonElement('refresh')
 const enabledElement = getSelectElement('enabled')
+const configurationElement = getDetailsElement('configuration')
+
+// The style library sizes legends through the `legend` element, not the
+// class, so the summary cannot inherit the title scale — copy it from a
+// real legend at boot to stay in lockstep with whatever the library
+// ships (the stylesheet keeps a close fallback).
+const matchLegendScale = (): void => {
+  const legend = document.querySelector('legend.homey-form-legend')
+  const summary = document.querySelector('#configuration_summary')
+  if (legend !== null && summary instanceof HTMLElement) {
+    const { fontSize, fontWeight } = getComputedStyle(legend)
+    summary.style.fontSize = fontSize
+    summary.style.fontWeight = fontWeight
+  }
+}
 const logsElement = getDivElement('logs')
 const sourcesElement = getDivElement('sources')
 
@@ -352,9 +370,20 @@ const displayRetainedLogs = (logs: readonly TimestampedLog[]): void => {
   }
 }
 
+// One-shot: the collapse state is decided from the persisted flag at
+// page load only — enabled means the tuning is done, fold the
+// configuration away; disabled means setup is pending, keep it open.
+// Refresh restores the form values but must not yank the panel shut
+// mid-edit.
+const initialCollapseState = { isApplied: false }
+
 const handleSettings = (settings: HomeySettings): void => {
   displayRetainedLogs(settings.lastLogs ?? [])
   enabledElement.value = String(settings.isEnabled === true)
+  if (!initialCollapseState.isApplied) {
+    initialCollapseState.isApplied = true
+    configurationElement.open = settings.isEnabled !== true
+  }
 }
 
 const fetchLanguage = async (homey: Homey): Promise<void> => {
@@ -798,21 +827,20 @@ const reportInitFailure = (homey: Homey, error: unknown): void => {
  * @param homey - The Homey instance handed to `onHomeyReady`.
  */
 export const start = async (homey: Homey): Promise<void> => {
+  matchLegendScale()
   // Listeners before the data load: the Refresh button is the retry
   // affordance when the initial load fails or times out, so it must work
   // regardless of how `run` ends.
   addEventListeners(homey)
-  let initError: unknown
-  let hasInitFailed = false
+  let initFailure: { readonly cause: unknown } | null = null
   try {
     await withInitTimeout(run(homey))
   } catch (error) {
-    initError = error
-    hasInitFailed = true
+    initFailure = { cause: error }
   } finally {
     homey.ready()
   }
-  if (hasInitFailed) {
-    reportInitFailure(homey, initError)
+  if (initFailure !== null) {
+    reportInitFailure(homey, initFailure.cause)
   }
 }
