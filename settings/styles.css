@@ -125,6 +125,6 @@
    the click affordance a legend lacks. */
 summary.homey-form-legend {
   cursor: pointer;
-  font-size: 1.75em;
+  font-size: 1.75rem;
   font-weight: 700;
 }
