@@ -118,3 +118,9 @@
   grid-column: 1 / -1;
   padding-block: 0.5em;
 }
+
+/* The collapsible configuration panel: the summary doubles as the
+   fieldset legend, so it needs the click affordance a legend lacks. */
+summary.homey-form-legend {
+  cursor: pointer;
+}

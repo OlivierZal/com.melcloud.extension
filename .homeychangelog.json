@@ -316,5 +316,20 @@
     "pl": "Naprawia stronę ustawień, która się nie ładowała.",
     "ru": "Исправлена загрузка страницы настроек.",
     "sv": "Åtgärdar inställningssidan som inte laddades."
+  },
+  "24.7.4": {
+    "ar": "أصبح قسم الإعداد الآن في أعلى الإعدادات ويُطوى عند تفعيل الضبط.",
+    "da": "Konfigurationssektionen ligger nu øverst i indstillingerne og foldes sammen, når justeringen er aktiveret.",
+    "de": "Der Konfigurationsbereich steht jetzt oben in den Einstellungen und klappt zu, sobald die Anpassung aktiviert ist.",
+    "en": "The configuration section now sits at the top of the settings and folds away once adjustment is enabled.",
+    "es": "La sección de configuración ahora está en la parte superior de los ajustes y se pliega cuando el ajuste está activado.",
+    "fr": "La section Configuration est désormais en haut des réglages et se replie une fois l'ajustement activé.",
+    "it": "La sezione di configurazione ora è in cima alle impostazioni e si richiude quando la regolazione è attiva.",
+    "ko": "구성 섹션이 설정 상단으로 이동했으며, 조정이 활성화되면 접힙니다.",
+    "nl": "De configuratiesectie staat nu bovenaan de instellingen en klapt in zodra de aanpassing is ingeschakeld.",
+    "no": "Konfigurasjonsdelen ligger nå øverst i innstillingene og foldes sammen når justeringen er aktivert.",
+    "pl": "Sekcja konfiguracji znajduje się teraz na górze ustawień i zwija się, gdy regulacja jest włączona.",
+    "ru": "Раздел конфигурации теперь находится вверху настроек и сворачивается, когда регулировка включена.",
+    "sv": "Konfigurationsavsnittet ligger nu överst i inställningarna och fälls ihop när justeringen är aktiverad."
   }
 }

@@ -124,11 +124,15 @@ const getDivElement = (id: string): HTMLDivElement =>
 
 // Safe at module load: the bundle is a `defer` classic script, so it runs
 // only after <body> is parsed (see settings/index.html).
+const getDetailsElement = (id: string): HTMLDetailsElement =>
+  getElement(id, HTMLDetailsElement, 'details')
+
 const applyElement = getButtonElement('apply')
 const emptyElement = getDivElement('empty_state')
 const installElement = getButtonElement('install')
 const refreshElement = getButtonElement('refresh')
 const enabledElement = getSelectElement('enabled')
+const configurationElement = getDetailsElement('configuration')
 const logsElement = getDivElement('logs')
 const sourcesElement = getDivElement('sources')
 
@@ -352,9 +356,20 @@ const displayRetainedLogs = (logs: readonly TimestampedLog[]): void => {
   }
 }
 
+// One-shot: the collapse state is decided from the persisted flag at
+// page load only — enabled means the tuning is done, fold the
+// configuration away; disabled means setup is pending, keep it open.
+// Refresh restores the form values but must not yank the panel shut
+// mid-edit.
+const initialCollapseState = { isApplied: false }
+
 const handleSettings = (settings: HomeySettings): void => {
   displayRetainedLogs(settings.lastLogs ?? [])
   enabledElement.value = String(settings.isEnabled === true)
+  if (!initialCollapseState.isApplied) {
+    initialCollapseState.isApplied = true
+    configurationElement.open = settings.isEnabled !== true
+  }
 }
 
 const fetchLanguage = async (homey: Homey): Promise<void> => {
@@ -716,6 +731,16 @@ const getSelectedSources = (): OutdoorSources =>
       .map(([deviceId, value]) => [deviceId, value === '' ? null : value]),
   )
 
+// Post-Update bookkeeping: snapshot the saved state, and — when the
+// adjustment was just enabled — fold the configuration away, mirroring
+// the collapsed state the page opens with when already enabled.
+const handleUpdateApplied = (): void => {
+  resetSavedState()
+  if (enabledElement.value === 'true') {
+    configurationElement.open = false
+  }
+}
+
 const autoAdjustCooling = async (homey: Homey): Promise<void> =>
   withBusyButtons(async () => {
     try {
@@ -730,7 +755,7 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
           callback,
         )
       })
-      resetSavedState()
+      handleUpdateApplied()
     } catch (error) {
       await homey.alert(getErrorMessage(error))
     }
