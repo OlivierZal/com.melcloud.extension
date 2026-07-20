@@ -346,5 +346,20 @@
     "pl": "Bardziej niezawodna strona ustawień: kolory dostosowane do trybu ciemnego, natywnie wyłączane przyciski, historia, która już nie znika, i większa odporność na przejściowe błędy.",
     "ru": "Более надёжная страница настроек: цвета адаптируются к тёмной теме, кнопки отключаются нативно, история больше не исчезает, повышена устойчивость к временным сбоям.",
     "sv": "Mer tillförlitlig inställningssida: färger som anpassar sig till mörkt läge, nativt inaktiverade knappar, en historik som inte längre försvinner och bättre motståndskraft mot tillfälliga fel."
+  },
+  "24.7.6": {
+    "ar": "الأجهزة الجديدة لا تُضبط تلقائيًا بعد الآن: مبنى جديد يبدأ بوضع «عدم التفعيل»، وجهاز يُضاف إلى مبنى مُهيأ يرث إعداده — وتم تحديث الرموز التعبيرية للسجل.",
+    "da": "Nye enheder justeres ikke længere automatisk: en ny bygning starter som «Aktivér ikke», og en enhed, der føjes til en konfigureret bygning, arver dens indstilling — og loggens emojis er opdateret.",
+    "de": "Neue Geräte werden nicht mehr automatisch angepasst: Ein neues Gebäude startet mit «Nicht aktivieren», und ein Gerät in einem konfigurierten Gebäude erbt dessen Einstellung — und die Protokoll-Emojis wurden aufgefrischt.",
+    "en": "New devices are no longer auto-adjusted by default: a new building starts as 'Do not activate', and a device added to a configured building inherits its setting — and the log emojis got a refresh.",
+    "es": "Los dispositivos nuevos ya no se ajustan automáticamente: un edificio nuevo empieza en «No activar», y un dispositivo añadido a un edificio configurado hereda su ajuste — y los emojis del registro se han renovado.",
+    "fr": "Les nouveaux appareils ne sont plus ajustés d'office : un nouveau bâtiment démarre sur « Ne pas activer », et un appareil ajouté à un bâtiment configuré hérite de son réglage — et les emojis du journal ont été rafraîchis.",
+    "it": "I nuovi dispositivi non vengono più regolati automaticamente: un nuovo edificio parte su «Non attivare», e un dispositivo aggiunto a un edificio configurato ne eredita l'impostazione — e le emoji del registro sono state rinnovate.",
+    "ko": "새 장치는 더 이상 자동으로 조정되지 않습니다: 새 건물은 '활성화 안 함'으로 시작하고, 구성된 건물에 추가된 장치는 해당 설정을 상속합니다 — 로그 이모지도 새로워졌습니다.",
+    "nl": "Nieuwe apparaten worden niet meer automatisch aangepast: een nieuw gebouw start op 'Niet activeren', en een apparaat dat aan een geconfigureerd gebouw wordt toegevoegd erft de instelling — en de log-emoji's zijn opgefrist.",
+    "no": "Nye enheter justeres ikke lenger automatisk: en ny bygning starter som «Ikke aktiver», og en enhet lagt til i en konfigurert bygning arver innstillingen — og loggens emojier er oppdatert.",
+    "pl": "Nowe urządzenia nie są już domyślnie regulowane: nowy budynek zaczyna od «Nie aktywuj», a urządzenie dodane do skonfigurowanego budynku dziedziczy jego ustawienie — odświeżono też emoji dziennika.",
+    "ru": "Новые устройства больше не регулируются автоматически: новое здание начинает с «Не активировать», а устройство, добавленное в настроенное здание, наследует его настройку — и эмодзи журнала обновлены.",
+    "sv": "Nya enheter justeras inte längre automatiskt: en ny byggnad börjar som «Aktivera inte», och en enhet som läggs till i en konfigurerad byggnad ärver dess inställning — och loggens emojier har fräschats upp."
   }
 }
