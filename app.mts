@@ -16,6 +16,7 @@ import {
   type DeviceGroups,
   type ListenerParams,
   type Names,
+  type OutdoorSources,
   type TemperatureListenerData,
   type TimestampedLog,
   DISABLED_SOURCE,
@@ -251,6 +252,25 @@ export default class MELCloudExtensionApp extends App {
     }
   }
 
+  // Newcomers inherit their building's outdoor source when the
+  // siblings agree; a new building (or a mixed/ungrouped one) starts
+  // disabled so no device gets auto-adjusted without an opt-in.
+  #inheritedSource(deviceId: string, stored: OutdoorSources): string | null {
+    const group = this.#deviceGroups?.find(({ deviceIds }) =>
+      deviceIds.includes(deviceId),
+    )
+    const siblingSources = new Set(
+      (group?.deviceIds ?? [])
+        .filter((id) => id !== deviceId && Object.hasOwn(stored, id))
+        .map((id) => stored[id] ?? null),
+    )
+    if (siblingSources.size !== 1) {
+      return DISABLED_SOURCE
+    }
+    const [shared = DISABLED_SOURCE] = siblingSources
+    return shared
+  }
+
   // Debounces device list reload: rapid device.create/delete events
   // are coalesced into a single init after INIT_DELAY. The timer body
   // routes through fireAndForget: the SDK invokes it bare, so a
@@ -307,7 +327,7 @@ export default class MELCloudExtensionApp extends App {
       }
     }
     await this.refreshDeviceGroups()
-    this.#migrateLegacySource()
+    this.#reconcileSourceEntries()
   }
 
   // Older versions stored one global outdoor source: seed every known AC
@@ -334,5 +354,37 @@ export default class MELCloudExtensionApp extends App {
       'lastLogs',
       [newLog, ...lastLogs].slice(0, MAX_LOGS),
     )
+  }
+
+  // Storage upkeep after each device discovery: the one-time legacy
+  // migration, then the explicit per-device seeding.
+  #reconcileSourceEntries(): void {
+    this.#migrateLegacySource()
+    this.#seedOutdoorSources()
+  }
+
+  // Every known AC device gets an EXPLICIT outdoor-source entry, so a
+  // device appearing later is distinguishable from one whose entry was
+  // never written. The first seeding on an existing install stamps the
+  // legacy default (null = Homey weather) and changes nothing;
+  // afterwards newcomers go through #inheritedSource.
+  #seedOutdoorSources(): void {
+    const stored: OutdoorSources = {
+      ...this.homey.settings.get('outdoorSources'),
+    }
+    const newcomers = this.#melcloudDevices.filter(
+      ({ id }) => !Object.hasOwn(stored, id),
+    )
+    const isLegacySeed =
+      this.homey.settings.get('hasSeededOutdoorSources') !== true
+    for (const { id } of newcomers) {
+      stored[id] = isLegacySeed ? null : this.#inheritedSource(id, stored)
+    }
+    if (newcomers.length > 0) {
+      this.homey.settings.set('outdoorSources', stored)
+    }
+    if (isLegacySeed) {
+      this.homey.settings.set('hasSeededOutdoorSources', true)
+    }
   }
 }
