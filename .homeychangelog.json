@@ -331,5 +331,20 @@
     "pl": "Sekcja konfiguracji znajduje się teraz na górze ustawień i można ją zwijać — otwiera się zwinięta, gdy regulacja jest już włączona.",
     "ru": "Раздел конфигурации теперь находится вверху настроек и сворачивается — при открытии он свёрнут, если регулировка уже включена.",
     "sv": "Konfigurationsavsnittet ligger nu överst i inställningarna och är hopfällbart — det öppnas hopfällt när justeringen redan är aktiverad."
+  },
+  "24.7.5": {
+    "ar": "صفحة إعدادات أكثر موثوقية: ألوان تتكيف مع الوضع الداكن، وأزرار تُعطَّل بشكل أصلي، وسجل محفوظ لا يختفي، ومقاومة أفضل للأخطاء العابرة.",
+    "da": "Mere robust indstillingsside: farver der tilpasser sig mørk tilstand, native deaktiverede knapper, en historik der ikke forsvinder og bedre modstand mod forbigående fejl.",
+    "de": "Zuverlässigere Einstellungsseite: Farben passen sich dem Dunkelmodus an, nativ deaktivierte Schaltflächen, ein Verlauf, der nicht verschwindet, und bessere Widerstandsfähigkeit gegen vorübergehende Fehler.",
+    "en": "More reliable settings page: colors adapt to dark mode, natively disabled buttons, a log history that no longer disappears, and better resilience to transient failures.",
+    "es": "Página de ajustes más fiable: colores que se adaptan al modo oscuro, botones desactivados de forma nativa, un historial que ya no desaparece y mejor resistencia a fallos transitorios.",
+    "fr": "Page de réglages plus fiable : couleurs adaptées au mode sombre, boutons désactivés nativement, un historique qui ne disparaît plus, et une meilleure résistance aux erreurs passagères.",
+    "it": "Pagina delle impostazioni più affidabile: colori che si adattano alla modalità scura, pulsanti disabilitati nativamente, una cronologia che non scompare più e maggiore resilienza agli errori transitori.",
+    "ko": "더 안정적인 설정 페이지: 다크 모드에 맞는 색상, 기본 비활성화 버튼, 사라지지 않는 기록, 일시적인 오류에 대한 향상된 복원력.",
+    "nl": "Betrouwbaardere instellingenpagina: kleuren passen zich aan de donkere modus aan, native uitgeschakelde knoppen, een geschiedenis die niet meer verdwijnt en betere bestendigheid tegen tijdelijke fouten.",
+    "no": "Mer pålitelig innstillingsside: farger som tilpasser seg mørk modus, native deaktiverte knapper, en historikk som ikke forsvinner og bedre motstandskraft mot forbigående feil.",
+    "pl": "Bardziej niezawodna strona ustawień: kolory dostosowane do trybu ciemnego, natywnie wyłączane przyciski, historia, która już nie znika, i większa odporność na przejściowe błędy.",
+    "ru": "Более надёжная страница настроек: цвета адаптируются к тёмной теме, кнопки отключаются нативно, история больше не исчезает, повышена устойчивость к временным сбоям.",
+    "sv": "Mer tillförlitlig inställningssida: färger som anpassar sig till mörkt läge, nativt inaktiverade knappar, en historik som inte längre försvinner och bättre motståndskraft mot tillfälliga fel."
   }
 }
