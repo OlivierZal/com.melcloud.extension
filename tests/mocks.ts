@@ -5,6 +5,12 @@ import type { Homey } from '../lib/homey.mts'
 import type { HomeySettings, Names } from '../types.mts'
 import { mock } from './helpers.ts'
 
+// The homey-api capability value contract (the shape
+// homey-api-override.d.ts mirrors), aliased once for the doubles.
+type CapabilityValue = boolean | number | string
+
+type StoredCapabilityValue = CapabilityValue | null
+
 export const names: Names = {
   device: 'Device',
   homeyWeather: 'the Homey weather',
@@ -16,15 +22,15 @@ export const names: Names = {
 export interface MockCapabilityInstance {
   readonly destroy: ReturnType<typeof vi.fn>
   readonly setValue: ReturnType<typeof vi.fn>
-  value: boolean | number | string | null
-  readonly listener: (value: boolean | number | string) => Promise<void> | void
+  value: StoredCapabilityValue
+  readonly listener: (value: CapabilityValue) => Promise<void> | void
 }
 
 export interface MockDevice {
   readonly capabilityInstances: Map<string, MockCapabilityInstance>
   readonly device: HomeyAPIV3Local.ManagerDevices.Device
   readonly setCapabilityValue: ReturnType<typeof vi.fn>
-  readonly values: Record<string, boolean | number | string | null>
+  readonly values: Record<string, StoredCapabilityValue>
 }
 
 export const createMockDevice = ({
@@ -42,7 +48,7 @@ export const createMockDevice = ({
   readonly capabilities?: readonly string[]
   readonly capabilitiesOptions?: Readonly<Record<string, { max?: number }>>
   readonly melcloudId?: string
-  readonly values?: Record<string, boolean | number | string | null>
+  readonly values?: Record<string, StoredCapabilityValue>
 }): MockDevice => {
   const capabilityInstances = new Map<string, MockCapabilityInstance>()
   const setCapabilityValue = vi
@@ -70,13 +76,13 @@ export const createMockDevice = ({
     setCapabilityValue,
     makeCapabilityInstance: (
       capabilityId: string,
-      listener: (value: boolean | number | string) => Promise<void> | void,
+      listener: (value: CapabilityValue) => Promise<void> | void,
     ): MockCapabilityInstance => {
       const instance: MockCapabilityInstance = {
         destroy: vi.fn<() => void>(),
         listener,
         setValue: vi
-          .fn<(value: boolean | number | string) => Promise<void>>()
+          .fn<(value: CapabilityValue) => Promise<void>>()
           .mockImplementation(async (value) => {
             instance.value = value
             values[capabilityId] = value
@@ -115,7 +121,7 @@ export const createMockDevicesManager = (
       (options: {
         capabilityId: string
         deviceId: string
-      }) => boolean | number | string | null
+      }) => StoredCapabilityValue
     >()
     .mockImplementation(
       ({ capabilityId, deviceId }) =>
