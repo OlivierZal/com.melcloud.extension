@@ -113,7 +113,9 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
   beacon POSTs the `userAgent` plus a `fetch` probe of the bundle to
   `/boot-error` (`app.error`) before degrading, distinguishing a fetch
   failure from a parse-or-runtime crash (pre-es2020 engines). Webview
-  code sticks to es2020-era runtime APIs (esbuild lowers syntax only). Settings pages and
+  runtime-API floor: es2023 array methods are accepted
+  (`toSorted`/`toReversed` ship today), but nothing newer — no iterator
+  helpers (`.entries().map()`, 2025-era): esbuild lowers syntax only. Settings pages and
   widgets do NOT style the same way: settings follow the Homey Style
   Library (`homey-form-*`/`homey-button-*`; in a `homey-form-group` the
   control is a SIBLING after its label — see
