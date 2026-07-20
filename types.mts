@@ -22,6 +22,7 @@ export type DeviceGroups = readonly {
 
 export interface HomeySettings {
   readonly capabilityPath?: string | null
+  readonly hasSeededOutdoorSources?: boolean | null
   readonly isEnabled?: boolean | null
   readonly lastLogs?: TimestampedLog[] | null
   readonly notifiedVersion?: string | null

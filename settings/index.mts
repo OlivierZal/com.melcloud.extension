@@ -51,10 +51,10 @@ const errorCategory: LogCategory = {
 }
 
 const categories: Partial<Record<string, LogCategory>> = {
-  calculated: { colorClass: 'log-message-calculated', icon: '🔢' },
+  calculated: { colorClass: 'log-message-calculated', icon: '🎯' },
   cleaned: { icon: '🗑️' },
   cleanedAll: { icon: '🛑' },
-  created: { icon: '🔊' },
+  created: { icon: '📡' },
   error: errorCategory,
   listened: { colorClass: 'log-message-listened', icon: '👂' },
   reverted: { icon: '↩️' },

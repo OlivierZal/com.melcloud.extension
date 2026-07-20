@@ -139,6 +139,106 @@ describe(MELCloudExtensionApp, () => {
     expect(app.deviceGroups).toStrictEqual(groups)
   })
 
+  it('should stamp the legacy weather default on the first seeding', async () => {
+    const { classicDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice])
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': null,
+    })
+    expect(mockHomey.settingsStore.hasSeededOutdoorSources).toBe(true)
+  })
+
+  it('should read absent settings as empty without any AC device', async () => {
+    const { sensorDevice } = createDevices()
+    const { mockHomey } = await createHarness([sensorDevice])
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({})
+  })
+
+  it('should default a newcomer in its own building to disabled', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice, homeDevice], {
+      settings: {
+        hasSeededOutdoorSources: true,
+        outdoorSources: { 'classic-1': 'sensor-1:measure_temperature.outdoor' },
+      },
+    })
+    mockHomey.apiAppGet.mockReturnValue([
+      { deviceIds: ['classic-1'], name: 'Domicile' },
+      { deviceIds: ['home-1'], name: 'Chalet' },
+    ])
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': 'sensor-1:measure_temperature.outdoor',
+      'home-1': 'none',
+    })
+  })
+
+  it('should default a newcomer to disabled when no grouping is available', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice, homeDevice], {
+      settings: {
+        hasSeededOutdoorSources: true,
+        outdoorSources: { 'classic-1': null },
+      },
+    })
+    mockHomey.apiAppGet.mockReturnValue('not-a-grouping')
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': null,
+      'home-1': 'none',
+    })
+  })
+
+  it('should inherit the building setting for a newcomer joining it', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice, homeDevice], {
+      settings: {
+        hasSeededOutdoorSources: true,
+        outdoorSources: { 'classic-1': 'sensor-1:measure_temperature.outdoor' },
+      },
+    })
+    mockHomey.apiAppGet.mockReturnValue([
+      { deviceIds: ['classic-1', 'home-1'], name: 'Domicile' },
+    ])
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': 'sensor-1:measure_temperature.outdoor',
+      'home-1': 'sensor-1:measure_temperature.outdoor',
+    })
+  })
+
+  it('should inherit the Homey-weather default from the building siblings', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice, homeDevice], {
+      settings: {
+        hasSeededOutdoorSources: true,
+        outdoorSources: { 'classic-1': null },
+      },
+    })
+    mockHomey.apiAppGet.mockReturnValue([
+      { deviceIds: ['classic-1', 'home-1'], name: 'Domicile' },
+    ])
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': null,
+      'home-1': null,
+    })
+  })
+
   it('should re-read the grouping on demand, following a rename', async () => {
     const { classicDevice } = createDevices()
     const { app, mockHomey } = await createHarness([classicDevice])
@@ -299,7 +399,11 @@ describe(MELCloudExtensionApp, () => {
     await advancePastInit()
 
     expect(mockHomey.settingsStore.isEnabled).toBe(false)
-    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({})
+    // The boot seeding stamps the legacy default (null = Homey weather)
+    // for devices that predate explicit entries.
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': null,
+    })
     expect(classicDevice.capabilityInstances.size).toBe(0)
   })
 
