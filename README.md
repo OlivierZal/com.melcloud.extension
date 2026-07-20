@@ -13,7 +13,7 @@ A [Homey](https://homey.app/) app extending the [MELCloud app](https://homey.app
 
 ## Introduction
 
-This app auto-adjusts the target temperature of your air-to-air devices — paired through either a MELCloud (classic) or a MELCloud Home account — to keep cooling within 8 °C of the outdoor temperature. Each device gets its own outdoor source: the weather at your Homey's location by default, or any temperature capability you pick (useful when your units are not all in the same place).
+This app auto-adjusts the target temperature of your air-to-air devices — paired through either a MELCloud (classic) or a MELCloud Home account — to keep cooling within 8 °C of the outdoor temperature. Outdoor sources are picked per MELCloud building: the weather at your Homey's location, any temperature capability you like (useful when your units are not all in the same place), or nothing at all — new buildings start disabled, so the app never adjusts a device you did not opt in, and devices added to a building inherit its setting.
 
 Why?
 
@@ -27,7 +27,7 @@ Why?
 2. Install the [MELCloud Homey app](https://homey.app/a/com.mecloud) from the Homey App Store.
 3. Pair your devices.
 4. Install the [MELCloud Homey app extension](https://homey.app/a/com.mecloud.extension) from the Homey App Store.
-5. Configure your outdoor temperature source in the settings of the MELCloud Homey app extension.
+5. Configure the outdoor temperature source of each MELCloud building in the settings of the MELCloud Homey app extension.
 
 ## Supported languages
 
@@ -48,7 +48,7 @@ npm run homey:start  # run the app on your Homey (remote)
 
 Architecture notes:
 
-- The settings page (`settings/`) is bundled by `scripts/bundle.mjs` into one self-contained `settings/index.mjs`; the output is gitignored and rebuilt by `npm run build`, which the Homey CLI runs automatically on validate/publish.
+- The settings page (`settings/`) is bundled by `scripts/bundle.mjs` into a classic IIFE `settings/index.js`, plus an ESM twin `settings/index.mjs` kept for phone-cached copies of the page (shipped bundle filenames are a compatibility contract); the outputs are gitignored and rebuilt by `npm run build`, which the Homey CLI runs automatically on validate/publish.
 - Both the build and `npm run typecheck` use the native TypeScript 7 compiler (`typescript@7` aliased as `@typescript/native`) for speed; `typescript@6` remains alongside it for tools that need the JS API (typescript-eslint).
 - Test coverage is enforced at 100% for backend code; browser glue (`settings/`) is excluded from coverage.
 
