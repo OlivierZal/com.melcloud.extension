@@ -207,6 +207,11 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
   reasoned reply when it does not — verify claims against sources
   before acting either way. Resolve the thread once settled; none left
   dangling.
+- SonarCloud must be spotless for a PR to merge: quality gate green,
+  zero open issues on its analysis, and 100 % coverage (within the
+  exclusions `sonar-project.properties` declares). A Sonar finding is
+  handled like a lint error — the code adapts, or the divergence is
+  settled as a documented verdict — never merged over.
 - Homey App Store releases: write the user-facing changelog entry into
   `.homeychangelog.json` under the NEW version key (all 13 locales —
   the com.melcloud set), bump `version` in `.homeycompose/app.json`,
