@@ -7,6 +7,14 @@ import { MELCloudListener } from '../../listeners/melcloud.mts'
 import { assertDefined, mock } from '../helpers.ts'
 import { type MockDevice, createMockDevice, names } from '../mocks.ts'
 
+// The capability listeners run their async bodies through
+// fireAndForget: invoking one returns before the work lands, so tests
+// flush a macrotask before asserting on the outcome.
+const settleListeners = async (): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, 0)
+  })
+
 interface Harness {
   readonly app: MELCloudExtensionApp
   readonly attach: ReturnType<typeof vi.fn>
@@ -191,6 +199,7 @@ describe(MELCloudListener, () => {
     await harness.listener.listenToThermostatMode()
 
     await getInstance(harness, 'target_temperature').listener(26)
+    await settleListeners()
 
     expect(harness.settingsStore.thresholds).toStrictEqual({ 'ac-1': 26 })
     expect(
@@ -204,6 +213,7 @@ describe(MELCloudListener, () => {
     harness.pushToUI.mockClear()
 
     await getInstance(harness, 'target_temperature').listener(23)
+    await settleListeners()
 
     expect(harness.pushToUI).toHaveBeenCalledTimes(0)
   })
@@ -213,6 +223,7 @@ describe(MELCloudListener, () => {
     await harness.listener.listenToThermostatMode()
 
     await getInstance(harness, 'thermostat_mode').listener('cool')
+    await settleListeners()
 
     expect(
       harness.mockDevice.capabilityInstances.has('target_temperature'),
@@ -226,6 +237,7 @@ describe(MELCloudListener, () => {
     const firstInstance = getInstance(harness, 'target_temperature')
 
     await getInstance(harness, 'thermostat_mode').listener('cool')
+    await settleListeners()
 
     expect(getInstance(harness, 'target_temperature')).toBe(firstInstance)
     expect(harness.attach).toHaveBeenCalledTimes(1)
@@ -237,6 +249,7 @@ describe(MELCloudListener, () => {
     Object.assign(harness.settingsStore, { thresholds: {} })
 
     await getInstance(harness, 'thermostat_mode').listener('heat')
+    await settleListeners()
 
     expect(harness.mockDevice.setCapabilityValue).toHaveBeenCalledWith({
       capabilityId: 'target_temperature',
@@ -249,6 +262,7 @@ describe(MELCloudListener, () => {
     await harness.listener.listenToThermostatMode()
 
     await getInstance(harness, 'thermostat_mode').listener('heat')
+    await settleListeners()
 
     expect(
       getInstance(harness, 'target_temperature').destroy,
@@ -268,6 +282,7 @@ describe(MELCloudListener, () => {
     )
 
     await getInstance(harness, 'thermostat_mode').listener('heat')
+    await settleListeners()
 
     expect(harness.pushToUI).toHaveBeenCalledWith('error.notFound', {
       idOrName: 'Living room',

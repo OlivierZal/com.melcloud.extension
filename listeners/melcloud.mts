@@ -2,7 +2,9 @@ import type { HomeyAPIV3Local } from 'homey-api'
 
 import type MELCloudExtensionApp from '../app.mts'
 import type { Names, Thresholds } from '../types.mts'
+import { fireAndForget } from '../lib/fire-and-forget.mts'
 import { formatTemperature } from '../lib/format-temperature.mts'
+import { getErrorMessage } from '../lib/get-error-message.mts'
 import type { OutdoorSource } from './outdoor-source.mts'
 
 const COOL = 'cool'
@@ -69,20 +71,31 @@ export class MELCloudListener {
   public async listenToThermostatMode(): Promise<void> {
     const currentThermostatMode =
       await this.#getCapabilityValue(THERMOSTAT_MODE)
+    // homey-api invokes capability listeners bare: route the async
+    // bodies through fireAndForget so a failure (e.g. the device going
+    // offline mid-update) logs instead of crashing the app with an
+    // unhandled rejection.
     this.#thermostatModeListener = this.#device.makeCapabilityInstance(
       THERMOSTAT_MODE,
-      async (value) => {
-        this.#app.pushToUI('listened', {
-          capability: this.#names.thermostatMode,
-          name: this.#device.name,
-          value,
-        })
-        if (value === COOL) {
-          await this.#listenToTargetTemperature()
-          return
-        }
-        await this.#destroyTemperature()
-        this.#source.detach(this)
+      (value) => {
+        fireAndForget(
+          (async (): Promise<void> => {
+            this.#app.pushToUI('listened', {
+              capability: this.#names.thermostatMode,
+              name: this.#device.name,
+              value,
+            })
+            if (value === COOL) {
+              await this.#listenToTargetTemperature()
+              return
+            }
+            await this.#destroyTemperature()
+            this.#source.detach(this)
+          })(),
+          (error) => {
+            this.#app.error(getErrorMessage(error))
+          },
+        )
       },
     )
     this.#app.pushToUI('created', {
@@ -174,7 +187,7 @@ export class MELCloudListener {
     )
     this.#targetTemperatureListener = this.#device.makeCapabilityInstance(
       TARGET_TEMPERATURE,
-      async (value) => {
+      (value) => {
         if (value === this.#getTargetTemperature()) {
           return
         }
@@ -183,7 +196,9 @@ export class MELCloudListener {
           name: this.#device.name,
           value: formatTemperature(value),
         })
-        await this.#setThreshold(Number(value))
+        fireAndForget(this.#setThreshold(Number(value)), (error) => {
+          this.#app.error(getErrorMessage(error))
+        })
       },
     )
     this.#app.pushToUI('created', {

@@ -17,14 +17,11 @@
     "homeyWeather": "het Homey-weer"
   },
   "settings": {
-    "allDevices": "Alle apparaten",
-    "apply": "Toepassen op alle lucht-lucht apparaten",
     "autoAdjust": "Auto-afstellen airco-temperatuur",
     "boolean": {
       "false": "Nee",
       "true": "Ja"
     },
-    "capabilities": "Buitentemperatuur",
     "configuration": "Configuratie",
     "defaultSource": "Homey-weer",
     "disabledSource": "Niet aanpassen",

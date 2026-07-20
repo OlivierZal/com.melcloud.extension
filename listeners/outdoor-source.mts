@@ -33,7 +33,19 @@ export abstract class OutdoorSource {
 
   public async attach(listener: MELCloudListener): Promise<void> {
     this.#subscribers.add(listener)
-    this.#watching ??= this.start()
+    // A failed start must not stay cached: reset the single-flight
+    // guard (and drop the subscriber this attach added) so the next
+    // attach retries watching instead of re-awaiting the same
+    // rejection forever.
+    this.#watching ??= (async (): Promise<void> => {
+      try {
+        await this.start()
+      } catch (error) {
+        this.#watching = null
+        this.#subscribers.delete(listener)
+        throw error
+      }
+    })()
     await this.#watching
   }
 

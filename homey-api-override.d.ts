@@ -33,8 +33,6 @@ declare module 'homey-api' {
 
       readonly max?: number
 
-      readonly min?: number
-
       readonly title: string
     }
 
@@ -59,7 +57,6 @@ declare module 'homey-api' {
       setCapabilityValue(options: {
         capabilityId: string
         value: boolean | number | string
-        opts?: { duration?: number }
       }): Promise<void>
     }
   }
@@ -70,10 +67,7 @@ declare module 'homey-api' {
 
       destroy(): void
 
-      setValue(
-        value: boolean | number | string,
-        options?: { duration?: number },
-      ): Promise<void>
+      setValue(value: boolean | number | string): Promise<void>
     }
   }
 }

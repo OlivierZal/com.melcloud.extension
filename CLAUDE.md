@@ -162,9 +162,10 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
   until the rule passes. One counterweight: when every compliant shape
   reads worse than the violation (a rule-pair conflict, a
   protocol-imposed form), the documented disable IS the honest form.
-  Current irreducibles: the fire-and-forget rule trio
-  (`lib/fire-and-forget.mts`, settings copy) and the TS9019
-  isolatedDeclarations carve-out in `lib/homey.mts`.
+  Current irreducibles: the fire-and-forget disable (once, in
+  `lib/fire-and-forget.mts` — the settings page wraps it for its
+  default `onError`) and the TS9019 isolatedDeclarations carve-out in
+  `lib/homey.mts`.
 - Naming is stricter than com.melcloud: properties are camelCase-only
   in app code. The tests block relaxes it (documented in the config)
   because test doubles mirror external contracts: capability ids

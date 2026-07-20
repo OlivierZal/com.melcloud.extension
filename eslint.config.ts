@@ -54,7 +54,9 @@ const config = defineConfig([
     ignores: [
       '.homeybuild/',
       'coverage/',
-      // esbuild output (see scripts/bundle.mjs), also gitignored
+      // Stale local bundle from builds predating the `.homeybuild`
+      // emission (bundle.mjs deletes it on its next run); without the
+      // entry a never-rebuilt tree would get swept by lint.
       'settings/index.mjs',
     ],
   },
@@ -863,13 +865,19 @@ const config = defineConfig([
   {
     files: ['lib/homey.mts'],
     rules: {
+      // The homey SDK is runtime-provided by the platform, deliberately
+      // absent from package.json dependencies.
       'import-x/no-extraneous-dependencies': 'off',
+      // `Homey.App` member access is the CJS-interop-safe documented
+      // form of the SDK's `export =` default.
       'import-x/no-named-as-default-member': 'off',
     },
   },
   {
     files: ['**/api.mts', 'app.mts'],
     rules: {
+      // The Homey SDK loads the app and its api surface as default
+      // exports.
       'import-x/no-default-export': 'off',
       'import-x/prefer-default-export': [
         'error',
@@ -882,7 +890,10 @@ const config = defineConfig([
   {
     files: ['**/*.config.ts'],
     rules: {
+      // Config objects carry external schema keys (rule ids, tool
+      // options) that no naming convention governs.
       '@typescript-eslint/naming-convention': 'off',
+      // Config loaders consume default exports.
       'import-x/no-default-export': 'off',
       'import-x/prefer-default-export': [
         'error',
@@ -1112,11 +1123,14 @@ const config = defineConfig([
           selector: 'typeParameter',
         },
       ],
+      // Fixtures and assertions are literal-heavy by nature.
       '@typescript-eslint/no-magic-numbers': 'off',
       // Test doubles cast wholesale around the SDK's branded types.
       '@typescript-eslint/no-unsafe-type-assertion': 'off',
       // Owned by `vitest/unbound-method`, the mock-aware port.
       '@typescript-eslint/unbound-method': 'off',
+      // Suites are one `describe` per function — length caps target
+      // production code, not test tables.
       'max-lines-per-function': 'off',
       'max-statements': 'off',
       // Mock builders nest factories.

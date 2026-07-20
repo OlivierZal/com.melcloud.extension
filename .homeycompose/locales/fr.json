@@ -17,7 +17,6 @@
     "thermostatMode": "le mode"
   },
   "settings": {
-    "allDevices": "Tous les appareils",
     "autoAdjust": "Auto-ajuster la température de la climatisation",
     "boolean": {
       "false": "Non",

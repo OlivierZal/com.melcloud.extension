@@ -81,7 +81,11 @@ export default class MELCloudExtensionApp extends App {
 
   readonly #melcloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
-  readonly #sources = new Map<string, OutdoorSource>()
+  // Keyed by source path, memoizing the IN-FLIGHT creation (not the
+  // result): devices of one building fan out concurrently and must
+  // share a single watcher per sensor, so the promise lands in the map
+  // synchronously, before the first await.
+  readonly #sources = new Map<string, Promise<OutdoorSource>>()
 
   readonly #temperatureSensors: HomeyAPIV3Local.ManagerDevices.Device[] = []
 
@@ -195,9 +199,16 @@ export default class MELCloudExtensionApp extends App {
       this.#deviceListeners.map(async (listener) => listener.destroy()),
     )
     this.#deviceListeners.length = 0
-    for (const source of this.#sources.values()) {
-      source.destroy()
-    }
+    await Promise.all(
+      this.#sources.values().map(async (source) => {
+        try {
+          const settled = await source
+          settled.destroy()
+        } catch {
+          // A source that never materialized has nothing to destroy.
+        }
+      }),
+    )
     this.#sources.clear()
   }
 
@@ -216,10 +227,19 @@ export default class MELCloudExtensionApp extends App {
     if (existing !== undefined) {
       return existing
     }
-    const source =
-      sourcePath === null ?
-        new WeatherOutdoorSource(this)
-      : await CapabilityOutdoorSource.create(this, sourcePath)
+    const source = (async (): Promise<OutdoorSource> => {
+      if (sourcePath === null) {
+        return new WeatherOutdoorSource(this)
+      }
+      try {
+        return await CapabilityOutdoorSource.create(this, sourcePath)
+      } catch (error) {
+        // A failed creation must not stay cached: the next lookup
+        // retries.
+        this.#sources.delete(key)
+        throw error
+      }
+    })()
     this.#sources.set(key, source)
     return source
   }
@@ -232,12 +252,21 @@ export default class MELCloudExtensionApp extends App {
   }
 
   // Debounces device list reload: rapid device.create/delete events
-  // are coalesced into a single init after INIT_DELAY.
+  // are coalesced into a single init after INIT_DELAY. The timer body
+  // routes through fireAndForget: the SDK invokes it bare, so a
+  // rejection would otherwise terminate the app process.
   #init(): void {
     this.homey.clearTimeout(this.#initTimeout)
-    this.#initTimeout = this.homey.setTimeout(async () => {
-      await this.#loadDevices()
-      await this.autoAdjustCooling()
+    this.#initTimeout = this.homey.setTimeout(() => {
+      fireAndForget(
+        (async (): Promise<void> => {
+          await this.#loadDevices()
+          await this.autoAdjustCooling()
+        })(),
+        (error) => {
+          this.error(getErrorMessage(error))
+        },
+      )
     }, INIT_DELAY)
   }
 

@@ -40,9 +40,7 @@ export const createMockDevice = ({
   readonly id: string
   readonly name: string
   readonly capabilities?: readonly string[]
-  readonly capabilitiesOptions?: Readonly<
-    Record<string, { max?: number; min?: number }>
-  >
+  readonly capabilitiesOptions?: Readonly<Record<string, { max?: number }>>
   readonly melcloudId?: string
   readonly values?: Record<string, boolean | number | string | null>
 }): MockDevice => {

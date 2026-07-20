@@ -17,14 +17,11 @@
     "homeyWeather": "the Homey weather"
   },
   "settings": {
-    "allDevices": "All devices",
-    "apply": "Apply to all air-to-air devices",
     "autoAdjust": "Auto-adjust air conditioning temperature",
     "boolean": {
       "false": "No",
       "true": "Yes"
     },
-    "capabilities": "Outdoor temperature",
     "configuration": "Configuration",
     "defaultSource": "Homey weather",
     "disabledSource": "Do not adjust",

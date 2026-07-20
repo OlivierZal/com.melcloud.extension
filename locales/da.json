@@ -17,14 +17,11 @@
     "homeyWeather": "Homey-vejret"
   },
   "settings": {
-    "allDevices": "Alle enheder",
-    "apply": "Anvend på alle luft-til-luft enheder",
     "autoAdjust": "Autojuster aircondition-temperaturen",
     "boolean": {
       "false": "Nej",
       "true": "Ja"
     },
-    "capabilities": "Udendørstemperatur",
     "configuration": "Konfiguration",
     "defaultSource": "Homey-vejr",
     "disabledSource": "Juster ikke",

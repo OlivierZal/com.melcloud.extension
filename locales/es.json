@@ -17,14 +17,11 @@
     "homeyWeather": "el tiempo de Homey"
   },
   "settings": {
-    "allDevices": "Todos los dispositivos",
-    "apply": "Aplicar a todos los dispositivos aire-aire",
     "autoAdjust": "Autoajustar la temperatura del aire acondicionado",
     "boolean": {
       "false": "No",
       "true": "Sí"
     },
-    "capabilities": "Temperatura exterior",
     "configuration": "Configuración",
     "defaultSource": "Tiempo de Homey",
     "disabledSource": "No ajustar",
