@@ -69,6 +69,7 @@ const createHarness = ({
           ),
       },
     },
+    error: vi.fn<(...args: unknown[]) => void>(),
     homey: {
       settings: {
         get: (key: keyof HomeySettings): unknown => settingsStore[key] ?? null,
@@ -272,6 +273,30 @@ describe(MELCloudListener, () => {
       value: 23,
     })
     expect(harness.detach).toHaveBeenCalledWith(harness.listener)
+  })
+
+  it('should log instead of crashing when the mode-switch work fails', async () => {
+    const harness = createHarness({ thermostatMode: 'heat' })
+    await harness.listener.listenToThermostatMode()
+    harness.attach.mockRejectedValueOnce(new Error('offline'))
+
+    await getInstance(harness, 'thermostat_mode').listener('cool')
+    await settleListeners()
+
+    expect(harness.app.error).toHaveBeenCalledWith('offline')
+  })
+
+  it('should log instead of crashing when the threshold recalculation fails', async () => {
+    const harness = createHarness()
+    await harness.listener.listenToThermostatMode()
+    getInstance(harness, 'target_temperature').setValue.mockRejectedValueOnce(
+      new Error('offline'),
+    )
+
+    await getInstance(harness, 'target_temperature').listener(26)
+    await settleListeners()
+
+    expect(harness.app.error).toHaveBeenCalledWith('offline')
   })
 
   it('should report the device as missing when the revert fails', async () => {
