@@ -17,7 +17,6 @@
     "thermostatMode": "режим"
   },
   "settings": {
-    "allDevices": "Все устройства",
     "autoAdjust": "Автоматически регулировать температуру кондиционера",
     "boolean": {
       "false": "Нет",

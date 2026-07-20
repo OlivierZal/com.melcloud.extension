@@ -1,7 +1,3 @@
-.is-disabled {
-  pointer-events: none;
-}
-
 /* Shared two-column grid: every row's time cell takes the width of the
    longest one, so the messages align across rows whatever the relative
    time's length ("il y a 1 heure" vs "il y a 13 heures"). */
@@ -16,22 +12,33 @@
   display: contents;
 }
 
+/* Buttons disable natively during in-flight actions (com.melcloud
+   form): native `disabled` also blocks keyboard activation and is
+   announced by screen readers. */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Homey Style Library tokens with today's hex as fallback: adaptive
+   when the injected sheet defines them (dark theme), byte-identical
+   otherwise. */
 .log-time {
-  color: #888;
+  color: var(--homey-color-text-light, #888);
   text-align: center;
   white-space: nowrap;
 }
 
 .log-message-calculated {
-  color: #008000;
+  color: var(--homey-color-green, #008000);
 }
 
 .log-message-error {
-  color: #e8000d;
+  color: var(--homey-color-text-danger, #e8000d);
 }
 
 .log-message-listened {
-  color: #0047ab;
+  color: var(--homey-color-highlight, #0047ab);
 }
 
 /* Two-column grid for button pairs */
@@ -72,7 +79,7 @@
    radius, a checkmark gutter — `overflow: auto` because the logical
    overflow-block is not supported by the phone webviews */
 .combobox-list {
-  background: #fff;
+  background: var(--homey-color-component, #fff);
   border-radius: 1em;
   box-shadow: 0 0.5em 2em rgb(0 0 0 / 20%);
   inset-block-start: calc(100% + 0.25em);
@@ -95,7 +102,7 @@
 }
 
 .combobox-option:hover {
-  background: #f2f2f2;
+  background: var(--homey-color-component-hover, #f2f2f2);
 }
 
 /* Thin stroke checkmark, same pen as the field chevron */
@@ -113,7 +120,7 @@
 }
 
 .log-day {
-  color: #888;
+  color: var(--homey-color-text-light, #888);
   font-weight: 600;
   grid-column: 1 / -1;
   padding-block: 0.5em;
@@ -121,10 +128,11 @@
 
 /* The collapsible configuration panel: the summary doubles as the
    fieldset legend, but Homey's style library sizes legends through the
-   `legend` element, not the class — restate the title scale here, plus
-   the click affordance a legend lacks. */
+   `legend` element, not the class — restate the legend's own tokens
+   (20px medium, bold — the old hardcoded 1.375rem sat 2px over it),
+   plus the click affordance a legend lacks. */
 summary.homey-form-legend {
   cursor: pointer;
-  font-size: 1.375rem;
-  font-weight: 700;
+  font-size: var(--homey-font-size-medium);
+  font-weight: var(--homey-font-weight-bold);
 }

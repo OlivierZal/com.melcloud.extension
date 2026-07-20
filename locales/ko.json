@@ -17,7 +17,6 @@
     "thermostatMode": "모드"
   },
   "settings": {
-    "allDevices": "모든 장치",
     "autoAdjust": "에어컨 온도 자동 조절",
     "boolean": {
       "false": "아니요",

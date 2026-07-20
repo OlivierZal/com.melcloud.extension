@@ -17,7 +17,6 @@
     "thermostatMode": "الوضع"
   },
   "settings": {
-    "allDevices": "جميع الأجهزة",
     "autoAdjust": "ضبط درجة حرارة مكيف الهواء تلقائيًا",
     "boolean": {
       "false": "لا",

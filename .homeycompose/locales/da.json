@@ -17,7 +17,6 @@
     "thermostatMode": "tilstanden"
   },
   "settings": {
-    "allDevices": "Alle enheder",
     "autoAdjust": "Autojuster aircondition-temperaturen",
     "boolean": {
       "false": "Nej",

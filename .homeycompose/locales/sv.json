@@ -17,7 +17,6 @@
     "thermostatMode": "läget"
   },
   "settings": {
-    "allDevices": "Alla enheter",
     "autoAdjust": "Autojustera luftkonditioneringstemperaturen",
     "boolean": {
       "false": "Nej",

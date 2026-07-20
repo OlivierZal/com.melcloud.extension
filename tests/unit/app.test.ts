@@ -335,6 +335,20 @@ describe(MELCloudExtensionApp, () => {
     })
   })
 
+  it('should log instead of crashing when the debounced reload fails', async () => {
+    const { classicDevice } = createDevices()
+    const { app, manager } = await createHarness([classicDevice])
+    await advancePastInit()
+    const createHandler = manager.eventHandlers.get('device.create')
+    assertDefined(createHandler)
+    manager.getDevices.mockRejectedValueOnce(new Error('api_down'))
+
+    createHandler()
+    await advancePastInit()
+
+    expect(app.error).toHaveBeenCalledWith('api_down')
+  })
+
   it('should coalesce rapid device events into one reload', async () => {
     const { classicDevice } = createDevices()
     const { manager } = await createHarness([classicDevice])

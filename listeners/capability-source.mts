@@ -1,6 +1,8 @@
 import type { HomeyAPIV3Local } from 'homey-api'
 
 import type MELCloudExtensionApp from '../app.mts'
+import { fireAndForget } from '../lib/fire-and-forget.mts'
+import { getErrorMessage } from '../lib/get-error-message.mts'
 import { ListenerError } from './error.mts'
 import { OutdoorSource } from './outdoor-source.mts'
 
@@ -63,9 +65,16 @@ export class CapabilityOutdoorSource extends OutdoorSource {
         deviceId: this.#device.id,
       }),
     )
+    // homey-api invokes the listener bare: route it through
+    // fireAndForget so a failed recalculation logs instead of crashing
+    // the app with an unhandled rejection.
     this.#capabilityInstance = this.#device.makeCapabilityInstance(
       this.#capabilityId,
-      async (value) => this.update(value),
+      (value) => {
+        fireAndForget(this.update(value), (error) => {
+          this.app.error(getErrorMessage(error))
+        })
+      },
     )
     this.app.pushToUI('created', {
       capability: this.app.names.temperature,

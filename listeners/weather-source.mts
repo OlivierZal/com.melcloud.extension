@@ -1,4 +1,5 @@
 import type MELCloudExtensionApp from '../app.mts'
+import { fireAndForget } from '../lib/fire-and-forget.mts'
 import { getErrorMessage } from '../lib/get-error-message.mts'
 import { OutdoorSource } from './outdoor-source.mts'
 
@@ -32,8 +33,18 @@ export class WeatherOutdoorSource extends OutdoorSource {
 
   protected async start(): Promise<void> {
     this.initialize(await this.#fetchTemperature())
-    this.#pollInterval = this.app.homey.setInterval(async () => {
-      await this.update(await this.#fetchTemperature())
+    // The SDK invokes the timer callback bare: route the poll through
+    // fireAndForget so a transient weather failure logs instead of
+    // crashing the app with an unhandled rejection.
+    this.#pollInterval = this.app.homey.setInterval(() => {
+      fireAndForget(
+        (async (): Promise<void> => {
+          await this.update(await this.#fetchTemperature())
+        })(),
+        (error) => {
+          this.app.error(getErrorMessage(error))
+        },
+      )
     }, POLL_INTERVAL)
     this.app.pushToUI('created', {
       capability: this.app.names.temperature,

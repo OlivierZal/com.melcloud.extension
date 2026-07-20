@@ -17,7 +17,6 @@
     "thermostatMode": "the mode"
   },
   "settings": {
-    "allDevices": "All devices",
     "autoAdjust": "Auto-adjust air conditioning temperature",
     "boolean": {
       "false": "No",

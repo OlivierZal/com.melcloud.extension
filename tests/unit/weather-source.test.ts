@@ -90,6 +90,20 @@ describe(WeatherOutdoorSource, () => {
     expect(subscriber.setTargetTemperature).toHaveBeenCalledTimes(1)
   })
 
+  it('should log instead of crashing when a polled recalculation fails', async () => {
+    const harness = createHarness()
+    const subscriber = createSubscriber()
+    await harness.source.attach(subscriber)
+    harness.apiCall.mockReturnValue({ temperatureCelsius: 35.5 })
+    vi.mocked(subscriber.setTargetTemperature).mockRejectedValueOnce(
+      new Error('offline'),
+    )
+
+    await vi.advanceTimersByTimeAsync(POLL_INTERVAL)
+
+    expect(harness.error).toHaveBeenCalledWith('offline')
+  })
+
   it('should not broadcast an unchanged reading', async () => {
     const harness = createHarness()
     const subscriber = createSubscriber()

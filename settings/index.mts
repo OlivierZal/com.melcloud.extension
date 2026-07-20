@@ -1,6 +1,8 @@
 import type Homey from 'homey/lib/HomeySettings'
 import { Temporal } from 'temporal-polyfill'
 
+import { fireAndForget as forget } from '../lib/fire-and-forget.mts'
+import { getErrorMessage } from '../lib/get-error-message.mts'
 import {
   type AdjustableDevice,
   type AdjustableGroup,
@@ -78,13 +80,14 @@ const surfaceError = (error: unknown): void => {
 /**
  * Runs an async operation that shouldn't block. Rejections go to `onError`
  * (default: `surfaceError`, which reports them in the webview dev tools).
+ * Thin default-argument wrapper over the shared lib helper — the
+ * bundler inlines the import, and the documented disable lives once.
  */
 const fireAndForget = (
   promise: Promise<unknown>,
   onError: (error: unknown) => void = surfaceError,
 ): void => {
-  // eslint-disable-next-line unicorn/prefer-await -- fire-and-forget: rejections route to onError without blocking the caller
-  promise.catch(onError)
+  forget(promise, onError)
 }
 
 // Promisifies Homey Settings API callbacks (error-first convention)
@@ -107,6 +110,11 @@ const getElement = <T extends HTMLElement>(
   elementType: string,
 ): T => {
   const element = document.querySelector(`#${id}`)
+  // Distinct diagnoses (com.melcloud form): a missing id must not read
+  // as a type mismatch.
+  if (element === null) {
+    throw new TypeError(`Element with id \`${id}\` not found`)
+  }
   if (!(element instanceof elementConstructor)) {
     throw new TypeError(`Element with id \`${id}\` is not a ${elementType}`)
   }
@@ -134,19 +142,6 @@ const refreshElement = getButtonElement('refresh')
 const enabledElement = getSelectElement('enabled')
 const configurationElement = getDetailsElement('configuration')
 
-// The style library sizes legends through the `legend` element, not the
-// class, so the summary cannot inherit the title scale — copy it from a
-// real legend at boot to stay in lockstep with whatever the library
-// ships (the stylesheet keeps a close fallback).
-const matchLegendScale = (): void => {
-  const legend = document.querySelector('legend.homey-form-legend')
-  const summary = document.querySelector('#configuration_summary')
-  if (legend !== null && summary instanceof HTMLElement) {
-    const { fontSize, fontWeight } = getComputedStyle(legend)
-    summary.style.fontSize = fontSize
-    summary.style.fontWeight = fontWeight
-  }
-}
 const logsElement = getDivElement('logs')
 const sourcesElement = getDivElement('sources')
 
@@ -187,10 +182,10 @@ const serializeState = (): string =>
 const busyState: { value: boolean } = { value: false }
 
 const updateDirty = (): void => {
-  applyElement.classList.toggle(
-    'is-disabled',
-    busyState.value || serializeState() === savedState.value,
-  )
+  // Native `disabled` (com.melcloud form): it also blocks keyboard
+  // activation mid-request and is announced by screen readers.
+  applyElement.disabled =
+    busyState.value || serializeState() === savedState.value
 }
 
 const resetSavedState = (): void => {
@@ -202,7 +197,7 @@ const resetSavedState = (): void => {
 // library's `is-loading` spinner shifts the label sideways.
 const setButtonsBusy = (areBusy: boolean): void => {
   busyState.value = areBusy
-  refreshElement.classList.toggle('is-disabled', areBusy)
+  refreshElement.disabled = areBusy
   updateDirty()
 }
 
@@ -337,13 +332,6 @@ const displayLog = (log: TimestampedLog): void => {
   logsElement.insertBefore(createDayElement(log.time), rowElement)
 }
 
-const getErrorMessage = (error: unknown): string => {
-  if (error instanceof Error) {
-    return error.message
-  }
-  return typeof error === 'string' ? error : JSON.stringify(error)
-}
-
 // Only show logs from the last LOG_RETENTION_DAYS (midnight cutoff)
 const getOldestDisplayableInstant = (): Temporal.Instant =>
   Temporal.Now.zonedDateTimeISO()
@@ -351,10 +339,21 @@ const getOldestDisplayableInstant = (): Temporal.Instant =>
     .startOfDay()
     .toInstant()
 
+// One-shot flag, not a child-count guard: a live 'log' event landing
+// between listener wiring and the first settings fetch must not
+// suppress the whole retained history for the session.
+const retainedLogsState = { wereDisplayed: false }
+
 const displayRetainedLogs = (logs: readonly TimestampedLog[]): void => {
-  if (logsElement.childElementCount > 0) {
+  if (retainedLogsState.wereDisplayed) {
     return
   }
+  retainedLogsState.wereDisplayed = true
+  // Any live row displayed before this first fetch is also part of the
+  // retained list (the app persists before the fetch can answer):
+  // rebuild the pane from scratch — right order, no duplicates.
+  logsElement.replaceChildren()
+  topDay.value = null
   const oldestInstant = getOldestDisplayableInstant()
   const retainedLogs = logs
     .filter(
@@ -406,12 +405,16 @@ const fetchHomeySettings = async (homey: Homey): Promise<void> => {
 const isNotFound = (error: unknown): boolean =>
   getErrorMessage(error) === 'notFound'
 
-const fetchTemperatureSensors = async (
+// Shared GET-or-empty policy of the two device lists: a 404 (endpoint
+// absent — an older com.melcloud) silently reads as "none", any other
+// failure alerts and still degrades to an empty list.
+const fetchListOrEmpty = async <T,>(
   homey: Homey,
-): Promise<TemperatureSensor[]> => {
+  path: string,
+): Promise<T[]> => {
   try {
-    return await homeyCallback<TemperatureSensor[]>((callback) => {
-      homey.api('GET', '/devices/sensors/temperature', callback)
+    return await homeyCallback<T[]>((callback) => {
+      homey.api('GET', path, callback)
     })
   } catch (error) {
     if (!isNotFound(error)) {
@@ -421,20 +424,15 @@ const fetchTemperatureSensors = async (
   }
 }
 
+const fetchTemperatureSensors = async (
+  homey: Homey,
+): Promise<TemperatureSensor[]> =>
+  fetchListOrEmpty<TemperatureSensor>(homey, '/devices/sensors/temperature')
+
 const fetchAdjustableGroups = async (
   homey: Homey,
-): Promise<AdjustableGroup[]> => {
-  try {
-    return await homeyCallback<AdjustableGroup[]>((callback) => {
-      homey.api('GET', '/devices/groups', callback)
-    })
-  } catch (error) {
-    if (!isNotFound(error)) {
-      await homey.alert(getErrorMessage(error))
-    }
-    return []
-  }
-}
+): Promise<AdjustableGroup[]> =>
+  fetchListOrEmpty<AdjustableGroup>(homey, '/devices/groups')
 
 // Auto-enable when the user picks a different source (UX convenience)
 const enableAdjustment = (): void => {
@@ -738,11 +736,15 @@ const populateSources = async (homey: Homey): Promise<void> => {
   emptyElement.hidden = devices.length > 0
 }
 
+// Spread (not `.entries().map()`): iterator helpers are a 2025-era
+// runtime API, far above the webview's es2020 floor — esbuild lowers
+// syntax only, never runtime APIs.
 const getSelectedSources = (): OutdoorSources =>
   Object.fromEntries(
-    sourceSelections
-      .entries()
-      .map(([deviceId, value]) => [deviceId, value === '' ? null : value]),
+    [...sourceSelections].map(([deviceId, value]) => [
+      deviceId,
+      value === '' ? null : value,
+    ]),
   )
 
 const autoAdjustCooling = async (homey: Homey): Promise<void> =>
@@ -827,7 +829,6 @@ const reportInitFailure = (homey: Homey, error: unknown): void => {
  * @param homey - The Homey instance handed to `onHomeyReady`.
  */
 export const start = async (homey: Homey): Promise<void> => {
-  matchLegendScale()
   // Listeners before the data load: the Refresh button is the retry
   // affordance when the initial load fails or times out, so it must work
   // regardless of how `run` ends.
