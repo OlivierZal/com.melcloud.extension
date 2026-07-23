@@ -47,7 +47,7 @@ const api = {
    * @param options - Homey API context.
    * @param options.homey - Homey instance carrying the app.
    * @returns The groups, sorted by name, devices sorted within.
-   * @throws NotFoundError when no MELCloud AC device is paired yet.
+   * @rejects {NotFoundError} when no MELCloud AC device is paired yet.
    */
   async getAdjustableGroups({
     homey,
