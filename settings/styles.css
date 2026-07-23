@@ -132,7 +132,32 @@ button:disabled {
    (20px medium, bold — the old hardcoded 1.375rem sat 2px over it),
    plus the click affordance a legend lacks. */
 summary.homey-form-legend {
+  align-items: center;
   cursor: pointer;
+  display: flex;
   font-size: var(--homey-font-size-medium);
   font-weight: var(--homey-font-weight-bold);
+  gap: 0.5rem;
+  list-style: none;
+}
+
+/* Match the field chevron instead of the native disclosure triangle: hide
+   the default marker and draw a leading chevron (same pen) that points
+   right when collapsed and rotates down when open. */
+summary.homey-form-legend::-webkit-details-marker {
+  display: none;
+}
+
+summary.homey-form-legend::before {
+  block-size: 0.45em;
+  border-block-start: 0.14em solid currentColor;
+  border-inline-end: 0.14em solid currentColor;
+  content: '';
+  inline-size: 0.45em;
+  rotate: 45deg;
+  transition: rotate 0.15s ease;
+}
+
+details[open] > summary.homey-form-legend::before {
+  rotate: 135deg;
 }
