@@ -13,6 +13,7 @@ import {
   type TimestampedLog,
   DISABLED_SOURCE,
 } from '../types.mts'
+import { createDirtyGate } from './dirty-gate.mts'
 
 // Give slow transports a real chance while keeping the loading overlay
 // finite: past this point the page surfaces the failure instead.
@@ -169,59 +170,19 @@ const closeOpenCombobox = (): void => {
 
 // "Update" only means something once the form diverges from the last
 // saved state — the snapshot greys it out otherwise.
-const savedState: { value: string } = { value: '' }
-
 const serializeState = (): string =>
   JSON.stringify([
     enabledElement.value,
     [...sourceSelections].toSorted(([id1], [id2]) => id1.localeCompare(id2)),
   ])
 
-// Requests in flight lock BOTH buttons: `updateDirty` folds the busy
-// flag in so a combobox pick mid-request cannot re-enable Update.
-const busyState: { value: boolean } = { value: false }
-
-const updateDirty = (): void => {
-  // Native `disabled` (com.melcloud form): it also blocks keyboard
-  // activation mid-request and is announced by screen readers.
-  applyElement.disabled =
-    busyState.value || serializeState() === savedState.value
-}
-
-const resetSavedState = (): void => {
-  savedState.value = serializeState()
-  updateDirty()
-}
-
 // Busy buttons only grey out (com.melcloud behavior): the style
 // library's `is-loading` spinner shifts the label sideways.
-const setButtonsBusy = (areBusy: boolean): void => {
-  busyState.value = areBusy
-  refreshElement.disabled = areBusy
-  updateDirty()
-}
-
-// Generation-tokened: a hung action force-released by the init timeout
-// must not clear (or re-set) the busy state a later, live action owns.
-const busyGeneration = { value: 0 }
-
-const releaseBusyButtons = (): void => {
-  busyGeneration.value += 1
-  setButtonsBusy(false)
-}
-
-const withBusyButtons = async (action: () => Promise<void>): Promise<void> => {
-  busyGeneration.value += 1
-  const generation = busyGeneration.value
-  setButtonsBusy(true)
-  try {
-    await action()
-  } finally {
-    if (generation === busyGeneration.value) {
-      setButtonsBusy(false)
-    }
-  }
-}
+const dirtyGate = createDirtyGate({
+  applyElement,
+  refreshElements: [refreshElement],
+  serialize: serializeState,
+})
 
 // The document language is the display locale: `fetchLanguage` overwrites
 // the html attribute's default with the Homey-configured language.
@@ -439,7 +400,7 @@ const enableAdjustment = (): void => {
   if (enabledElement.value === 'false') {
     enabledElement.value = 'true'
   }
-  updateDirty()
+  dirtyGate.recompute()
 }
 
 const registerSourceOption = (name: string, value: string): void => {
@@ -748,7 +709,7 @@ const getSelectedSources = (): OutdoorSources =>
   )
 
 const autoAdjustCooling = async (homey: Homey): Promise<void> =>
-  withBusyButtons(async () => {
+  dirtyGate.runBusy(async () => {
     try {
       await homeyCallback<undefined>((callback) => {
         homey.api(
@@ -761,7 +722,7 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
           callback,
         )
       })
-      resetSavedState()
+      dirtyGate.markSaved()
     } catch (error) {
       await homey.alert(getErrorMessage(error))
     }
@@ -770,10 +731,10 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
 // Refresh restores every value to the last saved state (the stored
 // enable flag and per-device sources)
 const refreshAll = async (homey: Homey): Promise<void> =>
-  withBusyButtons(async () => {
+  dirtyGate.runBusy(async () => {
     await populateSources(homey)
     await fetchHomeySettings(homey)
-    resetSavedState()
+    dirtyGate.markSaved()
   })
 
 const addEventListeners = (homey: Homey): void => {
@@ -793,7 +754,7 @@ const addEventListeners = (homey: Homey): void => {
   applyElement.addEventListener('click', () => {
     fireAndForget(autoAdjustCooling(homey))
   })
-  enabledElement.addEventListener('change', updateDirty)
+  dirtyGate.wire([enabledElement])
   installElement.addEventListener('click', () => {
     fireAndForget(homey.openURL('https://homey.app/a/com.mecloud'))
   })
@@ -809,13 +770,14 @@ const run = async (homey: Homey): Promise<void> => {
   await refreshAll(homey)
 }
 
-// A timed-out load may still be hung inside `withBusyButtons` — release
-// the controls (and orphan that run's busy claim) so the retry is
-// actually clickable. Fire-and-forget on the alert keeps `start()`
-// non-throwing: a rejected alert must not trip the HTML loader's catch
-// (double `ready()`, second generic alert).
+// A timed-out load may still be hung inside `runBusy` — release the
+// controls so the retry is actually clickable; the gate's generation
+// guard keeps that hung run's finally from touching a later, live
+// claim. Fire-and-forget on the alert keeps `start()` non-throwing: a
+// rejected alert must not trip the HTML loader's catch (double
+// `ready()`, second generic alert).
 const reportInitFailure = (homey: Homey, error: unknown): void => {
-  releaseBusyButtons()
+  dirtyGate.setBusy(false)
   fireAndForget(homey.alert(getErrorMessage(error)))
 }
 
