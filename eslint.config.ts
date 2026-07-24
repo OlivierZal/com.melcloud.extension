@@ -866,6 +866,7 @@ const config = defineConfig([
         'jsdoc/require-yields-description': 'error',
         'jsdoc/sort-tags': 'error',
       },
+      settings: { tagNamePreference: { rejects: 'throws' } },
     }),
     files: ['{api,app,files,types}.mts', 'lib/**/*.mts', 'listeners/**/*.mts'],
   },
