@@ -361,5 +361,20 @@
     "pl": "Nowe urządzenia nie są już domyślnie regulowane: nowy budynek zaczyna od «Nie aktywuj», a urządzenie dodane do skonfigurowanego budynku dziedziczy jego ustawienie — odświeżono też emoji dziennika.",
     "ru": "Новые устройства больше не регулируются автоматически: новое здание начинает с «Не активировать», а устройство, добавленное в настроенное здание, наследует его настройку — и эмодзи журнала обновлены.",
     "sv": "Nya enheter justeras inte längre automatiskt: en ny byggnad börjar som «Aktivera inte», och en enhet som läggs till i en konfigurerad byggnad ärver dess inställning — och loggens emojier har fräschats upp."
+  },
+  "24.7.7": {
+    "ar": "تحسين سهم التوسيع/الطي في الإعدادات.",
+    "da": "Forfinet fold ud/sammen-pil i indstillingerne.",
+    "de": "Verfeinerter Ein-/Ausklapp-Pfeil in den Einstellungen.",
+    "en": "Refined the settings collapse/expand chevron.",
+    "es": "Chevron de expandir/contraer de los ajustes refinado.",
+    "fr": "Chevron d'ouverture/fermeture des réglages affiné.",
+    "it": "Chevron di apertura/chiusura delle impostazioni rifinito.",
+    "ko": "설정의 펼치기/접기 화살표를 개선했습니다.",
+    "nl": "Verfijnde in-/uitklap-pijl in de instellingen.",
+    "no": "Forfinet vis/skjul-pil i innstillingene.",
+    "pl": "Dopracowana strzałka zwijania/rozwijania w ustawieniach.",
+    "ru": "Улучшена стрелка разворачивания/сворачивания в настройках.",
+    "sv": "Förfinad expandera/komprimera-pil i inställningarna."
   }
 }
