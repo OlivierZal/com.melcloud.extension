@@ -72,9 +72,9 @@ const surfaceError = (error: unknown): void => {
     return
   }
   setTimeout(() => {
-    throw error instanceof Error ? error : (
-        new Error('Unhandled settings error', { cause: error })
-      )
+    throw error instanceof Error
+      ? error
+      : new Error('Unhandled settings error', { cause: error })
   }, 0)
 }
 
@@ -512,9 +512,9 @@ const renderOptions = (
 ): void => {
   const needle = params.filter.trim().toLowerCase()
   const matches =
-    needle === '' ? sourceOptions : (
-      sourceOptions.filter(({ name }) => name.toLowerCase().includes(needle))
-    )
+    needle === ''
+      ? sourceOptions
+      : sourceOptions.filter(({ name }) => name.toLowerCase().includes(needle))
   list.replaceChildren(
     ...matches.map((option) => createOptionItem(option, params)),
   )

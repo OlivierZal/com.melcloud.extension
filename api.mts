@@ -97,9 +97,8 @@ const api = {
         const capabilities = Object.values(capabilitiesObj ?? {}).filter(
           ({ id }) => id.startsWith(MEASURE_TEMPERATURE),
         )
-        const selectable =
-          melcloudDevices.includes(device) ?
-            capabilities.filter(({ id }) => id === OUTDOOR_TEMPERATURE)
+        const selectable = melcloudDevices.includes(device)
+          ? capabilities.filter(({ id }) => id === OUTDOOR_TEMPERATURE)
           : capabilities
         return selectable.map(({ id, title }): TemperatureSensor => ({
           capabilityName: `${deviceName} - ${title}`,
