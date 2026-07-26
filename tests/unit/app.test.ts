@@ -92,11 +92,10 @@ const createHarness = async (
     settings = {},
     version = '0.0.0',
   }: {
-    readonly settings?: Parameters<typeof createMockHomey>[0] extends (
+    readonly settings?: Parameters<typeof createMockHomey>[0] extends
       { settings?: infer TSettings } | undefined
-    ) ?
-      TSettings
-    : never
+      ? TSettings
+      : never
     readonly version?: string
   } = {},
 ): Promise<Harness> => {
