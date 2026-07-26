@@ -138,8 +138,7 @@ button:disabled {
 /* The collapsible configuration panel: the summary doubles as the
    fieldset legend, but Homey's style library sizes legends through the
    `legend` element, not the class — restate the legend's own tokens
-   (20px medium, bold — the old hardcoded 1.375rem sat 2px over it),
-   plus the click affordance a legend lacks. */
+   (20px medium, bold), plus the click affordance a legend lacks. */
 summary.homey-form-legend {
   align-items: center;
   cursor: pointer;

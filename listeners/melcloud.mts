@@ -171,12 +171,8 @@ export class MELCloudListener {
     return this.#app.homey.settings.get('thresholds') ?? {}
   }
 
-  // Starts monitoring target temperature for this AC device:
-  // 1. Attaches to the outdoor source first (dependency)
-  // 2. Captures current target temperature as the initial threshold
-  // 3. Listens for manual changes: if the user sets a different value
-  //    than what was auto-calculated, it becomes the new threshold
-  // 4. Triggers an initial recalculation via #setThreshold
+  // The current target temperature seeds the user threshold; a manual
+  // change away from the auto-calculated value becomes the new threshold.
   async #listenToTargetTemperature(): Promise<void> {
     if (this.#targetTemperatureListener !== null) {
       return
