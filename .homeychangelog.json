@@ -376,5 +376,20 @@
     "pl": "Dopracowana strzałka zwijania/rozwijania w ustawieniach.",
     "ru": "Улучшена стрелка разворачивания/сворачивания в настройках.",
     "sv": "Förfinad expandera/komprimera-pil i inställningarna."
+  },
+  "24.8.0": {
+    "ar": "سجل نشاط أوضح: عناوين الأيام أكثر بروزًا، وإدخالات الأيام السابقة تعرض الوقت الدقيق.",
+    "da": "Tydeligere aktivitetslog: dagsoverskrifter træder frem, og poster fra tidligere dage viser det præcise klokkeslæt.",
+    "de": "Übersichtlicheres Aktivitätsprotokoll: Tagesüberschriften heben sich ab, und Einträge vergangener Tage zeigen die genaue Uhrzeit.",
+    "en": "Clearer activity log: day headers stand out, and entries from past days show the exact time.",
+    "es": "Registro de actividad más claro: los encabezados de día destacan y las entradas de días anteriores muestran la hora exacta.",
+    "fr": "Journal d'activité plus clair : les en-têtes de jour ressortent et les entrées des jours passés affichent l'heure exacte.",
+    "it": "Registro attività più chiaro: le intestazioni dei giorni risaltano e le voci dei giorni passati mostrano l'ora esatta.",
+    "ko": "더 명확해진 활동 로그: 날짜 머리글이 잘 보이고, 지난 날짜의 항목은 정확한 시각을 표시합니다.",
+    "nl": "Duidelijker activiteitenlog: dagkoppen springen eruit en items van eerdere dagen tonen de exacte tijd.",
+    "no": "Tydeligere aktivitetslogg: dagsoverskrifter skiller seg ut, og oppføringer fra tidligere dager viser nøyaktig klokkeslett.",
+    "pl": "Czytelniejszy dziennik aktywności: nagłówki dni są wyraźniejsze, a wpisy z poprzednich dni pokazują dokładną godzinę.",
+    "ru": "Более наглядный журнал активности: заголовки дней выделяются, а записи прошлых дней показывают точное время.",
+    "sv": "Tydligare aktivitetslogg: dagsrubriker framträder och poster från tidigare dagar visar exakt tid."
   }
 }
