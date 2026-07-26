@@ -119,11 +119,20 @@ button:disabled {
   translate: 0 -65%;
 }
 
+/* Day separators are break tokens, not entries: centered (the timeline
+   convention) and sentence-cased — CLDR weekday names are running-text
+   forms (fr: “samedi”), and `::first-letter` casing is per-script, so
+   caseless scripts are unaffected. */
 .log-day {
   color: var(--homey-color-text-light, #888);
   font-weight: 600;
   grid-column: 1 / -1;
   padding-block: 0.5em;
+  text-align: center;
+}
+
+.log-day::first-letter {
+  text-transform: uppercase;
 }
 
 /* The collapsible configuration panel: the summary doubles as the
