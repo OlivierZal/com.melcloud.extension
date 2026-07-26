@@ -200,20 +200,34 @@ const absoluteTime = (time: number): string =>
 
 const MINUTE_MS = 60_000
 const HOUR_MS = 3_600_000
-const DAY_MS = 86_400_000
 
-const relativeTime = (time: number): string => {
-  const elapsed = time - Temporal.Now.instant().epochMilliseconds
+const dayOf = (time: number): string =>
+  Temporal.Instant.fromEpochMilliseconds(time)
+    .toZonedDateTimeISO(Temporal.Now.timeZoneId())
+    .toPlainDate()
+    .toString()
+
+const clockTime = (time: number): string =>
+  Temporal.Instant.fromEpochMilliseconds(time).toLocaleString(
+    document.documentElement.lang,
+    { hour: 'numeric', minute: 'numeric' },
+  )
+
+// Today's entries read as recency ("2 hours ago"); older entries read as
+// clock time — their day separator already carries the date, and a
+// relative label is rendered once, so it only goes staler with age.
+const logTime = (time: number): string => {
+  const now = Temporal.Now.instant().epochMilliseconds
+  if (dayOf(time) !== dayOf(now)) {
+    return clockTime(time)
+  }
+  const elapsed = time - now
   const format = new Intl.RelativeTimeFormat(document.documentElement.lang, {
     numeric: 'auto',
   })
-  if (Math.abs(elapsed) < HOUR_MS) {
-    return format.format(Math.round(elapsed / MINUTE_MS), 'minute')
-  }
-  if (Math.abs(elapsed) < DAY_MS) {
-    return format.format(Math.round(elapsed / HOUR_MS), 'hour')
-  }
-  return format.format(Math.round(elapsed / DAY_MS), 'day')
+  return Math.abs(elapsed) < HOUR_MS
+    ? format.format(Math.round(elapsed / MINUTE_MS), 'minute')
+    : format.format(Math.round(elapsed / HOUR_MS), 'hour')
 }
 
 const createTimeElement = (time: number, icon: string): HTMLDivElement => {
@@ -221,7 +235,7 @@ const createTimeElement = (time: number, icon: string): HTMLDivElement => {
   timeElement.classList.add('log-time')
   timeElement.title = absoluteTime(time)
   timeElement.append(
-    document.createTextNode(relativeTime(time)),
+    document.createTextNode(logTime(time)),
     document.createElement('br'),
     document.createTextNode(icon),
   )
@@ -242,12 +256,6 @@ const createMessageElement = (
 
 // One separator above each day's logs (newest day on top)
 const topDay: { value: string | null } = { value: null }
-
-const dayOf = (time: number): string =>
-  Temporal.Instant.fromEpochMilliseconds(time)
-    .toZonedDateTimeISO(Temporal.Now.timeZoneId())
-    .toPlainDate()
-    .toString()
 
 const createDayElement = (time: number): HTMLDivElement => {
   const dayElement = document.createElement('div')
