@@ -133,6 +133,14 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
 
 - `.homeycompose/` is the SOURCE for `app.json` and `locales/*.json`;
   commit the CLI-generated outputs verbatim (no trailing newline).
+- Dirty-gating: `settings/dirty-gate.mts` is the ONE primitive behind the
+  Update/Refresh pair — never re-derive its invariant at a call site. Its
+  `serialize` must stay a PURE form snapshot, never a request-body
+  builder, and disabled greying styles `button:disabled` generically,
+  never a per-class list. `tests/dirty-gate.test.ts` locks the behavior;
+  the module is a byte-identical copy of com.melcloud's
+  `public/dirty-gate.mts` (com.heatzy carries the third copy) — edit all
+  three together.
 - Home ATA devices (`home-melcloud`) do NOT expose
   `measure_temperature.outdoor`; only Classic ATA devices do. The
   default outdoor-source selection and the sensor list must never
