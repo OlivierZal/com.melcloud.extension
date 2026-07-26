@@ -43,9 +43,7 @@ await Promise.all([
 ])
 
 // Courtesy cleanup: builds predating the `.homeybuild` emission left
-// bundles in the source tree. The CLI would copy them into the package,
-// where this build immediately overwrites them — harmless, but they
-// linger confusingly in the working tree.
+// bundles in the source tree; they only linger confusingly there.
 await Promise.all(
   ['settings/index.js', 'settings/index.mjs'].map(async (file) =>
     rm(file, { force: true }),

@@ -113,10 +113,9 @@ export default class MELCloudExtensionApp extends App {
     await this.#destroyListeners()
   }
 
-  // Starts or restarts automatic cooling adjustment. Destroys existing
-  // listeners first, then creates one listener per AC device from the
-  // provided or stored per-device outdoor sources. A device whose source
-  // fails to validate is reported and skipped; the others keep running.
+  // Starts or restarts automatic cooling adjustment. A device whose
+  // source fails to validate is reported and skipped; the others keep
+  // running.
   public async autoAdjustCooling(
     temperatureListenerData?: TemperatureListenerData,
   ): Promise<void> {
@@ -309,7 +308,7 @@ export default class MELCloudExtensionApp extends App {
   }
 
   // Categorizes all Homey devices into MELCloud AC units and temperature
-  // sensors. Devices without an explicit source use the Homey weather.
+  // sensors.
   async #loadDevices(): Promise<void> {
     this.#melcloudDevices.length = 0
     this.#temperatureSensors.length = 0
@@ -356,8 +355,6 @@ export default class MELCloudExtensionApp extends App {
     )
   }
 
-  // Storage upkeep after each device discovery: the one-time legacy
-  // migration, then the explicit per-device seeding.
   #reconcileSourceEntries(): void {
     this.#migrateLegacySource()
     this.#seedOutdoorSources()

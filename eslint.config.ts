@@ -186,7 +186,6 @@ const config = defineConfig([
           types: ['boolean'],
         },
         // ── Parameters ───────────────────────────────────────
-        // Unused parameters must wear the underscore.
         {
           format: ['camelCase'],
           leadingUnderscore: 'require',
