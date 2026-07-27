@@ -391,5 +391,20 @@
     "pl": "Czytelniejszy dziennik aktywności: nagłówki dni są wyraźniejsze, a wpisy z poprzednich dni pokazują dokładną godzinę.",
     "ru": "Более наглядный журнал активности: заголовки дней выделяются, а записи прошлых дней показывают точное время.",
     "sv": "Tydligare aktivitetslogg: dagsrubriker framträder och poster från tidigare dagar visar exakt tid."
+  },
+  "24.9.0": {
+    "ar": "أصبح الضبط التلقائي للتبريد بدقة نصف درجة، ما يبقي الهدف أقرب إلى فجوة الكفاءة البالغة 8 درجات.",
+    "da": "Den automatiske kølejustering er nu præcis på en halv grad og holder målet tættere på effektivitetsgabet på 8 °C.",
+    "de": "Die automatische Kühlanpassung arbeitet jetzt halbgradgenau und hält das Ziel näher am 8-°C-Effizienzabstand.",
+    "en": "Cooling auto-adjustment is now half-degree precise, keeping the target closer to the 8 °C efficiency gap.",
+    "es": "El ajuste automático de refrigeración ahora es preciso a medio grado, manteniendo el objetivo más cerca del margen de eficiencia de 8 °C.",
+    "fr": "L'ajustement automatique du refroidissement est désormais précis au demi-degré, gardant la cible au plus près de l'écart d'efficacité de 8 °C.",
+    "it": "La regolazione automatica del raffrescamento è ora precisa al mezzo grado, mantenendo l’obiettivo più vicino al margine di efficienza di 8 °C.",
+    "ko": "냉방 자동 조정이 이제 0.5도 단위로 정밀해져 목표 온도를 8 °C 효율 간격에 더 가깝게 유지합니다.",
+    "nl": "De automatische koelaanpassing is nu nauwkeurig tot op een halve graad en houdt het doel dichter bij de efficiëntiemarge van 8 °C.",
+    "no": "Den automatiske kjølejusteringen er nå nøyaktig på en halv grad og holder målet nærmere effektivitetsgapet på 8 °C.",
+    "pl": "Automatyczna regulacja chłodzenia jest teraz dokładna co pół stopnia, utrzymując cel bliżej 8-stopniowego marginesu wydajności.",
+    "ru": "Автоподстройка охлаждения теперь работает с точностью до полградуса, удерживая цель ближе к 8-градусному запасу эффективности.",
+    "sv": "Den automatiska kyljusteringen är nu exakt på en halv grad och håller målet närmare effektivitetsgapet på 8 °C."
   }
 }
