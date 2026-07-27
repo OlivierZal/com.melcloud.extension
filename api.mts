@@ -36,6 +36,20 @@ const api = {
     await app.autoAdjustCooling(body)
   },
   /**
+   * Serves the frozen legacy path `/melcloud/cooling/auto_adjustment`:
+   * phone webviews cache the settings bundle across app versions, so a
+   * pre-rename bundle still PUTs here — never remove it.
+   * @param context - Homey API context.
+   * @param context.body - Selected outdoor source and enablement flag.
+   * @param context.homey - Homey instance carrying the app.
+   */
+  async autoAdjustCoolingLegacy(context: {
+    body: TemperatureListenerData
+    homey: Homey
+  }): Promise<void> {
+    await api.autoAdjustCooling(context)
+  },
+  /**
    * Lists the settings rows: one named group per MELCloud building
    * (com.melcloud's inter-app grouping), unmatched devices trailing in
    * an unnamed group, or a single unnamed flat group when no grouping

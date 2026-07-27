@@ -2,6 +2,10 @@
   "api": {
     "autoAdjustCooling": {
       "method": "PUT",
+      "path": "/cooling/auto-adjustment"
+    },
+    "autoAdjustCoolingLegacy": {
+      "method": "PUT",
       "path": "/melcloud/cooling/auto_adjustment"
     },
     "getAdjustableGroups": {

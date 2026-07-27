@@ -13,6 +13,7 @@ import {
   type TimestampedLog,
   DISABLED_SOURCE,
 } from '../types.mts'
+import { homeyApiGet, homeyApiPut, homeyCallback } from './callback-api.mts'
 import { createDirtyGate } from './dirty-gate.mts'
 
 // Give slow transports a real chance while keeping the loading overlay
@@ -90,20 +91,6 @@ const fireAndForget = (
 ): void => {
   forget(promise, onError)
 }
-
-// Promisifies Homey Settings API callbacks (error-first convention)
-const homeyCallback = async <T,>(
-  call: (callback: (error: Error | null, result: T) => void) => void,
-): Promise<T> =>
-  new Promise((resolve, reject) => {
-    call((error, result) => {
-      if (error !== null) {
-        reject(error)
-        return
-      }
-      resolve(result)
-    })
-  })
 
 const getElement = <T extends HTMLElement>(
   id: string,
@@ -355,12 +342,12 @@ const handleSettings = (settings: HomeySettings): void => {
 }
 
 const fetchLanguage = async (homey: Homey): Promise<void> => {
-  document.documentElement.lang = await homeyCallback<string>((callback) => {
-    homey.api('GET', '/language', callback)
-  })
+  document.documentElement.lang = await homeyApiGet<string>(homey, '/language')
 }
 
-const fetchHomeySettings = async (homey: Homey): Promise<void> => {
+// `load`, not `fetch`: this reads the settings STORE (`homey.get`), not
+// the app API — the `fetch*` prefix is reserved for transport calls.
+const loadHomeySettings = async (homey: Homey): Promise<void> => {
   try {
     const settings = await homeyCallback<HomeySettings>((callback) => {
       homey.get(callback)
@@ -382,9 +369,7 @@ const fetchListOrEmpty = async <T,>(
   path: string,
 ): Promise<T[]> => {
   try {
-    return await homeyCallback<T[]>((callback) => {
-      homey.api('GET', path, callback)
-    })
+    return await homeyApiGet<T[]>(homey, path)
   } catch (error) {
     if (!isNotFound(error)) {
       await homey.alert(getErrorMessage(error))
@@ -719,17 +704,10 @@ const getSelectedSources = (): OutdoorSources =>
 const autoAdjustCooling = async (homey: Homey): Promise<void> =>
   dirtyGate.runBusy(async () => {
     try {
-      await homeyCallback<undefined>((callback) => {
-        homey.api(
-          'PUT',
-          '/melcloud/cooling/auto_adjustment',
-          {
-            isEnabled: enabledElement.value === 'true',
-            outdoorSources: getSelectedSources(),
-          } satisfies TemperatureListenerData,
-          callback,
-        )
-      })
+      await homeyApiPut(homey, '/cooling/auto-adjustment', {
+        isEnabled: enabledElement.value === 'true',
+        outdoorSources: getSelectedSources(),
+      } satisfies TemperatureListenerData)
       dirtyGate.markSaved()
     } catch (error) {
       await homey.alert(getErrorMessage(error))
@@ -741,7 +719,7 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
 const refreshAll = async (homey: Homey): Promise<void> =>
   dirtyGate.runBusy(async () => {
     await populateSources(homey)
-    await fetchHomeySettings(homey)
+    await loadHomeySettings(homey)
     dirtyGate.markSaved()
   })
 

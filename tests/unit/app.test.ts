@@ -134,6 +134,21 @@ describe(MELCloudExtensionApp, () => {
 
     await advancePastInit()
 
+    expect(mockHomey.apiAppGet).toHaveBeenCalledWith('/devices/groups')
+    expect(app.deviceGroups).toStrictEqual(groups)
+  })
+
+  it('should fall back to the frozen legacy grouping path on an older com.melcloud', async () => {
+    const { classicDevice } = createDevices()
+    const groups = [{ deviceIds: ['classic-1'], name: 'Domicile' }]
+    const { app, mockHomey } = await createHarness([classicDevice])
+    mockHomey.apiAppGet.mockImplementationOnce(() => {
+      throw new Error('Not Found')
+    })
+    mockHomey.apiAppGet.mockReturnValue(groups)
+
+    await advancePastInit()
+
     expect(mockHomey.apiAppGet).toHaveBeenCalledWith('/device_groups')
     expect(app.deviceGroups).toStrictEqual(groups)
   })

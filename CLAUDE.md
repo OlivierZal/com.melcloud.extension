@@ -133,6 +133,17 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
 
 - `.homeycompose/` is the SOURCE for `app.json` and `locales/*.json`;
   commit the CLI-generated outputs verbatim (no trailing newline).
+- App-API surface conventions (aligned on com.melcloud): paths are
+  kebab-case REST, `get*` for GET; `fetch*` in the webview is reserved
+  for transport calls (`load*` reads the settings store). The current
+  auto-adjustment path is `/cooling/auto-adjustment`;
+  `/melcloud/cooling/auto_adjustment` (`autoAdjustCoolingLegacy`) is
+  FROZEN — cached pre-rename bundles still PUT it, never remove it.
+  The com.melcloud grouping is probed `/devices/groups` first, then the
+  frozen `/device_groups` (an older com.melcloud during version skew).
+  `settings/callback-api.mts` is the settings page's transport
+  (error-first-callback SDK), a byte-identical copy of com.melcloud's
+  (com.heatzy carries the third) — edit all three together.
 - Dirty-gating: `settings/dirty-gate.mts` is the ONE primitive behind the
   Update/Refresh pair — never re-derive its invariant at a call site. Its
   `serialize` must stay a PURE form snapshot, never a request-body
