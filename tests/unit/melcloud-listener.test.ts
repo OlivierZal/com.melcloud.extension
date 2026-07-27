@@ -135,7 +135,7 @@ describe(MELCloudListener, () => {
     expect(harness.listener.isCooling).toBe(false)
   })
 
-  it('should floor the target to the outdoor temperature minus the gap', async () => {
+  it('should floor the target to the outdoor temperature minus the gap, half-degree precise', async () => {
     const harness = createHarness({
       outdoorTemperature: 34.2,
       targetTemperature: 23,
@@ -143,9 +143,24 @@ describe(MELCloudListener, () => {
 
     await harness.listener.listenToThermostatMode()
 
+    // 34.2 ceils to the wire's next half degree (34.5), not to 35: the
+    // floor hugs the outdoor reading while the gap stays <= 8.
     expect(
       getInstance(harness, 'target_temperature').setValue,
-    ).toHaveBeenCalledWith(27)
+    ).toHaveBeenCalledWith(26.5)
+  })
+
+  it('should keep a whole-degree outdoor reading on whole degrees', async () => {
+    const harness = createHarness({
+      outdoorTemperature: 34,
+      targetTemperature: 23,
+    })
+
+    await harness.listener.listenToThermostatMode()
+
+    expect(
+      getInstance(harness, 'target_temperature').setValue,
+    ).toHaveBeenCalledWith(26)
   })
 
   it('should cap the target at the capability maximum', async () => {

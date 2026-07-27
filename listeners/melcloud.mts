@@ -14,6 +14,15 @@ const THERMOSTAT_MODE = 'thermostat_mode'
 const DEFAULT_TEMPERATURE = 0
 // Minimum gap between outdoor temperature and target cooling temperature
 const GAP_TEMPERATURE = 8
+
+// MELCloud accepts half-degree setpoints: ceiling to the next 0.5 °C
+// keeps the floor as close as the wire allows to the real outdoor
+// reading, still never letting the setpoint sit more than
+// GAP_TEMPERATURE below it.
+const SETPOINT_STEP = 0.5
+
+const ceilToSetpointStep = (value: number): number =>
+  Math.ceil(value / SETPOINT_STEP) * SETPOINT_STEP
 // Fallback ceiling when the capability options do not advertise a max
 // (both MELCloud ATA drivers ship `target_temperature` with max 31 °C)
 const MAX_TEMPERATURE = 31
@@ -157,7 +166,8 @@ export class MELCloudListener {
     return Math.min(
       Math.max(
         this.#getThreshold(),
-        Math.ceil(this.#source.value ?? DEFAULT_TEMPERATURE) - GAP_TEMPERATURE,
+        ceilToSetpointStep(this.#source.value ?? DEFAULT_TEMPERATURE) -
+          GAP_TEMPERATURE,
       ),
       this.#getMaxTemperature(),
     )
