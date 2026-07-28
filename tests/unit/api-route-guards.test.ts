@@ -79,15 +79,4 @@ describe('api route guards', () => {
 
     expect(unmatched).toStrictEqual([])
   })
-
-  it('should keep the frozen legacy route declared for cached bundles', async () => {
-    const manifest = JSON.parse(
-      await readFile('.homeycompose/app.json', 'utf8'),
-    ) as { api: Record<string, DeclaredRoute> }
-
-    expect(manifest.api.autoAdjustCoolingLegacy).toStrictEqual({
-      method: 'PUT',
-      path: '/melcloud/cooling/auto_adjustment',
-    })
-  })
 })

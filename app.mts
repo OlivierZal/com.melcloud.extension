@@ -214,20 +214,10 @@ export default class MELCloudExtensionApp extends App {
 
   async #fetchDeviceGroups(): Promise<DeviceGroups | null> {
     try {
-      return toDeviceGroups(await this.#fetchDeviceGroupsPayload())
+      const payload: unknown = await this.#melcloudApp.get('/devices/groups')
+      return toDeviceGroups(payload)
     } catch {
       return null
-    }
-  }
-
-  // com.melcloud serves the grouping on `/devices/groups` and keeps the
-  // frozen legacy `/device_groups` alias; probing new-then-legacy rides
-  // out version skew between the two independently-updated apps.
-  async #fetchDeviceGroupsPayload(): Promise<unknown> {
-    try {
-      return await this.#melcloudApp.get('/devices/groups')
-    } catch {
-      return this.#melcloudApp.get('/device_groups')
     }
   }
 
