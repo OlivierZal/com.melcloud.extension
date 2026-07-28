@@ -358,8 +358,14 @@ const loadHomeySettings = async (homey: Homey): Promise<void> => {
   }
 }
 
-const isNotFound = (error: unknown): boolean =>
-  getErrorMessage(error) === 'notFound'
+// Two wire shapes for a missing endpoint: com.melcloud's own
+// NotFoundError serializes as 'notFound', while the Homey Pro 2019
+// firmware's API bridge answers 'Not found: GET /api/app/…' — both must
+// read as "endpoint absent", not as an alert-worthy failure.
+const isNotFound = (error: unknown): boolean => {
+  const message = getErrorMessage(error)
+  return message === 'notFound' || message.startsWith('Not found')
+}
 
 // Shared GET-or-empty policy of the two device lists: a 404 (endpoint
 // absent — an older com.melcloud) silently reads as "none", any other
