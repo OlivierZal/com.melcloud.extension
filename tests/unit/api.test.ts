@@ -113,18 +113,6 @@ describe('api', () => {
 
       expect(autoAdjustCooling).toHaveBeenCalledWith(body)
     })
-
-    it('should serve the frozen legacy path through the same handler', async () => {
-      const { autoAdjustCooling, homey } = createHomeyContext({
-        melcloudDevices: [],
-        temperatureSensors: [],
-      })
-      const body = { isEnabled: false, outdoorSources: {} }
-
-      await api.autoAdjustCoolingLegacy({ body, homey })
-
-      expect(autoAdjustCooling).toHaveBeenCalledWith(body)
-    })
   })
 
   describe('getAdjustableGroups', () => {

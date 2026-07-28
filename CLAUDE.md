@@ -53,7 +53,7 @@ to judge success.
   the temperature sensors, debounces device events, and owns the
   per-device `MELCloudListener`s plus the shared `OutdoorSource`
   registry.
-- Device grouping — com.melcloud exposes `GET /device_groups`
+- Device grouping — com.melcloud exposes `GET /devices/groups`
   (`[{ deviceIds, name }]`, one entry per MELCloud building, both
   dialects, sorted by name). The extension declares the
   `homey:app:com.mecloud` permission and calls the endpoint through
@@ -135,12 +135,12 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
   commit the CLI-generated outputs verbatim (no trailing newline).
 - App-API surface conventions (aligned on com.melcloud): paths are
   kebab-case REST, `get*` for GET; `fetch*` in the webview is reserved
-  for transport calls (`load*` reads the settings store). The current
-  auto-adjustment path is `/cooling/auto-adjustment`;
-  `/melcloud/cooling/auto_adjustment` (`autoAdjustCoolingLegacy`) is
-  FROZEN — cached pre-rename bundles still PUT it, never remove it.
-  The com.melcloud grouping is probed `/devices/groups` first, then the
-  frozen `/device_groups` (an older com.melcloud during version skew).
+  for transport calls (`load*` reads the settings store). The
+  auto-adjustment path is `/cooling/auto-adjustment` (the snake_case
+  legacy alias was dropped by decision, 2026-07 — a cached pre-rename
+  bundle now alerts on Apply until it refreshes). The com.melcloud
+  grouping is `GET /devices/groups` only; an older com.melcloud reads
+  as "no grouping" (the sanitizer's degradation path).
   `settings/callback-api.mts` is the settings page's transport
   (error-first-callback SDK), a byte-identical copy of com.melcloud's
   (com.heatzy carries the third) — edit all three together. The surface
@@ -148,8 +148,7 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
   touching a route: `tests/unit/api-contract.test.ts` pins manifest
   ids ↔ handlers both ways plus the handlers' function type;
   `tests/unit/api-route-guards.test.ts` pins the call sites (every
-  settings path literal must match a declared route) and the frozen
-  legacy route.
+  settings path literal must match a declared route).
 - Dirty-gating: `settings/dirty-gate.mts` is the ONE primitive behind the
   Update/Refresh pair — never re-derive its invariant at a call site. Its
   `serialize` must stay a PURE form snapshot, never a request-body
