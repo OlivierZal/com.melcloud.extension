@@ -214,6 +214,14 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
 - `useDefineForClassFields` wipes fields assigned by `super()`: a
   subclass re-declaring an Error option (like `cause`) must use
   `declare`, not a field initializer.
+- All-type exports hoist the keyword (`export type { A, B }`); mixed
+  exports keep inline `type` specifiers, mirroring the
+  inline-type-imports style. No shipped rule enforces the export side
+  (`consistent-type-exports` tolerates inline specifiers once present;
+  `import-x/consistent-type-specifier-style` covers imports only): the
+  convention is maintained by hand, in review — a bespoke
+  `no-restricted-syntax` selector for it was removed by decision
+  (2026-07-28).
 
 ## Repo process
 
