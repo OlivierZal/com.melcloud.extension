@@ -575,7 +575,39 @@ describe(MELCloudExtensionApp, () => {
     await app.autoAdjustCooling('garbage')
 
     expect(mockHomey.settingsStore.isEnabled).toBe(false)
-    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({})
+    // The sanitizer yields no sources, and that absence must not erase
+    // what seeding wrote: an off-shape body disables, it does not reset.
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': null,
+    })
+  })
+
+  // The settings page builds its payload from the devices it displayed,
+  // so an incomplete list must not take the others' entries down with it.
+  it('should keep the sources of devices the payload omits', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    const { app, mockHomey } = await createHarness(
+      [classicDevice, homeDevice],
+      {
+        settings: {
+          outdoorSources: {
+            'classic-1': 'sensor-1:measure_temperature',
+            'home-1': 'sensor-1:measure_temperature',
+          },
+        },
+      },
+    )
+
+    await advancePastInit()
+    await app.autoAdjustCooling({
+      isEnabled: false,
+      outdoorSources: { 'classic-1': null },
+    })
+
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': null,
+      'home-1': 'sensor-1:measure_temperature',
+    })
   })
 
   it('should log instead of crashing when the debounced reload fails', async () => {

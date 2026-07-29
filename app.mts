@@ -150,7 +150,13 @@ export default class MELCloudExtensionApp extends App {
         : toListenerData(payload)
     await this.#destroyListeners()
     this.homey.settings.set('isEnabled', isEnabled)
-    this.outdoorSources = outdoorSources
+    // Merged, never replaced: the settings page builds this payload from
+    // the devices it DISPLAYED, so a partial device list would drop the
+    // entries of the others. Merging is also the whole truth about this
+    // map — no key is ever legitimately removed (disabling a source is a
+    // value, `DISABLED_SOURCE`, not an absent entry), which is the same
+    // reason orphan entries are left alone.
+    this.outdoorSources = { ...this.outdoorSources, ...outdoorSources }
     if (!isEnabled) {
       return
     }
