@@ -254,6 +254,16 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
   `design/*` branches with dev-installs only — no PR merges, no tags,
   no releases, no App Store publishes until he lifts the pause.
 - `main` is protected (PRs only, squash merges); CI must be green.
+- The PR title IS the commit that lands: `squash_merge_commit_title` is
+  `PR_TITLE`, so the title is the single source (under the former
+  `COMMIT_OR_PR_TITLE`, a one-commit PR silently took its commit subject
+  instead). It must follow Conventional Commits, which the required
+  `PR title` check enforces (`.github/workflows/pr-title.yml`,
+  byte-identical in the five repos) — default type set, no scope
+  allowlist, and no `subjectPattern`: subjects legitimately open on a
+  proper noun. Dependabot's prefixes are pinned to `build(deps)` /
+  `build(deps-dev)` rather than inferred, which is what had it land a
+  different style in each repo.
 - After every push, monitor the triggered pipelines to completion — the
   PR checks after a push, the publish run after a release tag — and act
   on the outcome: rerun transient infra failures (a SonarCloud 504 is
