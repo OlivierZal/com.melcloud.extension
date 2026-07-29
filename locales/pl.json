@@ -6,6 +6,7 @@
     "created": "Tworzenie nasłuchu dla __capability__ urządzenia __name__",
     "listened": "Nasłuchiwanie __capability__ urządzenia __name__: __value__",
     "notFound": "Nie znaleziono: __type__ `__idOrName__`",
+    "noThreshold": "Brak zapisanej temperatury dla __name__: nie wysłano żadnego polecenia",
     "reverted": "Przywracanie temperatury __name__: __value__",
     "saved": "Zapisywanie temperatury __name__: __value__"
   },

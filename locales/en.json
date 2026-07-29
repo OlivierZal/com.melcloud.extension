@@ -6,6 +6,7 @@
     "created": "Creating a listener for __capability__ of __name__",
     "listened": "Listening to __capability__ of __name__: __value__",
     "notFound": "__type__ `__idOrName__` not found",
+    "noThreshold": "No stored temperature for __name__: nothing was sent to the unit",
     "reverted": "Reverting the temperature of __name__: __value__",
     "saved": "Saving the temperature of __name__: __value__"
   },

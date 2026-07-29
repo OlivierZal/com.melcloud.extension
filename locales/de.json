@@ -6,6 +6,7 @@
     "created": "Listener für __capability__ von __name__ wird erstellt",
     "listened": "__capability__ von __name__ wird überwacht: __value__",
     "notFound": "__type__ `__idOrName__` nicht gefunden",
+    "noThreshold": "Keine gespeicherte Solltemperatur für __name__: es wurde kein Befehl gesendet",
     "reverted": "Temperatur von __name__ wird zurückgesetzt: __value__",
     "saved": "Temperatur von __name__ wird gespeichert: __value__"
   },

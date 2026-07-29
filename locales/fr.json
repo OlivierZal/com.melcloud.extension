@@ -6,6 +6,7 @@
     "created": "Création d'un écouteur pour __capability__ de __name__",
     "listened": "Écoute de __capability__ de __name__ : __value__",
     "notFound": "__type__ `__idOrName__` introuvable",
+    "noThreshold": "Aucune température enregistrée pour __name__ : aucune commande envoyée",
     "reverted": "Rétablissement de la température de __name__ : __value__",
     "saved": "Enregistrement de la température de __name__ : __value__"
   },

@@ -11,7 +11,6 @@ const COOL = 'cool'
 const TARGET_TEMPERATURE = 'target_temperature'
 const THERMOSTAT_MODE = 'thermostat_mode'
 
-const DEFAULT_TEMPERATURE = 0
 // Minimum gap between outdoor temperature and target cooling temperature
 const GAP_TEMPERATURE = 8
 
@@ -121,6 +120,10 @@ export class MELCloudListener {
       return
     }
     const value = this.#getTargetTemperature()
+    if (value === null) {
+      this.#app.pushToUI('error.noThreshold', { name: this.#device.name })
+      return
+    }
     await this.#targetTemperatureListener.setValue(value)
     this.#app.pushToUI('calculated', {
       name: this.#device.name,
@@ -162,19 +165,30 @@ export class MELCloudListener {
   // - At least the user-defined threshold (minimum comfort temperature)
   // - At least outdoor temperature minus GAP_TEMPERATURE (efficiency floor)
   // - At most the device's advertised setpoint ceiling
-  #getTargetTemperature(): number {
-    return Math.min(
-      Math.max(
-        this.#getThreshold(),
-        ceilToSetpointStep(this.#source.value ?? DEFAULT_TEMPERATURE) -
-          GAP_TEMPERATURE,
-      ),
-      this.#getMaxTemperature(),
-    )
+  //
+  // Each floor is a term only when it is known: no outdoor reading means
+  // no efficiency floor, not a floor computed from a stand-in number.
+  #getTargetTemperature(): number | null {
+    const outdoor = this.#source.value
+    const floors = [
+      this.#getThreshold(),
+      outdoor === null ? null : ceilToSetpointStep(outdoor) - GAP_TEMPERATURE,
+    ].filter((floor): floor is number => floor !== null)
+    // Neither a stored setpoint nor a reading: nothing constrains the
+    // target, so there is no target to compute. Math.max of nothing is
+    // -Infinity, which would be a worse invention than the 0 this
+    // replaces.
+    return floors.length === 0
+      ? null
+      : Math.min(Math.max(...floors), this.#getMaxTemperature())
   }
 
-  #getThreshold(): number {
-    return this.#getThresholds()[this.#device.id] ?? DEFAULT_TEMPERATURE
+  // `null` when the user has no stored comfort setpoint for this device:
+  // absent, never a stand-in value. Callers decide what to do without
+  // one — the revert path refuses to write rather than inventing a
+  // setpoint nobody chose.
+  #getThreshold(): number | null {
+    return this.#getThresholds()[this.#device.id] ?? null
   }
 
   #getThresholds(): Thresholds {
@@ -216,9 +230,18 @@ export class MELCloudListener {
 
   // Restores the target temperature to the user's threshold when
   // auto-adjustment stops (e.g. device leaves cooling mode).
+  //
+  // Without a stored threshold there is nothing to restore, so nothing
+  // is written: leaving the unit where it is beats commanding a setpoint
+  // the user never chose. This path used to send the 0 °C that stood in
+  // for "absent".
   async #revertTemperature(): Promise<void> {
+    const value = this.#getThreshold()
+    if (value === null) {
+      this.#app.pushToUI('error.noThreshold', { name: this.#device.name })
+      return
+    }
     try {
-      const value = this.#getThreshold()
       await this.#device.setCapabilityValue({
         capabilityId: TARGET_TEMPERATURE,
         value,
@@ -237,9 +260,7 @@ export class MELCloudListener {
 
   async #setThreshold(value: number): Promise<void> {
     const { id, name } = this.#device
-    const thresholds = this.#getThresholds()
-    thresholds[id] = value
-    this.#app.homey.settings.set('thresholds', thresholds)
+    this.#app.thresholds = { ...this.#app.thresholds, [id]: value }
     this.#app.pushToUI('saved', { name, value: formatTemperature(value) })
     await this.setTargetTemperature()
   }
