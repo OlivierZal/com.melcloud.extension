@@ -6,6 +6,7 @@
     "created": "إنشاء مستمع لـ __capability__ في __name__",
     "listened": "الاستماع إلى __capability__ في __name__: __value__",
     "notFound": "__type__ `__idOrName__` غير موجود",
+    "noThreshold": "لا توجد درجة حرارة مرجعية محفوظة لـ __name__: لم يتم إرسال أي أمر",
     "reverted": "استعادة درجة حرارة __name__: __value__",
     "saved": "حفظ درجة حرارة __name__: __value__"
   },

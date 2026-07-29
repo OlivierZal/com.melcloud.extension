@@ -6,6 +6,7 @@
     "created": "Создание слушателя __capability__ у __name__",
     "listened": "Отслеживание __capability__ у __name__: __value__",
     "notFound": "Не найдено: __type__ `__idOrName__`",
+    "noThreshold": "Нет сохранённой температуры для __name__: команда не отправлена",
     "reverted": "Восстановление температуры __name__: __value__",
     "saved": "Сохранение температуры __name__: __value__"
   },

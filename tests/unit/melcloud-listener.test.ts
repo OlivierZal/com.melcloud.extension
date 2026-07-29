@@ -81,10 +81,14 @@ const createHarness = ({
     },
     names,
     pushToUI,
-    // A getter, not a snapshot: tests mutate settingsStore mid-run and
-    // the listener must see it, exactly as the real app getter does.
+    // The accessor PAIR, not a snapshot: tests mutate settingsStore
+    // mid-run and the listener must see it, and it writes back through
+    // the setter — exactly as the real app does.
     get thresholds(): Thresholds {
       return toThresholds(settingsStore.thresholds) ?? {}
+    },
+    set thresholds(value: Thresholds) {
+      Object.assign(settingsStore, { thresholds: value })
     },
   })
   const source = mock<OutdoorSource>({
@@ -265,18 +269,54 @@ describe(MELCloudListener, () => {
     expect(harness.attach).toHaveBeenCalledTimes(1)
   })
 
-  it('should revert to the default temperature when the stored threshold disappeared', async () => {
+  // It used to send 0 °C here — the stand-in value for "absent" reaching
+  // the unit as a real command.
+  it('should write nothing when the stored threshold disappeared', async () => {
     const harness = createHarness()
     await harness.listener.listenToThermostatMode()
     Object.assign(harness.settingsStore, { thresholds: {} })
+    harness.mockDevice.setCapabilityValue.mockClear()
 
     await getInstance(harness, 'thermostat_mode').listener('heat')
     await settleListeners()
 
-    expect(harness.mockDevice.setCapabilityValue).toHaveBeenCalledWith({
-      capabilityId: 'target_temperature',
-      value: 0,
+    expect(harness.mockDevice.setCapabilityValue).not.toHaveBeenCalled()
+    expect(harness.pushToUI).toHaveBeenCalledWith('error.noThreshold', {
+      name: 'Living room',
     })
+  })
+
+  // Nothing constrains the target: no stored setpoint and no reading.
+  // Math.max of no floor is -Infinity, so refusing is the only honest
+  // answer — this is the branch the old 0 °C stand-in hid.
+  it('should write nothing when neither a threshold nor a reading is known', async () => {
+    const harness = createHarness({ outdoorTemperature: null })
+    await harness.listener.listenToThermostatMode()
+    // Attaching seeds the threshold from the device's current setpoint,
+    // so both the store and that first write are cleared first.
+    Object.assign(harness.settingsStore, { thresholds: {} })
+    const instance = getInstance(harness, 'target_temperature')
+    instance.setValue.mockClear()
+    harness.pushToUI.mockClear()
+
+    await harness.listener.setTargetTemperature()
+
+    expect(instance.setValue).not.toHaveBeenCalled()
+    expect(harness.pushToUI).toHaveBeenCalledWith('error.noThreshold', {
+      name: 'Living room',
+    })
+  })
+
+  it('should ignore a corrupt stored threshold like an absent one', async () => {
+    const harness = createHarness()
+    await harness.listener.listenToThermostatMode()
+    Object.assign(harness.settingsStore, { thresholds: { 'ac-1': 'warm' } })
+    harness.mockDevice.setCapabilityValue.mockClear()
+
+    await getInstance(harness, 'thermostat_mode').listener('heat')
+    await settleListeners()
+
+    expect(harness.mockDevice.setCapabilityValue).not.toHaveBeenCalled()
   })
 
   it('should revert the temperature and release the outdoor listener when leaving cool', async () => {

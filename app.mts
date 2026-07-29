@@ -72,9 +72,16 @@ export default class MELCloudExtensionApp extends App {
   }
 
   // Sanitized and fresh on every read: a corrupt entry reads as absent,
-  // and callers may mutate the result without touching the store.
+  // and callers may mutate the result without touching the store. The
+  // accessor pair is the only door to each key, so the key name and its
+  // sanitizer sit together instead of being restated at every site —
+  // and a caller cannot write past the contract its reader assumes.
   public get outdoorSources(): OutdoorSources {
     return toOutdoorSources(this.homey.settings.get('outdoorSources')) ?? {}
+  }
+
+  public set outdoorSources(value: OutdoorSources) {
+    this.homey.settings.set('outdoorSources', value)
   }
 
   public get temperatureSensors(): HomeyAPIV3Local.ManagerDevices.Device[] {
@@ -83,6 +90,10 @@ export default class MELCloudExtensionApp extends App {
 
   public get thresholds(): Thresholds {
     return toThresholds(this.homey.settings.get('thresholds')) ?? {}
+  }
+
+  public set thresholds(value: Thresholds) {
+    this.homey.settings.set('thresholds', value)
   }
 
   #api!: HomeyAPIV3Local
@@ -138,7 +149,7 @@ export default class MELCloudExtensionApp extends App {
         : toListenerData(payload)
     await this.#destroyListeners()
     this.homey.settings.set('isEnabled', isEnabled)
-    this.homey.settings.set('outdoorSources', outdoorSources)
+    this.outdoorSources = outdoorSources
     if (!isEnabled) {
       return
     }
@@ -356,11 +367,8 @@ export default class MELCloudExtensionApp extends App {
     // `?? {}` would flatten. A garbage value now also reads as not yet
     // migrated, which is the right call.
     if (toOutdoorSources(this.homey.settings.get('outdoorSources')) === null) {
-      this.homey.settings.set(
-        'outdoorSources',
-        Object.fromEntries(
-          this.#melcloudDevices.map(({ id }) => [id, legacyPath]),
-        ),
+      this.outdoorSources = Object.fromEntries(
+        this.#melcloudDevices.map(({ id }) => [id, legacyPath]),
       )
     }
     this.homey.settings.unset('capabilityPath')
@@ -396,7 +404,7 @@ export default class MELCloudExtensionApp extends App {
       stored[id] = isLegacySeed ? null : this.#inheritedSource(id, stored)
     }
     if (newcomers.length > 0) {
-      this.homey.settings.set('outdoorSources', stored)
+      this.outdoorSources = stored
     }
     if (isLegacySeed) {
       this.homey.settings.set('hasSeededOutdoorSources', true)

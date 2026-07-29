@@ -6,6 +6,7 @@
     "created": "Oppretter en lytter for __capability__ av __name__",
     "listened": "Lytter til __capability__ av __name__: __value__",
     "notFound": "__type__ `__idOrName__` ikke funnet",
+    "noThreshold": "Ingen lagret temperatur for __name__: ingen kommando ble sendt",
     "reverted": "Gjenoppretter temperaturen til __name__: __value__",
     "saved": "Lagrer temperaturen til __name__: __value__"
   },

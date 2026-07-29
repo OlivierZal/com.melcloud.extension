@@ -421,5 +421,20 @@
     "pl": "Aplikacja nie pokazuje już błędu na Homey Pro (2019), gdy lista urządzeń jest niedostępna. Jeśli strona ustawień była otwarta przed tą aktualizacją, zamknij ją i otwórz ponownie — stara strona może nie zapisać zmian.",
     "ru": "Приложение больше не показывает ошибку на Homey Pro (2019), когда список устройств недоступен. Если страница настроек была открыта до этого обновления, закройте и откройте её заново — старая страница может не сохранить изменения.",
     "sv": "Appen visar inte längre ett fel på Homey Pro (2019) när en enhetslista inte är tillgänglig. Om inställningssidan var öppen före den här uppdateringen, stäng och öppna den igen — en gammal sida kan misslyckas när du sparar."
+  },
+  "25.1.0": {
+    "ar": "لم يعد التطبيق يرسل 0 °م عندما لا تكون درجة الحرارة المرجعية محفوظة: لا يُرسل أي أمر ويظهر سبب ذلك في السجل.",
+    "da": "Appen sender ikke længere 0 °C, når din gemte temperatur mangler: den sender ingenting og skriver årsagen i loggen.",
+    "de": "Die App sendet keine 0 °C mehr, wenn deine gespeicherte Temperatur fehlt: sie sendet nichts und schreibt den Grund ins Protokoll.",
+    "en": "The app no longer sends 0 °C when your stored temperature is missing: it sends nothing and says why in the log.",
+    "es": "La app ya no envía 0 °C cuando falta tu temperatura guardada: no envía nada y explica el motivo en el registro.",
+    "fr": "L'app n'envoie plus 0 °C lorsque votre température enregistrée est absente : elle n'envoie rien et en indique la raison dans le journal.",
+    "it": "L'app non invia più 0 °C quando la tua temperatura salvata manca: non invia nulla e ne spiega il motivo nel registro.",
+    "ko": "저장된 온도가 없을 때 앱이 더 이상 0 °C를 보내지 않습니다. 아무것도 보내지 않고 그 이유를 로그에 남깁니다.",
+    "nl": "De app stuurt niet langer 0 °C wanneer je opgeslagen temperatuur ontbreekt: er wordt niets verstuurd en de reden staat in het logboek.",
+    "no": "Appen sender ikke lenger 0 °C når den lagrede temperaturen din mangler: den sender ingenting og skriver årsaken i loggen.",
+    "pl": "Aplikacja nie wysyła już 0 °C, gdy brakuje zapisanej temperatury: nic nie wysyła i podaje powód w dzienniku.",
+    "ru": "Приложение больше не отправляет 0 °C, когда сохранённая температура отсутствует: оно ничего не отправляет и указывает причину в журнале.",
+    "sv": "Appen skickar inte längre 0 °C när din sparade temperatur saknas: den skickar ingenting och anger orsaken i loggen."
   }
 }

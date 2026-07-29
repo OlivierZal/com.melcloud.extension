@@ -6,6 +6,7 @@
     "created": "Skapar en lyssnare för __capability__ av __name__",
     "listened": "Lyssnar på __capability__ av __name__: __value__",
     "notFound": "__type__ `__idOrName__` hittades inte",
+    "noThreshold": "Ingen sparad temperatur för __name__: inget kommando skickades",
     "reverted": "Återställer temperaturen för __name__: __value__",
     "saved": "Sparar temperaturen för __name__: __value__"
   },
