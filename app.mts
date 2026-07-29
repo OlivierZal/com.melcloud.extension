@@ -6,6 +6,7 @@ import type { OutdoorSource } from './listeners/outdoor-source.mts'
 import { changelog } from './files.mts'
 import { fireAndForget } from './lib/fire-and-forget.mts'
 import { getErrorMessage } from './lib/get-error-message.mts'
+import { toJoinKey } from './lib/group-devices.mts'
 import { type Homey, App } from './lib/homey.mts'
 import { toDeviceGroups } from './lib/to-device-groups.mts'
 import { toListenerData } from './lib/to-listener-data.mts'
@@ -247,6 +248,17 @@ export default class MELCloudExtensionApp extends App {
     }
   }
 
+  // Bridges the two id spaces: the building payload speaks MELCloud
+  // ids, every settings map is keyed by Homey id.
+  #getHomeyIdByMelcloudId(): Map<string, string> {
+    return new Map(
+      this.#melcloudDevices.flatMap((device) => {
+        const melcloudId = toJoinKey(device.data.id)
+        return melcloudId === null ? [] : [[melcloudId, device.id] as const]
+      }),
+    )
+  }
+
   async #getSource(sourcePath: string | null): Promise<OutdoorSource> {
     const key = sourcePath ?? WEATHER_SOURCE_KEY
     const existing = this.#sources.get(key)
@@ -280,13 +292,32 @@ export default class MELCloudExtensionApp extends App {
   // Newcomers inherit their building's outdoor source when the
   // siblings agree; a new building (or a mixed/ungrouped one) starts
   // disabled so no device gets auto-adjusted without an opt-in.
-  #inheritedSource(deviceId: string, stored: OutdoorSources): string | null {
-    const group = this.#deviceGroups?.find(({ deviceIds }) =>
-      deviceIds.includes(deviceId),
-    )
+  //
+  // Two id spaces meet here and must not be confused: the settings map
+  // is keyed by HOMEY device id, while the building payload lists
+  // MELCLOUD ids. Each device carries its MELCloud id in `data.id` —
+  // the same join `groupAdjustableDevices` uses — so comparing the two
+  // spaces directly never matched and every newcomer silently fell
+  // through to DISABLED_SOURCE.
+  #inheritedSource(
+    device: HomeyAPIV3Local.ManagerDevices.Device,
+    stored: OutdoorSources,
+  ): string | null {
+    const melcloudId = toJoinKey(device.data.id)
+    const group =
+      melcloudId === null
+        ? undefined
+        : this.#deviceGroups?.find(({ deviceIds }) =>
+            deviceIds.includes(melcloudId),
+          )
+    const homeyIdByMelcloudId = this.#getHomeyIdByMelcloudId()
     const siblingSources = new Set(
       (group?.deviceIds ?? [])
-        .filter((id) => id !== deviceId && Object.hasOwn(stored, id))
+        .filter((id) => id !== melcloudId)
+        .map((id) => homeyIdByMelcloudId.get(id))
+        .filter(
+          (id): id is string => id !== undefined && Object.hasOwn(stored, id),
+        )
         .map((id) => stored[id] ?? null),
     )
     if (siblingSources.size !== 1) {
@@ -400,8 +431,10 @@ export default class MELCloudExtensionApp extends App {
     )
     const isLegacySeed =
       this.homey.settings.get('hasSeededOutdoorSources') !== true
-    for (const { id } of newcomers) {
-      stored[id] = isLegacySeed ? null : this.#inheritedSource(id, stored)
+    for (const device of newcomers) {
+      stored[device.id] = isLegacySeed
+        ? null
+        : this.#inheritedSource(device, stored)
     }
     if (newcomers.length > 0) {
       this.outdoorSources = stored

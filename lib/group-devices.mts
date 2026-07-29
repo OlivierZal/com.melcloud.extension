@@ -20,7 +20,7 @@ const SORT_BEFORE = -1
 
 // The homey-api device data is app-defined: only the id shapes the
 // MELCloud apps actually write can join with the building payload
-const toJoinKey = (id: unknown): string | null =>
+export const toJoinKey = (id: unknown): string | null =>
   typeof id === 'string' || typeof id === 'number' ? String(id) : null
 
 const byName = <T extends { readonly name: string }>(
