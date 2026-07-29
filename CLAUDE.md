@@ -165,12 +165,37 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
   the 10–31 °C `target_temperature` range; the setpoint ceiling is read
   from `capabilitiesObj` at runtime (31 °C fallback).
 - The threshold (user comfort setpoint) is persisted per device id in
-  the `thresholds` setting; reverting falls back to 0 °C if the stored
-  entry disappeared.
+  the `thresholds` setting. A missing entry means ABSENT, never a
+  stand-in value: reverting writes nothing and reports `log.noThreshold`
+  (it used to send 0 °C — the placeholder reaching the unit as a real
+  command). A missing outdoor reading is treated the same way: no
+  efficiency floor rather than one computed from 0, and
+  `#getTargetTemperature` returns `null` when neither floor is known.
 - Outdoor sources are per device (`outdoorSources` setting: null/absent
   = Homey weather, `'none'` = the device is not adjusted at all); the
   legacy global `capabilityPath` is migrated to every known AC device
   once, then unset.
+- Both per-device maps are reached ONLY through the app's accessor pairs
+  (`outdoorSources`, `thresholds`): the key name and its sanitizer live
+  together, the getter hands back a sanitized fresh copy, and no caller
+  can write past the contract its reader assumes.
+- Entries for devices Homey no longer knows are deliberately NOT pruned.
+  They are inert — `#inheritedSource` matches on the live grouping, and
+  Homey ids are UUIDs, so a stale entry can neither be resurrected nor
+  influence an inheritance. Pruning was designed and refused: the only
+  place to run it is after `#loadDevices`, which empties the device list
+  before its network call, so any hiccup (com.melcloud stopped, a failed
+  read) would wipe every source and threshold the user configured — and
+  a wrongly-pruned source does not self-heal, the device re-seeds as a
+  newcomer straight to `DISABLED_SOURCE`. Map hygiene does not justify a
+  destructive operation on user configuration.
+- Grouping joins on the MELCLOUD id (`device.data.id`), never the Homey
+  id: `/devices/groups` speaks MELCloud ids while every settings map is
+  keyed by Homey id. `lib/group-devices.mts` exports `toJoinKey` as the
+  single home for that conversion — confusing the two spaces silently
+  broke building inheritance for every newcomer, and test fixtures must
+  give devices a `melcloudId` distinct from their `id` or they cannot
+  catch it.
 - The Homey weather (home-screen temperature) is served by the LOCAL
   weather manager. Route it through the connected homey-api session's
   generic `call({method, path: '/api/manager/weather/weather'})`: the
