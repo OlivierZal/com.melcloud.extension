@@ -60,6 +60,7 @@ const createDevices = (): {
     ],
     driverId: 'homey:app:com.mecloud:melcloud',
     id: 'classic-1',
+    melcloudId: '1000',
     name: 'Living room',
     values: {
       'measure_temperature.outdoor': 30,
@@ -75,6 +76,7 @@ const createDevices = (): {
     ],
     driverId: 'homey:app:com.mecloud:home-melcloud',
     id: 'home-1',
+    melcloudId: 'uuid-home-1',
     name: 'Bedroom',
     values: { target_temperature: 21, thermostat_mode: 'heat' },
   }),
@@ -128,7 +130,7 @@ describe(MELCloudExtensionApp, () => {
 
   it('should expose the building grouping fetched from com.melcloud', async () => {
     const { classicDevice } = createDevices()
-    const groups = [{ deviceIds: ['classic-1'], name: 'Domicile' }]
+    const groups = [{ deviceIds: ['1000'], name: 'Domicile' }]
     const { app, mockHomey } = await createHarness([classicDevice])
     mockHomey.apiAppGet.mockReturnValue(groups)
 
@@ -168,8 +170,8 @@ describe(MELCloudExtensionApp, () => {
       },
     })
     mockHomey.apiAppGet.mockReturnValue([
-      { deviceIds: ['classic-1'], name: 'Domicile' },
-      { deviceIds: ['home-1'], name: 'Chalet' },
+      { deviceIds: ['1000'], name: 'Domicile' },
+      { deviceIds: ['uuid-home-1'], name: 'Chalet' },
     ])
 
     await advancePastInit()
@@ -207,7 +209,7 @@ describe(MELCloudExtensionApp, () => {
       },
     })
     mockHomey.apiAppGet.mockReturnValue([
-      { deviceIds: ['classic-1', 'home-1'], name: 'Domicile' },
+      { deviceIds: ['1000', 'uuid-home-1'], name: 'Domicile' },
     ])
 
     await advancePastInit()
@@ -215,6 +217,30 @@ describe(MELCloudExtensionApp, () => {
     expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
       'classic-1': 'sensor-1:measure_temperature.outdoor',
       'home-1': 'sensor-1:measure_temperature.outdoor',
+    })
+  })
+
+  // A device whose data carries no usable MELCloud id cannot be joined
+  // to a building, so it has no siblings to inherit from and starts
+  // disabled — the same answer as an ungrouped one.
+  it('should default a newcomer without a usable join id to disabled', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    Object.assign(homeDevice.device, { data: {} })
+    const { mockHomey } = await createHarness([classicDevice, homeDevice], {
+      settings: {
+        hasSeededOutdoorSources: true,
+        outdoorSources: { 'classic-1': 'sensor-1:measure_temperature.outdoor' },
+      },
+    })
+    mockHomey.apiAppGet.mockReturnValue([
+      { deviceIds: ['1000', 'uuid-home-1'], name: 'Domicile' },
+    ])
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': 'sensor-1:measure_temperature.outdoor',
+      'home-1': 'none',
     })
   })
 
@@ -227,7 +253,7 @@ describe(MELCloudExtensionApp, () => {
       },
     })
     mockHomey.apiAppGet.mockReturnValue([
-      { deviceIds: ['classic-1', 'home-1'], name: 'Domicile' },
+      { deviceIds: ['1000', 'uuid-home-1'], name: 'Domicile' },
     ])
 
     await advancePastInit()
@@ -242,7 +268,7 @@ describe(MELCloudExtensionApp, () => {
     const { classicDevice } = createDevices()
     const { app, mockHomey } = await createHarness([classicDevice])
     mockHomey.apiAppGet.mockReturnValue([
-      { deviceIds: ['classic-1'], name: 'Domicile' },
+      { deviceIds: ['1000'], name: 'Domicile' },
     ])
 
     await advancePastInit()
