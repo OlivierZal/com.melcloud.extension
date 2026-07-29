@@ -17,3 +17,11 @@ export const mock = <T>(overrides: Partial<Record<keyof T, unknown>> = {}): T =>
  * under a `default` key its declared type does not have.
  */
 export type InteropModule<TModule> = TModule & { default: TModule }
+
+// Feeds a deliberately off-shape value where the type forbids one, so a
+// sanitizer can be tested against what a hand-edited setting actually
+// looks like. Same helper as melcloud-api's.
+export function cast(value: unknown): never
+export function cast(value: unknown): unknown {
+  return value
+}

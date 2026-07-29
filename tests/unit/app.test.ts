@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type * as HomeyLib from '../../lib/homey.mts'
 import type { TimestampedLog } from '../../types.mts'
 import { changelog } from '../../files.mts'
-import { assertDefined } from '../helpers.ts'
+import { assertDefined, cast } from '../helpers.ts'
 import {
   type MockDevice,
   type MockHomey,
@@ -436,6 +436,120 @@ describe(MELCloudExtensionApp, () => {
     expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
       'classic-1': null,
     })
+  })
+
+  // An explicit null is the Homey-weather default, not an absent entry:
+  // dropping it would make #seedOutdoorSources re-seed the device as a
+  // newcomer. This is the Object.hasOwn regression guard.
+  it('should keep an explicit null source through sanitizing', async () => {
+    const { classicDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice], {
+      settings: {
+        hasSeededOutdoorSources: true,
+        outdoorSources: { 'classic-1': null },
+      },
+    })
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': null,
+    })
+  })
+
+  it('should read an off-shape outdoorSources setting as nothing stored', async () => {
+    const { classicDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice], {
+      settings: { outdoorSources: cast('garbage') },
+    })
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': null,
+    })
+  })
+
+  it('should still migrate the legacy source over an off-shape map', async () => {
+    const { classicDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice], {
+      settings: {
+        capabilityPath: 'classic-1:measure_temperature.outdoor',
+        outdoorSources: cast('garbage'),
+      },
+    })
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.capabilityPath).toBeUndefined()
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': 'classic-1:measure_temperature.outdoor',
+    })
+  })
+
+  it('should drop a corrupt source entry and re-seed the device as a newcomer', async () => {
+    const { classicDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice], {
+      settings: {
+        hasSeededOutdoorSources: true,
+        outdoorSources: cast({ 'classic-1': 42 }),
+      },
+    })
+
+    await advancePastInit()
+
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': 'none',
+    })
+  })
+
+  // #persistLog spreads the stored value, so a non-iterable would throw
+  // inside the call every listener uses to report.
+  it('should drop an off-shape log history instead of crashing', async () => {
+    const { classicDevice } = createDevices()
+    const { app, mockHomey } = await createHarness([classicDevice], {
+      settings: { lastLogs: cast('nope') },
+    })
+
+    await advancePastInit()
+    app.pushToUI('cleanedAll')
+
+    // Unsanitized, the string would have been spread character by
+    // character into the history instead of being dropped.
+    expect(
+      mockHomey.settingsStore.lastLogs?.every(
+        (entry) => typeof entry === 'object',
+      ),
+    ).toBe(true)
+  })
+
+  it('should drop off-shape entries from the log history', async () => {
+    const { classicDevice } = createDevices()
+    const { app, mockHomey } = await createHarness([classicDevice], {
+      settings: {
+        lastLogs: cast([{ message: 'kept', time: 1 }, { message: 2 }]),
+      },
+    })
+
+    await advancePastInit()
+    app.pushToUI('cleanedAll')
+
+    expect(mockHomey.settingsStore.lastLogs).toContainEqual({
+      message: 'kept',
+      time: 1,
+    })
+    expect(mockHomey.settingsStore.lastLogs).not.toContainEqual({ message: 2 })
+  })
+
+  it('should read an off-shape listener body as disabled without sources', async () => {
+    const { classicDevice } = createDevices()
+    const { app, mockHomey } = await createHarness([classicDevice])
+
+    await advancePastInit()
+    await app.autoAdjustCooling('garbage')
+
+    expect(mockHomey.settingsStore.isEnabled).toBe(false)
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({})
   })
 
   it('should log instead of crashing when the debounced reload fails', async () => {
