@@ -406,5 +406,20 @@
     "pl": "Automatyczna regulacja chłodzenia jest teraz dokładna co pół stopnia, utrzymując cel bliżej 8-stopniowego marginesu wydajności.",
     "ru": "Автоподстройка охлаждения теперь работает с точностью до полградуса, удерживая цель ближе к 8-градусному запасу эффективности.",
     "sv": "Den automatiska kyljusteringen är nu exakt på en halv grad och håller målet närmare effektivitetsgapet på 8 °C."
+  },
+  "25.0.0": {
+    "ar": "لم يعد التطبيق يعرض خطأ على Homey Pro (2019) عندما تكون قائمة الأجهزة غير متاحة. إذا كانت صفحة الإعدادات مفتوحة قبل هذا التحديث، فأغلقها وافتحها من جديد — قد تفشل صفحة قديمة في حفظ تغييراتك.",
+    "da": "Appen viser ikke længere en fejl på Homey Pro (2019), når en enhedsliste ikke er tilgængelig. Hvis indstillingssiden var åben før denne opdatering, så luk og åbn den igen — en gammel side kan fejle, når du gemmer.",
+    "de": "Die App zeigt auf Homey Pro (2019) keinen Fehler mehr an, wenn eine Geräteliste nicht verfügbar ist. War die Einstellungsseite vor diesem Update geöffnet, schließe und öffne sie erneut — eine alte Seite kann das Speichern fehlschlagen lassen.",
+    "en": "The app no longer shows an error on Homey Pro (2019) when a device list is unavailable. If the settings page was open before this update, close and reopen it — an old page can fail when you save.",
+    "es": "La app ya no muestra un error en Homey Pro (2019) cuando una lista de dispositivos no está disponible. Si la página de ajustes estaba abierta antes de esta actualización, ciérrala y vuelve a abrirla: una página antigua puede fallar al guardar.",
+    "fr": "L'app n'affiche plus d'erreur sur Homey Pro (2019) lorsqu'une liste d'appareils est indisponible. Si la page de réglages était ouverte avant cette mise à jour, fermez-la et rouvrez-la — une page ancienne peut échouer à l'enregistrement.",
+    "it": "L'app non mostra più un errore su Homey Pro (2019) quando un elenco di dispositivi non è disponibile. Se la pagina delle impostazioni era aperta prima di questo aggiornamento, chiudila e riaprila: una pagina vecchia può fallire al salvataggio.",
+    "ko": "Homey Pro(2019)에서 기기 목록을 사용할 수 없을 때 더 이상 오류가 표시되지 않습니다. 이 업데이트 전에 설정 페이지가 열려 있었다면 닫았다가 다시 여세요 — 오래된 페이지는 저장에 실패할 수 있습니다.",
+    "nl": "De app toont geen fout meer op Homey Pro (2019) wanneer een apparatenlijst niet beschikbaar is. Stond de instellingenpagina open vóór deze update, sluit en heropen die dan — een oude pagina kan mislukken bij het opslaan.",
+    "no": "Appen viser ikke lenger en feil på Homey Pro (2019) når en enhetsliste er utilgjengelig. Hvis innstillingssiden var åpen før denne oppdateringen, lukk og åpne den på nytt — en gammel side kan feile når du lagrer.",
+    "pl": "Aplikacja nie pokazuje już błędu na Homey Pro (2019), gdy lista urządzeń jest niedostępna. Jeśli strona ustawień była otwarta przed tą aktualizacją, zamknij ją i otwórz ponownie — stara strona może nie zapisać zmian.",
+    "ru": "Приложение больше не показывает ошибку на Homey Pro (2019), когда список устройств недоступен. Если страница настроек была открыта до этого обновления, закройте и откройте её заново — старая страница может не сохранить изменения.",
+    "sv": "Appen visar inte längre ett fel på Homey Pro (2019) när en enhetslista inte är tillgänglig. Om inställningssidan var öppen före den här uppdateringen, stäng och öppna den igen — en gammal sida kan misslyckas när du sparar."
   }
 }
