@@ -178,7 +178,7 @@ export class MELCloudListener {
   }
 
   #getThresholds(): Thresholds {
-    return this.#app.homey.settings.get('thresholds') ?? {}
+    return this.#app.thresholds
   }
 
   // The current target temperature seeds the user threshold; a manual

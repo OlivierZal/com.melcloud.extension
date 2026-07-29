@@ -8,6 +8,10 @@ import { fireAndForget } from './lib/fire-and-forget.mts'
 import { getErrorMessage } from './lib/get-error-message.mts'
 import { type Homey, App } from './lib/homey.mts'
 import { toDeviceGroups } from './lib/to-device-groups.mts'
+import { toListenerData } from './lib/to-listener-data.mts'
+import { toOutdoorSources } from './lib/to-outdoor-sources.mts'
+import { toThresholds } from './lib/to-thresholds.mts'
+import { toTimestampedLogs } from './lib/to-timestamped-logs.mts'
 import { CapabilityOutdoorSource } from './listeners/capability-source.mts'
 import { ListenerError } from './listeners/error.mts'
 import { MELCloudListener } from './listeners/melcloud.mts'
@@ -18,6 +22,7 @@ import {
   type Names,
   type OutdoorSources,
   type TemperatureListenerData,
+  type Thresholds,
   type TimestampedLog,
   DISABLED_SOURCE,
   MEASURE_TEMPERATURE,
@@ -66,8 +71,18 @@ export default class MELCloudExtensionApp extends App {
     }
   }
 
+  // Sanitized and fresh on every read: a corrupt entry reads as absent,
+  // and callers may mutate the result without touching the store.
+  public get outdoorSources(): OutdoorSources {
+    return toOutdoorSources(this.homey.settings.get('outdoorSources')) ?? {}
+  }
+
   public get temperatureSensors(): HomeyAPIV3Local.ManagerDevices.Device[] {
     return this.#temperatureSensors
+  }
+
+  public get thresholds(): Thresholds {
+    return toThresholds(this.homey.settings.get('thresholds')) ?? {}
   }
 
   #api!: HomeyAPIV3Local
@@ -116,11 +131,11 @@ export default class MELCloudExtensionApp extends App {
   // Starts or restarts automatic cooling adjustment. A device whose
   // source fails to validate is reported and skipped; the others keep
   // running.
-  public async autoAdjustCooling(
-    temperatureListenerData?: TemperatureListenerData,
-  ): Promise<void> {
+  public async autoAdjustCooling(payload?: unknown): Promise<void> {
     const { isEnabled, outdoorSources } =
-      temperatureListenerData ?? this.#getStoredListenerData()
+      payload === undefined
+        ? this.#getStoredListenerData()
+        : toListenerData(payload)
     await this.#destroyListeners()
     this.homey.settings.set('isEnabled', isEnabled)
     this.homey.settings.set('outdoorSources', outdoorSources)
@@ -247,7 +262,7 @@ export default class MELCloudExtensionApp extends App {
   #getStoredListenerData(): TemperatureListenerData {
     return {
       isEnabled: this.homey.settings.get('isEnabled') === true,
-      outdoorSources: this.homey.settings.get('outdoorSources') ?? {},
+      outdoorSources: this.outdoorSources,
     }
   }
 
@@ -336,7 +351,11 @@ export default class MELCloudExtensionApp extends App {
     if (typeof legacyPath !== 'string') {
       return
     }
-    if ((this.homey.settings.get('outdoorSources') ?? null) === null) {
+    // The one raw read: it needs "nothing stored" (never migrated)
+    // distinguished from "an empty map was stored", which the getter's
+    // `?? {}` would flatten. A garbage value now also reads as not yet
+    // migrated, which is the right call.
+    if (toOutdoorSources(this.homey.settings.get('outdoorSources')) === null) {
       this.homey.settings.set(
         'outdoorSources',
         Object.fromEntries(
@@ -348,7 +367,8 @@ export default class MELCloudExtensionApp extends App {
   }
 
   #persistLog(newLog: TimestampedLog): void {
-    const lastLogs = this.homey.settings.get('lastLogs') ?? []
+    const lastLogs =
+      toTimestampedLogs(this.homey.settings.get('lastLogs')) ?? []
     this.homey.settings.set(
       'lastLogs',
       [newLog, ...lastLogs].slice(0, MAX_LOGS),
@@ -366,9 +386,7 @@ export default class MELCloudExtensionApp extends App {
   // legacy default (null = Homey weather) and changes nothing;
   // afterwards newcomers go through #inheritedSource.
   #seedOutdoorSources(): void {
-    const stored: OutdoorSources = {
-      ...this.homey.settings.get('outdoorSources'),
-    }
+    const stored: OutdoorSources = this.outdoorSources
     const newcomers = this.#melcloudDevices.filter(
       ({ id }) => !Object.hasOwn(stored, id),
     )

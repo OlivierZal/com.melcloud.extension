@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import type MELCloudExtensionApp from '../../app.mts'
 import type { HomeySettings, TemperatureListenerData } from '../../types.mts'
+import { toOutdoorSources } from '../../lib/to-outdoor-sources.mts'
 import { mock } from '../helpers.ts'
 import { createMockDevice } from '../mocks.ts'
 import api from '../../api.mts'
@@ -61,6 +62,9 @@ const createHomeyContext = ({
       },
       log: vi.fn<(...args: readonly unknown[]) => void>(),
       melcloudDevices,
+      // Projected through the real sanitizer, exactly as the app getter
+      // does, so an off-shape fixture exercises the degradation here.
+      outdoorSources: toOutdoorSources(settings.outdoorSources) ?? {},
       refreshDeviceGroups: vi
         .fn<MELCloudExtensionApp['refreshDeviceGroups']>()
         .mockResolvedValue(deviceGroups),

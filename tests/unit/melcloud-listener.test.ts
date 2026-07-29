@@ -2,7 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type MELCloudExtensionApp from '../../app.mts'
 import type { OutdoorSource } from '../../listeners/outdoor-source.mts'
-import type { HomeySettings } from '../../types.mts'
+import type { HomeySettings, Thresholds } from '../../types.mts'
+import { toThresholds } from '../../lib/to-thresholds.mts'
 import { MELCloudListener } from '../../listeners/melcloud.mts'
 import { assertDefined, mock } from '../helpers.ts'
 import { type MockDevice, createMockDevice, names } from '../mocks.ts'
@@ -80,6 +81,11 @@ const createHarness = ({
     },
     names,
     pushToUI,
+    // A getter, not a snapshot: tests mutate settingsStore mid-run and
+    // the listener must see it, exactly as the real app getter does.
+    get thresholds(): Thresholds {
+      return toThresholds(settingsStore.thresholds) ?? {}
+    },
   })
   const source = mock<OutdoorSource>({
     attach,

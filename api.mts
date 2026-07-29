@@ -61,7 +61,7 @@ const api = {
     }
     return groupAdjustableDevices(
       app.melcloudDevices,
-      app.homey.settings.get('outdoorSources') ?? {},
+      app.outdoorSources,
       await app.refreshDeviceGroups(),
     )
   },
