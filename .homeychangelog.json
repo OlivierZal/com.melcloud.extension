@@ -436,5 +436,20 @@
     "pl": "Aplikacja nie wysyła już 0 °C, gdy brakuje zapisanej temperatury: nic nie wysyła i podaje powód w dzienniku.",
     "ru": "Приложение больше не отправляет 0 °C, когда сохранённая температура отсутствует: оно ничего не отправляет и указывает причину в журнале.",
     "sv": "Appen skickar inte längre 0 °C när din sparade temperatur saknas: den skickar ingenting och anger orsaken i loggen."
+  },
+  "25.1.1": {
+    "ar": "حفظ إعدادات التبريد لم يعد يمحو مصدر درجة الحرارة الخارجية للأجهزة التي لم تكن معروضة في الصفحة.",
+    "da": "Når du gemmer dine køleindstillinger, slettes udetemperatur-kilden for enheder, der ikke blev vist på siden, ikke længere.",
+    "de": "Beim Speichern der Kühleinstellungen wird die Außentemperatur-Quelle von Geräten, die nicht auf der Seite angezeigt wurden, nicht mehr gelöscht.",
+    "en": "Saving your cooling settings no longer clears the outdoor temperature source of devices that were not shown on the page.",
+    "es": "Al guardar tus ajustes de refrigeración ya no se borra la fuente de temperatura exterior de los dispositivos que no aparecían en la página.",
+    "fr": "Enregistrer vos réglages de refroidissement n'efface plus la source de température extérieure des appareils qui n'étaient pas affichés sur la page.",
+    "it": "Il salvataggio delle impostazioni di raffreddamento non cancella più la fonte della temperatura esterna dei dispositivi non mostrati nella pagina.",
+    "ko": "냉방 설정을 저장할 때 페이지에 표시되지 않은 기기의 외기 온도 소스가 더 이상 지워지지 않습니다.",
+    "nl": "Bij het opslaan van je koelinstellingen wordt de buitentemperatuurbron van apparaten die niet op de pagina stonden niet meer gewist.",
+    "no": "Når du lagrer kjøleinnstillingene, slettes ikke lenger utetemperatur-kilden for enheter som ikke ble vist på siden.",
+    "pl": "Zapisanie ustawień chłodzenia nie usuwa już źródła temperatury zewnętrznej urządzeń, które nie były widoczne na stronie.",
+    "ru": "Сохранение настроек охлаждения больше не стирает источник наружной температуры устройств, которые не отображались на странице.",
+    "sv": "När du sparar dina kylinställningar rensas inte längre källan för utetemperatur för enheter som inte visades på sidan."
   }
 }
