@@ -402,7 +402,7 @@ const config: Config[] = defineConfig([
         'error',
         {
           bundledDependencies: false,
-          devDependencies: ['*.config.ts', 'tests/**'],
+          devDependencies: ['*.config.ts', 'scripts/**', 'tests/**'],
           optionalDependencies: false,
           peerDependencies: false,
         },
@@ -974,7 +974,7 @@ const config: Config[] = defineConfig([
       'unicorn/no-invalid-file-input-accept': 'error',
       // The referenced module bundle is a gitignored build output (CI
       // lints without building); its existence is guaranteed harder by
-      // scripts/bundle.mjs, which hashes every local reference and
+      // scripts/bundle.mts, which hashes every local reference and
       // throws when one is missing.
       'unicorn/no-missing-local-resource': 'off',
       'unicorn/text-encoding-identifier-case': 'error',
@@ -1242,7 +1242,11 @@ const config: Config[] = defineConfig([
     },
   },
   {
+    // Scoped: without `files`, this block applied to every file, which
+    // made it the only one reaching `**/*.mjs` — and leaked 28 inert
+    // `yml/*` rules onto every `.mts` as well.
     extends: [ymlConfigs.standard, ymlConfigs.prettier],
+    files: ['**/*.{yaml,yml}'],
     rules: {
       'yml/file-extension': [
         'error',

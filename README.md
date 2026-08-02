@@ -48,7 +48,7 @@ npm run homey:start  # run the app on your Homey (remote)
 
 Architecture notes:
 
-- The settings page (`settings/`) is bundled by `scripts/bundle.mjs` into a classic IIFE `settings/index.js`, plus an ESM twin `settings/index.mjs` kept for phone-cached copies of the page (shipped bundle filenames are a compatibility contract); the outputs are gitignored and rebuilt by `npm run build`, which the Homey CLI runs automatically on validate/publish.
+- The settings page (`settings/`) is bundled by `scripts/bundle.mts` into a classic IIFE `settings/index.js`, plus an ESM twin `settings/index.mjs` kept for phone-cached copies of the page (shipped bundle filenames are a compatibility contract); the outputs are gitignored and rebuilt by `npm run build`, which the Homey CLI runs automatically on validate/publish.
 - Both the build and `npm run typecheck` use the native TypeScript 7 compiler (`typescript@7` aliased as `@typescript/native`) for speed; `typescript@6` remains alongside it for tools that need the JS API (typescript-eslint).
 - Test coverage is enforced at 100% for backend code; browser glue (`settings/`) is excluded from coverage.
 

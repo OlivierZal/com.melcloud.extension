@@ -18,18 +18,18 @@ Run the FULL suite before any push — CI runs all of it:
 - `npm test` / `npm run test:coverage` — vitest; backend coverage is at
   100% (branches included), keep it there. `settings/` is browser glue
   and excluded.
-- `npm run build` — esbuild bundle (`scripts/bundle.mjs`) + `tsc`
+- `npm run build` — esbuild bundle (`scripts/bundle.mts`) + `tsc`
   emit, BOTH into `.homeybuild`. The Homey CLI runs `npm run build`
   when it detects TypeScript — but only AFTER its pre-process copy into
   `.homeybuild`, so the source tree stays sources-only and everything
   the package needs must be emitted there: tsc does it via `outDir`,
-  and `bundle.mjs` emits the settings bundles there too (its former
+  and `bundle.mts` emits the settings bundles there too (its former
   source-tree outfiles landed too late to be copied — the com.melcloud
   #1404 root cause: store installs 404'd the bundles). The CLI's own
   build invocation is therefore sufficient for install, run, validate
   and publish alike; a standalone suite run (no `.homeybuild` page
   copy) still proves the bundles compile.
-- Cache-busting `?v=` — a PACKAGE-TIME transform: `bundle.mjs` stamps
+- Cache-busting `?v=` — a PACKAGE-TIME transform: `bundle.mts` stamps
   every local asset reference of the `.homeybuild` page copy with a
   content hash (`?v=<hash>`), so phone webviews (which cache assets
   across app versions) refetch an asset exactly when its bytes change.
@@ -93,7 +93,7 @@ to judge success.
   timeout still ends the overlay if the script failed to load. Init work is separately
   time-bounded (10 s) with `homey.ready()` in a `finally`; `start` is
   non-throwing by construction (failure alerts go through
-  `fireAndForget`). `scripts/bundle.mjs` stamps every local asset
+  `fireAndForget`). `scripts/bundle.mts` stamps every local asset
   reference — only inside an attribute/import context, never a comment —
   with a content hash (`?v=`): phone webviews cache assets across app
   versions. Never load the bundle as a STATIC `<script type=module>`:
@@ -105,7 +105,7 @@ to judge success.
   carries the bounded boot plus beacon. Phone webviews also cache the
   HTML ITSELF across
   app versions (proven on com.melcloud), so shipped bundle filenames are
-  a COMPAT CONTRACT: `scripts/bundle.mjs` builds the entry twice —
+  a COMPAT CONTRACT: `scripts/bundle.mts` builds the entry twice —
   `index.js` (IIFE) for the current HTML, `index.mjs` (ESM) for every
   cached ESM-era HTML, which is why the entry keeps `export const
 start`. Never rename or drop a shipped bundle filename; add alongside.
