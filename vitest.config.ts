@@ -1,6 +1,6 @@
-import { defineConfig } from 'vitest/config'
+import { type ViteUserConfig, defineConfig } from 'vitest/config'
 
-const config = defineConfig({
+const config: ViteUserConfig = defineConfig({
   test: {
     coverage: {
       exclude: ['settings/**/*.mts'],
