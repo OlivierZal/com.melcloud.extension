@@ -5,6 +5,7 @@
     "cleanedAll": "Limpieza de todos los oyentes",
     "created": "Creación de un oyente para __capability__ de __name__",
     "listened": "Escucha de __capability__ de __name__: __value__",
+    "noThreshold": "No hay temperatura guardada para __name__: no se envió ninguna orden",
     "notFound": "No se puede encontrar __type__ `__idOrName__`",
     "reverted": "Restablecimiento de la temperatura de __name__: __value__",
     "saved": "Guardado de la temperatura de __name__: __value__"
@@ -27,6 +28,7 @@
     "disabledSource": "No ajustar",
     "enabled": "Mantener dentro de los 8 °C de la temperatura exterior",
     "install": "Instalar la aplicación MELCloud",
+    "loadFailed": "Error al cargar",
     "log": "Historial",
     "notFound": "Primero, debes configurar tus dispositivos en la aplicación Homey MELCloud.",
     "refresh": "Recargar",

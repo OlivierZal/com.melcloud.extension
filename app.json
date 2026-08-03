@@ -1,10 +1,6 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "api": {
-    "autoAdjustCooling": {
-      "method": "PUT",
-      "path": "/cooling/auto-adjustment"
-    },
     "getAdjustableGroups": {
       "method": "GET",
       "path": "/devices/groups"
@@ -20,6 +16,10 @@
     "logWebviewBoot": {
       "method": "POST",
       "path": "/boot-error"
+    },
+    "updateCoolingAutoAdjustment": {
+      "method": "PUT",
+      "path": "/cooling/auto-adjustment"
     }
   },
   "author": {

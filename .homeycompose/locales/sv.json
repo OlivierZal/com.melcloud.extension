@@ -5,6 +5,7 @@
     "cleanedAll": "Rensar alla lyssnare",
     "created": "Skapar en lyssnare för __capability__ av __name__",
     "listened": "Lyssnar på __capability__ av __name__: __value__",
+    "noThreshold": "Ingen sparad temperatur för __name__: inget kommando skickades",
     "notFound": "__type__ `__idOrName__` hittades inte",
     "reverted": "Återställer temperaturen för __name__: __value__",
     "saved": "Sparar temperaturen för __name__: __value__"
@@ -27,6 +28,7 @@
     "disabledSource": "Justera inte",
     "enabled": "Håll inom 8 °C från utomhustemperaturen",
     "install": "Installera MELCloud-appen",
+    "loadFailed": "Inläsningen misslyckades",
     "log": "Historik",
     "notFound": "Du behöver först konfigurera dina enheter i MELCloud Homey-appen.",
     "refresh": "Ladda om",

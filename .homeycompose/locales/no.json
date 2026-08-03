@@ -5,6 +5,7 @@
     "cleanedAll": "Rengjør alle lyttere",
     "created": "Oppretter en lytter for __capability__ av __name__",
     "listened": "Lytter til __capability__ av __name__: __value__",
+    "noThreshold": "Ingen lagret temperatur for __name__: ingen kommando ble sendt",
     "notFound": "__type__ `__idOrName__` ikke funnet",
     "reverted": "Gjenoppretter temperaturen til __name__: __value__",
     "saved": "Lagrer temperaturen til __name__: __value__"
@@ -27,6 +28,7 @@
     "disabledSource": "Ikke juster",
     "enabled": "Hold innenfor 8 °C av utetemperaturen",
     "install": "Installer MELCloud-appen",
+    "loadFailed": "Innlasting mislyktes",
     "log": "Historikk",
     "notFound": "Først må du sette opp enhetene dine i MELCloud Homey-appen.",
     "refresh": "Gjenta",

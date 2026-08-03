@@ -21,21 +21,6 @@ const logSettingsRoute = (app: Homey['app'], route: string): void => {
 
 const api = {
   /**
-   * Starts or restarts automatic cooling adjustment from the settings UI.
-   * @param options - Homey API context.
-   * @param options.body - Selected outdoor source and enablement flag.
-   * @param options.homey - Homey instance carrying the app.
-   */
-  async autoAdjustCooling({
-    body,
-    homey: { app },
-  }: {
-    body: TemperatureListenerData
-    homey: Homey
-  }): Promise<void> {
-    await app.autoAdjustCooling(body)
-  },
-  /**
    * Lists the settings rows: one named group per MELCloud building
    * (com.melcloud's inter-app grouping), unmatched devices trailing in
    * an unnamed group, or a single unnamed flat group when no grouping
@@ -117,6 +102,21 @@ const api = {
     homey: Homey
   }): void => {
     app.error('Settings webview boot failed:', JSON.stringify(body))
+  },
+  /**
+   * Starts or restarts automatic cooling adjustment from the settings UI.
+   * @param options - Homey API context.
+   * @param options.body - Selected outdoor source and enablement flag.
+   * @param options.homey - Homey instance carrying the app.
+   */
+  async updateCoolingAutoAdjustment({
+    body,
+    homey: { app },
+  }: {
+    body: TemperatureListenerData
+    homey: Homey
+  }): Promise<void> {
+    await app.autoAdjustCooling(body)
   },
 }
 

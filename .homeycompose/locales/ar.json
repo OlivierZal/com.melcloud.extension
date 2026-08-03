@@ -5,6 +5,7 @@
     "cleanedAll": "إزالة جميع المستمعين",
     "created": "إنشاء مستمع لـ __capability__ في __name__",
     "listened": "الاستماع إلى __capability__ في __name__: __value__",
+    "noThreshold": "لا توجد درجة حرارة مرجعية محفوظة لـ __name__: لم يتم إرسال أي أمر",
     "notFound": "__type__ `__idOrName__` غير موجود",
     "reverted": "استعادة درجة حرارة __name__: __value__",
     "saved": "حفظ درجة حرارة __name__: __value__"
@@ -27,6 +28,7 @@
     "disabledSource": "عدم الضبط",
     "enabled": "الإبقاء ضمن 8 °C من درجة الحرارة الخارجية",
     "install": "تثبيت تطبيق MELCloud",
+    "loadFailed": "فشل التحميل",
     "log": "السجل",
     "notFound": "قم أولاً بإعداد أجهزتك في تطبيق MELCloud على Homey.",
     "refresh": "إعادة تحميل",
