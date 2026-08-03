@@ -33,7 +33,7 @@ jobs:
       - uses: ./.github/actions/setup-node-and-install
         with:
           npm-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: anthropics/claude-code-action@44423bdec74b97d67543eb16c110546762c110b2
+      - uses: anthropics/claude-code-action@be7b93b1907a4abad570368f3c74b6fe3807510b
         with:
           additional_permissions: |
             actions: read
@@ -66,5 +66,6 @@ name: Claude Dependabot Fix
 on:
   workflow_run:
     types: [completed]
+    # The repo's two always-running required build gates (see ruleset).
     workflows: [CI, Validate]
 permissions: {}

@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 1
           persist-credentials: false
-      - uses: anthropics/claude-code-action@44423bdec74b97d67543eb16c110546762c110b2
+      - uses: anthropics/claude-code-action@be7b93b1907a4abad570368f3c74b6fe3807510b
         with:
           additional_permissions: |
             actions: read
@@ -31,6 +31,8 @@ jobs:
     timeout-minutes: 15
 name: Claude
 on:
+  # No pull_request_review(_comment): Copilot auto-review fires them as a
+  # write-less bot, piling up held runs the if-guard would skip anyway.
   issue_comment:
     types: [created]
   issues:
