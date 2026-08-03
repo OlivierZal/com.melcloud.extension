@@ -163,7 +163,9 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
 - `.homeycompose/` is the SOURCE for `app.json` and `locales/*.json`;
   commit the CLI-generated outputs verbatim (no trailing newline).
 - App-API surface conventions (aligned on com.melcloud): paths are
-  kebab-case REST, `get*` for GET; `fetch*` in the webview is reserved
+  kebab-case REST, `get*` for GET — except `is*` for a boolean GET —,
+  `update*` for PUT, a business verb for POST (`logWebviewBoot` on
+  `/boot-error`); `fetch*` in the webview is reserved
   for transport calls (`load*` reads the settings store). The
   auto-adjustment path is `/cooling/auto-adjustment` (the snake_case
   legacy alias was dropped by decision, 2026-07 — a cached pre-rename
@@ -234,6 +236,26 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
   (unit-dependent); poll it (no push events), readings are sanitized by
   `lib/to-temperature.mts` (anything non-finite reads as null, never
   0/NaN).
+
+## Naming & authored-content conventions
+
+- What `@typescript-eslint/naming-convention` cannot see is convention
+  too: booleans read as questions even untyped (`isX`/`hasX`), handlers
+  as verbs; a name states what the thing IS, never its history. Test
+  files are named after the unit under test (`<module>.test.ts`); shared
+  test helpers keep their family's names — apps say `assertDefined` and
+  `mock(overrides)` where the libraries say `defined` and
+  `mock(value?)`: two test families, deliberately not unified.
+- Static markup and styles live in `.html`/`.css` files. TS builds DOM
+  only when the content is programmatic (computed values, per-item
+  nodes), via `createElement` — never `innerHTML` (`no-unsafe-dom-html`
+  enforces it). Inline style writes are reserved for values CSS cannot
+  express; anything static belongs in the stylesheet, following the
+  CSS/HTML lint rules' spirit even where no rule captures it.
+- The webview runtime floor (es2023, no `Object.groupBy`, no iterator
+  helpers) is enforced by a scoped lint block over `settings/` — the
+  tsconfig cannot express two runtimes in one project. Node-side code
+  may use the newer APIs freely.
 
 ## Lint doctrine
 
