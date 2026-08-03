@@ -5,6 +5,7 @@
     "cleanedAll": "Nettoyage de tous les écouteurs",
     "created": "Création d'un écouteur pour __capability__ de __name__",
     "listened": "Écoute de __capability__ de __name__ : __value__",
+    "noThreshold": "Aucune température enregistrée pour __name__ : aucune commande envoyée",
     "notFound": "__type__ `__idOrName__` introuvable",
     "reverted": "Rétablissement de la température de __name__ : __value__",
     "saved": "Enregistrement de la température de __name__ : __value__"
@@ -27,6 +28,7 @@
     "disabledSource": "Ne pas activer",
     "enabled": "Maintenir à moins de 8 °C de la température extérieure",
     "install": "Installer l'app MELCloud",
+    "loadFailed": "Le chargement a échoué",
     "log": "Historique",
     "notFound": "Vous devez d'abord configurer vos appareils dans l'appli Homey MELCloud.",
     "refresh": "Rafraîchir",

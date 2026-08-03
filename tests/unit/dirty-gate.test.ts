@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { createDirtyGate } from '../settings/dirty-gate.mts'
-import { mock } from './helpers.ts'
+import { createDirtyGate } from '../../settings/dirty-gate.mts'
+import { mock } from '../helpers.ts'
 
 // The gate is headless: buttons only need a `disabled` slot, and wired
 // targets only need to dispatch events, so plain doubles are enough.

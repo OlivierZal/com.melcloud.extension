@@ -5,6 +5,7 @@
     "cleanedAll": "Usuwanie wszystkich nasłuchów",
     "created": "Tworzenie nasłuchu dla __capability__ urządzenia __name__",
     "listened": "Nasłuchiwanie __capability__ urządzenia __name__: __value__",
+    "noThreshold": "Brak zapisanej temperatury dla __name__: nie wysłano żadnego polecenia",
     "notFound": "Nie znaleziono: __type__ `__idOrName__`",
     "reverted": "Przywracanie temperatury __name__: __value__",
     "saved": "Zapisywanie temperatury __name__: __value__"
@@ -27,6 +28,7 @@
     "disabledSource": "Nie dostosowuj",
     "enabled": "Utrzymuj w granicach 8 °C od temperatury zewnętrznej",
     "install": "Zainstaluj aplikację MELCloud",
+    "loadFailed": "Ładowanie nie powiodło się",
     "log": "Historia",
     "notFound": "Najpierw skonfiguruj urządzenia w aplikacji MELCloud dla Homey.",
     "refresh": "Odśwież",

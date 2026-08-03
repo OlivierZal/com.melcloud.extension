@@ -6,6 +6,35 @@ the MELCloud devices exclusively through the local Homey API (`homey-api`)
 — device behavior is fixed in com.melcloud (sibling repo with its own
 CLAUDE.md), never worked around here.
 
+## Inter-app API dependency
+
+This app has no npm dependency on the MELCloud stack — its real
+dependency is WIRE-LEVEL, against whatever com.melcloud version is
+installed alongside, and it is one-directional (com.melcloud never calls
+back). The consumed surface, exhaustively:
+
+- `GET /devices/groups` on com.melcloud's app API — the building
+  grouping. The contract is DEGRADE, never fail: an absent route (older
+  com.melcloud, app not installed) or an off-shape payload reads as "no
+  grouping" (`to-device-groups.mts` sanitizes; the settings page falls
+  back to one flat group). Never assume the route exists.
+- The MELCloud devices themselves through `homey-api`
+  (`HomeyAPIV3Local`): driver ids (`melcloud`, `home-melcloud`),
+  capability ids (`target_temperature`, `thermostat_mode`,
+  `measure_temperature`*), and `device.data.id` as the join key between
+  Homey devices and `/devices/groups` entries — Classic serializes a
+  NUMBER as string, Home a GUID, which is why joins go through
+  `toJoinKey` (`group-devices.mts`) and nothing else; #1229 was exactly
+  a join done another way.
+- Per-device failures are reported and skipped (`#listenToDevice`), so
+  one renamed capability cannot take the whole adjustment down.
+
+Changing any of these on the com.melcloud side is a cross-repo change:
+check this app the way byte-identical kernels are checked. The exact-pin
+rule of the npm consumers has no equivalent here — the wire tolerates
+version skew by design, which is why every consumed shape is sanitized
+at entry.
+
 ## Commands
 
 Run the FULL suite before any push — CI runs all of it:

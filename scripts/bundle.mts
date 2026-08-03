@@ -25,10 +25,12 @@ const entryPoints = ['settings/index.mts']
 
 const pages = ['settings/index.html']
 
-// A local asset reference: an attribute value (href/src) or a dynamic
-// import specifier, with an optional existing stamp.
+// A local asset reference — an href/src attribute value, with an
+// optional existing stamp. (A dynamic-import alternative once lived
+// here: dead since the classic-defer fix, no shipped HTML uses
+// `import()` any more.)
 const REFERENCE =
-  /(?<prefix>href="|src="|import\('\.\/)(?<file>[^"':?\/][^"':?]*)(?:\?v=[0-9a-f]+)?(?<suffix>["'\)])/gv
+  /(?<prefix>href="|src=")(?<file>[^"':?\/][^"':?]*)(?:\?v=[0-9a-f]+)?(?<suffix>")/gv
 
 const sharedOptions: BuildOptions = {
   bundle: true,

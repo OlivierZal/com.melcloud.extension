@@ -5,6 +5,7 @@
     "cleanedAll": "Cleaning all listeners",
     "created": "Creating a listener for __capability__ of __name__",
     "listened": "Listening to __capability__ of __name__: __value__",
+    "noThreshold": "No stored temperature for __name__: nothing was sent to the unit",
     "notFound": "__type__ `__idOrName__` not found",
     "reverted": "Reverting the temperature of __name__: __value__",
     "saved": "Saving the temperature of __name__: __value__"
@@ -27,6 +28,7 @@
     "disabledSource": "Do not adjust",
     "enabled": "Keep within 8 °C of the outdoor temperature",
     "install": "Install the MELCloud app",
+    "loadFailed": "Loading failed",
     "log": "History",
     "notFound": "First, you need to set up your devices in the MELCloud Homey app.",
     "refresh": "Refresh",

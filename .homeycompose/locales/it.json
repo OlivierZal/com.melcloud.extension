@@ -5,6 +5,7 @@
     "cleanedAll": "Rimozione di tutti i listener",
     "created": "Creazione di un listener per __capability__ di __name__",
     "listened": "In ascolto di __capability__ di __name__: __value__",
+    "noThreshold": "Nessuna temperatura salvata per __name__: nessun comando inviato",
     "notFound": "__type__ `__idOrName__` non trovato",
     "reverted": "Ripristino della temperatura di __name__: __value__",
     "saved": "Salvataggio della temperatura di __name__: __value__"
@@ -27,6 +28,7 @@
     "disabledSource": "Non regolare",
     "enabled": "Mantieni entro 8 °C dalla temperatura esterna",
     "install": "Installa l'app MELCloud",
+    "loadFailed": "Caricamento non riuscito",
     "log": "Cronologia",
     "notFound": "Prima configura i tuoi dispositivi nell'app MELCloud per Homey.",
     "refresh": "Ricarica",

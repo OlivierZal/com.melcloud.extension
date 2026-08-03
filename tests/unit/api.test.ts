@@ -100,7 +100,7 @@ describe('api', () => {
     })
   })
 
-  describe('autoAdjustCooling', () => {
+  describe('updateCoolingAutoAdjustment', () => {
     it('should forward the body to the app', async () => {
       const { autoAdjustCooling, homey } = createHomeyContext({
         melcloudDevices: [],
@@ -113,7 +113,7 @@ describe('api', () => {
         },
       }
 
-      await api.autoAdjustCooling({ body, homey })
+      await api.updateCoolingAutoAdjustment({ body, homey })
 
       expect(autoAdjustCooling).toHaveBeenCalledWith(body)
     })

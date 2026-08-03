@@ -5,6 +5,7 @@
     "cleanedAll": "Удаление всех слушателей",
     "created": "Создание слушателя __capability__ у __name__",
     "listened": "Отслеживание __capability__ у __name__: __value__",
+    "noThreshold": "Нет сохранённой температуры для __name__: команда не отправлена",
     "notFound": "Не найдено: __type__ `__idOrName__`",
     "reverted": "Восстановление температуры __name__: __value__",
     "saved": "Сохранение температуры __name__: __value__"
@@ -27,6 +28,7 @@
     "disabledSource": "Не регулировать",
     "enabled": "Держать в пределах 8 °C от наружной температуры",
     "install": "Установить приложение MELCloud",
+    "loadFailed": "Не удалось загрузить",
     "log": "История",
     "notFound": "Сначала настройте устройства в приложении MELCloud для Homey.",
     "refresh": "Загрузить",
