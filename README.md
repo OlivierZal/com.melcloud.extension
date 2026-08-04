@@ -1,6 +1,6 @@
 # Extension for MELCloud Homey App
 
-A [Homey](https://homey.app/) app extending the [MELCloud app](https://homey.app/a/com.melcloud) with automatic cooling adjustment based on the outdoor temperature.
+A [Homey](https://homey.app/) app extending the [MELCloud app](https://homey.app/a/com.mecloud) with automatic cooling adjustment based on the outdoor temperature.
 
 [![License](https://img.shields.io/github/license/OlivierZal/com.melcloud.extension)](LICENSE)
 [![GitHub release](https://img.shields.io/github/v/release/OlivierZal/com.melcloud.extension?sort=semver)](https://github.com/OlivierZal/com.melcloud.extension/releases)
@@ -24,9 +24,9 @@ Why?
 ## Usage
 
 1. You must have a Homey Pro.
-2. Install the [MELCloud Homey app](https://homey.app/a/com.melcloud) from the Homey App Store.
+2. Install the [MELCloud Homey app](https://homey.app/a/com.mecloud) from the Homey App Store.
 3. Pair your devices.
-4. Install the [MELCloud Homey app extension](https://homey.app/a/com.melcloud.extension) from the Homey App Store.
+4. Install the [MELCloud Homey app extension](https://homey.app/a/com.mecloud.extension) from the Homey App Store.
 5. Configure the outdoor temperature source of each MELCloud building in the settings of the MELCloud Homey app extension.
 
 ## Supported languages

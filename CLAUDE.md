@@ -13,6 +13,15 @@ dependency is WIRE-LEVEL, against whatever com.melcloud version is
 installed alongside, and it is one-directional (com.melcloud never calls
 back). The consumed surface, exhaustively:
 
+- The app ids themselves carry the original submissions' typo, and it
+  is LOAD-BEARING: this app is `com.mecloud.extension` and addresses
+  the main app as `com.mecloud` (`MELCLOUD_APP_ID`, `app.mts`). A
+  platform id cannot change without orphaning every install, so the
+  store URLs keep the typo too (`https://homey.app/a/com.mecloud`,
+  `https://homey.app/a/com.mecloud.extension`). Never "fix" the
+  missing `l` anywhere — manifest, code or docs links (a README "fix"
+  once turned all three store links into 404s; reverted, 2026-08).
+
 - `GET /devices/groups` on com.melcloud's app API — the building
   grouping. The contract is DEGRADE, never fail: an absent route (older
   com.melcloud, app not installed) or an off-shape payload reads as "no
