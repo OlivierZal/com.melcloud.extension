@@ -137,6 +137,18 @@ describe(MELCloudExtensionApp, () => {
     expect(app.deviceGroups).toStrictEqual(groups)
   })
 
+  it('should poke open webviews with the freshness event at boot', async () => {
+    const { classicDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice])
+
+    await advancePastInit()
+
+    expect(mockHomey.realtime).toHaveBeenCalledWith(
+      'webview_hashes_changed',
+      null,
+    )
+  })
+
   it('should stamp the legacy weather default on the first seeding', async () => {
     const { classicDevice } = createDevices()
     const { mockHomey } = await createHarness([classicDevice])
@@ -700,9 +712,9 @@ describe(MELCloudExtensionApp, () => {
     app.pushToUI('cleanedAll')
     app.pushToUI('error.notFound', { idOrName: 'x', type: 'Device' })
 
-    const [firstLog] = mockHomey.realtime.mock.calls.map(
-      ([, log]) => log as TimestampedLog,
-    )
+    const [firstLog] = mockHomey.realtime.mock.calls
+      .filter(([event]) => event === 'log')
+      .map(([, log]) => log as TimestampedLog)
 
     expect(firstLog?.category).toBe('cleanedAll')
     expect(firstLog?.message).toBe('log.cleanedAll')
