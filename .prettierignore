@@ -3,4 +3,8 @@
 /app.json
 /locales/
 /README.md
+# Pre-`.homeybuild` leftovers in never-rebuilt trees: gitignored, and
+# ignored here so a stale tree cannot break the format run.
+/settings/index.js
+/settings/index.mjs
 /.claude/

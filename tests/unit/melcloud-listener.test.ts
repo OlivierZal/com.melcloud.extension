@@ -198,7 +198,7 @@ describe(MELCloudListener, () => {
     ).toHaveBeenCalledWith(31)
   })
 
-  it('should treat a missing outdoor reading as the default temperature', async () => {
+  it('should fall back to the stored threshold when the outdoor reading is missing', async () => {
     const harness = createHarness({
       outdoorTemperature: null,
       targetTemperature: 17,

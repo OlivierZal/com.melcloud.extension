@@ -837,10 +837,11 @@ const config: Config[] = defineConfig([
       'unicorn/expiring-todo-comments': 'error',
       'unicorn/no-empty-file': 'error',
       'unicorn/no-invalid-file-input-accept': 'error',
-      // The referenced module bundle is a gitignored build output (CI
-      // lints without building); its existence is guaranteed harder by
+      // The referenced module bundle is a gitignored build output (the
+      // lint job never builds); its existence is guaranteed harder by
       // scripts/bundle.mts, which hashes every local reference and
-      // throws when one is missing.
+      // throws when one is missing — exercised on every PR by
+      // validate.yml, whose publish-level validation runs the CLI build.
       'unicorn/no-missing-local-resource': 'off',
       'unicorn/text-encoding-identifier-case': 'error',
     },

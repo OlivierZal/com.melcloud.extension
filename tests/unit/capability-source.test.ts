@@ -266,7 +266,7 @@ describe(CapabilityOutdoorSource, () => {
     expect(source.value).toBe(26)
   })
 
-  it('should clear the subscribers on destroy', async () => {
+  it('should tear down the capability instance on destroy', async () => {
     const harness = createHarness()
     const source = await CapabilityOutdoorSource.create(
       harness.app,

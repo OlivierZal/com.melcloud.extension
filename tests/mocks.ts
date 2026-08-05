@@ -22,7 +22,6 @@ export const names: Names = {
 export interface MockCapabilityInstance {
   readonly destroy: ReturnType<typeof vi.fn>
   readonly setValue: ReturnType<typeof vi.fn>
-  value: StoredCapabilityValue
   readonly listener: (value: CapabilityValue) => Promise<void> | void
 }
 
@@ -84,11 +83,9 @@ export const createMockDevice = ({
         setValue: vi
           .fn<(value: CapabilityValue) => Promise<void>>()
           .mockImplementation(async (value) => {
-            instance.value = value
             values[capabilityId] = value
             await Promise.resolve()
           }),
-        value: values[capabilityId] ?? null,
       }
       capabilityInstances.set(capabilityId, instance)
       return instance
@@ -98,7 +95,6 @@ export const createMockDevice = ({
 }
 
 export interface MockDevicesManager {
-  readonly connect: ReturnType<typeof vi.fn>
   readonly eventHandlers: Map<string, (...args: unknown[]) => void>
   readonly getCapabilityValue: ReturnType<typeof vi.fn>
   readonly getDevice: ReturnType<typeof vi.fn>
@@ -152,14 +148,7 @@ export const createMockDevicesManager = (
       eventHandlers.set(event, callback)
     },
   })
-  return {
-    connect,
-    eventHandlers,
-    getCapabilityValue,
-    getDevice,
-    getDevices,
-    manager,
-  }
+  return { eventHandlers, getCapabilityValue, getDevice, getDevices, manager }
 }
 
 export interface MockHomey {
@@ -168,10 +157,8 @@ export interface MockHomey {
   readonly eventHandlers: Map<string, (...args: unknown[]) => void>
   readonly homey: Homey.Homey
   readonly realtime: ReturnType<typeof vi.fn>
-  readonly setSetting: ReturnType<typeof vi.fn>
   readonly settingsStore: Partial<HomeySettings>
   readonly translate: ReturnType<typeof vi.fn>
-  readonly unsetSetting: ReturnType<typeof vi.fn>
 }
 
 export const createMockHomey = ({
@@ -241,9 +228,7 @@ export const createMockHomey = ({
     eventHandlers,
     homey,
     realtime,
-    setSetting,
     settingsStore,
     translate,
-    unsetSetting,
   }
 }
