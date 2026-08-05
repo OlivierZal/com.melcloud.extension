@@ -72,8 +72,9 @@ const api = {
    * @throws {@link NotFoundError} when no MELCloud AC device is paired yet.
    */
   getTemperatureSensors({ homey }: { homey: Homey }): TemperatureSensor[] {
-    const { melcloudDevices, temperatureSensors } = homey.app
-    logSettingsRoute(homey.app, '/devices/sensors/temperature')
+    const { app } = homey
+    const { melcloudDevices, temperatureSensors } = app
+    logSettingsRoute(app, '/devices/sensors/temperature')
     if (melcloudDevices.length === 0) {
       throw new NotFoundError()
     }
@@ -98,11 +99,19 @@ const api = {
   /**
    * Serves the packaged webview-bundle hashes so a booted page can
    * detect a stale cached copy of itself and reload once.
+   * @param options - Homey API context.
+   * @param options.homey - Homey instance carrying the app.
    * @returns The bundle hash per page entry; empty outside the
    * packaged flow.
    */
-  getWebviewHashes: async (): Promise<Partial<Record<string, string>>> =>
-    getWebviewHashes(),
+  async getWebviewHashes({
+    homey: { app },
+  }: {
+    homey: Homey
+  }): Promise<Partial<Record<string, string>>> {
+    logSettingsRoute(app, '/webview-hashes')
+    return getWebviewHashes()
+  },
   logWebviewBoot: ({
     body,
     homey: { app },
@@ -125,6 +134,7 @@ const api = {
     body: TemperatureListenerData
     homey: Homey
   }): Promise<void> {
+    logSettingsRoute(app, '/cooling/auto-adjustment')
     await app.autoAdjustCooling(body)
   },
 }

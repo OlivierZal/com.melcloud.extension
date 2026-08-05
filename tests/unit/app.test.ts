@@ -2,7 +2,7 @@ import type * as HomeyApi from 'homey-api'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type * as HomeyLib from '../../lib/homey.mts'
-import type { TimestampedLog } from '../../types.mts'
+import type { HomeySettings, TimestampedLog } from '../../types.mts'
 import { changelog } from '../../files.mts'
 import { assertDefined, cast } from '../helpers.ts'
 import {
@@ -94,10 +94,7 @@ const createHarness = async (
     settings = {},
     version = '0.0.0',
   }: {
-    readonly settings?: Parameters<typeof createMockHomey>[0] extends
-      { settings?: infer TSettings } | undefined
-      ? TSettings
-      : never
+    readonly settings?: Partial<HomeySettings>
     readonly version?: string
   } = {},
 ): Promise<Harness> => {
@@ -274,14 +271,14 @@ describe(MELCloudExtensionApp, () => {
     await advancePastInit()
 
     mockHomey.apiAppGet.mockReturnValue([
-      { deviceIds: ['classic-1'], name: 'Nouvelle maison' },
+      { deviceIds: ['1000'], name: 'Nouvelle maison' },
     ])
 
     await expect(app.refreshDeviceGroups()).resolves.toStrictEqual([
-      { deviceIds: ['classic-1'], name: 'Nouvelle maison' },
+      { deviceIds: ['1000'], name: 'Nouvelle maison' },
     ])
     expect(app.deviceGroups).toStrictEqual([
-      { deviceIds: ['classic-1'], name: 'Nouvelle maison' },
+      { deviceIds: ['1000'], name: 'Nouvelle maison' },
     ])
   })
 

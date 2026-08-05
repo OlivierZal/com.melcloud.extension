@@ -88,9 +88,9 @@ fieldset[disabled] button:disabled {
 
 /* Thin chevron at the field's end, matching the Homey select */
 .combobox::after {
+  block-size: 0.5em;
   border-block-end: 0.15em solid currentColor;
   border-inline-end: 0.15em solid currentColor;
-  block-size: 0.5em;
   content: '';
   inline-size: 0.5em;
   inset-block-start: 50%;
@@ -114,11 +114,11 @@ fieldset[disabled] button:disabled {
   background: var(--homey-color-component, #fff);
   border-radius: 1em;
   box-shadow: 0 0.5em 2em rgb(0 0 0 / 20%);
+  font: inherit;
   inset-block-start: calc(100% + 0.25em);
   inset-inline: 0;
   list-style: none;
   margin: 0;
-  font: inherit;
   max-block-size: 16em;
   overflow: auto;
   padding: 0.5em 0;

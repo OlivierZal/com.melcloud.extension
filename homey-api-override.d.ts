@@ -2,10 +2,7 @@ declare module 'homey-api' {
   export class HomeyAPIV3Local {
     readonly devices: HomeyAPIV3Local.ManagerDevices
 
-    static createAppAPI(options: {
-      homey: Homey
-      debug?: ((...args: unknown[]) => void) | null
-    }): Promise<HomeyAPIV3Local>
+    static createAppAPI(options: { homey: Homey }): Promise<HomeyAPIV3Local>
 
     call(options: { method: string; path: string }): Promise<unknown>
   }
@@ -63,8 +60,6 @@ declare module 'homey-api' {
 
   export namespace HomeyAPIV3Local.ManagerDevices.Device {
     export class DeviceCapability {
-      readonly value: boolean | number | string | null
-
       destroy(): void
 
       setValue(value: boolean | number | string): Promise<void>

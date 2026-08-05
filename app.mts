@@ -162,7 +162,7 @@ export default class MELCloudExtensionApp extends App {
     }
     await Promise.all(
       this.#melcloudDevices
-        .filter(({ id }) => (outdoorSources[id] ?? null) !== DISABLED_SOURCE)
+        .filter(({ id }) => outdoorSources[id] !== DISABLED_SOURCE)
         .map(async (device) =>
           this.#listenToDevice(device, outdoorSources[device.id] ?? null),
         ),
@@ -308,6 +308,7 @@ export default class MELCloudExtensionApp extends App {
   #inheritedSource(
     device: HomeyAPIV3Local.ManagerDevices.Device,
     stored: OutdoorSources,
+    homeyIdByMelcloudId: ReadonlyMap<string, string>,
   ): string | null {
     const melcloudId = toJoinKey(device.data.id)
     const group =
@@ -316,7 +317,6 @@ export default class MELCloudExtensionApp extends App {
         : this.#deviceGroups?.find(({ deviceIds }) =>
             deviceIds.includes(melcloudId),
           )
-    const homeyIdByMelcloudId = this.#getHomeyIdByMelcloudId()
     const siblingSources = new Set(
       (group?.deviceIds ?? [])
         .filter((id) => id !== melcloudId)
@@ -329,7 +329,7 @@ export default class MELCloudExtensionApp extends App {
     if (siblingSources.size !== 1) {
       return DISABLED_SOURCE
     }
-    const [shared = DISABLED_SOURCE] = siblingSources
+    const [shared = null] = siblingSources
     return shared
   }
 
@@ -440,10 +440,11 @@ export default class MELCloudExtensionApp extends App {
     )
     const isLegacySeed =
       this.homey.settings.get('hasSeededOutdoorSources') !== true
+    const homeyIdByMelcloudId = this.#getHomeyIdByMelcloudId()
     for (const device of newcomers) {
       stored[device.id] = isLegacySeed
         ? null
-        : this.#inheritedSource(device, stored)
+        : this.#inheritedSource(device, stored, homeyIdByMelcloudId)
     }
     if (newcomers.length > 0) {
       this.outdoorSources = stored

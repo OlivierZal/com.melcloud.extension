@@ -53,7 +53,6 @@ const createHomeyContext = ({
   const homey = mock<Homey>({
     app: mock<MELCloudExtensionApp>({
       autoAdjustCooling,
-      deviceGroups,
       error: vi.fn<(...args: readonly unknown[]) => void>(),
       homey: {
         settings: {
@@ -308,9 +307,14 @@ describe('api', () => {
 
   describe('webview hashes', () => {
     it('should serve the packaged manifest map', async () => {
+      const { homey } = createHomeyContext({
+        melcloudDevices: [],
+        temperatureSensors: [],
+      })
+
       // A dev suite run packages no manifest: the empty map is the
       // documented fresh-by-default answer.
-      await expect(api.getWebviewHashes()).resolves.toStrictEqual({})
+      await expect(api.getWebviewHashes({ homey })).resolves.toStrictEqual({})
     })
   })
 })
