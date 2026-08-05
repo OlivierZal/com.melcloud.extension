@@ -19,10 +19,7 @@
   },
   "settings": {
     "autoAdjust": "Auto-ajuster la température de la climatisation",
-    "boolean": {
-      "false": "Non",
-      "true": "Oui"
-    },
+    "boolean": { "false": "Non", "true": "Oui" },
     "configuration": "Configuration",
     "defaultSource": "Météo Homey",
     "disabledSource": "Ne pas activer",

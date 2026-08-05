@@ -19,10 +19,7 @@
   },
   "settings": {
     "autoAdjust": "Autoajustar la temperatura del aire acondicionado",
-    "boolean": {
-      "false": "No",
-      "true": "Sí"
-    },
+    "boolean": { "false": "No", "true": "Sí" },
     "configuration": "Configuración",
     "defaultSource": "Tiempo de Homey",
     "disabledSource": "No ajustar",

@@ -134,9 +134,7 @@ describe('api', () => {
     it('should fall back to a single flat group without grouping', async () => {
       const { homey } = createHomeyContext({
         melcloudDevices: [classicDevice.device, homeDevice.device],
-        settings: {
-          outdoorSources: { 'home-1': 'none' },
-        },
+        settings: { outdoorSources: { 'home-1': 'none' } },
         temperatureSensors: [],
       })
 

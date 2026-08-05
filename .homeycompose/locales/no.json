@@ -19,10 +19,7 @@
   },
   "settings": {
     "autoAdjust": "Autojuster aircondition-temperaturen",
-    "boolean": {
-      "false": "Nei",
-      "true": "Ja"
-    },
+    "boolean": { "false": "Nei", "true": "Ja" },
     "configuration": "Konfigurasjon",
     "defaultSource": "Homey-vær",
     "disabledSource": "Ikke juster",

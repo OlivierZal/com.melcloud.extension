@@ -405,10 +405,7 @@ describe(MELCloudExtensionApp, () => {
     classicDevice.values.thermostat_mode = 'cool'
     homeDevice.values.thermostat_mode = 'cool'
     await createHarness([classicDevice, homeDevice], {
-      settings: {
-        isEnabled: true,
-        outdoorSources: { 'classic-1': 'none' },
-      },
+      settings: { isEnabled: true, outdoorSources: { 'classic-1': 'none' } },
     })
 
     await advancePastInit()

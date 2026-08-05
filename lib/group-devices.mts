@@ -50,10 +50,7 @@ const groupByBuilding = (
     grouped.set(name, members)
   }
   return [...grouped]
-    .map(([name, members]) => ({
-      devices: members.toSorted(byName),
-      name,
-    }))
+    .map(([name, members]) => ({ devices: members.toSorted(byName), name }))
     .toSorted((group1, group2) => {
       if (group1.name === null) {
         return 1
