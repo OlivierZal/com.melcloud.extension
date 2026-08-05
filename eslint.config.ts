@@ -54,9 +54,10 @@ const config: Config[] = defineConfig([
     ignores: [
       '.homeybuild/',
       'coverage/',
-      // Stale local bundle from builds predating the `.homeybuild`
-      // emission (bundle.mts deletes it on its next run); without the
-      // entry a never-rebuilt tree would get swept by lint.
+      // Pre-`.homeybuild` leftovers in never-rebuilt trees: gitignored,
+      // and ignored here so a stale tree cannot break the lint run.
+      'settings/index.js',
+      'settings/index.mjs',
     ],
   },
   {
