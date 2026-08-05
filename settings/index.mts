@@ -15,6 +15,7 @@ import {
 } from '../types.mts'
 import { homeyApiGet, homeyApiPut, homeyCallback } from './callback-api.mts'
 import { createDirtyGate } from './dirty-gate.mts'
+import { ensureFreshWebview } from './webview-freshness.mts'
 
 // Give slow transports a real chance while keeping the loading overlay
 // finite: past this point the page surfaces the failure instead.
@@ -791,6 +792,15 @@ export const start = async (homey: Homey): Promise<void> => {
   // Listeners before the data load: the Refresh button is the retry
   // affordance when the initial load fails or times out, so it must work
   // regardless of how `run` ends.
+  // A stale cached page reloads itself once instead of booting: skip
+  // the init — the document is about to be replaced.
+  if (
+    await ensureFreshWebview('settings', async () =>
+      homeyApiGet(homey, '/webview-hashes'),
+    )
+  ) {
+    return
+  }
   addEventListeners(homey)
   let initFailure: { readonly cause: unknown } | null = null
   try {

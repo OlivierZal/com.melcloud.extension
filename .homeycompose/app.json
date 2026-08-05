@@ -12,6 +12,10 @@
       "method": "GET",
       "path": "/devices/sensors/temperature"
     },
+    "getWebviewHashes": {
+      "method": "GET",
+      "path": "/webview-hashes"
+    },
     "logWebviewBoot": {
       "method": "POST",
       "path": "/boot-error"
