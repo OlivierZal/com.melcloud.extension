@@ -19,10 +19,7 @@
   },
   "settings": {
     "autoAdjust": "Автоматически регулировать температуру кондиционера",
-    "boolean": {
-      "false": "Нет",
-      "true": "Да"
-    },
+    "boolean": { "false": "Нет", "true": "Да" },
     "configuration": "Конфигурация",
     "defaultSource": "Погода Homey",
     "disabledSource": "Не регулировать",

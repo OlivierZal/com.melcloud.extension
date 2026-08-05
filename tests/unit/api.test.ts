@@ -134,9 +134,7 @@ describe('api', () => {
     it('should fall back to a single flat group without grouping', async () => {
       const { homey } = createHomeyContext({
         melcloudDevices: [classicDevice.device, homeDevice.device],
-        settings: {
-          outdoorSources: { 'home-1': 'none' },
-        },
+        settings: { outdoorSources: { 'home-1': 'none' } },
         temperatureSensors: [],
       })
 
@@ -305,6 +303,14 @@ describe('api', () => {
       })
 
       expect(api.getTemperatureSensors({ homey })).toStrictEqual([])
+    })
+  })
+
+  describe('webview hashes', () => {
+    it('should serve the packaged manifest map', async () => {
+      // A dev suite run packages no manifest: the empty map is the
+      // documented fresh-by-default answer.
+      await expect(api.getWebviewHashes()).resolves.toStrictEqual({})
     })
   })
 })

@@ -146,7 +146,16 @@ to judge success.
   a COMPAT CONTRACT: `scripts/bundle.mts` builds the entry twice —
   `index.js` (IIFE) for the current HTML, `index.mjs` (ESM) for every
   cached ESM-era HTML, which is why the entry keeps `export const
-start`. Never rename or drop a shipped bundle filename; add alongside.
+start`. Never rename or drop a shipped bundle filename; add alongside. A second cache layer covers the HTML
+  itself (phone webviews cache the page across app versions,
+  force-close included): each bundle carries a freshness handshake —
+  the page's identity is the document-order join of its `?v=` stamps (a CSS-only ship moves it too), `GET /webview-hashes` serves the
+  live hashes (a manifest `bundle.mts` emits into the packaged app,
+  read by `lib/webview-hashes.mts`), and a mismatch triggers ONE
+  `location.reload()` (sessionStorage guard, `webview-freshness.mts`),
+  which revalidates the HTML and pulls the fresh bundle. Every failure
+  path stays open: an unstamped page, an absent route or denied
+  storage must never take a working webview down.
   When the bundle still fails to boot, the `onHomeyReady` poll's timeout
   beacon POSTs the `userAgent` plus a `fetch` probe of the bundle to
   `/boot-error` (`app.error`) before degrading, distinguishing a fetch
@@ -190,7 +199,12 @@ start`. Never rename or drop a shipped bundle filename; add alongside.
   `tests/unit/api-route-guards.test.ts` pins the call sites (every
   settings path literal must match a declared route).
 - Dirty-gating: `settings/dirty-gate.mts` is the ONE primitive behind the
-  Update/Refresh pair — never re-derive its invariant at a call site. Its
+  Update/Refresh pair — never re-derive its invariant at a call site. The gate also freezes the gated
+  fieldsets while a request is in flight (container `disabled` +
+  `aria-busy`, so a control's own domain `disabled` survives the thaw):
+  every success path rewrites the fields, so a mid-flight edit would be
+  silently clobbered — pass every region `serialize` reads through
+  `fieldsetElements`. Its
   `serialize` must stay a PURE form snapshot, never a request-body
   builder, and disabled greying styles `button:disabled` generically,
   never a per-class list. `tests/dirty-gate.test.ts` locks the behavior;

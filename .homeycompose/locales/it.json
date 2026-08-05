@@ -19,10 +19,7 @@
   },
   "settings": {
     "autoAdjust": "Regola automaticamente la temperatura del climatizzatore",
-    "boolean": {
-      "false": "No",
-      "true": "Sì"
-    },
+    "boolean": { "false": "No", "true": "Sì" },
     "configuration": "Configurazione",
     "defaultSource": "Meteo di Homey",
     "disabledSource": "Non regolare",

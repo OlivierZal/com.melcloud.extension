@@ -19,10 +19,7 @@
   },
   "settings": {
     "autoAdjust": "Auto-afstellen airco-temperatuur",
-    "boolean": {
-      "false": "Nee",
-      "true": "Ja"
-    },
+    "boolean": { "false": "Nee", "true": "Ja" },
     "configuration": "Configuratie",
     "defaultSource": "Homey-weer",
     "disabledSource": "Niet aanpassen",

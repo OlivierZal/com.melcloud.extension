@@ -19,10 +19,7 @@
   },
   "settings": {
     "autoAdjust": "Automatycznie dostosowuj temperaturę klimatyzacji",
-    "boolean": {
-      "false": "Nie",
-      "true": "Tak"
-    },
+    "boolean": { "false": "Nie", "true": "Tak" },
     "configuration": "Konfiguracja",
     "defaultSource": "Pogoda Homey",
     "disabledSource": "Nie dostosowuj",

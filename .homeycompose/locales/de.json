@@ -19,10 +19,7 @@
   },
   "settings": {
     "autoAdjust": "Temperatur der Klimaanlage automatisch anpassen",
-    "boolean": {
-      "false": "Nein",
-      "true": "Ja"
-    },
+    "boolean": { "false": "Nein", "true": "Ja" },
     "configuration": "Konfiguration",
     "defaultSource": "Homey-Wetter",
     "disabledSource": "Nicht anpassen",

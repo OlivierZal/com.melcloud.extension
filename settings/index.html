@@ -59,7 +59,11 @@
                 class="homey-form-legend"
                 data-i18n="settings.configuration"
             >Configuration</summary>
-            <div id="sources"></div>
+            <fieldset
+                id="sources"
+                class="busy-scope"
+                aria-labelledby="configuration_summary"
+            ></fieldset>
             <div id="empty_state" hidden>
                 <p data-i18n="settings.notFound">First, you need to set up your devices in the MELCloud Homey app.</p>
                 <button
@@ -70,7 +74,7 @@
                 >Install the MELCloud app</button>
             </div>
         </details>
-        <fieldset class="homey-form-fieldset">
+        <fieldset id="adjustment" class="homey-form-fieldset">
             <legend class="homey-form-legend" data-i18n="settings.autoAdjust">Auto-adjust air conditioning temperature</legend>
             <div class="homey-form-group">
                 <label

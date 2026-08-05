@@ -2,6 +2,7 @@ import type { Homey } from 'homey/lib/Homey'
 
 import { NotFoundError } from './lib/errors.mts'
 import { groupAdjustableDevices } from './lib/group-devices.mts'
+import { getWebviewHashes } from './lib/webview-hashes.mts'
 import {
   type AdjustableGroup,
   type TemperatureListenerData,
@@ -94,6 +95,14 @@ const api = {
         sensor1.capabilityName.localeCompare(sensor2.capabilityName),
       )
   },
+  /**
+   * Serves the packaged webview-bundle hashes so a booted page can
+   * detect a stale cached copy of itself and reload once.
+   * @returns The bundle hash per page entry; empty outside the
+   * packaged flow.
+   */
+  getWebviewHashes: async (): Promise<Partial<Record<string, string>>> =>
+    getWebviewHashes(),
   logWebviewBoot: ({
     body,
     homey: { app },

@@ -19,10 +19,7 @@
   },
   "settings": {
     "autoAdjust": "ضبط درجة حرارة مكيف الهواء تلقائيًا",
-    "boolean": {
-      "false": "لا",
-      "true": "نعم"
-    },
+    "boolean": { "false": "لا", "true": "نعم" },
     "configuration": "التكوين",
     "defaultSource": "طقس Homey",
     "disabledSource": "عدم الضبط",

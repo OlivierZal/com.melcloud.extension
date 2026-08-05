@@ -97,15 +97,7 @@ const createHarness = ({
     value: outdoorTemperature,
   })
   const listener = new MELCloudListener(app, mockDevice.device, source)
-  return {
-    app,
-    attach,
-    detach,
-    listener,
-    mockDevice,
-    pushToUI,
-    settingsStore,
-  }
+  return { app, attach, detach, listener, mockDevice, pushToUI, settingsStore }
 }
 
 const getInstance = (

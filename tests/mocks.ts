@@ -207,9 +207,7 @@ export const createMockHomey = ({
     __: translate,
     api: {
       realtime,
-      getApiApp: (): { get: (path: string) => unknown } => ({
-        get: apiAppGet,
-      }),
+      getApiApp: (): { get: (path: string) => unknown } => ({ get: apiAppGet }),
     },
     i18n: { getLanguage: (): string => language },
     manifest: { version },

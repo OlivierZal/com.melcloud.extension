@@ -19,10 +19,7 @@
   },
   "settings": {
     "autoAdjust": "Autojustera luftkonditioneringstemperaturen",
-    "boolean": {
-      "false": "Nej",
-      "true": "Ja"
-    },
+    "boolean": { "false": "Nej", "true": "Ja" },
     "configuration": "Konfiguration",
     "defaultSource": "Homey-väder",
     "disabledSource": "Justera inte",

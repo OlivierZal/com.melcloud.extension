@@ -1,64 +1,28 @@
 {
-  "1.0.0": {
-    "en": "Created an extension for MELCloud Homey app."
-  },
-  "2.0.0": {
-    "en": "Translated app and upgraded for new Homey Web API."
-  },
-  "3.0.0": {
-    "en": "Optimized loops."
-  },
-  "4.0.0": {
-    "en": "Reshaped error management."
-  },
+  "1.0.0": { "en": "Created an extension for MELCloud Homey app." },
+  "2.0.0": { "en": "Translated app and upgraded for new Homey Web API." },
+  "3.0.0": { "en": "Optimized loops." },
+  "4.0.0": { "en": "Reshaped error management." },
   "5.0.0": {
     "en": "Improved recording of target temperature to restore it when refreshing stops."
   },
-  "6.0.0": {
-    "en": "Improved value fetching."
-  },
-  "7.0.0": {
-    "en": "Added logs to app settings."
-  },
-  "8.0.0": {
-    "en": "Improve logs by formatting them."
-  },
-  "9.0.0": {
-    "en": "Updated modules."
-  },
-  "10.0.0": {
-    "en": "Use eslint flat config."
-  },
-  "11.0.0": {
-    "en": "Reshaped code."
-  },
-  "12.0.0": {
-    "en": "Use decorator."
-  },
-  "15.0.0": {
-    "en": "Improved types."
-  },
-  "16.0.0": {
-    "en": "Improved performances."
-  },
-  "17.0.0": {
-    "en": "Various improvements."
-  },
+  "6.0.0": { "en": "Improved value fetching." },
+  "7.0.0": { "en": "Added logs to app settings." },
+  "8.0.0": { "en": "Improve logs by formatting them." },
+  "9.0.0": { "en": "Updated modules." },
+  "10.0.0": { "en": "Use eslint flat config." },
+  "11.0.0": { "en": "Reshaped code." },
+  "12.0.0": { "en": "Use decorator." },
+  "15.0.0": { "en": "Improved types." },
+  "16.0.0": { "en": "Improved performances." },
+  "17.0.0": { "en": "Various improvements." },
   "18.0.0": {
     "en": "Added air-to-air devices to outdoor temperature sensors."
   },
-  "19.0.0": {
-    "en": "Reshaped app design."
-  },
-  "20.1.2": {
-    "en": "Various app improvements."
-  },
-  "21.0.0": {
-    "en": "Improved code."
-  },
-  "22.0.0": {
-    "en": "Fixed bugs"
-  },
+  "19.0.0": { "en": "Reshaped app design." },
+  "20.1.2": { "en": "Various app improvements." },
+  "21.0.0": { "en": "Improved code." },
+  "22.0.0": { "en": "Fixed bugs" },
   "23.0.1": {
     "da": "Opdateret for kompatibilitet med Node.js 22 og senere.",
     "en": "Updated for compatibility with Node.js 22 and later.",
