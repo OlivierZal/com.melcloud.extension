@@ -30,10 +30,6 @@ const MAX_TEMPERATURE = 31
 // changes and automatically adjusts the target cooling temperature
 // based on its outdoor source readings.
 export class MELCloudListener {
-  public get isCooling(): boolean {
-    return this.#thermostatModeListener?.value === COOL
-  }
-
   readonly #app: MELCloudExtensionApp
 
   readonly #device: HomeyAPIV3Local.ManagerDevices.Device

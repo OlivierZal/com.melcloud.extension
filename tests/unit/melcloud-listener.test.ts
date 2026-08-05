@@ -134,7 +134,6 @@ describe(MELCloudListener, () => {
     expect(
       harness.mockDevice.capabilityInstances.has('target_temperature'),
     ).toBe(false)
-    expect(harness.listener.isCooling).toBe(false)
   })
 
   it('should floor the target to the outdoor temperature minus the gap, half-degree precise', async () => {
@@ -246,7 +245,6 @@ describe(MELCloudListener, () => {
     expect(
       harness.mockDevice.capabilityInstances.has('target_temperature'),
     ).toBe(true)
-    expect(harness.listener.isCooling).toBe(false)
   })
 
   it('should not rearm the target listener when cool is reported twice', async () => {
@@ -366,14 +364,6 @@ describe(MELCloudListener, () => {
       idOrName: 'Living room',
       type: 'Device',
     })
-  })
-
-  it('should report cooling from the live thermostat mode', async () => {
-    const harness = createHarness()
-
-    await harness.listener.listenToThermostatMode()
-
-    expect(harness.listener.isCooling).toBe(true)
   })
 
   it('should destroy both capability listeners and revert', async () => {

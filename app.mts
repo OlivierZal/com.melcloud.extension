@@ -420,16 +420,19 @@ export default class MELCloudExtensionApp extends App {
     )
   }
 
-  #reconcileSourceEntries(): void {
-    this.#migrateLegacySource()
-    this.#seedOutdoorSources()
-  }
-
   // Every known AC device gets an EXPLICIT outdoor-source entry, so a
   // device appearing later is distinguishable from one whose entry was
   // never written. The first seeding on an existing install stamps the
   // legacy default (null = Homey weather) and changes nothing;
   // afterwards newcomers go through #inheritedSource.
+  // Brings the per-device source entries in line with the freshly
+  // loaded device set: the legacy single-source form migrates first so
+  // seeding sees its result, and newcomers start disabled (opt-in).
+  #reconcileSourceEntries(): void {
+    this.#migrateLegacySource()
+    this.#seedOutdoorSources()
+  }
+
   #seedOutdoorSources(): void {
     const stored: OutdoorSources = this.outdoorSources
     const newcomers = this.#melcloudDevices.filter(

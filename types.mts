@@ -14,7 +14,7 @@ export interface AdjustableGroup {
   readonly name: string | null
 }
 
-// Payload served by com.melcloud's /device_groups endpoint
+// Payload served by com.melcloud's /devices/groups endpoint
 export type DeviceGroups = readonly {
   readonly deviceIds: readonly string[]
   readonly name: string

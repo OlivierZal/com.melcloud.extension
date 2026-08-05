@@ -57,7 +57,6 @@ const config: Config[] = defineConfig([
       // Stale local bundle from builds predating the `.homeybuild`
       // emission (bundle.mts deletes it on its next run); without the
       // entry a never-rebuilt tree would get swept by lint.
-      'settings/index.mjs',
     ],
   },
   {
