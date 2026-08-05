@@ -703,7 +703,7 @@ const populateSources = async (homey: Homey): Promise<void> => {
 }
 
 // Spread (not `.entries().map()`): iterator helpers are a 2025-era
-// runtime API, far above the webview's es2020 floor — esbuild lowers
+// runtime API, far above the webview's es2023 floor — esbuild lowers
 // syntax only, never runtime APIs.
 const getSelectedSources = (): OutdoorSources =>
   Object.fromEntries(
