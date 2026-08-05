@@ -160,11 +160,16 @@ export default class MELCloudExtensionApp extends App {
     if (!isEnabled) {
       return
     }
+    // The restart routes from the merged map for the same reason: a
+    // device the payload omits keeps its stored source instead of
+    // falling back to Homey weather — or restarting at all, when the
+    // store disables it.
+    const sources = this.outdoorSources
     await Promise.all(
       this.#melcloudDevices
-        .filter(({ id }) => outdoorSources[id] !== DISABLED_SOURCE)
+        .filter(({ id }) => sources[id] !== DISABLED_SOURCE)
         .map(async (device) =>
-          this.#listenToDevice(device, outdoorSources[device.id] ?? null),
+          this.#listenToDevice(device, sources[device.id] ?? null),
         ),
     )
   }

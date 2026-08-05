@@ -604,6 +604,45 @@ describe(MELCloudExtensionApp, () => {
     })
   })
 
+  it('should not restart a device the payload omits but the store disables', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    classicDevice.values.thermostat_mode = 'cool'
+    homeDevice.values.thermostat_mode = 'cool'
+    const { app } = await createHarness([classicDevice, homeDevice], {
+      settings: { outdoorSources: { 'classic-1': 'none' } },
+    })
+
+    await advancePastInit()
+    await app.autoAdjustCooling({
+      isEnabled: true,
+      outdoorSources: { 'home-1': null },
+    })
+
+    expect(classicDevice.capabilityInstances.size).toBe(0)
+    expect(homeDevice.capabilityInstances.has('target_temperature')).toBe(true)
+  })
+
+  it('should route an omitted device through its stored source', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    classicDevice.values.thermostat_mode = 'cool'
+    homeDevice.values.thermostat_mode = 'cool'
+    const { app } = await createHarness([classicDevice, homeDevice], {
+      settings: {
+        outdoorSources: { 'home-1': 'classic-1:measure_temperature.outdoor' },
+      },
+    })
+
+    await advancePastInit()
+    await app.autoAdjustCooling({
+      isEnabled: true,
+      outdoorSources: { 'classic-1': null },
+    })
+
+    expect(
+      classicDevice.capabilityInstances.has('measure_temperature.outdoor'),
+    ).toBe(true)
+  })
+
   it('should log instead of crashing when the debounced reload fails', async () => {
     const { classicDevice } = createDevices()
     const { app, manager } = await createHarness([classicDevice])
