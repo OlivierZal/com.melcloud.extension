@@ -118,12 +118,16 @@ const getSelectElement = (id: string): HTMLSelectElement =>
 const getDivElement = (id: string): HTMLDivElement =>
   getElement(id, HTMLDivElement, 'div')
 
+const getFieldsetElement = (id: string): HTMLFieldSetElement =>
+  getElement(id, HTMLFieldSetElement, 'fieldset')
+
 // Safe at module load: the bundle is a `defer` classic script, so it runs
 // only after <body> is parsed (see settings/index.html).
 const getDetailsElement = (id: string): HTMLDetailsElement =>
   getElement(id, HTMLDetailsElement, 'details')
 
 const applyElement = getButtonElement('apply')
+const adjustmentElement = getFieldsetElement('adjustment')
 const emptyElement = getDivElement('empty_state')
 const installElement = getButtonElement('install')
 const refreshElement = getButtonElement('refresh')
@@ -131,7 +135,7 @@ const enabledElement = getSelectElement('enabled')
 const configurationElement = getDetailsElement('configuration')
 
 const logsElement = getDivElement('logs')
-const sourcesElement = getDivElement('sources')
+const sourcesElement = getFieldsetElement('sources')
 
 interface SourceOption {
   readonly name: string
@@ -167,6 +171,7 @@ const serializeState = (): string =>
 // library's `is-loading` spinner shifts the label sideways.
 const dirtyGate = createDirtyGate({
   applyElement,
+  fieldsetElements: [adjustmentElement, sourcesElement],
   refreshElements: [refreshElement],
   serialize: serializeState,
 })

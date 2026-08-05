@@ -20,6 +20,27 @@ button:disabled {
   opacity: 0.5;
 }
 
+/* The sources container is a fieldset so the dirty gate can freeze every
+   per-building control with one `disabled` flip while a request is in
+   flight: no UA fieldset chrome may surface. Explicit `display: block`
+   because WebKit renders inline fieldsets atomically. */
+fieldset.busy-scope {
+  border: 0;
+  display: block;
+  margin: 0;
+  min-inline-size: 0;
+  padding: 0;
+}
+
+/* A dirty-gate freeze sets `disabled` on the gated fieldset while its
+   request is in flight — grey it like the buttons. Attribute (not
+   `:disabled`) so nested fieldsets inside a frozen section do not
+   compound the opacity. */
+fieldset[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 /* Homey Style Library tokens with today's hex as fallback: adaptive
    when the injected sheet defines them (dark theme), byte-identical
    otherwise. */
