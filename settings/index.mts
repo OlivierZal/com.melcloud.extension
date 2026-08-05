@@ -795,8 +795,19 @@ export const start = async (homey: Homey): Promise<void> => {
   // A stale cached page reloads itself once instead of booting: skip
   // the init — the document is about to be replaced.
   if (
-    await ensureFreshWebview('settings', async () =>
-      homeyApiGet(homey, '/webview-hashes'),
+    await ensureFreshWebview(
+      'settings',
+      async () => homeyApiGet(homey, '/webview-hashes'),
+      (message) => {
+        homey.api(
+          'POST',
+          '/boot-error',
+          { message, name: 'WebviewFreshness' },
+          () => {
+            // A missed freshness breadcrumb is acceptable.
+          },
+        )
+      },
     )
   ) {
     return
