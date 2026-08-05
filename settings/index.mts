@@ -788,29 +788,43 @@ const reportInitFailure = (homey: Homey, error: unknown): void => {
  * overlay is still up never gets seen.
  * @param homey - The Homey instance handed to `onHomeyReady`.
  */
+// One freshness pass, shared by the boot pull and the app's realtime
+// poke; its breadcrumbs ride the declared boot-error route.
+const checkFreshness = async (homey: Homey): Promise<boolean> =>
+  ensureFreshWebview(
+    'settings',
+    async () => homeyApiGet(homey, '/webview-hashes'),
+    (message) => {
+      homey.api(
+        'POST',
+        '/boot-error',
+        { message, name: 'WebviewFreshness' },
+        () => {
+          // A missed freshness breadcrumb is acceptable.
+        },
+      )
+    },
+  )
+
+// Boot pull, then push subscription: a stale page refetches itself
+// (the caller skips its init — the document is about to be replaced);
+// a fresh one subscribes to the app's boot poke and re-runs the same
+// handshake when it fires.
+const startFreshness = async (homey: Homey): Promise<boolean> => {
+  if (await checkFreshness(homey)) {
+    return true
+  }
+  homey.on('webview_hashes_changed', () => {
+    fireAndForget(checkFreshness(homey))
+  })
+  return false
+}
+
 export const start = async (homey: Homey): Promise<void> => {
   // Listeners before the data load: the Refresh button is the retry
   // affordance when the initial load fails or times out, so it must work
   // regardless of how `run` ends.
-  // A stale cached page refetches itself once (never-cached address)
-  // instead of booting: skip
-  // the init — the document is about to be replaced.
-  if (
-    await ensureFreshWebview(
-      'settings',
-      async () => homeyApiGet(homey, '/webview-hashes'),
-      (message) => {
-        homey.api(
-          'POST',
-          '/boot-error',
-          { message, name: 'WebviewFreshness' },
-          () => {
-            // A missed freshness breadcrumb is acceptable.
-          },
-        )
-      },
-    )
-  ) {
+  if (await startFreshness(homey)) {
     return
   }
   addEventListeners(homey)

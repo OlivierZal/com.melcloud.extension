@@ -134,6 +134,9 @@ export default class MELCloudExtensionApp extends App {
       })
     })
     this.#createNotification()
+    // Poke any open webview to re-run its freshness handshake: an app
+    // (re)boot is exactly when the served hashes may have moved.
+    this.homey.api.realtime('webview_hashes_changed', null)
   }
 
   public override async onUninit(): Promise<void> {
