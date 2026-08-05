@@ -39,7 +39,11 @@ fieldset.busy-scope {
    reaches form controls — the combobox list's items are plain `li`
    elements, and a list opened before a keyboard-activated request
    would otherwise stay clickable while frozen. */
-fieldset[disabled] {
+/* The `body` ancestor outweighs the injected sheet's `all: unset` on
+   its reset fieldsets whatever the order: without it the section dim
+   can lose the cascade on-device, and the button neutralizer below then
+   leaves in-flight buttons fully opaque. */
+body fieldset[disabled] {
   cursor: not-allowed;
   opacity: 0.5;
   pointer-events: none;
