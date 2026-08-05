@@ -792,7 +792,8 @@ export const start = async (homey: Homey): Promise<void> => {
   // Listeners before the data load: the Refresh button is the retry
   // affordance when the initial load fails or times out, so it must work
   // regardless of how `run` ends.
-  // A stale cached page reloads itself once instead of booting: skip
+  // A stale cached page refetches itself once (never-cached address)
+  // instead of booting: skip
   // the init — the document is about to be replaced.
   if (
     await ensureFreshWebview(
