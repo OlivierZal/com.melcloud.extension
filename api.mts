@@ -98,7 +98,8 @@ const api = {
   },
   /**
    * Serves the packaged webview-bundle hashes so a booted page can
-   * detect a stale cached copy of itself and reload once.
+   * detect a stale cached copy of itself and refetch once through a
+   * never-cached address.
    * @param options - Homey API context.
    * @param options.homey - Homey instance carrying the app.
    * @returns The bundle hash per page entry; empty outside the

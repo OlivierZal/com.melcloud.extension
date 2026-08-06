@@ -158,7 +158,9 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   refetch of the document through a never-cached address
   (`?fresh=<identity>` — a bare reload can be re-served the same stale
   document from the HTTP cache; sessionStorage guard,
-  `webview-freshness.mts`), whose fresh stamps pull the fresh assets;
+  `webview-freshness.mts` — byte-identical in the three apps, its test
+  differing only by its import path; edit all three together), whose
+  fresh stamps pull the fresh assets;
   a mismatch that survives its refetch is reported to
   `POST /boot-error`. The app also emits a `webview_hashes_changed`
   realtime event at its own boot; an open page re-runs the same
@@ -217,7 +219,7 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   `fieldsetElements`. Its
   `serialize` must stay a PURE form snapshot, never a request-body
   builder, and disabled greying styles `button:disabled` generically,
-  never a per-class list. `tests/dirty-gate.test.ts` locks the behavior;
+  never a per-class list. `tests/unit/dirty-gate.test.ts` locks the behavior;
   the module is a byte-identical copy of com.melcloud's
   `public/dirty-gate.mts` (com.heatzy carries the third copy) — edit all
   three together.
