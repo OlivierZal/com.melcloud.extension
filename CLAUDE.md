@@ -346,6 +346,11 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   SECURITY.md, CLAUDE.md) — never a later sweep; the 2026-08 README
   audit caught exactly the drift this prevents (a shipped Home ATW
   driver absent from its README, a stale `Result` kind list).
+- Every substantive wave ends with a cleanup pass over its own diff —
+  residue (history comments, orphaned helpers, stale doc claims),
+  simplification, and the factoring the change just made possible.
+  Features land first, the sweep runs second, so the sweep covers
+  them; a wave is not done until that pass has run.
 
 - Design phases (on Olivier's call, start and end): iterate on
   `design/*` branches with dev-installs only — no PR merges, no tags,
