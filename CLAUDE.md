@@ -215,11 +215,13 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   fieldsets while a request is in flight (container `disabled` +
   `aria-busy`, so a control's own domain `disabled` survives the thaw):
   every success path rewrites the fields, so a mid-flight edit would be
-  silently clobbered — pass every region `serialize` reads through
-  `fieldsetElements`. Its
-  `serialize` must stay a PURE form snapshot, never a request-body
-  builder, and disabled greying styles `button:disabled` generically,
-  never a per-class list. `tests/unit/dirty-gate.test.ts` locks the behavior;
+  silently clobbered — pass every region the arming source reads through
+  `fieldsetElements`. Arming comes from exactly ONE source, exclusive by
+  type: baseline mode (`serialize`, a pure snapshot — never a
+  request-body builder) or predicate mode (`isActionable`, no baseline
+  at all; `markSaved` then only re-evaluates) — this app's single pair
+  is baseline-mode. Disabled greying styles `button:disabled`
+  generically, never a per-class list. `tests/unit/dirty-gate.test.ts` locks the behavior;
   the module is a byte-identical copy of com.melcloud's
   `public/dirty-gate.mts` (com.heatzy carries the third copy) — edit all
   three together.
