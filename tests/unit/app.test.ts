@@ -191,6 +191,25 @@ describe(MELCloudExtensionApp, () => {
     })
   })
 
+  it('should start both newcomers of a fresh building disabled', async () => {
+    const { classicDevice, homeDevice } = createDevices()
+    const { mockHomey } = await createHarness([classicDevice, homeDevice], {
+      settings: { hasSeededOutdoorSources: true, outdoorSources: {} },
+    })
+    mockHomey.apiAppGet.mockReturnValue([
+      { deviceIds: ['1000', 'uuid-home-1'], name: 'Domicile' },
+    ])
+
+    await advancePastInit()
+
+    // The sibling vote reads only pre-seed entries: neither newcomer
+    // may count the other's freshly inferred value as a decision.
+    expect(mockHomey.settingsStore.outdoorSources).toStrictEqual({
+      'classic-1': 'none',
+      'home-1': 'none',
+    })
+  })
+
   it('should default a newcomer to disabled when no grouping is available', async () => {
     const { classicDevice, homeDevice } = createDevices()
     const { mockHomey } = await createHarness([classicDevice, homeDevice], {

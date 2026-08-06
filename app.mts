@@ -448,17 +448,31 @@ export default class MELCloudExtensionApp extends App {
     )
     const isLegacySeed =
       this.homey.settings.get('hasSeededOutdoorSources') !== true
-    const homeyIdByMelcloudId = this.#getHomeyIdByMelcloudId()
-    for (const device of newcomers) {
-      stored[device.id] = isLegacySeed
-        ? null
-        : this.#inheritedSource(device, stored, homeyIdByMelcloudId)
-    }
+    this.#writeNewcomerEntries(stored, newcomers, isLegacySeed)
     if (newcomers.length > 0) {
       this.outdoorSources = stored
     }
     if (isLegacySeed) {
       this.homey.settings.set('hasSeededOutdoorSources', true)
+    }
+  }
+
+  // The sibling vote reads a pre-seed snapshot, never the map being
+  // written: only entries that predate this reconciliation — user
+  // decisions and past seeds — may decide a newcomer, so one
+  // newcomer's inferred value cannot leak into another's vote. The
+  // first (legacy) seed stamps the historical default instead.
+  #writeNewcomerEntries(
+    stored: OutdoorSources,
+    newcomers: readonly HomeyAPIV3Local.ManagerDevices.Device[],
+    isLegacySeed: boolean,
+  ): void {
+    const homeyIdByMelcloudId = this.#getHomeyIdByMelcloudId()
+    const decided: OutdoorSources = { ...stored }
+    for (const device of newcomers) {
+      stored[device.id] = isLegacySeed
+        ? null
+        : this.#inheritedSource(device, decided, homeyIdByMelcloudId)
     }
   }
 }
