@@ -157,13 +157,22 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   refetch of the document through a never-cached address
   (`?fresh=<identity>` — a bare reload can be re-served the same stale
   document from the HTTP cache; sessionStorage guard,
-  `ensureFreshWebview` from `@olivierzal/homey-kit/webview`), whose
+  `watchWebviewFreshness` from `@olivierzal/homey-kit/webview`), whose
   fresh stamps pull the fresh assets;
   a mismatch that survives its refetch is reported to
-  `POST /boot-error`. The app also emits a `webview_hashes_changed`
-  realtime event at its own boot; an open page re-runs the same
-  handshake on it — a second trigger of the one primitive, covering a
-  page left open across an app restart or update. Every failure
+  `POST /boot-error`. The guarantee lives in the BOOT check, and which
+  surface needs it was measured on device (2026-08-07): the web-app
+  settings page is destroyed and REMOUNTED when the app restarts, and
+  mobile widgets reload too — both are fresh for free. Only the mobile
+  settings page survives an app restart, so it alone never boots again;
+  that is why the watcher re-checks on RETURN TO THE FOREGROUND
+  (`visibilitychange`), the trigger that covers it. The app also emits a
+  `webview_hashes_changed` realtime event at its own boot and the page
+  subscribes to it, but it guarantees NOTHING on its own: it fires at
+  the end of the app's `onInit`, i.e. exactly when the restart has just
+  disconnected every open page, so its audience is absent by
+  construction (measured: an open mobile page produced no request and no
+  breadcrumb). Never fold the visibility trigger into it. Every failure
   path stays open: an unstamped page, an absent route or denied
   storage must never take a working webview down.
   When the bundle still fails to boot, the `onHomeyReady` poll's timeout
@@ -328,7 +337,7 @@ need auth.
 manifest reader runs on the device) owns what used to be copied across
 the three apps: the dirty gate and the freshness handshake
 (`/webview`), the settings transport (`/settings`), the manifest reader
-(`/node`), `fireAndForget`/`getErrorMessage`/`NotFoundError`
+(`/node`), `fireAndForget`/`getErrorMessage`
 (root) and the two test kernels (`/testing`). A change to any of them
 is a kit release adopted here by a pin bump — never a local edit, and
 never a re-derivation.
@@ -339,6 +348,14 @@ What stays local, by measurement rather than omission:
   the dev tools, it does not log through a logger instance. The kit's
   node-side seam takes `(promise, logger, message)` and is what every
   `app.mts`/`listeners/**` site uses.
+- `lib/errors.mts` (`NotFoundError`): unlike the two sibling apps, this
+  one forces `super('notFound')` and `api.mts` throws it with NO
+  argument, because `settings/index.mts` matches on that exact message
+  (`message === 'notFound'`) to tell "no MELCloud device paired yet"
+  from a real failure. Swapping in the kit's class — whose message is
+  whatever the caller passes — would silently break that branch, and no
+  test would see it. Extend the kit class or keep this one; never
+  replace it blind.
 - The `ManagerSettings` augmentation: the local block is STRICTER than
   the kit's generic (no `(key: string) => unknown` overload) and carries
   `unset`, which the generic lacks. Adopting it would loosen this app.

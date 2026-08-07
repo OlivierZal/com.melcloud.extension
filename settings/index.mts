@@ -7,7 +7,7 @@ import {
 } from '@olivierzal/homey-kit/settings'
 import {
   createDirtyGate,
-  ensureFreshWebview,
+  watchWebviewFreshness,
 } from '@olivierzal/homey-kit/webview'
 import { Temporal } from 'temporal-polyfill'
 
@@ -794,13 +794,15 @@ const reportInitFailure = (homey: Homey, error: unknown): void => {
  * overlay is still up never gets seen.
  * @param homey - The Homey instance handed to `onHomeyReady`.
  */
-// One freshness pass, shared by the boot pull and the app's realtime
-// poke; its breadcrumbs ride the declared boot-error route.
-const checkFreshness = async (homey: Homey): Promise<boolean> =>
-  ensureFreshWebview(
-    'settings',
-    async () => homeyApiGet(homey, '/webview-hashes'),
-    (message) => {
+// Boot check plus the triggers that cover a page outliving it: this
+// webview survives an app restart on mobile, so no new document — and
+// no boot check — ever happens there. Breadcrumbs ride the declared
+// boot-error route.
+const startFreshness = async (homey: Homey): Promise<boolean> =>
+  watchWebviewFreshness({
+    entry: 'settings',
+    fetchHashes: async () => homeyApiGet(homey, '/webview-hashes'),
+    report: (message) => {
       homey.api(
         'POST',
         '/boot-error',
@@ -810,22 +812,10 @@ const checkFreshness = async (homey: Homey): Promise<boolean> =>
         },
       )
     },
-  )
-
-// Boot pull, then push subscription: a stale page refetches itself
-// (the caller skips its init — the document is about to be replaced);
-// any page that stays — fresh, or stale but unable to refetch —
-// subscribes to the app's boot poke and re-runs the same handshake
-// when it fires.
-const startFreshness = async (homey: Homey): Promise<boolean> => {
-  if (await checkFreshness(homey)) {
-    return true
-  }
-  homey.on('webview_hashes_changed', () => {
-    fireAndForget(checkFreshness(homey))
+    subscribe: (onPoke) => {
+      homey.on('webview_hashes_changed', onPoke)
+    },
   })
-  return false
-}
 
 export const start = async (homey: Homey): Promise<void> => {
   // Listeners before the data load: the Refresh button is the retry
