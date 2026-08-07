@@ -1,8 +1,7 @@
 import type { HomeyAPIV3Local } from 'homey-api'
+import { fireAndForget } from '@olivierzal/homey-kit'
 
 import type MELCloudExtensionApp from '../app.mts'
-import { fireAndForget } from '../lib/fire-and-forget.mts'
-import { getErrorMessage } from '../lib/get-error-message.mts'
 import { ListenerError } from './error.mts'
 import { OutdoorSource } from './outdoor-source.mts'
 
@@ -71,9 +70,11 @@ export class CapabilityOutdoorSource extends OutdoorSource {
     this.#capabilityInstance = this.#device.makeCapabilityInstance(
       this.#capabilityId,
       (value) => {
-        fireAndForget(this.update(value), (error) => {
-          this.app.error(getErrorMessage(error))
-        })
+        fireAndForget(
+          this.update(value),
+          this.app,
+          'Failed to update from the capability source',
+        )
       },
     )
     this.app.pushToUI('created', {

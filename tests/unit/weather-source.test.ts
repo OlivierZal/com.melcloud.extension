@@ -101,7 +101,10 @@ describe(WeatherOutdoorSource, () => {
 
     await vi.advanceTimersByTimeAsync(POLL_INTERVAL)
 
-    expect(harness.error).toHaveBeenCalledWith('offline')
+    expect(harness.error).toHaveBeenCalledWith(
+      'Failed to poll the weather temperature',
+      new Error('offline'),
+    )
   })
 
   it('should not broadcast an unchanged reading', async () => {

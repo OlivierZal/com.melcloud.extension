@@ -334,7 +334,10 @@ describe(MELCloudListener, () => {
     await getInstance(harness, 'thermostat_mode').listener('cool')
     await settleListeners()
 
-    expect(harness.app.error).toHaveBeenCalledWith('offline')
+    expect(harness.app.error).toHaveBeenCalledWith(
+      'Failed to handle a thermostat mode change',
+      new Error('offline'),
+    )
   })
 
   it('should log instead of crashing when the threshold recalculation fails', async () => {
@@ -347,7 +350,10 @@ describe(MELCloudListener, () => {
     await getInstance(harness, 'target_temperature').listener(26)
     await settleListeners()
 
-    expect(harness.app.error).toHaveBeenCalledWith('offline')
+    expect(harness.app.error).toHaveBeenCalledWith(
+      'Failed to set the temperature threshold',
+      new Error('offline'),
+    )
   })
 
   it('should report the device as missing when the revert fails', async () => {

@@ -1,8 +1,8 @@
 import type { Homey } from 'homey/lib/Homey'
+import { getWebviewHashes } from '@olivierzal/homey-kit/node'
 
 import { NotFoundError } from './lib/errors.mts'
 import { groupAdjustableDevices } from './lib/group-devices.mts'
-import { getWebviewHashes } from './lib/webview-hashes.mts'
 import {
   type AdjustableGroup,
   type TemperatureListenerData,
@@ -111,7 +111,10 @@ const api = {
     homey: Homey
   }): Promise<Partial<Record<string, string>>> {
     logSettingsRoute(app, '/webview-hashes')
-    return getWebviewHashes()
+    // The manifest URL is passed explicitly: the kit resolves its
+    // default against its own module, which sits in `node_modules` —
+    // only the caller knows where the bundler stamped the manifest.
+    return getWebviewHashes(new URL('webview-hashes.json', import.meta.url))
   },
   logWebviewBoot: ({
     body,

@@ -1,11 +1,10 @@
 import type ApiApp from 'homey/lib/ApiApp'
+import { fireAndForget, getErrorMessage } from '@olivierzal/homey-kit'
 import { HomeyAPIV3Local } from 'homey-api'
 import { Temporal } from 'temporal-polyfill'
 
 import type { OutdoorSource } from './listeners/outdoor-source.mts'
 import { changelog } from './files.mts'
-import { fireAndForget } from './lib/fire-and-forget.mts'
-import { getErrorMessage } from './lib/get-error-message.mts'
 import { toJoinKey } from './lib/group-devices.mts'
 import { type Homey, App } from './lib/homey.mts'
 import { toDeviceGroups } from './lib/to-device-groups.mts'
@@ -129,9 +128,11 @@ export default class MELCloudExtensionApp extends App {
       this.#init()
     })
     this.homey.on('unload', () => {
-      fireAndForget(this.#destroyListeners(), (error) => {
-        this.error(getErrorMessage(error))
-      })
+      fireAndForget(
+        this.#destroyListeners(),
+        this,
+        'Failed to destroy listeners',
+      )
     })
     this.#createNotification()
     // Poke any open webview to re-run its freshness handshake: an app
@@ -353,9 +354,8 @@ export default class MELCloudExtensionApp extends App {
           await this.#loadDevices()
           await this.autoAdjustCooling()
         })(),
-        (error) => {
-          this.error(getErrorMessage(error))
-        },
+        this,
+        'Failed to reload devices',
       )
     }, INIT_DELAY)
   }
