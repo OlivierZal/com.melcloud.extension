@@ -1,5 +1,10 @@
 import type ApiApp from 'homey/lib/ApiApp'
-import { fireAndForget, getErrorMessage } from '@olivierzal/homey-kit'
+import {
+  fireAndForget,
+  getErrorMessage,
+  selectChangelogEntries,
+  sequential,
+} from '@olivierzal/homey-kit'
 import { HomeyAPIV3Local } from 'homey-api'
 import { Temporal } from 'temporal-polyfill'
 
@@ -213,21 +218,26 @@ export default class MELCloudExtensionApp extends App {
       notifications,
       settings,
     } = homey
-    if (settings.get('notifiedVersion') === version) {
-      return
-    }
-    const changelogByVersion = changelog as Record<
-      string,
-      Record<string, string>
-    >
-    const versionChangelog = changelogByVersion[version] ?? {}
-    const excerpt = versionChangelog[homey.i18n.getLanguage()]
-    if (excerpt === undefined) {
+    // Every release since the one already announced, not just the
+    // running one: a user who updates rarely would otherwise never hear
+    // about the versions in between. The SDK read is untyped, as
+    // everywhere else settings are read: a stored value that is not a
+    // string reads as no baseline at all.
+    const notified: unknown = settings.get('notifiedVersion')
+    const { entries } = selectChangelogEntries({
+      changelog,
+      from: typeof notified === 'string' ? notified : null,
+      language: homey.i18n.getLanguage(),
+      to: version,
+    })
+    if (entries.length === 0) {
       return
     }
     homey.setTimeout(async () => {
       try {
-        await notifications.createNotification({ excerpt })
+        await sequential(entries, async ({ excerpt }) => {
+          await notifications.createNotification({ excerpt })
+        })
         settings.set('notifiedVersion', version)
       } catch {
         // Non-critical: notification display is best-effort
