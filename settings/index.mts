@@ -73,6 +73,27 @@ const categories: Partial<Record<string, LogCategory>> = {
  * Surfaces an error in the webview dev tools without blocking the caller:
  * `reportError` where the webview provides it, an async rethrow otherwise.
  */
+// TEMPORARY (kit adoption test): appends the running bundle's `?v=`
+// content stamp to the page title, so an on-device tester can prove the
+// page is the branch's bundle and not a cached older one — and, once
+// this commit is reverted, prove the refresh by watching it disappear.
+// Removed by the commit that follows the test.
+const STAMP_LENGTH = 8
+
+const showBundleStamp = (): void => {
+  const stamp = [...document.querySelectorAll('script[src]')]
+    .map(
+      (element) =>
+        /[?&]v=(?<hash>[^&"']+)/u.exec(element.getAttribute('src') ?? '')
+          ?.groups?.hash,
+    )
+    .find((hash) => hash !== undefined)
+  const titleElement = document.querySelector('.homey-title')
+  if (titleElement !== null) {
+    titleElement.textContent = `${titleElement.textContent} KIT-TEST ${stamp?.slice(0, STAMP_LENGTH) ?? 'unstamped'}`
+  }
+}
+
 const surfaceError = (error: unknown): void => {
   if (typeof reportError === 'function') {
     reportError(error)
@@ -818,6 +839,7 @@ const checkFreshness = async (homey: Homey): Promise<boolean> =>
 // subscribes to the app's boot poke and re-runs the same handshake
 // when it fires.
 const startFreshness = async (homey: Homey): Promise<boolean> => {
+  showBundleStamp()
   if (await checkFreshness(homey)) {
     return true
   }
