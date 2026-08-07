@@ -431,7 +431,7 @@
     "ru": "Страница настроек теперь обновляется сама после обновления приложения, форма блокируется на время применения изменений, а устройства, не вошедшие в обновление настроек охлаждения, сохраняют источник наружной температуры при перезапуске регулировки.",
     "sv": "Inställningssidan uppdaterar nu sig själv efter en appuppdatering, formuläret är låst medan dina ändringar tillämpas, och enheter som inte ingick i en uppdatering av kylinställningarna behåller sin källa för utetemperatur när justeringen startar om."
   },
-  "25.2.1": {
+  "25.2.2": {
     "ar": "صفحة الإعدادات المتروكة مفتوحة على هاتفك تتحدّث الآن عند العودة إليها بعد تحديث التطبيق، بدلًا من البقاء على النسخة السابقة.",
     "da": "En indstillingsside, der er ladt åben på din telefon, opdaterer nu sig selv, når du vender tilbage til den efter en app-opdatering, i stedet for at blive stående på den forrige version.",
     "de": "Eine auf deinem Telefon geöffnet gelassene Einstellungsseite aktualisiert sich jetzt selbst, wenn du nach einem App-Update zu ihr zurückkehrst, statt auf der vorherigen Version zu bleiben.",
