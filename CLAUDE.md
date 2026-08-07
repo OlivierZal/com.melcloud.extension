@@ -306,15 +306,16 @@ plugin devDeps here; the webview floor rides its `webviewFloorFiles`
 glob), the prettier config (`"prettier"` key in package.json, no local
 file) and the `tsconfig/app` base (`outDir` stays local — paths in an
 extended tsconfig resolve against the base file inside node_modules).
-The overlay keeps ONLY per-repo verdicts: the lint ignores, the
-`**/*.d.ts` block around `homey-api-override.d.ts`, and the stricter
-camelCase-only property naming (this app has no drivers, so no
-snake_case capability keys in main code — the family preset tolerates
-them, this repo re-tightens). `untypedDoubleTestFiles` gets a
-deliberate no-match glob: the preset requires a non-empty array and
-this app has no untyped SDK doubles. Do not re-declare family policy
-locally — a rule evaluation or version bump happens in configs,
-adoption is a reviewed pin bump. The
+The overlay keeps ONLY per-repo verdicts: the lint ignores and the
+`**/*.d.ts` block around `homey-api-override.d.ts`. Naming comes whole
+from the family core, strict by default — properties are camelCase and
+the only departures are the preset's scoped escapes (capability-shaped
+keys for the platform, quoted keys, the `__` sentinel). Re-tightening it
+locally is not worth what it costs: the rule's options array replaces
+rather than merges, so a partial override silently drops every entry it
+omits, and a full copy drifts from the core it duplicates. Do not
+re-declare family policy locally — a rule evaluation or version bump
+happens in configs, adoption is a reviewed pin bump. The
 ci/audit/pr-title/zizmor/dependabot/claude workflows are stubs calling
 the family reusables in OlivierZal/configs, pinned `@<sha> # vX.Y.Z`;
 `publish.yml` and `validate.yml` stay local (no reusable exists).
