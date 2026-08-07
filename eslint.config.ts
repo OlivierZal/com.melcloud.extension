@@ -11,10 +11,6 @@ const config: Config[] = defineConfig([
       'lib/**/*.mts',
       'listeners/**/*.mts',
     ],
-    // No drivers, so no untyped SDK doubles — but the preset requires a
-    // non-empty glob (ESLint rejects `files: []`), so this one matches
-    // nothing by design.
-    untypedDoubleTestFiles: ['tests/none/**'],
     webviewFloorFiles: ['settings/**/*.mts'],
   }),
   {
