@@ -298,6 +298,30 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   (`settings/` imports shared `lib/` and `types/` modules). Node-side
   code may use the newer APIs freely.
 
+## Tooling boundary (@olivierzal/configs)
+
+The shared tooling lives in `@olivierzal/configs` (exact pin): the
+eslint `homeyApp` preset (plugins are the package's dependencies — no
+plugin devDeps here; the webview floor rides its `webviewFloorFiles`
+glob), the prettier config (`"prettier"` key in package.json, no local
+file) and the `tsconfig/app` base (`outDir` stays local — paths in an
+extended tsconfig resolve against the base file inside node_modules).
+The overlay keeps ONLY per-repo verdicts: the lint ignores, the
+`**/*.d.ts` block around `homey-api-override.d.ts`, and the stricter
+camelCase-only property naming (this app has no drivers, so no
+snake_case capability keys in main code — the family preset tolerates
+them, this repo re-tightens). `untypedDoubleTestFiles` gets a
+deliberate no-match glob: the preset requires a non-empty array and
+this app has no untyped SDK doubles. Do not re-declare family policy
+locally — a rule evaluation or version bump happens in configs,
+adoption is a reviewed pin bump. The
+ci/audit/pr-title/zizmor/dependabot/claude workflows are stubs calling
+the family reusables in OlivierZal/configs, pinned `@<sha> # vX.Y.Z`;
+`publish.yml` and `validate.yml` stay local (no reusable exists).
+`.npmrc` (scope registry + `NODE_AUTH_TOKEN` auth) is load-bearing:
+the configs devDependency lives on GitHub Packages, where even reads
+need auth.
+
 ## Lint doctrine
 
 - Code adapts to the rules, never the reverse. Never add a disable —
