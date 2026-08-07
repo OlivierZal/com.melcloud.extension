@@ -1,6 +1,6 @@
 {
   "name": "com.melcloud.extension",
-  "version": "25.2.2",
+  "version": "25.2.3",
   "description": "Extension for MELCloud Homey App",
   "homepage": "https://github.com/OlivierZal/com.melcloud.extension/",
   "bugs": {
@@ -32,7 +32,7 @@
   },
   "prettier": "@olivierzal/configs/prettier",
   "dependencies": {
-    "@olivierzal/homey-kit": "2.1.1",
+    "@olivierzal/homey-kit": "2.1.2",
     "homey-api": "^3.19.1",
     "temporal-polyfill": "^1.0.1"
   },
