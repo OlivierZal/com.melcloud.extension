@@ -1,10 +1,9 @@
 import type { HomeyAPIV3Local } from 'homey-api'
+import { fireAndForget } from '@olivierzal/homey-kit'
 
 import type MELCloudExtensionApp from '../app.mts'
 import type { Names, Thresholds } from '../types.mts'
-import { fireAndForget } from '../lib/fire-and-forget.mts'
 import { formatTemperature } from '../lib/format-temperature.mts'
-import { getErrorMessage } from '../lib/get-error-message.mts'
 import type { OutdoorSource } from './outdoor-source.mts'
 
 const COOL = 'cool'
@@ -96,9 +95,8 @@ export class MELCloudListener {
             await this.#destroyTemperature()
             this.#source.detach(this)
           })(),
-          (error) => {
-            this.#app.error(getErrorMessage(error))
-          },
+          this.#app,
+          'Failed to handle a thermostat mode change',
         )
       },
     )
@@ -212,9 +210,11 @@ export class MELCloudListener {
           name: this.#device.name,
           value: formatTemperature(value),
         })
-        fireAndForget(this.#setThreshold(Number(value)), (error) => {
-          this.#app.error(getErrorMessage(error))
-        })
+        fireAndForget(
+          this.#setThreshold(Number(value)),
+          this.#app,
+          'Failed to set the temperature threshold',
+        )
       },
     )
     this.#app.pushToUI('created', {

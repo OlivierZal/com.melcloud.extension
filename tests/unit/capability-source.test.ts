@@ -181,7 +181,10 @@ describe(CapabilityOutdoorSource, () => {
       setTimeout(resolve, 0)
     })
 
-    expect(harness.app.error).toHaveBeenCalledWith('offline')
+    expect(harness.app.error).toHaveBeenCalledWith(
+      'Failed to update from the capability source',
+      new Error('offline'),
+    )
   })
 
   it('should read a non-numeric payload as no measurement', async () => {

@@ -1,8 +1,16 @@
 import type Homey from 'homey/lib/HomeySettings'
+import { getErrorMessage } from '@olivierzal/homey-kit'
+import {
+  homeyApiGet,
+  homeyApiPut,
+  homeyCallback,
+} from '@olivierzal/homey-kit/settings'
+import {
+  createDirtyGate,
+  ensureFreshWebview,
+} from '@olivierzal/homey-kit/webview'
 import { Temporal } from 'temporal-polyfill'
 
-import { fireAndForget as forget } from '../lib/fire-and-forget.mts'
-import { getErrorMessage } from '../lib/get-error-message.mts'
 import {
   type AdjustableDevice,
   type AdjustableGroup,
@@ -13,9 +21,6 @@ import {
   type TimestampedLog,
   DISABLED_SOURCE,
 } from '../types.mts'
-import { homeyApiGet, homeyApiPut, homeyCallback } from './callback-api.mts'
-import { createDirtyGate } from './dirty-gate.mts'
-import { ensureFreshWebview } from './webview-freshness.mts'
 
 // Give slow transports a real chance while keeping the loading overlay
 // finite: past this point the page surfaces the failure instead.
@@ -83,14 +88,15 @@ const surfaceError = (error: unknown): void => {
 /**
  * Runs an async operation that shouldn't block. Rejections go to `onError`
  * (default: `surfaceError`, which reports them in the webview dev tools).
- * Thin default-argument wrapper over the shared lib helper — the
- * bundler inlines the import, and the documented disable lives once.
+ * Distinct from the kit's node-side seam, which logs a context message
+ * through a logger instance: a webview has no logger, it surfaces.
  */
 const fireAndForget = (
   promise: Promise<unknown>,
   onError: (error: unknown) => void = surfaceError,
 ): void => {
-  forget(promise, onError)
+  // eslint-disable-next-line unicorn/prefer-await -- fire-and-forget: rejections surface in the dev tools without blocking the caller
+  promise.catch(onError)
 }
 
 const getElement = <T extends HTMLElement>(

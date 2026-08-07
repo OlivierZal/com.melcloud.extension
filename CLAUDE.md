@@ -151,15 +151,13 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   force-close included): each bundle carries a freshness handshake —
   the page's identity is the document-order join of its `?v=` stamps (a CSS-only ship moves it too), `GET /webview-hashes` serves the
   live hashes (a manifest `bundle.mts` emits into the packaged app,
-  read by `lib/webview-hashes.mts`; module, test
-  `tests/unit/webview-hashes.test.ts` and the
-  `tests/fixtures/webview-hashes/` fixtures are byte-identical in the
-  three apps — edit all three together), and a mismatch triggers ONE
+  read by `@olivierzal/homey-kit/node`; `api.mts` passes the manifest
+  URL explicitly — the kit's default resolves against its own module,
+  which lives in `node_modules`), and a mismatch triggers ONE
   refetch of the document through a never-cached address
   (`?fresh=<identity>` — a bare reload can be re-served the same stale
   document from the HTTP cache; sessionStorage guard,
-  `webview-freshness.mts` — byte-identical in the three apps, its test
-  differing only by its import path; edit all three together), whose
+  `ensureFreshWebview` from `@olivierzal/homey-kit/webview`), whose
   fresh stamps pull the fresh assets;
   a mismatch that survives its refetch is reported to
   `POST /boot-error`. The app also emits a `webview_hashes_changed`
@@ -202,15 +200,17 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   bundle now alerts on Apply until it refreshes). The com.melcloud
   grouping is `GET /devices/groups` only; an older com.melcloud reads
   as "no grouping" (the sanitizer's degradation path).
-  `settings/callback-api.mts` is the settings page's transport
-  (error-first-callback SDK), a byte-identical copy of com.melcloud's
-  (com.heatzy carries the third) — edit all three together. The surface
+  `@olivierzal/homey-kit/settings` is the settings page's transport
+  (error-first-callback SDK). The surface
   is test-pinned in two halves, one file each — extend BOTH when
   touching a route: `tests/unit/api-contract.test.ts` pins manifest
   ids ↔ handlers both ways plus the handlers' function type;
   `tests/unit/api-route-guards.test.ts` pins the call sites (every
-  settings path literal must match a declared route).
-- Dirty-gating: `settings/dirty-gate.mts` is the ONE primitive behind the
+  settings path literal must match a declared route). Both are now the
+  kit's table-driven kernels: each file holds this app's table and the
+  factory call, nothing else.
+- Dirty-gating: `createDirtyGate` (`@olivierzal/homey-kit/webview`) is
+  the ONE primitive behind the
   Update/Refresh pair — never re-derive its invariant at a call site. The gate also freezes the gated
   fieldsets while a request is in flight (container `disabled` +
   `aria-busy`, so a control's own domain `disabled` survives the thaw):
@@ -221,10 +221,9 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   request-body builder) or predicate mode (`isActionable`, no baseline
   at all; `markSaved` then only re-evaluates) — this app's single pair
   is baseline-mode. Disabled greying styles `button:disabled`
-  generically, never a per-class list. `tests/unit/dirty-gate.test.ts` locks the behavior;
-  the module is a byte-identical copy of com.melcloud's
-  `public/dirty-gate.mts` (com.heatzy carries the third copy) — edit all
-  three together.
+  generically, never a per-class list. The kit's own suite locks the
+  behavior — a change to the gate is a kit release, adopted here by an
+  exact-pin bump.
 - Home ATA devices (`home-melcloud`) do NOT expose
   `measure_temperature.outdoor`; only Classic ATA devices do. The
   default outdoor-source selection and the sensor list must never
@@ -322,6 +321,34 @@ the family reusables in OlivierZal/configs, pinned `@<sha> # vX.Y.Z`;
 `.npmrc` (scope registry + `NODE_AUTH_TOKEN` auth) is load-bearing:
 the configs devDependency lives on GitHub Packages, where even reads
 need auth.
+
+## Runtime boundary (@olivierzal/homey-kit)
+
+`@olivierzal/homey-kit` (exact pin, a PRODUCTION dependency — the
+manifest reader runs on the device) owns what used to be copied across
+the three apps: the dirty gate and the freshness handshake
+(`/webview`), the settings transport (`/settings`), the manifest reader
+(`/node`), `fireAndForget`/`getErrorMessage`/`NotFoundError`
+(root) and the two test kernels (`/testing`). A change to any of them
+is a kit release adopted here by a pin bump — never a local edit, and
+never a re-derivation.
+
+What stays local, by measurement rather than omission:
+
+- The webview `fireAndForget` in `settings/index.mts`: it surfaces in
+  the dev tools, it does not log through a logger instance. The kit's
+  node-side seam takes `(promise, logger, message)` and is what every
+  `app.mts`/`listeners/**` site uses.
+- The `ManagerSettings` augmentation: the local block is STRICTER than
+  the kit's generic (no `(key: string) => unknown` overload) and carries
+  `unset`, which the generic lacks. Adopting it would loosen this app.
+- `homey-api-override.d.ts`, and the `lib/` helpers no sibling shares.
+
+`api.mts` passes the manifest URL to `getWebviewHashes` explicitly: the
+kit's default resolves `../webview-hashes.json` against its own module,
+which sits in `node_modules` — only the caller knows where the bundler
+stamped it. Dropping that argument silently disables the freshness
+handshake (the reader fails open with an empty map).
 
 ## Lint doctrine
 

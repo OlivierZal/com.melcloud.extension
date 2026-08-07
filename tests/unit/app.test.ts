@@ -685,7 +685,10 @@ describe(MELCloudExtensionApp, () => {
     createHandler()
     await advancePastInit()
 
-    expect(app.error).toHaveBeenCalledWith('api_down')
+    expect(app.error).toHaveBeenCalledWith(
+      'Failed to reload devices',
+      new Error('api_down'),
+    )
   })
 
   it('should coalesce rapid device events into one reload', async () => {
@@ -870,7 +873,10 @@ describe(MELCloudExtensionApp, () => {
     unloadHandler()
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(app.error).toHaveBeenCalledWith('realtime_down')
+    expect(app.error).toHaveBeenCalledWith(
+      'Failed to destroy listeners',
+      new Error('realtime_down'),
+    )
   })
 
   it('should expose the localized names', async () => {

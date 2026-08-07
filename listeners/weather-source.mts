@@ -1,6 +1,6 @@
+import { fireAndForget, getErrorMessage } from '@olivierzal/homey-kit'
+
 import type MELCloudExtensionApp from '../app.mts'
-import { fireAndForget } from '../lib/fire-and-forget.mts'
-import { getErrorMessage } from '../lib/get-error-message.mts'
 import { OutdoorSource } from './outdoor-source.mts'
 
 const WEATHER_PATH = '/api/manager/weather/weather'
@@ -41,9 +41,8 @@ export class WeatherOutdoorSource extends OutdoorSource {
         (async (): Promise<void> => {
           await this.update(await this.#fetchTemperature())
         })(),
-        (error) => {
-          this.app.error(getErrorMessage(error))
-        },
+        this.app,
+        'Failed to poll the weather temperature',
       )
     }, POLL_INTERVAL)
     this.app.pushToUI('created', {
