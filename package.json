@@ -32,7 +32,7 @@
   },
   "prettier": "@olivierzal/configs/prettier",
   "dependencies": {
-    "@olivierzal/homey-kit": "2.1.2",
+    "@olivierzal/homey-kit": "2.2.0",
     "homey-api": "^3.19.1",
     "temporal-polyfill": "^1.0.1"
   },
