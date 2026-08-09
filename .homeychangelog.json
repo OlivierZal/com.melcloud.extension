@@ -778,5 +778,20 @@
     "pl": "Aplikacja nie instaluje już dużego zestawu plików deweloperskich, których nigdy nie potrzebowała, co zwalnia miejsce na Twoim Homey i przy okazji usuwa zgłoszoną lukę w zabezpieczeniach.",
     "ru": "Приложение больше не устанавливает большой набор файлов разработки, которые ему никогда не требовались: это освобождает место на вашем Homey и заодно устраняет обнаруженную уязвимость.",
     "sv": "Appen installerar inte längre en stor mängd utvecklingsfiler som den aldrig behövde, vilket frigör utrymme på din Homey och samtidigt tar bort en rapporterad sårbarhet."
+  },
+  "25.3.0": {
+    "ar": "يتم إعلامك الآن أيضًا بتغييرات الإصدارات التي تخطّيتها.",
+    "da": "Du får nu også besked om ændringerne fra versioner, du sprang over.",
+    "de": "Du wirst jetzt auch über die Änderungen übersprungener Versionen benachrichtigt.",
+    "en": "You are now also notified about the changes from versions you skipped.",
+    "es": "Ahora también se te notifican los cambios de las versiones que te saltaste.",
+    "fr": "Vous êtes désormais aussi notifié des changements des versions que vous avez sautées.",
+    "it": "Ora ricevi notifiche anche per le modifiche delle versioni saltate.",
+    "ko": "이제 건너뛴 버전의 변경 사항도 알림으로 받아볼 수 있습니다.",
+    "nl": "Je krijgt nu ook meldingen over de wijzigingen van overgeslagen versies.",
+    "no": "Du blir nå også varslet om endringene fra versjoner du hoppet over.",
+    "pl": "Otrzymujesz teraz również powiadomienia o zmianach z pominiętych wersji.",
+    "ru": "Теперь вы также получаете уведомления об изменениях в пропущенных версиях.",
+    "sv": "Du meddelas nu även om ändringarna från versioner du hoppat över."
   }
 }
