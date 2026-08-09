@@ -143,6 +143,7 @@ export default class MELCloudExtensionApp extends App {
     // Poke any open webview to re-run its freshness handshake: an app
     // (re)boot is exactly when the served hashes may have moved.
     this.homey.api.realtime('webview_hashes_changed', null)
+    fireAndForget(this.#logBootReady(), this, 'Boot readiness tracking failed:')
   }
 
   public override async onUninit(): Promise<void> {
@@ -408,6 +409,21 @@ export default class MELCloudExtensionApp extends App {
     }
     await this.refreshDeviceGroups()
     this.#reconcileSourceEntries()
+  }
+
+  // Measurement breadcrumb (2026-08): the installed base's platform
+  // split (1 = Homey Pro 2016-2019, 2 = Pro 2023+) decides the node
+  // device-floor policy — read it from diagnostics reports.
+  async #logBootReady(): Promise<void> {
+    await this.homey.ready()
+    this.log(
+      'Boot: ready after',
+      process.uptime().toFixed(1),
+      's — platform',
+      this.homey.platformVersion ?? 'unknown',
+      '— node',
+      process.version,
+    )
   }
 
   // Older versions stored one global outdoor source: seed every known AC
