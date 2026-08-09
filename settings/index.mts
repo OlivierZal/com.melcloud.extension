@@ -1,12 +1,21 @@
 import type Homey from 'homey/lib/HomeySettings'
 import { getErrorMessage } from '@olivierzal/homey-kit'
 import {
+  getButton,
+  getDetails,
+  getDiv,
+  getFieldset,
+  getSelect,
+} from '@olivierzal/homey-kit/dom'
+import {
   homeyApiGet,
   homeyApiPut,
   homeyCallback,
 } from '@olivierzal/homey-kit/settings'
 import {
   createDirtyGate,
+  fireAndForget,
+  runWebview,
   watchWebviewFreshness,
 } from '@olivierzal/homey-kit/webview'
 import { Temporal } from 'temporal-polyfill'
@@ -21,30 +30,6 @@ import {
   type TimestampedLog,
   DISABLED_SOURCE,
 } from '../types.mts'
-
-// Give slow transports a real chance while keeping the loading overlay
-// finite: past this point the page surfaces the failure instead.
-const INIT_TIMEOUT_MS = 10_000
-
-// Bounds the init chain: `Homey.ready()` must always end the loading
-// overlay, so a hung transport call cannot be allowed to hold it open
-// forever. The underlying work is not cancelled — a late success simply
-// repaints over the degraded state.
-const withInitTimeout = async <T,>(work: Promise<T>): Promise<T> => {
-  let timer: ReturnType<typeof setTimeout> | undefined
-  try {
-    return await Promise.race([
-      work,
-      new Promise<never>((_resolve, reject) => {
-        timer = setTimeout(() => {
-          reject(new Error('Timed out while loading data from the app'))
-        }, INIT_TIMEOUT_MS)
-      }),
-    ])
-  } finally {
-    clearTimeout(timer)
-  }
-}
 
 const LOG_RETENTION_DAYS = 6
 
@@ -73,76 +58,18 @@ const categories: Partial<Record<string, LogCategory>> = {
  * Surfaces an error in the webview dev tools without blocking the caller:
  * `reportError` where the webview provides it, an async rethrow otherwise.
  */
-const surfaceError = (error: unknown): void => {
-  if (typeof reportError === 'function') {
-    reportError(error)
-    return
-  }
-  setTimeout(() => {
-    throw error instanceof Error
-      ? error
-      : new Error('Unhandled settings error', { cause: error })
-  }, 0)
-}
-
-/**
- * Runs an async operation that shouldn't block. Rejections go to `onError`
- * (default: `surfaceError`, which reports them in the webview dev tools).
- * Distinct from the kit's node-side seam, which logs a context message
- * through a logger instance: a webview has no logger, it surfaces.
- */
-const fireAndForget = (
-  promise: Promise<unknown>,
-  onError: (error: unknown) => void = surfaceError,
-): void => {
-  // eslint-disable-next-line unicorn/prefer-await -- fire-and-forget: rejections surface in the dev tools without blocking the caller
-  promise.catch(onError)
-}
-
-const getElement = <T extends HTMLElement>(
-  id: string,
-  elementConstructor: new () => T,
-  elementType: string,
-): T => {
-  const element = document.querySelector(`#${id}`)
-  // Distinct diagnoses (com.melcloud form): a missing id must not read
-  // as a type mismatch.
-  if (element === null) {
-    throw new TypeError(`Element with id \`${id}\` not found`)
-  }
-  if (!(element instanceof elementConstructor)) {
-    throw new TypeError(`Element with id \`${id}\` is not a ${elementType}`)
-  }
-  return element
-}
-
-const getButtonElement = (id: string): HTMLButtonElement =>
-  getElement(id, HTMLButtonElement, 'button')
-
-const getSelectElement = (id: string): HTMLSelectElement =>
-  getElement(id, HTMLSelectElement, 'select')
-
-const getDivElement = (id: string): HTMLDivElement =>
-  getElement(id, HTMLDivElement, 'div')
-
-const getFieldsetElement = (id: string): HTMLFieldSetElement =>
-  getElement(id, HTMLFieldSetElement, 'fieldset')
-
 // Safe at module load: the bundle is a `defer` classic script, so it runs
 // only after <body> is parsed (see settings/index.html).
-const getDetailsElement = (id: string): HTMLDetailsElement =>
-  getElement(id, HTMLDetailsElement, 'details')
+const applyElement = getButton('apply')
+const adjustmentElement = getFieldset('adjustment')
+const emptyElement = getDiv('empty_state')
+const installElement = getButton('install')
+const refreshElement = getButton('refresh')
+const enabledElement = getSelect('enabled')
+const configurationElement = getDetails('configuration')
 
-const applyElement = getButtonElement('apply')
-const adjustmentElement = getFieldsetElement('adjustment')
-const emptyElement = getDivElement('empty_state')
-const installElement = getButtonElement('install')
-const refreshElement = getButtonElement('refresh')
-const enabledElement = getSelectElement('enabled')
-const configurationElement = getDetailsElement('configuration')
-
-const logsElement = getDivElement('logs')
-const sourcesElement = getFieldsetElement('sources')
+const logsElement = getDiv('logs')
+const sourcesElement = getFieldset('sources')
 
 interface SourceOption {
   readonly name: string
@@ -825,15 +752,11 @@ export const start = async (homey: Homey): Promise<void> => {
     return
   }
   addEventListeners(homey)
-  let initFailure: { readonly cause: unknown } | null = null
-  try {
-    await withInitTimeout(run(homey))
-  } catch (error) {
-    initFailure = { cause: error }
-  } finally {
-    homey.ready()
-  }
-  if (initFailure !== null) {
-    reportInitFailure(homey, initFailure.cause)
+  // Reported AFTER the overlay closes: `runWebview` calls `homey.ready()`
+  // in its `finally` and hands back the outcome, so the failure notice
+  // never competes with the overlay for the screen.
+  const { error, hasFailed } = await runWebview(homey, run(homey))
+  if (hasFailed) {
+    reportInitFailure(homey, error)
   }
 }
