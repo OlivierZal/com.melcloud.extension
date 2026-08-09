@@ -23,6 +23,8 @@ vi.mock(import('../../lib/homey.mts'), async () => {
   const { mock: mockModule } = await import('../helpers.ts')
   class AppStub {
     public readonly error = vi.fn<(...args: unknown[]) => void>()
+
+    public readonly log = vi.fn<(...args: unknown[]) => void>()
   }
   return mockModule<typeof HomeyLib>({ App: AppStub })
 })
@@ -91,15 +93,22 @@ const createDevices = (): {
 const createHarness = async (
   mockDevices: readonly MockDevice[],
   {
+    bootReadyError,
+    platformVersion,
     settings = {},
     version = '0.0.0',
   }: {
+    readonly bootReadyError?: Error
+    readonly platformVersion?: number | undefined
     readonly settings?: Partial<HomeySettings>
     readonly version?: string
   } = {},
 ): Promise<Harness> => {
   const manager = createMockDevicesManager(mockDevices)
-  const mockHomey = createMockHomey({ settings, version })
+  const mockHomey = createMockHomey({ platformVersion, settings, version })
+  if (bootReadyError) {
+    mockHomey.ready.mockRejectedValueOnce(bootReadyError)
+  }
   const apiCall = createApiCall()
   createAppAPIMock.mockResolvedValue({
     call: apiCall,
@@ -108,6 +117,9 @@ const createHarness = async (
   const app = new MELCloudExtensionApp()
   Object.assign(app, { homey: mockHomey.homey })
   await app.onInit()
+  // The boot-ready breadcrumb is detached (fire-and-forget): flush it.
+  await Promise.resolve()
+  await Promise.resolve()
   return { apiCall, app, manager, mockHomey }
 }
 
@@ -116,6 +128,45 @@ const advancePastInit = async (): Promise<void> => {
 }
 
 describe(MELCloudExtensionApp, () => {
+  it('should log the platform breadcrumb once ready', async () => {
+    const { classicDevice } = createDevices()
+    const { app } = await createHarness([classicDevice], { platformVersion: 2 })
+
+    expect(app.log).toHaveBeenCalledWith(
+      'Boot: ready after',
+      expect.any(String),
+      's — platform',
+      2,
+      '— node',
+      process.version,
+    )
+  })
+
+  it('should fall back to unknown when the platform version is absent', async () => {
+    const { classicDevice } = createDevices()
+    const { app } = await createHarness([classicDevice])
+
+    expect(app.log).toHaveBeenCalledWith(
+      'Boot: ready after',
+      expect.any(String),
+      's — platform',
+      'unknown',
+      '— node',
+      process.version,
+    )
+  })
+
+  it('should log a boot readiness tracking failure', async () => {
+    const { classicDevice } = createDevices()
+    const bootReadyError = new Error('never ready')
+    const { app } = await createHarness([classicDevice], { bootReadyError })
+
+    expect(app.error).toHaveBeenCalledWith(
+      'Boot readiness tracking failed:',
+      bootReadyError,
+    )
+  })
+
   beforeEach(() => {
     vi.useFakeTimers()
   })
