@@ -196,8 +196,6 @@ export const createMockHomey = ({
   const ready = vi.fn<() => Promise<void>>().mockResolvedValue()
   const homey = mock<Homey.Homey>({
     __: translate,
-    platformVersion,
-    ready,
     api: {
       realtime,
       getApiApp: (): { get: (path: string) => unknown } => ({ get: apiAppGet }),
@@ -205,6 +203,8 @@ export const createMockHomey = ({
     i18n: { getLanguage: (): string => language },
     manifest: { version },
     notifications: { createNotification },
+    platformVersion,
+    ready,
     settings: {
       set: setSetting,
       unset: unsetSetting,

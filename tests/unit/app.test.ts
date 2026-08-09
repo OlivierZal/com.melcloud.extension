@@ -106,7 +106,7 @@ const createHarness = async (
 ): Promise<Harness> => {
   const manager = createMockDevicesManager(mockDevices)
   const mockHomey = createMockHomey({ platformVersion, settings, version })
-  if (bootReadyError) {
+  if (bootReadyError !== undefined) {
     mockHomey.ready.mockRejectedValueOnce(bootReadyError)
   }
   const apiCall = createApiCall()
@@ -128,6 +128,15 @@ const advancePastInit = async (): Promise<void> => {
 }
 
 describe(MELCloudExtensionApp, () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.clearAllMocks()
+  })
+
   it('should log the platform breadcrumb once ready', async () => {
     const { classicDevice } = createDevices()
     const { app } = await createHarness([classicDevice], { platformVersion: 2 })
@@ -165,15 +174,6 @@ describe(MELCloudExtensionApp, () => {
       'Boot readiness tracking failed:',
       bootReadyError,
     )
-  })
-
-  beforeEach(() => {
-    vi.useFakeTimers()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-    vi.clearAllMocks()
   })
 
   it('should expose the building grouping fetched from com.melcloud', async () => {
