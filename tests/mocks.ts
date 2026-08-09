@@ -156,6 +156,7 @@ export interface MockHomey {
   readonly createNotification: ReturnType<typeof vi.fn>
   readonly eventHandlers: Map<string, (...args: unknown[]) => void>
   readonly homey: Homey.Homey
+  readonly ready: ReturnType<typeof vi.fn>
   readonly realtime: ReturnType<typeof vi.fn>
   readonly settingsStore: Partial<HomeySettings>
   readonly translate: ReturnType<typeof vi.fn>
@@ -163,10 +164,12 @@ export interface MockHomey {
 
 export const createMockHomey = ({
   language = 'en',
+  platformVersion,
   settings = {},
   version = '0.0.0',
 }: {
   readonly language?: string
+  readonly platformVersion?: number | undefined
   readonly settings?: Partial<HomeySettings>
   readonly version?: string
 } = {}): MockHomey => {
@@ -190,6 +193,7 @@ export const createMockHomey = ({
     .mockImplementation((key) => {
       Reflect.deleteProperty(settingsStore, key)
     })
+  const ready = vi.fn<() => Promise<void>>().mockResolvedValue()
   const homey = mock<Homey.Homey>({
     __: translate,
     api: {
@@ -199,6 +203,8 @@ export const createMockHomey = ({
     i18n: { getLanguage: (): string => language },
     manifest: { version },
     notifications: { createNotification },
+    platformVersion,
+    ready,
     settings: {
       set: setSetting,
       unset: unsetSetting,
@@ -227,6 +233,7 @@ export const createMockHomey = ({
     createNotification,
     eventHandlers,
     homey,
+    ready,
     realtime,
     settingsStore,
     translate,
