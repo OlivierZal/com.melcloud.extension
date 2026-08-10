@@ -331,7 +331,9 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   claim — `pushToUI`'s `toReversed` and `group-devices.mts`'s
   `toSorted` stay exactly as they are. The same holds for syntax:
   `files.mts` reads its JSON through import attributes, the statically
-  analysable form.
+  analysable form, and node-side regexes take the family's `v` flag —
+  only the webview globs step down to `u`, and that step-down is the
+  scoped block's job, never a second overlay.
 
 ## Tooling boundary (@olivierzal/configs)
 
