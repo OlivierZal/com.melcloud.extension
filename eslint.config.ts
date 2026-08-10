@@ -11,7 +11,9 @@ const config: Config[] = defineConfig([
       'lib/**/*.mts',
       'listeners/**/*.mts',
     ],
-    webviewFloorFiles: ['settings/**/*.mts'],
+    // `types.mts` is cross-surface: the settings bundle emits its
+    // constants (measured by metafile), so it carries the floor too.
+    webviewFloorFiles: ['settings/**/*.mts', 'types.mts'],
   }),
   {
     // Ambient declaration files: `declare module` blocks parse as scripts,
