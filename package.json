@@ -34,7 +34,7 @@
   "dependencies": {
     "@olivierzal/homey-kit": "5.0.0",
     "homey-api": "^3.19.1",
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.3"
   },
   "devDependencies": {
     "@olivierzal/configs": "3.2.0",
