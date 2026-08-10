@@ -4,7 +4,7 @@ import { type Config, defineConfig } from 'eslint/config'
 const config: Config[] = defineConfig([
   { ignores: ['.homeybuild/', 'coverage/'] },
   ...homeyApp({
-    bundledSourceGlobs: [],
+    bundledSourceGlobs: ['settings/**'],
     defaultExportFiles: ['**/api.mts', 'app.mts'],
     jsdocFiles: [
       '{api,app,files,types}.mts',
