@@ -24,6 +24,14 @@ const config: Config[] = defineConfig([
       'max-classes-per-file': 'off',
     },
   },
+  {
+    // Shipped node code keeps `u`-flag regexes: the `v` flag is a
+    // parse-time SyntaxError on older Homey Pro (2016-2019) firmwares
+    // (pre-Node-20 runtime) — the 2026-08 boot-crash root cause in the
+    // sibling apps.
+    files: ['*.mts', 'lib/**/*.mts'],
+    rules: { 'require-unicode-regexp': ['error', { requireFlag: 'u' }] },
+  },
 ])
 
 export default config
