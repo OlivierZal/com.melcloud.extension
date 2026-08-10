@@ -192,8 +192,8 @@ export default class MELCloudExtensionApp extends App {
       category: category ?? messageId,
       // Fix i18n grammar: "de el" → "del" (Spanish), "de le" → "du" (French)
       message: (translated === '' ? messageId : translated)
-        .replaceAll(/de el /giv, 'del ')
-        .replaceAll(/de le /giv, 'du '),
+        .replaceAll(/de el /giu, 'del ')
+        .replaceAll(/de le /giu, 'du '),
       time: Temporal.Now.instant().epochMilliseconds,
     }
     this.homey.api.realtime('log', newLog)
