@@ -1,115 +1,139 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <title>MELCloud Extension Settings</title>
-        <script>
-            // The page bundle loads as a classic defer script, not an ES
-            // module: a static module script stalls the whole boot on a
-            // cold webview open (a stalled module fetch also blocks
-            // onHomeyReady — proven on-device on com.melcloud), while
-            // classic scripts, like the stylesheet, load cold. defer runs
-            // it after <body> parses (so the entry's top-level DOM
-            // lookups are safe) and before onHomeyReady; the poll keeps
-            // the boot bounded — it hands the instance to the bundle's
-            // start, or reports why and ends the overlay if it failed to
-            // load.
-            function onHomeyReady(homey) {
-                const deadline = Date.now() + 10000
-                const waitForBundle = () => {
-                    if (globalThis.MELCloudWebview) {
-                        globalThis.MELCloudWebview.start(homey)
-                    } else if (Date.now() > deadline) {
-                        // Boot beacon: the bundle never booted — report WHY
-                        // before degrading. A 200 probe with no global means
-                        // the script fetched but failed to parse/run (old
-                        // engine); a probe error means the fetch itself
-                        // fails on this device.
-                        const script = document.querySelector('script[src*="index.js"]')
-                        const report = (probe) => {
-                            homey.api('POST', '/boot-error', { message: 'The settings bundle did not boot within 10s', name: 'BootTimeout', probe, userAgent: navigator.userAgent }, () => {})
-                            homey.ready()
-                            homey.alert(homey.__('settings.loadFailed')).catch(() => {})
-                        }
-                        fetch(script ? script.src : 'index.js')
-                            .then((response) => { report('fetch ' + String(response.status)) })
-                            .catch((error) => { report('fetch failed: ' + String(error)) })
-                    } else {
-                        setTimeout(waitForBundle, 50)
-                    }
-                }
-                waitForBundle()
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MELCloud Extension Settings</title>
+    <script>
+      // The page bundle loads as a classic defer script, not an ES
+      // module: a static module script stalls the whole boot on a
+      // cold webview open (a stalled module fetch also blocks
+      // onHomeyReady — proven on-device on com.melcloud), while
+      // classic scripts, like the stylesheet, load cold. defer runs
+      // it after <body> parses (so the entry's top-level DOM
+      // lookups are safe) and before onHomeyReady; the poll keeps
+      // the boot bounded — it hands the instance to the bundle's
+      // start, or reports why and ends the overlay if it failed to
+      // load.
+      function onHomeyReady(homey) {
+        const deadline = Date.now() + 10000
+        const waitForBundle = () => {
+          if (globalThis.MELCloudWebview) {
+            globalThis.MELCloudWebview.start(homey)
+          } else if (Date.now() > deadline) {
+            // Boot beacon: the bundle never booted — report WHY
+            // before degrading. A 200 probe with no global means
+            // the script fetched but failed to parse/run (old
+            // engine); a probe error means the fetch itself
+            // fails on this device.
+            const script = document.querySelector('script[src*="index.js"]')
+            const report = (probe) => {
+              homey.api(
+                'POST',
+                '/boot-error',
+                {
+                  message: 'The settings bundle did not boot within 10s',
+                  name: 'BootTimeout',
+                  probe,
+                  userAgent: navigator.userAgent,
+                },
+                () => {},
+              )
+              homey.ready()
+              homey.alert(homey.__('settings.loadFailed')).catch(() => {})
             }
-        </script>
-        <link href="styles.css" rel="stylesheet">
-        <script defer src="index.js"></script>
-        <script data-origin="settings" defer src="/homey.js"></script>
-        <meta content="MELCloud extension settings" name="description">
-    </head>
-    <body>
-        <header class="homey-header">
-            <h1 class="homey-title" data-i18n="settings.title">MELCloud extension settings</h1>
-        </header>
-        <!-- Collapsible: opens folded when adjustment is already enabled
+            fetch(script ? script.src : 'index.js')
+              .then((response) => {
+                report('fetch ' + String(response.status))
+              })
+              .catch((error) => {
+                report('fetch failed: ' + String(error))
+              })
+          } else {
+            setTimeout(waitForBundle, 50)
+          }
+        }
+        waitForBundle()
+      }
+    </script>
+    <link href="styles.css" rel="stylesheet" />
+    <script defer src="index.js"></script>
+    <script data-origin="settings" defer src="/homey.js"></script>
+    <meta content="MELCloud extension settings" name="description" />
+  </head>
+  <body>
+    <header class="homey-header">
+      <h1 class="homey-title" data-i18n="settings.title">
+        MELCloud extension settings
+      </h1>
+    </header>
+    <!-- Collapsible: opens folded when adjustment is already enabled
             (the tuning is done), expanded otherwise (setup pending). -->
-        <details id="configuration" class="homey-form-fieldset">
-            <summary
-                id="configuration_summary"
-                class="homey-form-legend"
-                data-i18n="settings.configuration"
-            >Configuration</summary>
-            <fieldset
-                id="sources"
-                class="busy-scope"
-                aria-labelledby="configuration_summary"
-            ></fieldset>
-            <div id="empty_state" hidden>
-                <p data-i18n="settings.notFound">First, you need to set up your devices in the MELCloud Homey app.</p>
-                <button
-                    id="install"
-                    type="button"
-                    class="homey-button-primary-full"
-                    data-i18n="settings.install"
-                >Install the MELCloud app</button>
-            </div>
-        </details>
-        <fieldset id="adjustment" class="homey-form-fieldset">
-            <legend class="homey-form-legend" data-i18n="settings.autoAdjust">Auto-adjust air conditioning temperature</legend>
-            <div class="homey-form-group">
-                <label
-                    class="homey-form-label"
-                    data-i18n="settings.enabled"
-                    for="enabled"
-                >Enabled</label>
-                <select id="enabled" class="homey-form-select">
-                    <option data-i18n="settings.boolean.false" value="false">No</option>
-                    <option data-i18n="settings.boolean.true" value="true">Yes</option>
-                </select>
-            </div>
-            <div class="container">
-                <button
-                    id="refresh"
-                    type="button"
-                    class="homey-button-secondary-shadow"
-                    data-i18n="settings.refresh"
-                >Refresh</button>
-                <button
-                    id="apply"
-                    type="button"
-                    class="homey-button-danger-shadow"
-                    data-i18n="settings.update"
-                >Update</button>
-            </div>
-        </fieldset>
-        <fieldset class="homey-form-fieldset">
-            <legend class="homey-form-legend" data-i18n="settings.log"></legend>
-            <div
-                id="logs"
-                class="homey-form-group"
-                aria-label="Log"
-                role="log"
-            ></div>
-        </fieldset>
-    </body>
+    <details id="configuration" class="homey-form-fieldset">
+      <summary
+        id="configuration_summary"
+        class="homey-form-legend"
+        data-i18n="settings.configuration"
+      >
+        Configuration
+      </summary>
+      <fieldset
+        id="sources"
+        class="busy-scope"
+        aria-labelledby="configuration_summary"
+      ></fieldset>
+      <div id="empty_state" hidden>
+        <p data-i18n="settings.notFound">
+          First, you need to set up your devices in the MELCloud Homey app.
+        </p>
+        <button
+          id="install"
+          type="button"
+          class="homey-button-primary-full"
+          data-i18n="settings.install"
+        >
+          Install the MELCloud app
+        </button>
+      </div>
+    </details>
+    <fieldset id="adjustment" class="homey-form-fieldset">
+      <legend class="homey-form-legend" data-i18n="settings.autoAdjust">
+        Auto-adjust air conditioning temperature
+      </legend>
+      <div class="homey-form-group">
+        <label
+          class="homey-form-label"
+          data-i18n="settings.enabled"
+          for="enabled"
+          >Enabled</label
+        >
+        <select id="enabled" class="homey-form-select">
+          <option data-i18n="settings.boolean.false" value="false">No</option>
+          <option data-i18n="settings.boolean.true" value="true">Yes</option>
+        </select>
+      </div>
+      <div class="container">
+        <button
+          id="refresh"
+          type="button"
+          class="homey-button-secondary-shadow"
+          data-i18n="settings.refresh"
+        >
+          Refresh
+        </button>
+        <button
+          id="apply"
+          type="button"
+          class="homey-button-danger-shadow"
+          data-i18n="settings.update"
+        >
+          Update
+        </button>
+      </div>
+    </fieldset>
+    <fieldset class="homey-form-fieldset">
+      <legend class="homey-form-legend" data-i18n="settings.log"></legend>
+      <div id="logs" class="homey-form-group" aria-label="Log" role="log"></div>
+    </fieldset>
+  </body>
 </html>
