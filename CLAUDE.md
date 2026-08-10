@@ -351,8 +351,13 @@ rather than merges, so a partial override silently drops every entry it
 omits, and a full copy drifts from the core it duplicates. Do not
 re-declare family policy locally — a rule evaluation or version bump
 happens in configs, adoption is a reviewed pin bump. The
-ci/audit/pr-title/zizmor/dependabot/claude workflows are stubs calling
-the family reusables in OlivierZal/configs, pinned `@<sha> # vX.Y.Z`;
+ci/claude/dependabot/dependency-review/pr-title/zizmor workflows are
+stubs calling the family reusables in OlivierZal/configs, pinned
+`@<sha> # vX.Y.Z`; dependency vulnerabilities are GitHub's own —
+Dependabot alerts scan continuously and carry the named, reasoned
+dismissals (an exception lives on the advisory, so it cannot outlive
+it, and this repo's `parseuri` ReDoS is dismissed there), while
+`dependency-review` judges what a PR introduces;
 `publish.yml` and `validate.yml` stay local (no reusable exists).
 `.npmrc` (scope registry + `NODE_AUTH_TOKEN` auth) is load-bearing:
 the configs devDependency lives on GitHub Packages, where even reads
