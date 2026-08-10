@@ -25,9 +25,9 @@ import { mock, settleDetached } from '../helpers.ts'
 // `import.meta.url` is an http URL the fs module refuses.
 const pageHtml = readFileSync('settings/index.html', 'utf8')
 
-// Fixed mid-day clock (only `Date` is faked — `setImmediate` stays real
-// for settleDetached): every relative-time offset below stays inside
-// the intended day in UTC and Europe/Paris alike.
+// Fixed mid-day clock (pinned at `Temporal.Now`, so `setImmediate`
+// stays real for settleDetached): every relative-time offset below
+// stays inside the intended day in UTC and Europe/Paris alike.
 const NOW_MS = Temporal.Instant.from('2026-08-10T12:00:00Z').epochMilliseconds
 const MINUTES_30_MS = 1_800_000
 const HOURS_2_MS = 7_200_000
@@ -258,7 +258,19 @@ describe('settings page', () => {
 
   beforeEach(() => {
     vi.resetModules()
-    vi.useFakeTimers({ now: NOW_MS, toFake: ['Date'] })
+    // The page reads its clock through `Temporal.Now`, and
+    // temporal-polyfill defers to the runtime's native Temporal when one
+    // exists — a faked `Date` never reaches that native clock, so the
+    // pin lands on `Temporal.Now` itself. `timeZoneId` stays live: the
+    // fixture offsets are chosen to survive any zone.
+    vi.spyOn(Temporal.Now, 'instant').mockReturnValue(
+      Temporal.Instant.fromEpochMilliseconds(NOW_MS),
+    )
+    vi.spyOn(Temporal.Now, 'zonedDateTimeISO').mockImplementation(() =>
+      Temporal.Instant.fromEpochMilliseconds(NOW_MS).toZonedDateTimeISO(
+        Temporal.Now.timeZoneId(),
+      ),
+    )
     reportErrorMock = vi.fn<(error: unknown) => void>()
     vi.stubGlobal('reportError', reportErrorMock)
     sessionStorage.clear()
@@ -267,7 +279,9 @@ describe('settings page', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
+    // The spies sit on a module-level object shared across the worker's
+    // test files — restore them so later files see the real clock.
+    vi.restoreAllMocks()
     vi.unstubAllGlobals()
   })
 
