@@ -779,7 +779,7 @@
     "ru": "Приложение больше не устанавливает большой набор файлов разработки, которые ему никогда не требовались: это освобождает место на вашем Homey и заодно устраняет обнаруженную уязвимость.",
     "sv": "Appen installerar inte längre en stor mängd utvecklingsfiler som den aldrig behövde, vilket frigör utrymme på din Homey och samtidigt tar bort en rapporterad sårbarhet."
   },
-  "25.3.0": {
+  "25.3.1": {
     "ar": "يتم إعلامك الآن أيضًا بتغييرات الإصدارات التي تخطّيتها.",
     "da": "Du får nu også besked om ændringerne fra versioner, du sprang over.",
     "de": "Du wirst jetzt auch über die Änderungen übersprungener Versionen benachrichtigt.",
