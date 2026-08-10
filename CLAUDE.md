@@ -313,27 +313,25 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   not lower, hence its place in the same block). The **node-side**
   floor is the Homey's own Node, and it is held by the manifest's
   `compatibility` declaration, not by a check.
-- That node-side floor is a DECLARATION, deliberately: two shipped
-  incidents (the regex `v` flag, then `import … with { type: 'json' }`)
-  crashed the app at PARSE time on Homey Pro (2016-2019) firmwares
-  before 13.4, which run a pre-Node-20 engine — a module the engine
-  cannot parse fails BEFORE a line of it runs, so no try/catch anywhere
-  can recover it. A parse-level guard over the emitted build was built
-  and then REFUSED (2026-08): no acorn `ecmaVersion` corresponds to
-  "what Node 22.19 accepts" — es2025 is only partly implemented there
-  (regex modifiers and duplicate named groups are Node 23, `using` is
-  Node 24) — so any calibration is either too lax to catch anything or
-  too strict, forcing rewrites of perfectly valid code. A guard that
-  cannot be calibrated honestly guards nothing; the declaration is the
-  net, kept aligned with the `engines` of the shipped dependencies
-  (`>=22.19.0`). `files.mts` still reads its JSON through
-  `createRequire` — not to satisfy a floor, but because it is the
-  robust form and costs nothing.
-- Node-side runtime APIs above the floor are therefore LEGITIMATE:
+- A floor is declared from WHERE THE CODE RUNS, never from what a
+  dependency happens to require. `compatibility: ">=12.9.0"` is
+  Athom's own documented Node 22 boundary ("as of Homey v12.9.0, all
+  Homey platforms run apps on Node.js v22") and already covers the
+  `engines` of every shipped dependency. Raising it cannot express
+  more than it already does: the two firmware lines are numbered
+  independently, so one semver range cannot say "has Node 22" across
+  both — and on Homey Pro (2016-2019) the Node 22 firmware is still
+  only a release candidate, so a raise would cut off that whole stable
+  install base rather than a few laggards.
+- Node-side runtime APIs above es2022 are therefore LEGITIMATE:
   `toSorted`/`toReversed` (Node 20), `Object.groupBy` (Node 21) and
-  `Promise.withResolvers` (Node 22) all predate the declared engine.
-  Never rewrite one away for compatibility — `pushToUI`'s `toReversed`
-  and `group-devices.mts`'s `toSorted` stay exactly as they are.
+  `Promise.withResolvers` (Node 22) all predate the declared engine,
+  and `@olivierzal/homey-kit` already calls `toSorted` inside the boot
+  path. Never rewrite one away for an engine the manifest does not
+  claim — `pushToUI`'s `toReversed` and `group-devices.mts`'s
+  `toSorted` stay exactly as they are. The same holds for syntax:
+  `files.mts` reads its JSON through import attributes, the statically
+  analysable form.
 
 ## Tooling boundary (@olivierzal/configs)
 
