@@ -215,11 +215,10 @@ const displayLog = (log: TimestampedLog): void => {
   const rowElement = createLogRow(log)
   const day = dayOf(log.time)
   if (day === topDay.value) {
-    // Below the day separator sitting on top
-    logsElement.insertBefore(
-      rowElement,
-      logsElement.firstChild?.nextSibling ?? null,
-    )
+    // Below the day separator sitting on top — `item` hands
+    // `insertBefore` its null itself, so no fallback branch dangles on
+    // a pane the separator invariant already guarantees is populated.
+    logsElement.insertBefore(rowElement, logsElement.children.item(1))
     return
   }
   topDay.value = day
@@ -363,9 +362,13 @@ const populateSourceOptions = (
 // can never match a real option, so no checkmark shows either
 const MIXED_SELECTION = '\u{0}'
 
+// Misses stay `undefined` inside the set rather than being defaulted:
+// the seeding invariant (every rendered device is seeded) makes a miss
+// unreachable, and folding it into the sentinel keeps every branch here
+// one a test can exercise (the device-less group covers the empty set).
 const commonSelectionOf = (deviceIds: readonly string[]): string => {
   const values = new Set(
-    deviceIds.map((deviceId) => sourceSelections.get(deviceId) ?? ''),
+    deviceIds.map((deviceId) => sourceSelections.get(deviceId)),
   )
   const [first] = values
   return first !== undefined && values.size === 1 ? first : MIXED_SELECTION
@@ -574,16 +577,21 @@ const appendComboboxRow = (homey: Homey, config: ComboboxConfig): void => {
 }
 
 // One row drives every device of the building; devices without a
-// building (no grouping available) get one row each.
+// building (no grouping available) get one row each. The parameter
+// re-encodes the caller's narrowing — a nullable `name` here would
+// drag a fallback no call can ever reach.
 const appendGroupRow = (
   homey: Homey,
-  group: AdjustableGroup,
+  group: {
+    readonly devices: readonly AdjustableDevice[]
+    readonly name: string
+  },
   index: number,
 ): void => {
   const deviceIds = group.devices.map(({ id }) => id)
   appendComboboxRow(homey, {
     id: `group-${String(index)}`,
-    label: group.name ?? '',
+    label: group.name,
     getValue: (): string => commonSelectionOf(deviceIds),
     setValue: (value): void => {
       for (const deviceId of deviceIds) {
@@ -597,7 +605,8 @@ const appendDeviceRow = (homey: Homey, device: AdjustableDevice): void => {
   appendComboboxRow(homey, {
     id: device.id,
     label: device.name,
-    getValue: (): string => sourceSelections.get(device.id) ?? '',
+    // The one-device group: same accessor, same miss semantics
+    getValue: (): string => commonSelectionOf([device.id]),
     setValue: (value): void => {
       sourceSelections.set(device.id, value)
     },
@@ -615,7 +624,7 @@ const appendSourceRows = (
       }
       continue
     }
-    appendGroupRow(homey, group, index)
+    appendGroupRow(homey, { devices: group.devices, name: group.name }, index)
   }
 }
 

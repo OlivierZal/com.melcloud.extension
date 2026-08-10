@@ -3,7 +3,7 @@ import { type ViteUserConfig, defineConfig } from 'vitest/config'
 const config: ViteUserConfig = defineConfig({
   test: {
     coverage: {
-      exclude: ['.homeybuild/**', 'scripts/**/*.mts', 'settings/**/*.mts'],
+      exclude: ['.homeybuild/**'],
       include: ['**/*.mts'],
       reporter: ['text', 'lcov'],
       thresholds: {

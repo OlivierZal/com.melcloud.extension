@@ -25,3 +25,11 @@ export function cast(value: unknown): never
 export function cast(value: unknown): unknown {
   return value
 }
+
+// Drain the microtask chains a detached (fire-and-forget) run leaves
+// behind: one macrotask turn settles them all when the mocks resolve
+// synchronously. Same helper as com.heatzy's.
+export const settleDetached = async (): Promise<void> =>
+  new Promise((resolve) => {
+    setImmediate(resolve)
+  })
