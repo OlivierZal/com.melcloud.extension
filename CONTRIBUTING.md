@@ -71,12 +71,13 @@ docs.
 Node-side code follows `engines.node` and may use modern APIs freely.
 
 Webview code — [`settings/`](settings) — runs on **phone browser
-engines**, not on the Homey. Those stall at **es2023**, a separate and
-lower ceiling the lint enforces on exactly that path. esbuild lowers
-syntax but never polyfills APIs, so a too-recent API passes both the lint
-and the compile and fails only on a user's phone. Raising one floor never
-raises the other; conflating them has already caused a production
-incident in a sibling app.
+engines**, not on the Homey. Their ceiling is **es2023**, derived from the
+Homey mobile app's own minimum of iOS 16.4 (App Store, 2026-08-11) and
+enforced by the lint on exactly that path. esbuild lowers syntax but never
+polyfills APIs, so a too-recent API passes both the lint and the compile
+and fails only on a user's phone. Raising one floor never raises the
+other; conflating them has already caused a production incident in a
+sibling app.
 
 The floor the device runs is a third, distinct declaration:
 `compatibility` in [`.homeycompose/app.json`](.homeycompose/app.json).

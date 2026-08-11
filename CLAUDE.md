@@ -302,22 +302,30 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   enforces it). Inline style writes are reserved for values CSS cannot
   express; anything static belongs in the stylesheet, following the
   CSS/HTML lint rules' spirit even where no rule captures it.
-- The webview runtime floor (es2023: no `Object.groupBy`, no iterator
-  helpers, no `v` regex flag) is enforced by a scoped lint block over
-  `settings/` — the tsconfig cannot express two runtimes in one
-  project. A `tsconfig.webview.json` floor was probed and refused on
-  com.melcloud (2026-08-06): tsc checks the import CLOSURE, which
-  crosses into node-side code — the same shape exists here
-  (`settings/` imports shared `lib/` and `types/` modules).
+- The webview runtime floor (es2023: no `Object.groupBy`/`Map.groupBy`,
+  no iterator helpers, no `v` regex flag) is DERIVED, not precautionary:
+  the Homey mobile app requires iOS 16.4 or later (App Store, read
+  2026-08-11) and a Homey app only ever gets the system WebKit, so the
+  worst legitimate engine is iOS 16.4's — es2023-complete, short of
+  every es2024 gain (`Object.groupBy` and `Promise.withResolvers` need
+  Safari 17.4, the `v` flag 17). es2024 becomes derivable when that App
+  Store minimum reaches 17.4; Android never binds the floor, its System
+  WebView being evergreen.
+- The floor is enforced by a scoped lint block over `settings/` — the
+  tsconfig cannot express two runtimes in one project. A
+  `tsconfig.webview.json` floor was probed and refused on com.melcloud
+  (2026-08-06): tsc checks the import CLOSURE, which crosses into
+  node-side code — the same shape exists here (`settings/` imports
+  shared `lib/` and `types/` modules).
 - TWO floors coexist, on UNRELATED engines — never let one move the
-  other. The **webview** floor is es2023 and is set by the phone's
-  WebKit, which no Homey firmware can rejuvenate: it stays enforced by
-  the scoped lint block above, and the danger there is APIs, because
-  esbuild lowers syntax but NEVER polyfills (`Object.groupBy`, iterator
-  helpers…; the regex `v` flag is the mixed case — syntax esbuild does
-  not lower, hence its place in the same block). The **node-side**
-  floor is the Homey's own Node, and it is held by the manifest's
-  `compatibility` declaration, not by a check.
+  other. On the **webview** side the danger is APIs, because esbuild
+  lowers syntax but NEVER polyfills (`Object.groupBy`, iterator
+  helpers…); the `v` flag joins them because esbuild defers it instead
+  of lowering it — under the bundler's es2020 target the literal ships
+  as a `new RegExp` call, so an escapee fails at RUNTIME, inside the
+  feature that runs it, not at parse. Narrower blast radius, same ban.
+  The **node-side** floor is the Homey's own Node, and it is held by
+  the manifest's `compatibility` declaration, not by a check.
 - A floor is declared from WHERE THE CODE RUNS, never from what a
   dependency happens to require. `compatibility: ">=12.9.0"` is
   Athom's own documented Node 22 boundary ("as of Homey v12.9.0, all
