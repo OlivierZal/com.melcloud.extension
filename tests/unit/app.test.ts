@@ -117,6 +117,12 @@ const advancePastInit = async (): Promise<void> => {
   await vi.advanceTimersByTimeAsync(INIT_DELAY)
 }
 
+const logCategories = (mockHomey: MockHomey): string[] =>
+  (mockHomey.settingsStore.lastLogs ?? []).map(({ category }) => category ?? '')
+
+const logMessages = (mockHomey: MockHomey): string[] =>
+  (mockHomey.settingsStore.lastLogs ?? []).map(({ message }) => message)
+
 describe(MELCloudExtensionApp, () => {
   beforeEach(() => {
     vi.useFakeTimers()
@@ -879,6 +885,198 @@ describe(MELCloudExtensionApp, () => {
       'Failed to destroy listeners',
       new Error('realtime_down'),
     )
+  })
+
+  // The reconciliation is what makes the restore independent of the
+  // events: every case below is one the capability listeners cannot
+  // report, because no listener is watching when it happens.
+  describe('outstanding adjustments', () => {
+    const OWED = { previous: 21, written: 26 }
+
+    const createOwingHarness = async (
+      device: MockDevice,
+      settings: Partial<HomeySettings> = {},
+    ): Promise<Harness> =>
+      createHarness([device], {
+        settings: {
+          adjustments: { 'classic-1': OWED },
+          hasSeededOutdoorSources: true,
+          isEnabled: true,
+          outdoorSources: { 'classic-1': null },
+          ...settings,
+        },
+      })
+
+    // A settlement racing a write clears the record from under it: the
+    // debt restarts from the value going out rather than inventing an
+    // older one to give back.
+    it('should restart a debt whose record vanished mid-write', async () => {
+      const { classicDevice } = createDevices()
+      const { app, mockHomey } = await createHarness([classicDevice], {
+        settings: { hasSeededOutdoorSources: true, isEnabled: false },
+      })
+
+      app.recordWrite('classic-1', 26)
+
+      expect(mockHomey.settingsStore.adjustments).toStrictEqual({
+        'classic-1': { previous: 26, written: 26 },
+      })
+    })
+
+    it('should write nothing for a device it owes nothing', async () => {
+      const { classicDevice } = createDevices()
+      const { app } = await createHarness([classicDevice], {
+        settings: { hasSeededOutdoorSources: true, isEnabled: false },
+      })
+
+      await app.revertAdjustment(classicDevice.device)
+
+      expect(classicDevice.setCapabilityValue).not.toHaveBeenCalled()
+    })
+
+    // Two restarts overlapping — a device event landing on a settings
+    // apply — used to leave the first run's listener live but
+    // unreachable: still writing setpoints, impossible to settle.
+    it('should settle a predecessor listener before taking its slot', async () => {
+      const { classicDevice } = createDevices()
+      const { app } = await createOwingHarness(classicDevice)
+      await advancePastInit()
+
+      await Promise.all([app.autoAdjustCooling(), app.autoAdjustCooling()])
+      await app.onUninit()
+
+      // No listener may outlive the map that owns it: an orphan's
+      // capability instances would still be alive at this point, writing
+      // setpoints nothing could ever settle.
+      expect(
+        classicDevice.createdCapabilityInstances.filter(
+          ({ destroy }) => destroy.mock.calls.length === 0,
+        ),
+      ).toStrictEqual([])
+    })
+
+    it('should settle a device that is no longer cooling', async () => {
+      const { classicDevice } = createDevices()
+      Object.assign(classicDevice.values, {
+        target_temperature: 26,
+        thermostat_mode: 'heat',
+      })
+      const { mockHomey } = await createOwingHarness(classicDevice)
+
+      await advancePastInit()
+
+      expect(classicDevice.setCapabilityValue).toHaveBeenCalledWith({
+        capabilityId: 'target_temperature',
+        value: 21,
+      })
+      expect(mockHomey.settingsStore.adjustments).toStrictEqual({})
+      expect(logCategories(mockHomey)).toContain('reverted')
+    })
+
+    it('should settle a device the app no longer adjusts at all', async () => {
+      const { classicDevice } = createDevices()
+      classicDevice.values.target_temperature = 26
+      const { mockHomey } = await createOwingHarness(classicDevice, {
+        isEnabled: false,
+      })
+
+      await advancePastInit()
+
+      expect(classicDevice.setCapabilityValue).toHaveBeenCalledWith({
+        capabilityId: 'target_temperature',
+        value: 21,
+      })
+      expect(mockHomey.settingsStore.adjustments).toStrictEqual({})
+    })
+
+    it('should keep a setpoint chosen after the adjustment', async () => {
+      const { classicDevice } = createDevices()
+      Object.assign(classicDevice.values, {
+        target_temperature: 24,
+        thermostat_mode: 'heat',
+      })
+      const { mockHomey } = await createOwingHarness(classicDevice)
+
+      await advancePastInit()
+
+      expect(classicDevice.setCapabilityValue).not.toHaveBeenCalled()
+      expect(mockHomey.settingsStore.adjustments).toStrictEqual({})
+      expect(logCategories(mockHomey)).toContain('kept')
+    })
+
+    it('should hold the debt when the setpoint reads as no temperature', async () => {
+      const { classicDevice } = createDevices()
+      Object.assign(classicDevice.values, {
+        target_temperature: 'warm',
+        thermostat_mode: 'heat',
+      })
+      const { mockHomey } = await createOwingHarness(classicDevice)
+
+      await advancePastInit()
+
+      expect(classicDevice.setCapabilityValue).not.toHaveBeenCalled()
+      expect(mockHomey.settingsStore.adjustments).toStrictEqual({
+        'classic-1': OWED,
+      })
+    })
+
+    it('should hold the debt when the device cannot be read at all', async () => {
+      const { classicDevice } = createDevices()
+      const { manager, mockHomey } = await createOwingHarness(classicDevice)
+      manager.getCapabilityValue.mockImplementation(() => {
+        throw new Error('offline')
+      })
+
+      await advancePastInit()
+
+      // "I could not check" must never read as "it stopped cooling".
+      expect(classicDevice.setCapabilityValue).not.toHaveBeenCalled()
+      expect(mockHomey.settingsStore.adjustments).toStrictEqual({
+        'classic-1': OWED,
+      })
+    })
+
+    it('should leave a still-cooling device to its listener', async () => {
+      const { classicDevice } = createDevices()
+      const { mockHomey } = await createOwingHarness(classicDevice)
+
+      await advancePastInit()
+
+      expect(logCategories(mockHomey)).not.toContain('reverted')
+    })
+
+    it('should leave the entry of a device Homey no longer knows', async () => {
+      const { classicDevice } = createDevices()
+      classicDevice.values.thermostat_mode = 'heat'
+      const { mockHomey } = await createOwingHarness(classicDevice, {
+        adjustments: { 'gone-1': OWED },
+      })
+
+      await advancePastInit()
+
+      // Inert rather than pruned: nothing can be written to a device
+      // that is not there, and a wrong prune cannot be undone.
+      expect(mockHomey.settingsStore.adjustments).toStrictEqual({
+        'gone-1': OWED,
+      })
+    })
+
+    it('should keep the debt when the restore write fails', async () => {
+      const { classicDevice } = createDevices()
+      Object.assign(classicDevice.values, {
+        target_temperature: 26,
+        thermostat_mode: 'heat',
+      })
+      classicDevice.setCapabilityValue.mockRejectedValueOnce(new Error('gone'))
+      const { mockHomey } = await createOwingHarness(classicDevice)
+
+      await advancePastInit()
+
+      expect(logMessages(mockHomey)).toContain('log.notFound')
+      expect(mockHomey.settingsStore.adjustments).toStrictEqual({
+        'classic-1': OWED,
+      })
+    })
   })
 
   it('should expose the localized names', async () => {

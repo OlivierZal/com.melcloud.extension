@@ -1,5 +1,6 @@
 import type MELCloudExtensionApp from '../app.mts'
 import { formatTemperature } from '../lib/format-temperature.mts'
+import { settleAll } from '../lib/settle-all.mts'
 import { toTemperature } from '../lib/to-temperature.mts'
 import type { MELCloudListener } from './melcloud.mts'
 
@@ -78,10 +79,14 @@ export abstract class OutdoorSource {
       name: this.name,
       value: formatTemperature(value),
     })
-    await Promise.all(
+    // One device refusing its new setpoint (offline, capability gone)
+    // must neither hide the others' failures nor cancel their update.
+    await settleAll(
       this.#subscribers
         .values()
         .map(async (listener) => listener.setTargetTemperature()),
+      this.app,
+      'Failed to recalculate a device target temperature',
     )
   }
 }

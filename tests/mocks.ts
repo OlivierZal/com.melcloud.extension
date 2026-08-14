@@ -27,6 +27,10 @@ export interface MockCapabilityInstance {
 
 export interface MockDevice {
   readonly capabilityInstances: Map<string, MockCapabilityInstance>
+  // Every instance ever created, in order. The map above keeps only the
+  // latest per capability, yet a REPLACED instance is exactly what a
+  // stranded listener leaves behind — so its fate must stay observable.
+  readonly createdCapabilityInstances: MockCapabilityInstance[]
   readonly device: HomeyAPIV3Local.ManagerDevices.Device
   readonly setCapabilityValue: ReturnType<typeof vi.fn>
   readonly values: Record<string, StoredCapabilityValue>
@@ -50,6 +54,7 @@ export const createMockDevice = ({
   readonly values?: Record<string, StoredCapabilityValue>
 }): MockDevice => {
   const capabilityInstances = new Map<string, MockCapabilityInstance>()
+  const createdCapabilityInstances: MockCapabilityInstance[] = []
   const setCapabilityValue = vi
     .fn<(options: { capabilityId: string; value: number }) => Promise<void>>()
     .mockImplementation(async ({ capabilityId, value }) => {
@@ -88,10 +93,17 @@ export const createMockDevice = ({
           }),
       }
       capabilityInstances.set(capabilityId, instance)
+      createdCapabilityInstances.push(instance)
       return instance
     },
   })
-  return { capabilityInstances, device, setCapabilityValue, values }
+  return {
+    capabilityInstances,
+    createdCapabilityInstances,
+    device,
+    setCapabilityValue,
+    values,
+  }
 }
 
 export interface MockDevicesManager {

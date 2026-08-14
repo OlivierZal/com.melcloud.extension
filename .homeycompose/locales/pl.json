@@ -4,6 +4,7 @@
     "cleaned": "Usuwanie nasłuchu dla __capability__ urządzenia __name__",
     "cleanedAll": "Usuwanie wszystkich nasłuchów",
     "created": "Tworzenie nasłuchu dla __capability__ urządzenia __name__",
+    "kept": "Zachowanie temperatury __name__: __value__ ustawiono po regulacji",
     "listened": "Nasłuchiwanie __capability__ urządzenia __name__: __value__",
     "noThreshold": "Brak zapisanej temperatury dla __name__: nie wysłano żadnego polecenia",
     "notFound": "Nie znaleziono: __type__ `__idOrName__`",

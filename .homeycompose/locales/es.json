@@ -4,6 +4,7 @@
     "cleaned": "Limpieza del oyente para __capability__ de __name__",
     "cleanedAll": "Limpieza de todos los oyentes",
     "created": "Creación de un oyente para __capability__ de __name__",
+    "kept": "Se conserva la temperatura de __name__: __value__ se estableció tras el ajuste",
     "listened": "Escucha de __capability__ de __name__: __value__",
     "noThreshold": "No hay temperatura guardada para __name__: no se envió ninguna orden",
     "notFound": "No se puede encontrar __type__ `__idOrName__`",

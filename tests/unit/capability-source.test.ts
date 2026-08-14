@@ -181,8 +181,10 @@ describe(CapabilityOutdoorSource, () => {
       setTimeout(resolve, 0)
     })
 
+    // Reported per device, not as one aggregate failure: a second
+    // subscriber failing must leave its own trace.
     expect(harness.app.error).toHaveBeenCalledWith(
-      'Failed to update from the capability source',
+      'Failed to recalculate a device target temperature',
       new Error('offline'),
     )
   })

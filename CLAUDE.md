@@ -245,13 +245,59 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
 - Both ATA drivers share `thermostat_mode` values (incl. `cool`) and
   the 10–31 °C `target_temperature` range; the setpoint ceiling is read
   from `capabilitiesObj` at runtime (31 °C fallback).
-- The threshold (user comfort setpoint) is persisted per device id in
-  the `thresholds` setting. A missing entry means ABSENT, never a
-  stand-in value: reverting writes nothing and reports `log.noThreshold`
-  (it used to send 0 °C — the placeholder reaching the unit as a real
-  command). A missing outdoor reading is treated the same way: no
-  efficiency floor rather than one computed from 0, and
-  `#getTargetTemperature` returns `null` when neither floor is known.
+- The comfort setpoint and the debt are ONE record, not two. It is the
+  `previous` member of the `adjustments` entry (below): what the device
+  held when the app engaged is both the floor the calculation uses and
+  the value owed back, so a separate `thresholds` map was a second store
+  for the same number, kept in step by hand — exactly the kind of pair
+  that drifts when one side's sanitizer drops an entry. The key is gone;
+  installs carrying it just stop reading it. A missing entry means
+  ABSENT, never a stand-in value: nothing is written and
+  `log.noThreshold` is reported (it used to send 0 °C — the placeholder
+  reaching the unit as a real command). A missing outdoor reading is
+  treated the same way: no efficiency floor rather than one computed
+  from 0, and `#getTargetTemperature` returns `null` when neither floor
+  is known. A setpoint the app cannot READ is refused the same way: the
+  device is left unadjusted rather than written into a debt that could
+  never be repaid (`Number()` used to turn that absence into 0, or into
+  a NaN that JSON stored as `null` and the sanitizer then dropped).
+- Restoring a setpoint is EVENT-INDEPENDENT, and that is the whole
+  design. The `adjustments` setting is a ledger of what this app owes
+  each device — `{ previous, written }`, what it found and what it put
+  there — written on every successful write and cleared only once the
+  device has taken its value back. It has exactly two writers, named for
+  their intent: `recordComfort` (the value found, then any the user
+  chooses) and `recordWrite` (what actually reached the device); each
+  keeps the other member. The capability listeners remain the
+  fast path (leaving cooling settles immediately), but correctness lives
+  in `#reconcileAdjustments`, which runs on every restart (boot, device
+  add/remove, settings apply) and re-judges every outstanding debt
+  against the LIVE `thermostat_mode`. That is what survives the four
+  ways a listener never sees a device leave cooling: a realtime
+  reconnect (homey-api wires no `onReconnect`, so missed events are
+  never replayed), a crash or reboot with no `unload`, the extension
+  being disabled, and a device opted out of adjustment — a device
+  `DISABLED_SOURCE` excludes from `autoAdjustCooling` must still get
+  back what was taken from it. Two refusals are deliberate: a setpoint
+  that no longer holds `written` carries a decision made after ours and
+  stands (`log.kept`), and an unreadable one settles nothing, leaving
+  the debt for a later pass rather than commanding blind. Never make
+  the restore depend on the threshold map, on a live listener, or on
+  having witnessed the transition.
+- Restarts are SERIALIZED (`#queueRestart`): `autoAdjustCooling` is a
+  critical section — tear down, settle, rebuild — and two overlapping
+  runs (a device event landing on a settings apply) raced for the same
+  device slots, leaving a listener installed by the losing run alive but
+  unreachable, still writing setpoints nothing could settle. The
+  listener registry is keyed by device id for the same reason: an array
+  cleared by length reset cannot express ownership.
+- Independent per-device work goes through `settleAll`
+  (`lib/settle-all.mts`), not `Promise.all`: the aggregate must attempt
+  every branch and report each failure on its own. `Promise.all` would
+  abandon the restart at the first rejection — skipping the very
+  reconciliation meant to repair it — and would surface one reason while
+  hiding the others. Keep `Promise.all` only where the caller genuinely
+  cannot continue without every branch.
 - Outdoor sources are per device (`outdoorSources` setting: null/absent
   = Homey weather, `'none'` = the device is not adjusted at all); the
   legacy global `capabilityPath` is migrated to every known AC device

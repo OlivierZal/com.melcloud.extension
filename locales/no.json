@@ -8,7 +8,8 @@
     "notFound": "__type__ `__idOrName__` ikke funnet",
     "noThreshold": "Ingen lagret temperatur for __name__: ingen kommando ble sendt",
     "reverted": "Gjenoppretter temperaturen til __name__: __value__",
-    "saved": "Lagrer temperaturen til __name__: __value__"
+    "saved": "Lagrer temperaturen til __name__: __value__",
+    "kept": "Beholder temperaturen for __name__: __value__ ble stilt inn etter justeringen"
   },
   "names": {
     "device": "Enheten",

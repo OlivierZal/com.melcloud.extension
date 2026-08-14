@@ -2,13 +2,15 @@ import type { HomeyAPIV3Local } from 'homey-api'
 import { fireAndForget } from '@olivierzal/homey-kit'
 
 import type MELCloudExtensionApp from '../app.mts'
-import type { Names, Thresholds } from '../types.mts'
 import { formatTemperature } from '../lib/format-temperature.mts'
+import { toTemperature } from '../lib/to-temperature.mts'
+import {
+  type Names,
+  COOL,
+  TARGET_TEMPERATURE,
+  THERMOSTAT_MODE,
+} from '../types.mts'
 import type { OutdoorSource } from './outdoor-source.mts'
-
-const COOL = 'cool'
-const TARGET_TEMPERATURE = 'target_temperature'
-const THERMOSTAT_MODE = 'thermostat_mode'
 
 // Minimum gap between outdoor temperature and target cooling temperature
 const GAP_TEMPERATURE = 8
@@ -119,12 +121,25 @@ export class MELCloudListener {
       return
     }
     await this.#targetTemperatureListener.setValue(value)
+    // The debt follows the WRITE, never the intent: only a value that
+    // actually reached the device is owed back.
+    this.#app.recordWrite(this.#device.id, value)
     this.#app.pushToUI('calculated', {
       name: this.#device.name,
       outdoorTemperature: formatTemperature(this.#source.value),
       threshold: formatTemperature(this.#getThreshold()),
       value: formatTemperature(value),
     })
+  }
+
+  // A setpoint still holding this app's own last write is not a user
+  // choice, so it must not become the comfort value: what the device
+  // held before that write is the one the ledger remembers. This is the
+  // path a crash-restart takes, with the auto-calculated value still on
+  // the unit.
+  #comfortTemperature(found: number): number {
+    const adjustment = this.#app.adjustments[this.#device.id]
+    return adjustment?.written === found ? adjustment.previous : found
   }
 
   async #destroyTemperature(): Promise<void> {
@@ -137,7 +152,11 @@ export class MELCloudListener {
       capability: this.#names.temperature,
       name: this.#device.name,
     })
-    await this.#revertTemperature()
+    // The fast path only: the app settles the same debt again on its
+    // next reconciliation, so a listener that never runs this — killed
+    // by a crash, deaf to the mode change — costs latency, not the
+    // setpoint.
+    await this.#app.revertAdjustment(this.#device)
   }
 
   async #getCapabilityValue(
@@ -177,16 +196,12 @@ export class MELCloudListener {
       : Math.min(Math.max(...floors), this.#getMaxTemperature())
   }
 
-  // `null` when the user has no stored comfort setpoint for this device:
-  // absent, never a stand-in value. Callers decide what to do without
-  // one — the revert path refuses to write rather than inventing a
-  // setpoint nobody chose.
+  // The comfort setpoint IS the value this app owes the device back, so
+  // the ledger is its one home: a second store for the same number could
+  // only drift from it. `null` means absent, never a stand-in — callers
+  // decide what to do without one.
   #getThreshold(): number | null {
-    return this.#getThresholds()[this.#device.id] ?? null
-  }
-
-  #getThresholds(): Thresholds {
-    return this.#app.thresholds
+    return this.#app.adjustments[this.#device.id]?.previous ?? null
   }
 
   // The current target temperature seeds the user threshold; a manual
@@ -196,22 +211,30 @@ export class MELCloudListener {
       return
     }
     await this.#source.attach(this)
-    const temperature = Number(
+    const temperature = toTemperature(
       await this.#getCapabilityValue(TARGET_TEMPERATURE),
     )
+    // A setpoint this app cannot read is one it cannot give back, so the
+    // device is left alone rather than adjusted into a debt that could
+    // never be repaid.
+    if (temperature === null) {
+      this.#refuseUnreadableSetpoint()
+      return
+    }
     this.#targetTemperatureListener = this.#device.makeCapabilityInstance(
       TARGET_TEMPERATURE,
       (value) => {
-        if (value === this.#getTargetTemperature()) {
+        const manual = toTemperature(value)
+        if (manual === null || manual === this.#getTargetTemperature()) {
           return
         }
         this.#app.pushToUI('listened', {
           capability: this.#names.temperature,
           name: this.#device.name,
-          value: formatTemperature(value),
+          value: formatTemperature(manual),
         })
         fireAndForget(
-          this.#setThreshold(Number(value)),
+          this.#setThreshold(manual),
           this.#app,
           'Failed to set the temperature threshold',
         )
@@ -221,42 +244,19 @@ export class MELCloudListener {
       capability: this.#names.temperature,
       name: this.#device.name,
     })
-    await this.#setThreshold(temperature)
+    await this.#setThreshold(this.#comfortTemperature(temperature))
   }
 
-  // Restores the target temperature to the user's threshold when
-  // auto-adjustment stops (e.g. device leaves cooling mode).
-  //
-  // Without a stored threshold there is nothing to restore, so nothing
-  // is written: leaving the unit where it is beats commanding a setpoint
-  // the user never chose. This path used to send the 0 °C that stood in
-  // for "absent".
-  async #revertTemperature(): Promise<void> {
-    const value = this.#getThreshold()
-    if (value === null) {
-      this.#app.pushToUI('error.noThreshold', { name: this.#device.name })
-      return
-    }
-    try {
-      await this.#device.setCapabilityValue({
-        capabilityId: TARGET_TEMPERATURE,
-        value,
-      })
-      this.#app.pushToUI('reverted', {
-        name: this.#device.name,
-        value: formatTemperature(value),
-      })
-    } catch {
-      this.#app.pushToUI('error.notFound', {
-        idOrName: this.#device.name,
-        type: this.#names.device,
-      })
-    }
+  // Leaving the source too: an unadjusted device must not hold a watcher
+  // open on its behalf.
+  #refuseUnreadableSetpoint(): void {
+    this.#app.pushToUI('error.noThreshold', { name: this.#device.name })
+    this.#source.detach(this)
   }
 
   async #setThreshold(value: number): Promise<void> {
     const { id, name } = this.#device
-    this.#app.thresholds = { ...this.#app.thresholds, [id]: value }
+    this.#app.recordComfort(id, value)
     this.#app.pushToUI('saved', { name, value: formatTemperature(value) })
     await this.setTargetTemperature()
   }

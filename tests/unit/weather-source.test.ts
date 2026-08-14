@@ -101,8 +101,10 @@ describe(WeatherOutdoorSource, () => {
 
     await vi.advanceTimersByTimeAsync(POLL_INTERVAL)
 
+    // The poll itself succeeded: what failed is one subscriber's write,
+    // and it is reported as such rather than as a polling failure.
     expect(harness.error).toHaveBeenCalledWith(
-      'Failed to poll the weather temperature',
+      'Failed to recalculate a device target temperature',
       new Error('offline'),
     )
   })
