@@ -47,7 +47,6 @@ export interface HomeySettings {
   readonly lastLogs?: TimestampedLog[] | null
   readonly notifiedVersion?: string | null
   readonly outdoorSources?: OutdoorSources | null
-  readonly thresholds?: Thresholds | null
 }
 
 export interface ListenerParams {
@@ -84,8 +83,6 @@ export interface TemperatureSensor {
   readonly capabilityName: string
   readonly capabilityPath: string
 }
-
-export type Thresholds = Partial<Record<string, number>>
 
 export interface TimestampedLog {
   readonly message: string

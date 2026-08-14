@@ -2,14 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type MELCloudExtensionApp from '../../app.mts'
 import type { OutdoorSource } from '../../listeners/outdoor-source.mts'
-import type {
-  Adjustment,
-  Adjustments,
-  HomeySettings,
-  Thresholds,
-} from '../../types.mts'
+import type { Adjustment, Adjustments, HomeySettings } from '../../types.mts'
 import { toAdjustments } from '../../lib/to-adjustments.mts'
-import { toThresholds } from '../../lib/to-thresholds.mts'
 import { MELCloudListener } from '../../listeners/melcloud.mts'
 import { assertDefined, mock } from '../helpers.ts'
 import { type MockDevice, createMockDevice, names } from '../mocks.ts'
@@ -69,12 +63,27 @@ const createHarness = ({
   const revertAdjustment = vi
     .fn<(device: unknown) => Promise<void>>()
     .mockResolvedValue()
-  const recordAdjustment = vi
-    .fn<(deviceId: string, adjustment: Adjustment) => void>()
-    .mockImplementation((deviceId, adjustment) => {
-      Object.assign(settingsStore, {
-        adjustments: { ...settingsStore.adjustments, [deviceId]: adjustment },
-      })
+  // The real merge semantics, because the listener depends on them: one
+  // member is written, the other kept — or seeded from the written one
+  // when no record exists yet.
+  const record = (deviceId: string, adjustment: Adjustment): void => {
+    Object.assign(settingsStore, {
+      adjustments: { ...settingsStore.adjustments, [deviceId]: adjustment },
+    })
+  }
+  const recordComfort = vi
+    .fn<(deviceId: string, previous: number) => void>()
+    .mockImplementation((deviceId, previous) => {
+      const { written = previous } =
+        toAdjustments(settingsStore.adjustments)?.[deviceId] ?? {}
+      record(deviceId, { previous, written })
+    })
+  const recordWrite = vi
+    .fn<(deviceId: string, written: number) => void>()
+    .mockImplementation((deviceId, written) => {
+      const { previous = written } =
+        toAdjustments(settingsStore.adjustments)?.[deviceId] ?? {}
+      record(deviceId, { previous, written })
     })
   const app = mock<MELCloudExtensionApp>({
     api: {
@@ -101,19 +110,13 @@ const createHarness = ({
     },
     names,
     pushToUI,
-    recordAdjustment,
+    recordComfort,
+    recordWrite,
     revertAdjustment,
-    // The accessor PAIR, not a snapshot: tests mutate settingsStore
-    // mid-run and the listener must see it, and it writes back through
-    // the setter — exactly as the real app does.
+    // A getter, not a snapshot: tests mutate settingsStore mid-run and
+    // the listener must see it — exactly as the real app does.
     get adjustments(): Adjustments {
       return toAdjustments(settingsStore.adjustments) ?? {}
-    },
-    get thresholds(): Thresholds {
-      return toThresholds(settingsStore.thresholds) ?? {}
-    },
-    set thresholds(value: Thresholds) {
-      Object.assign(settingsStore, { thresholds: value })
     },
   })
   const source = mock<OutdoorSource>({
@@ -143,6 +146,9 @@ const getInstance = (
   return instance
 }
 
+const comfortOf = (harness: Harness): number | undefined =>
+  harness.settingsStore.adjustments?.['ac-1']?.previous
+
 describe(MELCloudListener, () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -154,7 +160,7 @@ describe(MELCloudListener, () => {
     await harness.listener.listenToThermostatMode()
 
     expect(harness.attach).toHaveBeenCalledWith(harness.listener)
-    expect(harness.settingsStore.thresholds).toStrictEqual({ 'ac-1': 23 })
+    expect(comfortOf(harness)).toBe(23)
     expect(
       getInstance(harness, 'target_temperature').setValue,
     ).toHaveBeenCalledWith(23)
@@ -252,7 +258,7 @@ describe(MELCloudListener, () => {
     await getInstance(harness, 'target_temperature').listener(26)
     await settleListeners()
 
-    expect(harness.settingsStore.thresholds).toStrictEqual({ 'ac-1': 26 })
+    expect(comfortOf(harness)).toBe(26)
     expect(
       getInstance(harness, 'target_temperature').setValue,
     ).toHaveBeenCalledWith(26)
@@ -299,9 +305,9 @@ describe(MELCloudListener, () => {
   it('should write nothing when neither a threshold nor a reading is known', async () => {
     const harness = createHarness({ outdoorTemperature: null })
     await harness.listener.listenToThermostatMode()
-    // Attaching seeds the threshold from the device's current setpoint,
-    // so both the store and that first write are cleared first.
-    Object.assign(harness.settingsStore, { thresholds: {} })
+    // Attaching seeds the comfort value from the device's current
+    // setpoint, so the ledger and that first write are cleared first.
+    Reflect.deleteProperty(harness.settingsStore, 'adjustments')
     const instance = getInstance(harness, 'target_temperature')
     instance.setValue.mockClear()
     harness.pushToUI.mockClear()
@@ -314,27 +320,6 @@ describe(MELCloudListener, () => {
     })
   })
 
-  it('should still owe the debt when the stored threshold is corrupt', async () => {
-    const harness = createHarness()
-    await harness.listener.listenToThermostatMode()
-    Object.assign(harness.settingsStore, { thresholds: { 'ac-1': 'warm' } })
-
-    await getInstance(harness, 'thermostat_mode').listener('heat')
-    await settleListeners()
-
-    // The debt is recorded independently of the threshold map, which is
-    // exactly what a dropped threshold entry used to disarm.
-    expect(harness.settingsStore.adjustments).toStrictEqual({
-      'ac-1': { previous: 23, written: 23 },
-    })
-    expect(harness.revertAdjustment).toHaveBeenCalledWith(
-      harness.mockDevice.device,
-    )
-  })
-
-  // The path a crash-restart takes: the app comes back with its own
-  // auto-calculated value still on the unit, and must not mistake it for
-  // a setpoint the user chose.
   it('should reclaim the comfort value when the device still holds our write', async () => {
     const harness = createHarness({ targetTemperature: 26 })
     Object.assign(harness.settingsStore, {
@@ -343,7 +328,7 @@ describe(MELCloudListener, () => {
 
     await harness.listener.listenToThermostatMode()
 
-    expect(harness.settingsStore.thresholds).toStrictEqual({ 'ac-1': 21 })
+    expect(comfortOf(harness)).toBe(21)
   })
 
   it('should adopt a setpoint the user moved while the app was away', async () => {
@@ -354,7 +339,7 @@ describe(MELCloudListener, () => {
 
     await harness.listener.listenToThermostatMode()
 
-    expect(harness.settingsStore.thresholds).toStrictEqual({ 'ac-1': 24 })
+    expect(comfortOf(harness)).toBe(24)
   })
 
   it('should record the written value as the debt', async () => {
@@ -392,7 +377,7 @@ describe(MELCloudListener, () => {
     await settleListeners()
 
     expect(harness.pushToUI).not.toHaveBeenCalled()
-    expect(harness.settingsStore.thresholds).toStrictEqual({ 'ac-1': 23 })
+    expect(comfortOf(harness)).toBe(23)
   })
 
   it('should restart the debt when its record vanished mid-write', async () => {

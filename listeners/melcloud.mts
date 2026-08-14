@@ -6,7 +6,6 @@ import { formatTemperature } from '../lib/format-temperature.mts'
 import { toTemperature } from '../lib/to-temperature.mts'
 import {
   type Names,
-  type Thresholds,
   COOL,
   TARGET_TEMPERATURE,
   THERMOSTAT_MODE,
@@ -123,14 +122,8 @@ export class MELCloudListener {
     }
     await this.#targetTemperatureListener.setValue(value)
     // The debt follows the WRITE, never the intent: only a value that
-    // actually reached the device is owed back. A record cleared
-    // underneath this write (a settlement racing it) restarts the debt
-    // from the value going out, rather than inventing an older one.
-    const adjustment = this.#app.adjustments[this.#device.id]
-    this.#app.recordAdjustment(this.#device.id, {
-      previous: adjustment?.previous ?? value,
-      written: value,
-    })
+    // actually reached the device is owed back.
+    this.#app.recordWrite(this.#device.id, value)
     this.#app.pushToUI('calculated', {
       name: this.#device.name,
       outdoorTemperature: formatTemperature(this.#source.value),
@@ -203,16 +196,12 @@ export class MELCloudListener {
       : Math.min(Math.max(...floors), this.#getMaxTemperature())
   }
 
-  // `null` when the user has no stored comfort setpoint for this device:
-  // absent, never a stand-in value. Callers decide what to do without
-  // one — the revert path refuses to write rather than inventing a
-  // setpoint nobody chose.
+  // The comfort setpoint IS the value this app owes the device back, so
+  // the ledger is its one home: a second store for the same number could
+  // only drift from it. `null` means absent, never a stand-in — callers
+  // decide what to do without one.
   #getThreshold(): number | null {
-    return this.#getThresholds()[this.#device.id] ?? null
-  }
-
-  #getThresholds(): Thresholds {
-    return this.#app.thresholds
+    return this.#app.adjustments[this.#device.id]?.previous ?? null
   }
 
   // The current target temperature seeds the user threshold; a manual
@@ -267,16 +256,7 @@ export class MELCloudListener {
 
   async #setThreshold(value: number): Promise<void> {
     const { id, name } = this.#device
-    this.#app.thresholds = { ...this.#app.thresholds, [id]: value }
-    // The comfort setpoint is also what this app owes back: the value
-    // found when engaging, then whatever the user chooses afterwards.
-    // Recording it here keeps ONE writer for `previous`, and keeps the
-    // debt readable even when the threshold map cannot be.
-    const adjustment = this.#app.adjustments[id]
-    this.#app.recordAdjustment(id, {
-      previous: value,
-      written: adjustment?.written ?? value,
-    })
+    this.#app.recordComfort(id, value)
     this.#app.pushToUI('saved', { name, value: formatTemperature(value) })
     await this.setTargetTemperature()
   }

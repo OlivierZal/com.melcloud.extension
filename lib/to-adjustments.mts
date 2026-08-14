@@ -12,7 +12,7 @@ const isEntry = (entry: [string, unknown]): entry is [string, Adjustment] => {
 }
 
 // Sanitizes the persisted outstanding adjustments, on the same contract
-// as `toThresholds`: the container is all-or-nothing, an entry is
+// as `toOutdoorSources`: the container is all-or-nothing, an entry is
 // individual, and `null` is returned rather than `{}` so "nothing
 // stored" stays distinguishable.
 //

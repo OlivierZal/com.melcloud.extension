@@ -19,7 +19,6 @@ import { toDeviceGroups } from './lib/to-device-groups.mts'
 import { toListenerData } from './lib/to-listener-data.mts'
 import { toOutdoorSources } from './lib/to-outdoor-sources.mts'
 import { toTemperature } from './lib/to-temperature.mts'
-import { toThresholds } from './lib/to-thresholds.mts'
 import { toTimestampedLogs } from './lib/to-timestamped-logs.mts'
 import { CapabilityOutdoorSource } from './listeners/capability-source.mts'
 import { ListenerError } from './listeners/error.mts'
@@ -33,7 +32,6 @@ import {
   type Names,
   type OutdoorSources,
   type TemperatureListenerData,
-  type Thresholds,
   type TimestampedLog,
   COOL,
   DISABLED_SOURCE,
@@ -109,14 +107,6 @@ export default class MELCloudExtensionApp extends App {
 
   public get temperatureSensors(): HomeyAPIV3Local.ManagerDevices.Device[] {
     return this.#temperatureSensors
-  }
-
-  public get thresholds(): Thresholds {
-    return toThresholds(this.homey.settings.get('thresholds')) ?? {}
-  }
-
-  public set thresholds(value: Thresholds) {
-    this.homey.settings.set('thresholds', value)
   }
 
   #api!: HomeyAPIV3Local
@@ -208,12 +198,21 @@ export default class MELCloudExtensionApp extends App {
     this.#persistLog(newLog)
   }
 
-  // Records the debt a write creates: `previous` is what the device held
-  // before this app touched it in the current cooling cycle, `written`
-  // what went out. It lives in settings rather than in the listener,
-  // because settling it must outlive the listener that made it.
-  public recordAdjustment(deviceId: string, adjustment: Adjustment): void {
-    this.adjustments = { ...this.adjustments, [deviceId]: adjustment }
+  // The comfort setpoint: what the device held when this app engaged,
+  // then whatever the user chooses afterwards. It is also exactly what
+  // is owed back, so the ledger is its one home — a second store for the
+  // same number could only drift from it.
+  public recordComfort(deviceId: string, previous: number): void {
+    const { written = previous } = this.adjustments[deviceId] ?? {}
+    this.#recordAdjustment(deviceId, { previous, written })
+  }
+
+  // Records what actually reached the device. A record cleared
+  // underneath the write (a settlement racing it) restarts the debt from
+  // the value going out, rather than inventing an older one.
+  public recordWrite(deviceId: string, written: number): void {
+    const { previous = written } = this.adjustments[deviceId] ?? {}
+    this.#recordAdjustment(deviceId, { previous, written })
   }
 
   // Building grouping served by com.melcloud's inter-app API; anything
@@ -564,6 +563,12 @@ export default class MELCloudExtensionApp extends App {
   #reconcileSourceEntries(): void {
     this.#migrateLegacySource()
     this.#seedOutdoorSources()
+  }
+
+  // The ledger lives in settings rather than in the listener, because
+  // settling a debt must outlive the listener that ran it up.
+  #recordAdjustment(deviceId: string, adjustment: Adjustment): void {
+    this.adjustments = { ...this.adjustments, [deviceId]: adjustment }
   }
 
   async #restartAdjustment(payload?: unknown): Promise<void> {

@@ -907,6 +907,22 @@ describe(MELCloudExtensionApp, () => {
         },
       })
 
+    // A settlement racing a write clears the record from under it: the
+    // debt restarts from the value going out rather than inventing an
+    // older one to give back.
+    it('should restart a debt whose record vanished mid-write', async () => {
+      const { classicDevice } = createDevices()
+      const { app, mockHomey } = await createHarness([classicDevice], {
+        settings: { hasSeededOutdoorSources: true, isEnabled: false },
+      })
+
+      app.recordWrite('classic-1', 26)
+
+      expect(mockHomey.settingsStore.adjustments).toStrictEqual({
+        'classic-1': { previous: 26, written: 26 },
+      })
+    })
+
     it('should write nothing for a device it owes nothing', async () => {
       const { classicDevice } = createDevices()
       const { app } = await createHarness([classicDevice], {
