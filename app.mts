@@ -10,11 +10,15 @@ import { Temporal } from 'temporal-polyfill'
 
 import type { OutdoorSource } from './listeners/outdoor-source.mts'
 import { changelog } from './files.mts'
+import { formatTemperature } from './lib/format-temperature.mts'
 import { toJoinKey } from './lib/group-devices.mts'
 import { type Homey, App } from './lib/homey.mts'
+import { settleAll } from './lib/settle-all.mts'
+import { toAdjustments } from './lib/to-adjustments.mts'
 import { toDeviceGroups } from './lib/to-device-groups.mts'
 import { toListenerData } from './lib/to-listener-data.mts'
 import { toOutdoorSources } from './lib/to-outdoor-sources.mts'
+import { toTemperature } from './lib/to-temperature.mts'
 import { toThresholds } from './lib/to-thresholds.mts'
 import { toTimestampedLogs } from './lib/to-timestamped-logs.mts'
 import { CapabilityOutdoorSource } from './listeners/capability-source.mts'
@@ -22,6 +26,8 @@ import { ListenerError } from './listeners/error.mts'
 import { MELCloudListener } from './listeners/melcloud.mts'
 import { WeatherOutdoorSource } from './listeners/weather-source.mts'
 import {
+  type Adjustment,
+  type Adjustments,
   type DeviceGroups,
   type ListenerParams,
   type Names,
@@ -29,8 +35,11 @@ import {
   type TemperatureListenerData,
   type Thresholds,
   type TimestampedLog,
+  COOL,
   DISABLED_SOURCE,
   MEASURE_TEMPERATURE,
+  TARGET_TEMPERATURE,
+  THERMOSTAT_MODE,
 } from './types.mts'
 
 // The MELCloud app id is com.mecloud (historical typo). AC units come from
@@ -53,6 +62,15 @@ const WEATHER_SOURCE_KEY = 'homey:weather'
 // sensors, then manages automatic cooling adjustment listeners.
 export default class MELCloudExtensionApp extends App {
   declare public readonly homey: Homey.Homey
+
+  // Sanitized and fresh on every read, like the other persisted maps.
+  public get adjustments(): Adjustments {
+    return toAdjustments(this.homey.settings.get('adjustments')) ?? {}
+  }
+
+  public set adjustments(value: Adjustments) {
+    this.homey.settings.set('adjustments', value)
+  }
 
   public get api(): HomeyAPIV3Local {
     return this.#api
@@ -105,13 +123,22 @@ export default class MELCloudExtensionApp extends App {
 
   #deviceGroups: DeviceGroups | null = null
 
-  readonly #deviceListeners: MELCloudListener[] = []
+  // Keyed by device id so a listener always has exactly one owner: an
+  // array cleared by length reset strands the listener an overlapping
+  // restart pushed after the clear, and a stranded listener keeps
+  // writing setpoints nobody can settle.
+  readonly #deviceListeners = new Map<string, MELCloudListener>()
 
   #initTimeout: NodeJS.Timeout | null = null
 
   #melcloudApp!: ApiApp
 
   readonly #melcloudDevices: HomeyAPIV3Local.ManagerDevices.Device[] = []
+
+  // Tail of the restart queue. It may reject: the next caller catches it
+  // before running, and the caller that raised it awaits it too, so the
+  // rejection is always handled exactly once.
+  #restarting: Promise<void> = Promise.resolve()
 
   // Keyed by source path, memoizing the IN-FLIGHT creation (not the
   // result): devices of one building fan out concurrently and must
@@ -152,35 +179,17 @@ export default class MELCloudExtensionApp extends App {
   // Starts or restarts automatic cooling adjustment. A device whose
   // source fails to validate is reported and skipped; the others keep
   // running.
+  //
+  // Restarts are SERIALIZED, because one is a critical section: it tears
+  // every listener down, settles what is owed, then rebuilds from the
+  // settings. Two overlapping runs — a device event landing on a
+  // settings apply — would race for the same slots, one installing a
+  // listener the other had already decided to replace, and that listener
+  // would keep writing setpoints with nobody left able to settle it.
   public async autoAdjustCooling(payload?: unknown): Promise<void> {
-    const { isEnabled, outdoorSources } =
-      payload === undefined
-        ? this.#getStoredListenerData()
-        : toListenerData(payload)
-    await this.#destroyListeners()
-    this.homey.settings.set('isEnabled', isEnabled)
-    // Merged, never replaced: the settings page builds this payload from
-    // the devices it DISPLAYED, so a partial device list would drop the
-    // entries of the others. Merging is also the whole truth about this
-    // map — no key is ever legitimately removed (disabling a source is a
-    // value, `DISABLED_SOURCE`, not an absent entry), which is the same
-    // reason orphan entries are left alone.
-    this.outdoorSources = { ...this.outdoorSources, ...outdoorSources }
-    if (!isEnabled) {
-      return
-    }
-    // The restart routes from the merged map for the same reason: a
-    // device the payload omits keeps its stored source instead of
-    // falling back to Homey weather — or restarting at all, when the
-    // store disables it.
-    const sources = this.outdoorSources
-    await Promise.all(
-      this.#melcloudDevices
-        .filter(({ id }) => sources[id] !== DISABLED_SOURCE)
-        .map(async (device) =>
-          this.#listenToDevice(device, sources[device.id] ?? null),
-        ),
-    )
+    const restart = this.#queueRestart(this.#restarting, payload)
+    this.#restarting = restart
+    await restart
   }
 
   // Parses "category.messageId" (e.g. "error.notFound") into a log entry
@@ -200,6 +209,14 @@ export default class MELCloudExtensionApp extends App {
     this.#persistLog(newLog)
   }
 
+  // Records the debt a write creates: `previous` is what the device held
+  // before this app touched it in the current cooling cycle, `written`
+  // what went out. It lives in settings rather than in the listener,
+  // because settling it must outlive the listener that made it.
+  public recordAdjustment(deviceId: string, adjustment: Adjustment): void {
+    this.adjustments = { ...this.adjustments, [deviceId]: adjustment }
+  }
+
   // Building grouping served by com.melcloud's inter-app API; anything
   // off (older app version, not installed, bad payload) reads as "no
   // grouping" and the settings fall back to the per-device list.
@@ -209,6 +226,26 @@ export default class MELCloudExtensionApp extends App {
   public async refreshDeviceGroups(): Promise<DeviceGroups | null> {
     this.#deviceGroups = await this.#fetchDeviceGroups()
     return this.#deviceGroups
+  }
+
+  // Gives a device back what this app took from it, then clears the
+  // debt. Two refusals, both deliberate: a setpoint that no longer holds
+  // our own value carries a decision the user made after ours, so it
+  // stands; and an unreadable setpoint settles nothing, leaving the debt
+  // for a later pass rather than commanding a temperature blind.
+  public async revertAdjustment(
+    device: HomeyAPIV3Local.ManagerDevices.Device,
+  ): Promise<void> {
+    const adjustment = this.adjustments[device.id]
+    if (adjustment !== undefined) {
+      await this.#settleAdjustment(device, adjustment)
+    }
+  }
+
+  #clearAdjustment(deviceId: string): void {
+    const adjustments = { ...this.adjustments }
+    Reflect.deleteProperty(adjustments, deviceId)
+    this.adjustments = adjustments
   }
 
   #createNotification(): void {
@@ -247,10 +284,17 @@ export default class MELCloudExtensionApp extends App {
 
   async #destroyListeners(): Promise<void> {
     this.pushToUI('cleanedAll')
-    await Promise.all(
-      this.#deviceListeners.map(async (listener) => listener.destroy()),
+    // One device failing to release must not abandon the restart: the
+    // steps after this one — settling the outstanding adjustments above
+    // all — are exactly what repairs such a failure.
+    await settleAll(
+      this.#deviceListeners
+        .values()
+        .map(async (listener) => listener.destroy()),
+      this,
+      'Failed to destroy a device listener',
     )
-    this.#deviceListeners.length = 0
+    this.#deviceListeners.clear()
     await Promise.all(
       this.#sources.values().map(async (source) => {
         try {
@@ -370,6 +414,20 @@ export default class MELCloudExtensionApp extends App {
     }, INIT_DELAY)
   }
 
+  // A device this cycle still adjusts stays owed; anything else is
+  // settled. An unreadable mode leaves the debt alone: "I could not
+  // check" must never read as "it stopped cooling".
+  async #isStale(
+    device: HomeyAPIV3Local.ManagerDevices.Device,
+    adjustableIds: ReadonlySet<string>,
+  ): Promise<boolean> {
+    if (!adjustableIds.has(device.id)) {
+      return true
+    }
+    const mode = await this.#readCapability(device.id, THERMOSTAT_MODE)
+    return mode !== null && mode !== COOL
+  }
+
   async #listenToDevice(
     device: HomeyAPIV3Local.ManagerDevices.Device,
     sourcePath: string | null,
@@ -377,7 +435,7 @@ export default class MELCloudExtensionApp extends App {
     try {
       const source = await this.#getSource(sourcePath)
       const listener = new MELCloudListener(this, device, source)
-      this.#deviceListeners.push(listener)
+      this.#deviceListeners.set(device.id, listener)
       await listener.listenToThermostatMode()
     } catch (error) {
       if (error instanceof ListenerError) {
@@ -438,12 +496,135 @@ export default class MELCloudExtensionApp extends App {
     )
   }
 
+  // Waits for the restart ahead of it, whatever became of it: that one's
+  // failure belongs to its own caller, and must not keep this one from
+  // running. Each caller awaits its own restart, so no rejection here
+  // goes unhandled.
+  async #queueRestart(
+    previous: Promise<void>,
+    payload?: unknown,
+  ): Promise<void> {
+    try {
+      await previous
+    } catch {
+      // Reported where it was raised.
+    }
+    await this.#restartAdjustment(payload)
+  }
+
+  // A failed read reads as absent rather than throwing: every caller
+  // treats "unknown" as a reason to leave the device alone.
+  async #readCapability(
+    deviceId: string,
+    capabilityId: string,
+  ): Promise<boolean | number | string | null> {
+    try {
+      return await this.#api.devices.getCapabilityValue({
+        capabilityId,
+        deviceId,
+      })
+    } catch {
+      return null
+    }
+  }
+
+  // The correctness half of the design: the capability listeners give
+  // latency, this gives the guarantee. Every adjustment still on record
+  // is re-judged against the LIVE state, so a debt survives a lost
+  // realtime event, a crash-restart, an orphaned listener or a device
+  // opted out of adjustment — none of which any listener would report.
+  async #reconcileAdjustments(
+    adjustableIds: ReadonlySet<string>,
+  ): Promise<void> {
+    const devicesById = new Map(
+      this.#melcloudDevices.map((device) => [device.id, device] as const),
+    )
+    const settled = await Promise.all(
+      Object.keys(this.adjustments).map(async (deviceId) => {
+        // A device Homey no longer knows has nothing to be written to;
+        // its entry is inert and deliberately left in place.
+        const device = devicesById.get(deviceId)
+        return device !== undefined &&
+          (await this.#isStale(device, adjustableIds))
+          ? device
+          : null
+      }),
+    )
+    await settleAll(
+      settled
+        .filter((device) => device !== null)
+        .map(async (device) => this.revertAdjustment(device)),
+      this,
+      'Failed to settle an outstanding adjustment',
+    )
+  }
+
   // Brings the per-device source entries in line with the freshly
   // loaded device set: the legacy single-source form migrates first so
   // seeding sees its result, and newcomers start disabled (opt-in).
   #reconcileSourceEntries(): void {
     this.#migrateLegacySource()
     this.#seedOutdoorSources()
+  }
+
+  async #restartAdjustment(payload?: unknown): Promise<void> {
+    const { isEnabled, outdoorSources } =
+      payload === undefined
+        ? this.#getStoredListenerData()
+        : toListenerData(payload)
+    await this.#destroyListeners()
+    this.homey.settings.set('isEnabled', isEnabled)
+    // Merged, never replaced: the settings page builds this payload from
+    // the devices it DISPLAYED, so a partial device list would drop the
+    // entries of the others. Merging is also the whole truth about this
+    // map — no key is ever legitimately removed (disabling a source is a
+    // value, `DISABLED_SOURCE`, not an absent entry), which is the same
+    // reason orphan entries are left alone.
+    this.outdoorSources = { ...this.outdoorSources, ...outdoorSources }
+    // The restart routes from the merged map for the same reason: a
+    // device the payload omits keeps its stored source instead of
+    // falling back to Homey weather — or restarting at all, when the
+    // store disables it.
+    const sources = this.outdoorSources
+    const adjustable = isEnabled
+      ? this.#melcloudDevices.filter(
+          ({ id }) => sources[id] !== DISABLED_SOURCE,
+        )
+      : []
+    // Settling comes BEFORE the new listeners: a device this cycle no
+    // longer adjusts — disabled app, opted-out source, or simply not
+    // cooling any more — gets back what it was owed, whether or not any
+    // listener ever witnessed it leaving.
+    await this.#reconcileAdjustments(new Set(adjustable.map(({ id }) => id)))
+    await Promise.all(
+      adjustable.map(async (device) =>
+        this.#listenToDevice(device, sources[device.id] ?? null),
+      ),
+    )
+  }
+
+  // The debt is cleared only once the device has actually taken its
+  // value back: a failed write keeps it on record for a later pass.
+  async #restoreTemperature(
+    device: HomeyAPIV3Local.ManagerDevices.Device,
+    value: number,
+  ): Promise<void> {
+    try {
+      await device.setCapabilityValue({
+        capabilityId: TARGET_TEMPERATURE,
+        value,
+      })
+      this.#clearAdjustment(device.id)
+      this.pushToUI('reverted', {
+        name: device.name,
+        value: formatTemperature(value),
+      })
+    } catch {
+      this.pushToUI('error.notFound', {
+        idOrName: device.name,
+        type: this.names.device,
+      })
+    }
   }
 
   // Every known AC device gets an EXPLICIT outdoor-source entry, so a
@@ -465,6 +646,27 @@ export default class MELCloudExtensionApp extends App {
     if (isLegacySeed) {
       this.homey.settings.set('hasSeededOutdoorSources', true)
     }
+  }
+
+  async #settleAdjustment(
+    device: HomeyAPIV3Local.ManagerDevices.Device,
+    adjustment: Adjustment,
+  ): Promise<void> {
+    const current = toTemperature(
+      await this.#readCapability(device.id, TARGET_TEMPERATURE),
+    )
+    if (current === null) {
+      return
+    }
+    if (current !== adjustment.written) {
+      this.pushToUI('kept', {
+        name: device.name,
+        value: formatTemperature(current),
+      })
+      this.#clearAdjustment(device.id)
+      return
+    }
+    await this.#restoreTemperature(device, adjustment.previous)
   }
 
   // The sibling vote reads a pre-seed snapshot, never the map being

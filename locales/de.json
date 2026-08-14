@@ -8,7 +8,8 @@
     "notFound": "__type__ `__idOrName__` nicht gefunden",
     "noThreshold": "Keine gespeicherte Solltemperatur für __name__: es wurde kein Befehl gesendet",
     "reverted": "Temperatur von __name__ wird zurückgesetzt: __value__",
-    "saved": "Temperatur von __name__ wird gespeichert: __value__"
+    "saved": "Temperatur von __name__ wird gespeichert: __value__",
+    "kept": "Temperatur von __name__ beibehalten: __value__ wurde nach der Anpassung eingestellt"
   },
   "names": {
     "device": "Gerät",

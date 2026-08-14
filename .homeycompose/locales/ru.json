@@ -4,6 +4,7 @@
     "cleaned": "Удаление слушателя __capability__ у __name__",
     "cleanedAll": "Удаление всех слушателей",
     "created": "Создание слушателя __capability__ у __name__",
+    "kept": "Сохранение температуры __name__: __value__ была задана после регулировки",
     "listened": "Отслеживание __capability__ у __name__: __value__",
     "noThreshold": "Нет сохранённой температуры для __name__: команда не отправлена",
     "notFound": "Не найдено: __type__ `__idOrName__`",

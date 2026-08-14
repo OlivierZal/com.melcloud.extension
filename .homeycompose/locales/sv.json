@@ -4,6 +4,7 @@
     "cleaned": "Rensar lyssnare för __capability__ av __name__",
     "cleanedAll": "Rensar alla lyssnare",
     "created": "Skapar en lyssnare för __capability__ av __name__",
+    "kept": "Behåller temperaturen för __name__: __value__ ställdes in efter justeringen",
     "listened": "Lyssnar på __capability__ av __name__: __value__",
     "noThreshold": "Ingen sparad temperatur för __name__: inget kommando skickades",
     "notFound": "__type__ `__idOrName__` hittades inte",

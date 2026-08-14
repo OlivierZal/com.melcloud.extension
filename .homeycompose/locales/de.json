@@ -4,6 +4,7 @@
     "cleaned": "Listener für __capability__ von __name__ wird entfernt",
     "cleanedAll": "Alle Listener werden entfernt",
     "created": "Listener für __capability__ von __name__ wird erstellt",
+    "kept": "Temperatur von __name__ beibehalten: __value__ wurde nach der Anpassung eingestellt",
     "listened": "__capability__ von __name__ wird überwacht: __value__",
     "noThreshold": "Keine gespeicherte Solltemperatur für __name__: es wurde kein Befehl gesendet",
     "notFound": "__type__ `__idOrName__` nicht gefunden",

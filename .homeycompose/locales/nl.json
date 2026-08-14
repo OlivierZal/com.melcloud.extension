@@ -4,6 +4,7 @@
     "cleaned": "Opschonen van de luisteraar voor __capability__ van __name__",
     "cleanedAll": "Opschonen van alle luisteraars",
     "created": "Aanmaken van een luisteraar voor __capability__ van __name__",
+    "kept": "Temperatuur van __name__ behouden: __value__ is na de aanpassing ingesteld",
     "listened": "Luisteren naar __capability__ van __name__: __value__",
     "noThreshold": "Geen opgeslagen temperatuur voor __name__: er is niets verstuurd",
     "notFound": "__type__ `__idOrName__` niet gevonden",

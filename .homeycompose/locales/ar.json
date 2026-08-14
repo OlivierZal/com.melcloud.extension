@@ -4,6 +4,7 @@
     "cleaned": "إزالة المستمع لـ __capability__ في __name__",
     "cleanedAll": "إزالة جميع المستمعين",
     "created": "إنشاء مستمع لـ __capability__ في __name__",
+    "kept": "الحفاظ على درجة حرارة __name__: تم ضبط __value__ بعد التعديل",
     "listened": "الاستماع إلى __capability__ في __name__: __value__",
     "noThreshold": "لا توجد درجة حرارة مرجعية محفوظة لـ __name__: لم يتم إرسال أي أمر",
     "notFound": "__type__ `__idOrName__` غير موجود",

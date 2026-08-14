@@ -4,6 +4,7 @@
     "cleaned": "Nettoyage de l'écouteur pour __capability__ de __name__",
     "cleanedAll": "Nettoyage de tous les écouteurs",
     "created": "Création d'un écouteur pour __capability__ de __name__",
+    "kept": "Conservation de la température de __name__ : __value__ a été réglée après l'ajustement",
     "listened": "Écoute de __capability__ de __name__ : __value__",
     "noThreshold": "Aucune température enregistrée pour __name__ : aucune commande envoyée",
     "notFound": "__type__ `__idOrName__` introuvable",

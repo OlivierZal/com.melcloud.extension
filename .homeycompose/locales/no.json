@@ -4,6 +4,7 @@
     "cleaned": "Rengjør lytter for __capability__ av __name__",
     "cleanedAll": "Rengjør alle lyttere",
     "created": "Oppretter en lytter for __capability__ av __name__",
+    "kept": "Beholder temperaturen for __name__: __value__ ble stilt inn etter justeringen",
     "listened": "Lytter til __capability__ av __name__: __value__",
     "noThreshold": "Ingen lagret temperatur for __name__: ingen kommando ble sendt",
     "notFound": "__type__ `__idOrName__` ikke funnet",

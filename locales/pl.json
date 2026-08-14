@@ -8,7 +8,8 @@
     "notFound": "Nie znaleziono: __type__ `__idOrName__`",
     "noThreshold": "Brak zapisanej temperatury dla __name__: nie wysłano żadnego polecenia",
     "reverted": "Przywracanie temperatury __name__: __value__",
-    "saved": "Zapisywanie temperatury __name__: __value__"
+    "saved": "Zapisywanie temperatury __name__: __value__",
+    "kept": "Zachowanie temperatury __name__: __value__ ustawiono po regulacji"
   },
   "names": {
     "device": "Urządzenie",

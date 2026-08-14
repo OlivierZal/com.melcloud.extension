@@ -8,7 +8,8 @@
     "notFound": "__type__ `__idOrName__` introuvable",
     "noThreshold": "Aucune température enregistrée pour __name__ : aucune commande envoyée",
     "reverted": "Rétablissement de la température de __name__ : __value__",
-    "saved": "Enregistrement de la température de __name__ : __value__"
+    "saved": "Enregistrement de la température de __name__ : __value__",
+    "kept": "Conservation de la température de __name__ : __value__ a été réglée après l'ajustement"
   },
   "names": {
     "device": "L'appareil",

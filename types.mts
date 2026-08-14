@@ -1,5 +1,10 @@
 export const MEASURE_TEMPERATURE = 'measure_temperature'
 export const OUTDOOR_TEMPERATURE = 'measure_temperature.outdoor'
+export const TARGET_TEMPERATURE = 'target_temperature'
+export const THERMOSTAT_MODE = 'thermostat_mode'
+
+// The one mode the cooling adjustment acts on
+export const COOL = 'cool'
 
 export interface AdjustableDevice {
   readonly id: string
@@ -14,6 +19,20 @@ export interface AdjustableGroup {
   readonly name: string | null
 }
 
+// What a device held before an adjustment, and what was written over it.
+// `written` is what lets a later settlement tell our own value from one
+// the user has since chosen.
+export interface Adjustment {
+  readonly previous: number
+  readonly written: number
+}
+
+// The outstanding adjustments, by device id: the debt this app owes back
+// to the devices it wrote on. Persisted, because an adjustment outlives
+// the listener that made it — a restart, a lost realtime event or a
+// device leaving cooling unobserved must not strand a setpoint.
+export type Adjustments = Partial<Record<string, Adjustment>>
+
 // Payload served by com.melcloud's /devices/groups endpoint
 export type DeviceGroups = readonly {
   readonly deviceIds: readonly string[]
@@ -21,6 +40,7 @@ export type DeviceGroups = readonly {
 }[]
 
 export interface HomeySettings {
+  readonly adjustments?: Adjustments | null
   readonly capabilityPath?: string | null
   readonly hasSeededOutdoorSources?: boolean | null
   readonly isEnabled?: boolean | null

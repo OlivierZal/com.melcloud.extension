@@ -4,6 +4,7 @@
     "cleaned": "Cleaning listener for __capability__ of __name__",
     "cleanedAll": "Cleaning all listeners",
     "created": "Creating a listener for __capability__ of __name__",
+    "kept": "Keeping the temperature of __name__: __value__ was set after the adjustment",
     "listened": "Listening to __capability__ of __name__: __value__",
     "noThreshold": "No stored temperature for __name__: nothing was sent to the unit",
     "notFound": "__type__ `__idOrName__` not found",
