@@ -123,10 +123,9 @@ export default class MELCloudExtensionApp extends App {
 
   #deviceGroups: DeviceGroups | null = null
 
-  // Keyed by device id so a listener always has exactly one owner: an
-  // array cleared by length reset strands the listener an overlapping
-  // restart pushed after the clear, and a stranded listener keeps
-  // writing setpoints nobody can settle.
+  // Keyed by device id: exactly one listener owns a device at a time,
+  // and a listener nothing owns keeps writing setpoints nobody can
+  // settle.
   readonly #deviceListeners = new Map<string, MELCloudListener>()
 
   #initTimeout: NodeJS.Timeout | null = null

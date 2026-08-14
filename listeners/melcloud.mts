@@ -139,6 +139,16 @@ export class MELCloudListener {
     })
   }
 
+  // A setpoint still holding this app's own last write is not a user
+  // choice, so it must not become the comfort value: what the device
+  // held before that write is the one the ledger remembers. This is the
+  // path a crash-restart takes, with the auto-calculated value still on
+  // the unit.
+  #comfortTemperature(found: number): number {
+    const adjustment = this.#app.adjustments[this.#device.id]
+    return adjustment?.written === found ? adjustment.previous : found
+  }
+
   async #destroyTemperature(): Promise<void> {
     if (this.#targetTemperatureListener === null) {
       return
@@ -215,11 +225,9 @@ export class MELCloudListener {
     const temperature = toTemperature(
       await this.#getCapabilityValue(TARGET_TEMPERATURE),
     )
-    // A setpoint this app cannot read is a setpoint it cannot give back,
-    // so the device is left alone instead of being adjusted into a debt
-    // that could never be repaid. `Number()` used to turn the same
-    // absence into 0 or NaN, and a NaN threshold vanished on its next
-    // read — silently disarming the restore.
+    // A setpoint this app cannot read is one it cannot give back, so the
+    // device is left alone rather than adjusted into a debt that could
+    // never be repaid.
     if (temperature === null) {
       this.#refuseUnreadableSetpoint()
       return
@@ -247,7 +255,7 @@ export class MELCloudListener {
       capability: this.#names.temperature,
       name: this.#device.name,
     })
-    await this.#setThreshold(temperature)
+    await this.#setThreshold(this.#comfortTemperature(temperature))
   }
 
   // Leaving the source too: an unadjusted device must not hold a watcher

@@ -332,6 +332,31 @@ describe(MELCloudListener, () => {
     )
   })
 
+  // The path a crash-restart takes: the app comes back with its own
+  // auto-calculated value still on the unit, and must not mistake it for
+  // a setpoint the user chose.
+  it('should reclaim the comfort value when the device still holds our write', async () => {
+    const harness = createHarness({ targetTemperature: 26 })
+    Object.assign(harness.settingsStore, {
+      adjustments: { 'ac-1': { previous: 21, written: 26 } },
+    })
+
+    await harness.listener.listenToThermostatMode()
+
+    expect(harness.settingsStore.thresholds).toStrictEqual({ 'ac-1': 21 })
+  })
+
+  it('should adopt a setpoint the user moved while the app was away', async () => {
+    const harness = createHarness({ targetTemperature: 24 })
+    Object.assign(harness.settingsStore, {
+      adjustments: { 'ac-1': { previous: 21, written: 26 } },
+    })
+
+    await harness.listener.listenToThermostatMode()
+
+    expect(harness.settingsStore.thresholds).toStrictEqual({ 'ac-1': 24 })
+  })
+
   it('should record the written value as the debt', async () => {
     const harness = createHarness({ outdoorTemperature: 38 })
 
