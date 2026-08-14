@@ -808,5 +808,20 @@
     "pl": "Naprawia problem z uruchamianiem aplikacji na Homey Pro (2016 – 2019) ze starszym oprogramowaniem.",
     "ru": "Исправлен запуск приложения на Homey Pro (2016 – 2019) со старой прошивкой.",
     "sv": "Åtgärdar att appen inte startade på Homey Pro (2016 – 2019) med äldre firmware."
+  },
+  "25.3.3": {
+    "ar": "يستعيد التطبيق الآن دائمًا درجة الحرارة التي ضبطتها عند توقّف الضبط التلقائي، حتى بعد إعادة تشغيل أو انقطاع اتصال أو إيقاف وحدة دون أن يلاحظ ذلك.",
+    "da": "Appen gendanner nu altid din egen temperatur, når den automatiske justering stopper – også efter en genstart, en afbrydelse eller en enhed, der blev slukket, uden at appen så det.",
+    "de": "Die App stellt Ihre eigene Temperatur jetzt immer wieder her, wenn die automatische Anpassung endet – auch nach einem Neustart, einer Unterbrechung oder einem Gerät, das unbemerkt ausgeschaltet wurde.",
+    "en": "The app now always restores your own temperature when the automatic adjustment stops — including after a restart, a disconnection, or a unit switched off without the app noticing.",
+    "es": "La aplicación ahora restaura siempre tu propia temperatura cuando el ajuste automático se detiene, incluso tras un reinicio, una desconexión o una unidad apagada sin que la aplicación lo viera.",
+    "fr": "L'app rétablit désormais toujours votre propre température lorsque l'ajustement automatique s'arrête, y compris après un redémarrage, une coupure ou une unité éteinte sans qu'elle l'ait vu.",
+    "it": "L'app ripristina ora sempre la tua temperatura quando la regolazione automatica si interrompe, anche dopo un riavvio, una disconnessione o un'unità spenta senza che se ne accorgesse.",
+    "ko": "이제 자동 조절이 멈추면 앱이 항상 사용자가 설정한 온도를 복원합니다. 재시작, 연결 끊김, 앱이 알아채지 못한 사이 꺼진 기기의 경우에도 마찬가지입니다.",
+    "nl": "De app herstelt nu altijd je eigen temperatuur wanneer de automatische aanpassing stopt, ook na een herstart, een onderbreking of een apparaat dat werd uitgeschakeld zonder dat de app het zag.",
+    "no": "Appen gjenoppretter nå alltid din egen temperatur når den automatiske justeringen stopper – også etter en omstart, et brudd eller en enhet som ble slått av uten at appen så det.",
+    "pl": "Aplikacja zawsze przywraca teraz Twoją własną temperaturę, gdy automatyczna regulacja się kończy — także po restarcie, przerwaniu połączenia lub wyłączeniu urządzenia bez jej wiedzy.",
+    "ru": "Теперь приложение всегда восстанавливает заданную вами температуру после остановки автоматической регулировки — в том числе после перезапуска, обрыва связи или выключения устройства незаметно для него.",
+    "sv": "Appen återställer nu alltid din egen temperatur när den automatiska justeringen upphör – även efter en omstart, ett avbrott eller en enhet som stängdes av utan att appen såg det."
   }
 }
