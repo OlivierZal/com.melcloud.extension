@@ -52,7 +52,13 @@ Run the FULL suite before any push — CI runs all of it:
   cover formatting).
 - `npm run lint` / `npm run lint:fix` — ESLint (also lints CSS, HTML,
   JSON, YAML and Markdown via the language plugins).
-- `npm run typecheck` — `tsc` from `@typescript/native` (TypeScript 7).
+- `npm run typecheck` — the native TypeScript 7 compiler, reached by
+  its explicit path, `node ./node_modules/@typescript/native/bin/tsc`
+  (`build` spells out the same path). Keep the path explicit: the
+  native package ships no `.bin` shim, and the `tsc` and `tsc6` shims
+  that do exist come from the compat package `@typescript/typescript6`
+  and run TypeScript 6 — a bare `tsc` would silently typecheck on the
+  wrong compiler.
 - `npm test` / `npm run test:coverage` — vitest; backend coverage is at
   100% (branches included), keep it there. `settings/` is browser glue
   and excluded.

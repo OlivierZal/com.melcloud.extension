@@ -38,7 +38,7 @@ caught failures the others miss:
 ```sh title="checks"
 npm run format          # prettier --check (npm run format:fix to write)
 npm run lint            # ESLint, including CSS and HTML
-npm run typecheck       # native tsc --noEmit
+npm run typecheck       # native TypeScript 7 compiler, --noEmit
 npm test                # vitest run
 npm run test:coverage   # must remain at 100% on all four axes
 npm run build           # esbuild bundle + tsc emit, both into .homeybuild
