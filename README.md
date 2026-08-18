@@ -50,7 +50,7 @@ Architecture notes:
 
 - The MELCloud dependency is wire-level, not npm: devices are reached through Homey's local API (`homey-api`), buildings through the MELCloud app's own API (app id `com.mecloud`), and every consumed shape is sanitized at entry so version skew degrades instead of failing.
 - The settings page (`settings/`) is bundled by `scripts/bundle.mts` into a compat pair — a classic IIFE `index.js` (what the shipped HTML loads) plus an ESM twin `index.mjs` for phone-cached copies of the page (shipped bundle filenames are a compatibility contract) — emitted into `.homeybuild`, the packaged app, never into the source tree; `npm run build` produces them, and the Homey CLI runs it automatically on validate/publish.
-- Both the build and `npm run typecheck` use the native TypeScript 7 compiler (`typescript@7` aliased as `@typescript/native`) for speed; `typescript@6` remains alongside it for tools that need the JS API (typescript-eslint).
+- Both the build and `npm run typecheck` use the native TypeScript 7 compiler (`typescript@7`, aliased as `@typescript/native`); the TS6 JS API continues as `@typescript/typescript6`, installed under the `typescript` name for tools with a `typescript` peer (typescript-eslint) — the official TypeScript 6/7 side-by-side layout.
 - Test coverage is enforced at 100% for backend code; browser glue (`settings/`) is excluded from coverage.
 
 ## Disclaimer
