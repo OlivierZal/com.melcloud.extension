@@ -73,9 +73,11 @@ Run the FULL suite before any push — CI runs all of it:
   build invocation is therefore sufficient for install, run, validate
   and publish alike; a standalone suite run (no `.homeybuild` page
   copy) still proves the bundles compile.
-- Cache-busting `?v=` — a PACKAGE-TIME transform: `bundle.mts` stamps
-  every local asset reference of the `.homeybuild` page copy with a
-  content hash (`?v=<hash>`), so phone webviews (which cache assets
+- Cache-busting `?v=` — a PACKAGE-TIME transform: `bundle.mts` hands
+  the `.homeybuild` page copy to the kit's `stampPackagedPages`
+  (`@olivierzal/homey-kit/node`), which stamps every local asset
+  reference with a content hash (`?v=<hash>`) and emits the
+  `webview-hashes.json` manifest, so phone webviews (which cache assets
   across app versions) refetch an asset exactly when its bytes change.
   The committed source HTML carries NO stamps — never hand-add a `?v=`
   there, and nothing needs re-committing when a settings source changes
@@ -86,7 +88,14 @@ Run the FULL suite before any push — CI runs all of it:
   pass, and one to a real file would be stamped by the builder yet
   invisible to the page-side DOM query, splitting the two identities
   into an endless refetch handshake. Delete a dead reference, never
-  comment it out.
+  comment it out. The producer is strict on purpose: a page copy that
+  exists but cannot be read rejects, a PARTIAL tree (some page copies
+  present, some not) throws naming the missing entries, and a copy with
+  no local reference to stamp throws too; only a tree with no copy at
+  all (a standalone suite run) stamps nothing and emits no manifest.
+  This one-page app cannot trip the partial-tree guard: its single
+  mistyped `page` path reads as "no copy at all", which is why
+  `bundle.test.ts` pins the path under the `settings` manifest key.
 - `npm run homey:validate` — Homey validation at publish level; may
   rewrite files (locales), re-stage if it does.
 - `npm run homey:start` — `homey app run --remote` for on-device testing.
@@ -143,9 +152,9 @@ to judge success.
   time-bounded (10 s) with `homey.ready()` in a `finally`; `start` is
   non-throwing by construction (failure alerts go through
   `fireAndForget`). `scripts/bundle.mts` stamps every local asset
-  reference — only inside an attribute/import context, never a comment —
-  with a content hash (`?v=`): phone webviews cache assets across app
-  versions. Never load the bundle as a STATIC `<script type=module>`:
+  reference — inside an `href`/`src` attribute, HTML comments included
+  (see the cache-busting bullet under Commands) — with a content hash (`?v=`) through the kit's `stampPackagedPages`:
+  phone webviews cache assets across app versions. Never load the bundle as a STATIC `<script type=module>`:
   it stalls the whole boot on a cold open (shipped and reverted in
   com.melcloud, proven on-device there). Dynamic `import()` is merely
   unnecessary, not broken — its supposed Android fetch failures were
@@ -161,15 +170,17 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   itself (phone webviews cache the page across app versions,
   force-close included): each bundle carries a freshness handshake —
   the page's identity is the document-order join of its `?v=` stamps (a CSS-only ship moves it too), `GET /webview-hashes` serves the
-  live hashes (a manifest `bundle.mts` emits into the packaged app,
-  read by `@olivierzal/homey-kit/node`; `api.mts` passes the manifest
-  URL explicitly — the kit's default resolves against its own module,
-  which lives in `node_modules`), and a mismatch triggers ONE
-  refetch of the document through a never-cached address
-  (`?fresh=<identity>` — a bare reload can be re-served the same stale
-  document from the HTTP cache; sessionStorage guard,
-  `watchWebviewFreshness` from `@olivierzal/homey-kit/webview`), whose
-  fresh stamps pull the fresh assets;
+  live hashes (a manifest `bundle.mts` emits into the packaged app
+  through the kit's `stampPackagedPages`, read back by its
+  `getWebviewHashes` — both `@olivierzal/homey-kit/node`; `api.mts`
+  passes the manifest URL, a REQUIRED argument: a default once
+  resolved against the kit's own module in `node_modules`), and a
+  mismatch triggers ONE refetch of the document through a never-cached
+  address (`?fresh=<identity>` — a bare reload can be re-served the
+  same stale document from the HTTP cache; sessionStorage guard,
+  `watchSettingsFreshness` from `@olivierzal/homey-kit/settings`, the
+  settings page's fixed-route wiring of the `/webview` primitive
+  `watchWebviewFreshness`), whose fresh stamps pull the fresh assets;
   a mismatch that survives its refetch is reported to
   `POST /boot-error`. The guarantee lives in the BOOT check, and which
   surface needs it was measured on device (2026-08-07): the web-app
@@ -448,19 +459,31 @@ need auth.
 
 `@olivierzal/homey-kit` (exact pin, a PRODUCTION dependency — the
 manifest reader runs on the device) owns what used to be copied across
-the three apps: the dirty gate and the freshness handshake
-(`/webview`), the settings transport (`/settings`), the manifest reader
-(`/node`), `fireAndForget`/`getErrorMessage`
-(root) and the two test kernels (`/testing`). A change to any of them
-is a kit release adopted here by a pin bump — never a local edit, and
-never a re-derivation.
+the three apps: the dirty gate and the freshness primitive
+(`/webview`); the settings transport and `watchSettingsFreshness`, the
+settings page's whole handshake — the `settings` entry,
+`GET /webview-hashes`, the `POST /boot-error` breadcrumb with a
+swallowed outcome and the `webview_hashes_changed` poke — which
+`start` awaits first and skips its own init on `true` (`/settings`);
+the package-time stamp producer `stampPackagedPages` (+ `stampHtml`,
+`stampReferences`) and the manifest reader (`/node`);
+`fireAndForget`/`getErrorMessage` (root); and, under `/testing`, the
+analysis kernels — the API contract, the route guards, and the
+webview-floor closure walk `analyzeWebviewFloor` with its
+`getQuotedEntries` list reader (which throws on an empty sweep, the
+guard the suite used to carry by hand) — plus the plain test helpers
+`assertDefined`, `mock`, `settleDetached`, `getMockCallArg` and the
+`InteropModule` shape. A change to any of them is a kit release
+adopted here by a pin bump — never a local edit, and never a
+re-derivation. The three former copies (the inlined stamp producer in
+`scripts/bundle.mts`, the freshness triplet in `settings/index.mts`,
+the closure walk in `tests/unit/webview-floor.test.ts`) and the shared
+helpers in `tests/helpers.ts` were deleted at the 5.1.0 adoption.
 
 What stays local, by measurement rather than omission:
 
-- The webview `fireAndForget` in `settings/index.mts`: it surfaces in
-  the dev tools, it does not log through a logger instance. The kit's
-  node-side seam takes `(promise, logger, message)` and is what every
-  `app.mts`/`listeners/**` site uses.
+- `tests/helpers.ts` keeps only `cast`, the off-shape feeder the
+  sanitizer tests need — melcloud-api's helper, not a Homey one.
 - `lib/errors.mts` (`NotFoundError`): unlike the two sibling apps, this
   one forces `super('notFound')` and `api.mts` throws it with NO
   argument, because `settings/index.mts` matches on that exact message
@@ -474,11 +497,12 @@ What stays local, by measurement rather than omission:
   `unset`, which the generic lacks. Adopting it would loosen this app.
 - `homey-api-override.d.ts`, and the `lib/` helpers no sibling shares.
 
-`api.mts` passes the manifest URL to `getWebviewHashes` explicitly: the
-kit's default resolves `../webview-hashes.json` against its own module,
-which sits in `node_modules` — only the caller knows where the bundler
-stamped it. Dropping that argument silently disables the freshness
-handshake (the reader fails open with an empty map).
+`api.mts` passes the manifest URL to `getWebviewHashes`, a REQUIRED
+argument: only the caller knows where the bundler stamped it, and the
+inferred default the kit once had resolved `../webview-hashes.json`
+against its own module in `node_modules`, failed open with an empty
+map and silently disabled the freshness handshake. The URL stays bound
+app-side, from the app root.
 
 ## Lint doctrine
 

@@ -1,4 +1,5 @@
 import type * as HomeyApi from 'homey-api'
+import { assertDefined } from '@olivierzal/homey-kit/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type * as HomeyLib from '../../lib/homey.mts'
@@ -8,7 +9,7 @@ import type {
   TimestampedLog,
 } from '../../types.mts'
 import { changelog } from '../../files.mts'
-import { assertDefined, cast } from '../helpers.ts'
+import { cast } from '../helpers.ts'
 import {
   type MockDevice,
   type MockHomey,
@@ -24,7 +25,7 @@ const { createAppAPIMock } = vi.hoisted(() => ({
 }))
 
 vi.mock(import('../../lib/homey.mts'), async () => {
-  const { mock: mockModule } = await import('../helpers.ts')
+  const { mock: mockModule } = await import('@olivierzal/homey-kit/testing')
   class AppStub {
     public readonly error = vi.fn<(...args: unknown[]) => void>()
 
@@ -34,7 +35,7 @@ vi.mock(import('../../lib/homey.mts'), async () => {
 })
 
 vi.mock(import('homey-api'), async () => {
-  const { mock: mockModule } = await import('../helpers.ts')
+  const { mock: mockModule } = await import('@olivierzal/homey-kit/testing')
   return mockModule<typeof HomeyApi>({
     HomeyAPIV3Local: { createAppAPI: createAppAPIMock },
   })

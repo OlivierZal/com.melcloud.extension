@@ -1,10 +1,10 @@
 import type { Homey } from 'homey/lib/Homey'
+import { mock } from '@olivierzal/homey-kit/testing'
 import { describe, expect, it, vi } from 'vitest'
 
 import type MELCloudExtensionApp from '../../app.mts'
 import type { HomeySettings, TemperatureListenerData } from '../../types.mts'
 import { toOutdoorSources } from '../../lib/to-outdoor-sources.mts'
-import { mock } from '../helpers.ts'
 import { createMockDevice } from '../mocks.ts'
 import api from '../../api.mts'
 

@@ -1,9 +1,9 @@
+import { assertDefined, mock } from '@olivierzal/homey-kit/testing'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type MELCloudExtensionApp from '../../app.mts'
 import type { MELCloudListener } from '../../listeners/melcloud.mts'
 import { CapabilityOutdoorSource } from '../../listeners/capability-source.mts'
-import { assertDefined, mock } from '../helpers.ts'
 import {
   type MockDevice,
   createMockDevice,
