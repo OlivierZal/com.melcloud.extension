@@ -406,8 +406,13 @@ The shared tooling lives in `@olivierzal/configs` (exact pin): the
 eslint `homeyApp` preset (plugins are the package's dependencies — no
 plugin devDeps here; the webview floor rides its `webviewFloorFiles`
 glob), the prettier config (`"prettier"` key in package.json, no local
-file) and the `tsconfig/app` base (`outDir` stays local — paths in an
-extended tsconfig resolve against the base file inside node_modules).
+file), the `tsconfig/app` base (`outDir` stays local — paths in an
+extended tsconfig resolve against the base file inside node_modules)
+and the vitest coverage bar (`coverageDefaults` from
+`@olivierzal/configs/vitest-coverage`: the `text` + `lcov` reporters
+and the four 100 % thresholds, spread into `test.coverage`; the
+`include`/`exclude` globs stay local — which files count is per-repo
+identity, how high the bar sits is not).
 The overlay keeps ONLY per-repo verdicts: the lint ignores and the
 `**/*.d.ts` block around `homey-api-override.d.ts`. Naming comes whole
 from the family core, strict by default — properties are camelCase and
