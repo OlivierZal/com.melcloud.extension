@@ -90,10 +90,12 @@ Run the FULL suite before any push — CI runs all of it:
   into an endless refetch handshake. Delete a dead reference, never
   comment it out. The producer is strict on purpose: a page copy that
   exists but cannot be read rejects, a PARTIAL tree (some page copies
-  present, some not — a mistyped `page` path in the CLI flow) throws
-  naming the missing entries, and a copy with no local reference to
-  stamp throws too; only a tree with no copy at all (a standalone suite
-  run) stamps nothing and emits no manifest.
+  present, some not) throws naming the missing entries, and a copy with
+  no local reference to stamp throws too; only a tree with no copy at
+  all (a standalone suite run) stamps nothing and emits no manifest.
+  This one-page app cannot trip the partial-tree guard: its single
+  mistyped `page` path reads as "no copy at all", which is why
+  `bundle.test.ts` pins the path under the `settings` manifest key.
 - `npm run homey:validate` — Homey validation at publish level; may
   rewrite files (locales), re-stage if it does.
 - `npm run homey:start` — `homey app run --remote` for on-device testing.
@@ -150,8 +152,8 @@ to judge success.
   time-bounded (10 s) with `homey.ready()` in a `finally`; `start` is
   non-throwing by construction (failure alerts go through
   `fireAndForget`). `scripts/bundle.mts` stamps every local asset
-  reference — only inside an attribute/import context, never a comment —
-  with a content hash (`?v=`) through the kit's `stampPackagedPages`:
+  reference — inside an `href`/`src` attribute, HTML comments included
+  (see the cache-busting bullet under Commands) — with a content hash (`?v=`) through the kit's `stampPackagedPages`:
   phone webviews cache assets across app versions. Never load the bundle as a STATIC `<script type=module>`:
   it stalls the whole boot on a cold open (shipped and reverted in
   com.melcloud, proven on-device there). Dynamic `import()` is merely

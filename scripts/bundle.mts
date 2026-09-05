@@ -64,7 +64,9 @@ await Promise.all(
 // emits the live-hash manifest the app serves. The committed source
 // HTML stays unstamped — the copy exists only in the CLI flow (its
 // pre-process copy runs before `npm run build`); a standalone suite run
-// has no copy, stamps nothing and only proves the bundles compile,
-// while a partial tree fails the packaging pass rather than shipping a
-// release with a silently disabled handshake.
+// has no copy, stamps nothing and only proves the bundles compile. A
+// copy that exists but cannot be read, or carries no local reference,
+// fails the pass; with this app's single page a mistyped path reads as
+// "no copy at all" (`false`, the standalone answer), which is why
+// `bundle.test.ts` pins the path under the `settings` manifest key.
 await stampPackagedPages(OUT_ROOT, pages)
