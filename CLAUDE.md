@@ -406,8 +406,13 @@ The shared tooling lives in `@olivierzal/configs` (exact pin): the
 eslint `homeyApp` preset (plugins are the package's dependencies — no
 plugin devDeps here; the webview floor rides its `webviewFloorFiles`
 glob), the prettier config (`"prettier"` key in package.json, no local
-file) and the `tsconfig/app` base (`outDir` stays local — paths in an
-extended tsconfig resolve against the base file inside node_modules).
+file), the `tsconfig/app` base (`outDir` stays local — paths in an
+extended tsconfig resolve against the base file inside node_modules)
+and the vitest coverage bar (`coverageDefaults` from
+`@olivierzal/configs/vitest-coverage`: the `text` + `lcov` reporters
+and the four 100 % thresholds, spread into `test.coverage`; the
+`include`/`exclude` globs stay local — which files count is per-repo
+identity, how high the bar sits is not).
 The overlay keeps ONLY per-repo verdicts: the lint ignores and the
 `**/*.d.ts` block around `homey-api-override.d.ts`. Naming comes whole
 from the family core, strict by default — properties are camelCase and
@@ -425,7 +430,16 @@ Dependabot alerts scan continuously and carry the named, reasoned
 dismissals (an exception lives on the advisory, so it cannot outlive
 it, and this repo's `parseuri` ReDoS is dismissed there), while
 `dependency-review` judges what a PR introduces;
-`publish.yml` and `validate.yml` stay local (no reusable exists).
+`publish.yml` and `validate.yml` stay local (no reusable exists), so
+the composite action stays too — as the family's VERBATIM copy of
+`OlivierZal/configs/.github/actions/setup-node-and-install`, re-copied
+at each adoption. Whatever is app-specific travels as caller inputs,
+never as an edit to the copy: `node-version: '22'` (the Homey runtime;
+the family default is `lts/*`), the `@olivierzal` `registry-url`/`scope`
+(also what makes setup-node write the user-level `.npmrc` that
+`publish.yml` copies for the publish action), and `require-npm-token:
+'true'` with `npm-token` (the configs and homey-kit dependencies live
+on GitHub Packages, where even reads need auth).
 `.npmrc` (scope registry + `NODE_AUTH_TOKEN` auth) is load-bearing:
 the configs devDependency lives on GitHub Packages, where even reads
 need auth.
