@@ -11,6 +11,7 @@ import {
   getFieldset,
   getSelect,
 } from '@olivierzal/homey-kit/dom'
+import { mock, settleDetached } from '@olivierzal/homey-kit/testing'
 import { Temporal } from 'temporal-polyfill'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -19,7 +20,6 @@ import type {
   TemperatureSensor,
   TimestampedLog,
 } from '../../types.mts'
-import { mock, settleDetached } from '../helpers.ts'
 
 // A plain relative path: under the happy-dom environment
 // `import.meta.url` is an http URL the fs module refuses.

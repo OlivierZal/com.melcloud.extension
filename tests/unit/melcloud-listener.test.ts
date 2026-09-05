@@ -1,3 +1,4 @@
+import { assertDefined, mock } from '@olivierzal/homey-kit/testing'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type MELCloudExtensionApp from '../../app.mts'
@@ -5,7 +6,6 @@ import type { OutdoorSource } from '../../listeners/outdoor-source.mts'
 import type { Adjustment, Adjustments, HomeySettings } from '../../types.mts'
 import { toAdjustments } from '../../lib/to-adjustments.mts'
 import { MELCloudListener } from '../../listeners/melcloud.mts'
-import { assertDefined, mock } from '../helpers.ts'
 import { type MockDevice, createMockDevice, names } from '../mocks.ts'
 
 // The capability listeners run their async bodies through

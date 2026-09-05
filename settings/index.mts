@@ -11,12 +11,12 @@ import {
   homeyApiGet,
   homeyApiPut,
   homeyCallback,
+  watchSettingsFreshness,
 } from '@olivierzal/homey-kit/settings'
 import {
   createDirtyGate,
   fireAndForget,
   runWebview,
-  watchWebviewFreshness,
 } from '@olivierzal/homey-kit/webview'
 import { Temporal } from 'temporal-polyfill'
 
@@ -730,34 +730,15 @@ const reportInitFailure = (homey: Homey, error: unknown): void => {
  * overlay is still up never gets seen.
  * @param homey - The Homey instance handed to `onHomeyReady`.
  */
-// Boot check plus the triggers that cover a page outliving it: this
-// webview survives an app restart on mobile, so no new document — and
-// no boot check — ever happens there. Breadcrumbs ride the declared
-// boot-error route.
-const startFreshness = async (homey: Homey): Promise<boolean> =>
-  watchWebviewFreshness({
-    entry: 'settings',
-    fetchHashes: async () => homeyApiGet(homey, '/webview-hashes'),
-    report: (message) => {
-      homey.api(
-        'POST',
-        '/boot-error',
-        { message, name: 'WebviewFreshness' },
-        () => {
-          // A missed freshness breadcrumb is acceptable.
-        },
-      )
-    },
-    subscribe: (onPoke) => {
-      homey.on('webview_hashes_changed', onPoke)
-    },
-  })
-
 export const start = async (homey: Homey): Promise<void> => {
-  // Listeners before the data load: the Refresh button is the retry
-  // affordance when the initial load fails or times out, so it must work
-  // regardless of how `run` ends.
-  if (await startFreshness(homey)) {
+  // Boot check first: the kit's settings handshake (`GET /webview-hashes`,
+  // the `POST /boot-error` breadcrumb, the `webview_hashes_changed` poke
+  // and the foreground re-check a mobile page outliving an app restart
+  // needs) answers true when the document is being replaced, so this
+  // page's own init must not run. Listeners before the data load: the
+  // Refresh button is the retry affordance when the initial load fails
+  // or times out, so it must work regardless of how `run` ends.
+  if (await watchSettingsFreshness(homey)) {
     return
   }
   addEventListeners(homey)

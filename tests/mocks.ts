@@ -1,9 +1,9 @@
 import type { HomeyAPIV3Local } from 'homey-api'
+import { mock } from '@olivierzal/homey-kit/testing'
 import { vi } from 'vitest'
 
 import type { Homey } from '../lib/homey.mts'
 import type { HomeySettings, Names } from '../types.mts'
-import { mock } from './helpers.ts'
 
 // The homey-api capability value contract (the shape
 // homey-api-override.d.ts mirrors), aliased once for the doubles.

@@ -1,9 +1,9 @@
+import { mock } from '@olivierzal/homey-kit/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type MELCloudExtensionApp from '../../app.mts'
 import type { MELCloudListener } from '../../listeners/melcloud.mts'
 import { WeatherOutdoorSource } from '../../listeners/weather-source.mts'
-import { mock } from '../helpers.ts'
 import { createApiCall, names } from '../mocks.ts'
 
 const POLL_INTERVAL = 900_000

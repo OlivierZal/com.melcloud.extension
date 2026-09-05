@@ -1,10 +1,9 @@
+import type { InteropModule } from '@olivierzal/homey-kit/testing'
 import type HomeyModule from 'homey'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { InteropModule } from '../helpers.ts'
-
 vi.mock(import('homey'), async () => {
-  const { mock: mockModule } = await import('../helpers.ts')
+  const { mock: mockModule } = await import('@olivierzal/homey-kit/testing')
   class AppStub {
     public readonly error = vi.fn<(...args: unknown[]) => void>()
   }
