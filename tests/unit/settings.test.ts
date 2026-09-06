@@ -351,7 +351,12 @@ describe('settings page', () => {
 
     it.each([
       ['serialized NotFoundError', new Error('notFound')],
-      ['bridge wording', new Error('Not found: GET /api/app/com.mecloud')],
+      [
+        'bridge wording',
+        new Error(
+          'Not found: GET /api/app/com.mecloud.extension/devices/groups',
+        ),
+      ],
     ])('should read a %s as no devices, silently', async (_name, error) => {
       const { alert } = await bootPage({
         failures: {

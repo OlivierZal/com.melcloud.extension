@@ -41,7 +41,7 @@ const api = {
     homey: Homey
   }): Promise<AdjustableGroup[]> {
     const { app } = homey
-    logSettingsRoute(app, '/devices/groups')
+    logSettingsRoute(app, 'GET /devices/groups')
     if (app.melcloudDevices.length === 0) {
       throw new NotFoundError()
     }
@@ -58,7 +58,7 @@ const api = {
    * @returns The BCP-47 language tag (e.g. `en`, `fr`).
    */
   getLanguage: ({ homey: { app, i18n } }: { homey: Homey }): string => {
-    logSettingsRoute(app, '/language')
+    logSettingsRoute(app, 'GET /language')
     return i18n.getLanguage()
   },
   /**
@@ -74,7 +74,7 @@ const api = {
   getTemperatureSensors({ homey }: { homey: Homey }): TemperatureSensor[] {
     const { app } = homey
     const { melcloudDevices, temperatureSensors } = app
-    logSettingsRoute(app, '/devices/sensors/temperature')
+    logSettingsRoute(app, 'GET /devices/sensors/temperature')
     if (melcloudDevices.length === 0) {
       throw new NotFoundError()
     }
@@ -110,10 +110,10 @@ const api = {
   }: {
     homey: Homey
   }): Promise<Partial<Record<string, string>>> {
-    logSettingsRoute(app, '/webview-hashes')
-    // The manifest URL is passed explicitly: the kit resolves its
-    // default against its own module, which sits in `node_modules` —
-    // only the caller knows where the bundler stamped the manifest.
+    logSettingsRoute(app, 'GET /webview-hashes')
+    // The manifest URL is a required argument: only the caller knows
+    // where the bundler stamped it (a kit-side default once resolved
+    // inside `node_modules` and failed open).
     return getWebviewHashes(new URL('webview-hashes.json', import.meta.url))
   },
   logWebviewBoot: ({
@@ -138,7 +138,7 @@ const api = {
     body: TemperatureListenerData
     homey: Homey
   }): Promise<void> {
-    logSettingsRoute(app, '/cooling/auto-adjustment')
+    logSettingsRoute(app, 'PUT /cooling/auto-adjustment')
     await app.autoAdjustCooling(body)
   },
 }

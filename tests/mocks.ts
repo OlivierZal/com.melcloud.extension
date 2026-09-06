@@ -19,7 +19,7 @@ export const names: Names = {
   thermostatMode: 'the mode',
 }
 
-export interface MockCapabilityInstance {
+interface MockCapabilityInstance {
   readonly destroy: ReturnType<typeof vi.fn>
   readonly setValue: ReturnType<typeof vi.fn>
   readonly listener: (value: CapabilityValue) => Promise<void> | void
@@ -106,7 +106,7 @@ export const createMockDevice = ({
   }
 }
 
-export interface MockDevicesManager {
+interface MockDevicesManager {
   readonly eventHandlers: Map<string, (...args: unknown[]) => void>
   readonly getCapabilityValue: ReturnType<typeof vi.fn>
   readonly getDevice: ReturnType<typeof vi.fn>

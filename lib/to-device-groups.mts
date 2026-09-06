@@ -1,10 +1,10 @@
 import type { DeviceGroups } from '../types.mts'
+import { isRecord } from './is-record.mts'
 
 const isGroup = (
   entry: unknown,
 ): entry is { deviceIds: readonly string[]; name: string } =>
-  typeof entry === 'object' &&
-  entry !== null &&
+  isRecord(entry) &&
   'name' in entry &&
   typeof entry.name === 'string' &&
   'deviceIds' in entry &&

@@ -7,7 +7,8 @@ workflow expected before opening a pull request.
 
 An **extension**: it pairs no device of its own and ships no driver. It
 drives the air-to-air units already paired with the MELCloud app, over
-the inter-app API (`homey-api`), and exposes a single settings page. Its
+Homey's local API (`homey-api`) with one inter-app read of the MELCloud
+app's `/devices/groups`, and exposes a single settings page. Its
 whole surface is that page plus the listeners that keep it in step.
 
 ## Prerequisites
@@ -87,9 +88,8 @@ The floor the device runs is a third, distinct declaration:
 `@olivierzal/homey-kit` carries the primitives the three apps share. What
 stays local here stays by measurement, and
 [`CLAUDE.md`](CLAUDE.md) records each verdict with its reason — the
-`NotFoundError` whose exact message the settings page matches on, the
-stricter `ManagerSettings` augmentation, the webview `fireAndForget` that
-surfaces in the dev tools rather than through a logger. Adopting the kit
+`NotFoundError` whose exact message the settings page matches on,
+`homey-api-override.d.ts`, the `cast` test helper. Adopting the kit
 version blind would break behaviour no test watches. If you diverge,
 write the verdict down; an unrecorded divergence is indistinguishable
 from an oversight.

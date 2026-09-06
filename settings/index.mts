@@ -54,10 +54,6 @@ const categories: Partial<Record<string, LogCategory>> = {
   saved: { icon: '☁️' },
 }
 
-/**
- * Surfaces an error in the webview dev tools without blocking the caller:
- * `reportError` where the webview provides it, an async rethrow otherwise.
- */
 // Safe at module load: the bundle is a `defer` classic script, so it runs
 // only after <body> is parsed (see settings/index.html).
 const applyElement = getButton('apply')
@@ -296,18 +292,18 @@ const loadHomeySettings = async (homey: Homey): Promise<void> => {
   }
 }
 
-// Two wire shapes for a missing endpoint: com.melcloud's own
-// NotFoundError serializes as 'notFound', while the Homey Pro 2019
-// firmware's API bridge answers 'Not found: GET /api/app/…' — both must
-// read as "endpoint absent", not as an alert-worthy failure.
+// Two serializations of this app's own NotFoundError (no MELCloud
+// device paired yet): 'notFound' on current firmware, and 'Not found:
+// GET /api/app/…' from the Homey Pro 2019 API bridge (seen on-device) —
+// both mean the empty state, not an alert-worthy failure.
 const isNotFound = (error: unknown): boolean => {
   const message = getErrorMessage(error)
   return message === 'notFound' || message.startsWith('Not found')
 }
 
-// Shared GET-or-empty policy of the two device lists: a 404 (endpoint
-// absent — an older com.melcloud) silently reads as "none", any other
-// failure alerts and still degrades to an empty list.
+// Shared GET-or-empty policy of the two device lists: a not-found (no
+// device paired) silently reads as "none", any other failure alerts
+// and still degrades to an empty list.
 const fetchListOrEmpty = async <T,>(
   homey: Homey,
   path: string,
