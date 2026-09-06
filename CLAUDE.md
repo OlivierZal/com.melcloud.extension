@@ -59,9 +59,10 @@ Run the FULL suite before any push — CI runs all of it:
   that do exist come from the compat package `@typescript/typescript6`
   and run TypeScript 6 — a bare `tsc` would silently typecheck on the
   wrong compiler.
-- `npm test` / `npm run test:coverage` — vitest; backend coverage is at
-  100% (branches included), keep it there. `settings/` is browser glue
-  and excluded.
+- `npm test` / `npm run test:coverage` — vitest; coverage is at 100%
+  (branches included) across the whole tree — the settings page
+  (happy-dom) and `scripts/bundle.mts` included; only `.homeybuild/**`
+  is excluded. Keep it there.
 - `npm run build` — esbuild bundle (`scripts/bundle.mts`) + `tsc`
   emit, BOTH into `.homeybuild`. The Homey CLI runs `npm run build`
   when it detects TypeScript — but only AFTER its pre-process copy into
@@ -213,9 +214,10 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   controls inside labels).
 - `homey-api-override.d.ts` — ambient module declaration for the
   homey-api surface actually used; `homey-override.d.ts` types the app
-  settings. `lib/homey.mts` re-exports the runtime-provided `homey` SDK
-  (the scoped eslint carve-out for `import-x/no-extraneous-dependencies`
-  lives there, not inline).
+  settings. `lib/homey.mts` re-exports the runtime-provided `homey` SDK;
+  the `import-x/no-extraneous-dependencies` / `no-named-as-default-member`
+  carve-out for that one file is the preset's `homeyShimBlock` in
+  `@olivierzal/configs`, not a local disable.
 
 ## Platform gotchas
 
@@ -320,7 +322,7 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   legacy global `capabilityPath` is migrated to every known AC device
   once, then unset.
 - Both per-device maps are reached ONLY through the app's accessor pairs
-  (`outdoorSources`, `thresholds`): the key name and its sanitizer live
+  (`outdoorSources`, `adjustments`): the key name and its sanitizer live
   together, the getter hands back a sanitized fresh copy, and no caller
   can write past the contract its reader assumes.
 - Entries for devices Homey no longer knows are deliberately NOT pruned.
@@ -329,7 +331,7 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   influence an inheritance. Pruning was designed and refused: the only
   place to run it is after `#loadDevices`, which empties the device list
   before its network call, so any hiccup (com.melcloud stopped, a failed
-  read) would wipe every source and threshold the user configured — and
+  read) would wipe every source and adjustment record the user configured — and
   a wrongly-pruned source does not self-heal, the device re-seeds as a
   newcomer straight to `DISABLED_SOURCE`. Map hygiene does not justify a
   destructive operation on user configuration.
@@ -467,7 +469,9 @@ swallowed outcome and the `webview_hashes_changed` poke — which
 `start` awaits first and skips its own init on `true` (`/settings`);
 the package-time stamp producer `stampPackagedPages` (+ `stampHtml`,
 `stampReferences`) and the manifest reader (`/node`);
-`fireAndForget`/`getErrorMessage` (root); and, under `/testing`, the
+`fireAndForget`/`getErrorMessage`/`sequential`/`selectChangelogEntries`
+(+ the `Logger` seam) (root); the typed element accessors (`/dom`); and,
+under `/testing`, the
 analysis kernels — the API contract, the route guards, and the
 webview-floor closure walk `analyzeWebviewFloor` with its
 `getQuotedEntries` list reader (which throws on an empty sweep, the
@@ -492,9 +496,6 @@ What stays local, by measurement rather than omission:
   whatever the caller passes — would silently break that branch, and no
   test would see it. Extend the kit class or keep this one; never
   replace it blind.
-- The `ManagerSettings` augmentation: the local block is STRICTER than
-  the kit's generic (no `(key: string) => unknown` overload) and carries
-  `unset`, which the generic lacks. Adopting it would loosen this app.
 - `homey-api-override.d.ts`, and the `lib/` helpers no sibling shares.
 
 `api.mts` passes the manifest URL to `getWebviewHashes`, a REQUIRED
@@ -511,10 +512,9 @@ app-side, from the app root.
   until the rule passes. One counterweight: when every compliant shape
   reads worse than the violation (a rule-pair conflict, a
   protocol-imposed form), the documented disable IS the honest form.
-  Current irreducibles: the fire-and-forget disable (once, in
-  `lib/fire-and-forget.mts` — the settings page wraps it for its
-  default `onError`) and the TS9019 isolatedDeclarations carve-out in
-  `lib/homey.mts`.
+  Current irreducible: the TS9019 isolatedDeclarations carve-out in
+  `lib/homey.mts` (the fire-and-forget disable moved to the kit with
+  the primitive).
 - Naming is stricter than com.melcloud: properties are camelCase-only
   in app code. The tests block relaxes it (documented in the config)
   because test doubles mirror external contracts: capability ids

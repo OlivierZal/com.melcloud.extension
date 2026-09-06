@@ -1,4 +1,5 @@
 import type { TimestampedLog } from '../types.mts'
+import { isRecord } from './is-record.mts'
 
 // `category` is optional, so absent-or-string is the check — requiring
 // it would drop every entry the app writes without one.
@@ -6,8 +7,7 @@ const hasValidCategory = (entry: object): boolean =>
   !('category' in entry) || typeof entry.category === 'string'
 
 const isTimestampedLog = (entry: unknown): entry is TimestampedLog =>
-  typeof entry === 'object' &&
-  entry !== null &&
+  isRecord(entry) &&
   'message' in entry &&
   typeof entry.message === 'string' &&
   'time' in entry &&

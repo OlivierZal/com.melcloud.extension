@@ -8,6 +8,7 @@ const config: ViteUserConfig = defineConfig({
       exclude: ['.homeybuild/**'],
       include: ['**/*.mts'],
     },
+    include: ['tests/**/*.test.ts'],
   },
 })
 
