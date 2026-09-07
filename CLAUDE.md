@@ -462,7 +462,11 @@ re-declare family policy locally — a rule evaluation or version bump
 happens in configs, adoption is a reviewed pin bump. The
 ci/claude/dependabot/dependency-review/pr-title/zizmor workflows are
 stubs calling the family reusables in OlivierZal/configs, pinned
-`@<sha> # vX.Y.Z`; dependency vulnerabilities are GitHub's own —
+`@<sha> # vX. Since 2026-09-08 the Dependabot-fix stub also
+fires on a `zizmor`failure (a required gate) — with no npm-runnable
+zizmor for its`verify-commands`, such a fix reaches the run
+unverified locally and is re-judged by the `zizmor / Zizmor` leg on
+the fixed push: a family gap, not this app's.Y.Z`; dependency vulnerabilities are GitHub's own —
 Dependabot alerts scan continuously and carry the named, reasoned
 dismissals (an exception lives on the advisory, so it cannot outlive
 it, and this repo's `parseuri` ReDoS is dismissed there), while
