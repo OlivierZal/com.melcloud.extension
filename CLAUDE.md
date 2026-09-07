@@ -410,9 +410,16 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   toolchain needs in order to install and run this tree — and is
   derived from the installed dependency tree exactly as configs derives
   its own, never copied from a sibling or nudged by hand (measured
-  2026-09-07: `@olivierzal/configs` and, through it,
-  `eslint-plugin-package-json` require `^22.22.2 || >=24.15.0`, the
-  value `engines` and `.nvmrc` carry; re-derive it when the tree moves).
+  2026-09-08 over the TOOLCHAIN — the devDependencies and their trees:
+  `@olivierzal/configs`, `eslint-plugin-package-json`,
+  `eslint-plugin-jsdoc` and jsdoc's two parsers require
+  `^22.22.2 || >=24.15.0`, the value `engines` and `.nvmrc` carry;
+  re-derive it when that tree moves). The one SHIPPED dependency that
+  declares a higher engine, `homey-api` (`>=24`), is left out on
+  purpose: it speaks about the device runtime, where this app runs on
+  the Node 22 firmware regardless, and folding it in would raise the
+  toolchain floor to a Node no Homey ships — `npm ci` warns on it (no
+  `engine-strict`) and nothing else.
   It states nothing about the device, and CI's `22.20` coverage leg
   legitimately runs BELOW it: that leg is the on-device fleet floor
   (a Pro 2019, measured 2026-08), and the reusable CI sets no
@@ -475,17 +482,22 @@ the configs devDependency lives on GitHub Packages, where even reads
 need auth.
 
 The bare `homey-apps-sdk-v3-types` devDependency beside the
-`@types/homey` alias is NOT a duplicate, and the two lines move together
-on every SDK-types bump. The alias is what lets `homey` and
+`@types/homey` alias is NOT a duplicate, and the two lines must move
+together when the SDK types bump (none since the bare line landed on
+2026-07-13, and Dependabot's `minor-and-patch` group does not cover the
+alias — the pair is a hand-kept invariant). The alias is what lets `homey` and
 `homey/lib/…` resolve for TypeScript; the bare name is what satisfies
 `import-x/no-extraneous-dependencies`, which checks the RESOLVED
 package's real `name` against the manifest and never maps `homey` back
 to `@types/homey`. The app preset runs the rule without `includeTypes`,
-so the type-only imports pass on their own; the one value import —
-`tests/unit/homey.test.ts` mocking `import('homey')` — needs the bare
-name declared (measured 2026-09-07: removing it fails lint on exactly
-that file, and nothing else — typecheck, tests and build all still
-pass, which is why it reads as dead to a grep). Never "deduplicate" it.
+so the type-only imports pass on their own; the value imports need
+the bare name declared: `tests/unit/homey.test.ts` mocking
+`import('homey')` (measured 2026-09-07: removing the line fails lint on
+exactly that file and nothing else — typecheck, tests and build all
+still pass, which is why it reads as dead to a grep), while
+`lib/homey.mts` is a value import too and passes only because the
+preset's `homeyShimBlock` exempts that one file — drop the exemption
+and the count becomes two. Never "deduplicate" it.
 
 ## Runtime boundary (@olivierzal/homey-kit)
 
