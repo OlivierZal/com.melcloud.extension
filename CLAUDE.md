@@ -1,7 +1,12 @@
 # CLAUDE.md
 
 Homey app extending com.melcloud with automatic cooling adjustment based
-on an outdoor temperature source. ESM only, Node >= 22.19. It talks to
+on an outdoor temperature source. ESM only. Two Node floors, never
+confused: `engines` (`^22.22.2 || >=24.15.0`, `.nvmrc` on its lower
+bound) is the TOOLCHAIN floor, derived from the installed tree the way
+configs derives its own; the DEVICE floor is the manifest's
+`compatibility` (`>=12.9.0`, Athom's Node 22 boundary — see the floor
+doctrine under Naming & authored-content conventions). It talks to
 the MELCloud devices exclusively through the local Homey API (`homey-api`)
 — device behavior is fixed in com.melcloud (sibling repo with its own
 CLAUDE.md), never worked around here.
@@ -401,6 +406,18 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   both — and on Homey Pro (2016-2019) the Node 22 firmware is still
   only a release candidate, so a raise would cut off that whole stable
   install base rather than a few laggards.
+- The package's own `engines` answers a DIFFERENT question — what the
+  toolchain needs in order to install and run this tree — and is
+  derived from the installed dependency tree exactly as configs derives
+  its own, never copied from a sibling or nudged by hand (measured
+  2026-09-07: `@olivierzal/configs` and, through it,
+  `eslint-plugin-package-json` require `^22.22.2 || >=24.15.0`, the
+  value `engines` and `.nvmrc` carry; re-derive it when the tree moves).
+  It states nothing about the device, and CI's `22.20` coverage leg
+  legitimately runs BELOW it: that leg is the on-device fleet floor
+  (a Pro 2019, measured 2026-08), and the reusable CI sets no
+  `engine-strict`, so `npm ci` warns there rather than fails. Neither
+  floor ever moves the other.
 - Node-side runtime APIs above es2022 are therefore LEGITIMATE:
   `toSorted`/`toReversed` (Node 20), `Object.groupBy` (Node 21) and
   `Promise.withResolvers` (Node 22) all predate the declared engine,
@@ -456,6 +473,19 @@ on GitHub Packages, where even reads need auth).
 `.npmrc` (scope registry + `NODE_AUTH_TOKEN` auth) is load-bearing:
 the configs devDependency lives on GitHub Packages, where even reads
 need auth.
+
+The bare `homey-apps-sdk-v3-types` devDependency beside the
+`@types/homey` alias is NOT a duplicate, and the two lines move together
+on every SDK-types bump. The alias is what lets `homey` and
+`homey/lib/…` resolve for TypeScript; the bare name is what satisfies
+`import-x/no-extraneous-dependencies`, which checks the RESOLVED
+package's real `name` against the manifest and never maps `homey` back
+to `@types/homey`. The app preset runs the rule without `includeTypes`,
+so the type-only imports pass on their own; the one value import —
+`tests/unit/homey.test.ts` mocking `import('homey')` — needs the bare
+name declared (measured 2026-09-07: removing it fails lint on exactly
+that file, and nothing else — typecheck, tests and build all still
+pass, which is why it reads as dead to a grep). Never "deduplicate" it.
 
 ## Runtime boundary (@olivierzal/homey-kit)
 
