@@ -390,6 +390,22 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   (2026-08-06): tsc checks the import CLOSURE, which crosses into
   node-side code — the same shape exists here (`settings/` imports
   shared `lib/` and `types/` modules).
+- The stylesheet has the SAME floor, held by the preset's CSS gate:
+  since configs 5.0.0 `css/use-baseline` is bound to Baseline 2022 (the
+  last year whose every entry sits inside the iOS 16.4 WebKit — 2023
+  would admit what Safari 16.5 brought) plus an exact-name allowlist
+  (`color-mix()`, `mask-image`, `outline`: Baseline dates a feature by
+  the LAST core browser to ship it, so the year alone rejects CSS
+  WebKit had before the floor). Classified at the 5.0.0 adoption
+  (2026-09-07): `settings/styles.css` passes with zero findings and
+  leans on nothing in the allowlist, and the option triple is the only
+  `eslint --print-config` difference the release makes here. A
+  rejection is triaged against MDN's browser-compat data, never waved
+  through: a feature Safari 16.4 or lower carries re-enters the
+  allowlist IN CONFIGS with its Safari release (a family release,
+  adopted by a pin bump); anything newer is rewritten here. Never
+  re-declare the rule locally — its options array replaces rather than
+  merges, so a partial override silently drops the allowlist.
 - TWO floors coexist, on UNRELATED engines — never let one move the
   other. On the **webview** side the danger is APIs, because esbuild
   lowers syntax but NEVER polyfills (`Object.groupBy`, iterator
@@ -465,25 +481,29 @@ re-declare family policy locally — a rule evaluation or version bump
 happens in configs, adoption is a reviewed pin bump. The
 ci/claude/dependabot/dependency-review/pr-title/zizmor workflows are
 stubs calling the family reusables in OlivierZal/configs, pinned
-`@<sha> # vX. Since 2026-09-08 the Dependabot-fix stub also
-fires on a `zizmor`failure (a required gate) — with no npm-runnable
-zizmor for its`verify-commands`, such a fix reaches the run
+`@<sha> # vX.Y.Z`. Since 2026-09-08 the Dependabot-fix stub also
+fires on a `zizmor` failure (a required gate) — with no npm-runnable
+zizmor for its `verify-commands`, such a fix reaches the run
 unverified locally and is re-judged by the `zizmor / Zizmor` leg on
-the fixed push: a family gap, not this app's.Y.Z`; dependency vulnerabilities are GitHub's own —
-Dependabot alerts scan continuously and carry the named, reasoned
-dismissals (an exception lives on the advisory, so it cannot outlive
-it, and this repo's `parseuri` ReDoS is dismissed there), while
-`dependency-review` judges what a PR introduces;
-`publish.yml` and `validate.yml` stay local (no reusable exists), so
-the composite action stays too — as the family's VERBATIM copy of
-`OlivierZal/configs/.github/actions/setup-node-and-install`, re-copied
-at each adoption. Whatever is app-specific travels as caller inputs,
-never as an edit to the copy: `node-version: '22'` (the Homey runtime;
-the family default is `lts/*`), the `@olivierzal` `registry-url`/`scope`
-(also what makes setup-node write the user-level `.npmrc` that
-`publish.yml` copies for the publish action), and `require-npm-token:
-'true'` with `npm-token` (the configs and homey-kit dependencies live
-on GitHub Packages, where even reads need auth).
+the fixed push: a family gap, not this app's. Dependency
+vulnerabilities are GitHub's own — Dependabot alerts scan continuously
+and carry the named, reasoned dismissals (an exception lives on the
+advisory, so it cannot outlive it, and this repo's `parseuri` ReDoS is
+dismissed there), while `dependency-review` judges what a PR
+introduces. `publish.yml` and `validate.yml` stay local: the release
+reusables configs ships since 5.0.0 (`reusable-publish.yml`,
+`reusable-docs.yml`) are the LIBRARIES' path — an npm publish with
+provenance and a Pages deploy — while this app's `publish.yml` is the
+Homey App Store path through Athom's publish action, which no reusable
+covers. So the composite action stays too — as the family's VERBATIM
+copy of `OlivierZal/configs/.github/actions/setup-node-and-install`,
+re-copied at each adoption. Whatever is app-specific travels as caller
+inputs, never as an edit to the copy: `node-version: '22'` (the Homey
+runtime; the family default is `lts/*`), the `@olivierzal`
+`registry-url`/`scope` (also what makes setup-node write the user-level
+`.npmrc` that `publish.yml` copies for the publish action), and
+`require-npm-token: 'true'` with `npm-token` (the configs and homey-kit
+dependencies live on GitHub Packages, where even reads need auth).
 `.npmrc` (scope registry + `NODE_AUTH_TOKEN` auth) is load-bearing:
 the configs devDependency lives on GitHub Packages, where even reads
 need auth.
