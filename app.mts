@@ -1,9 +1,9 @@
 import type ApiApp from 'homey/lib/ApiApp'
 import {
+  announceChangelog,
   fireAndForget,
   getErrorMessage,
-  selectChangelogEntries,
-  sequential,
+  settleAll,
 } from '@olivierzal/homey-kit'
 import { HomeyAPIV3Local } from 'homey-api'
 import { Temporal } from 'temporal-polyfill'
@@ -13,7 +13,6 @@ import { changelog } from './files.mts'
 import { formatTemperature } from './lib/format-temperature.mts'
 import { toJoinKey } from './lib/group-devices.mts'
 import { type Homey, App } from './lib/homey.mts'
-import { settleAll } from './lib/settle-all.mts'
 import { toAdjustments } from './lib/to-adjustments.mts'
 import { toDeviceGroups } from './lib/to-device-groups.mts'
 import { toListenerData } from './lib/to-listener-data.mts'
@@ -50,7 +49,6 @@ const ATA_DRIVER_IDS = new Set([
 
 const MAX_LOGS = 100
 const INIT_DELAY = 1000
-const NOTIFICATION_DELAY = 10_000
 
 // Registry key for the shared Homey-weather source (devices configured
 // on a capability use their "deviceId:capabilityId" path as key)
@@ -246,38 +244,21 @@ export default class MELCloudExtensionApp extends App {
     this.adjustments = adjustments
   }
 
+  // The announcement is the kit's whole — every release since the one
+  // already announced, posted once the boot's churn has settled,
+  // best-effort. The Homey instance is the scheduler: its `setTimeout`
+  // is `this`-bound and disposed at uninit, which a bare reference
+  // would lose.
   #createNotification(): void {
     const { homey } = this
-    const {
-      manifest: { version },
-      notifications,
-      settings,
-    } = homey
-    // Every release since the one already announced, not just the
-    // running one: a user who updates rarely would otherwise never hear
-    // about the versions in between. The SDK read is untyped, as
-    // everywhere else settings are read: a stored value that is not a
-    // string reads as no baseline at all.
-    const notified: unknown = settings.get('notifiedVersion')
-    const { entries } = selectChangelogEntries({
+    announceChangelog({
       changelog,
-      from: typeof notified === 'string' ? notified : null,
+      homey,
       language: homey.i18n.getLanguage(),
-      to: version,
+      notifications: homey.notifications,
+      settings: homey.settings,
+      version: homey.manifest.version,
     })
-    if (entries.length === 0) {
-      return
-    }
-    homey.setTimeout(async () => {
-      try {
-        await sequential(entries, async ({ excerpt }) => {
-          await notifications.createNotification({ excerpt })
-        })
-        settings.set('notifiedVersion', version)
-      } catch {
-        // Non-critical: notification display is best-effort
-      }
-    }, NOTIFICATION_DELAY)
   }
 
   async #destroyListeners(): Promise<void> {
