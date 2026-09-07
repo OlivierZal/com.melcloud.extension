@@ -542,8 +542,10 @@ changelog delivery in `app.mts` `#createNotification` (now one
 `announceChangelog` call, the Homey instance passed as the scheduler so
 the timer stays `this`-bound and disposed at uninit) and the local
 `logSettingsRoute` in `api.mts`. The kit's `createSettingManager` and
-`watchWidgetFreshness` (`/widget`) have no consumer here: this app
-persists no API-library session and ships no widget.
+`watchWidgetFreshness` (`/widget`) have no consumer here — this app
+persists no API-library session and ships no widget — and neither does
+`sequential` any more: its one caller was the changelog delivery, which
+now runs inside `announceChangelog`.
 
 What stays local, by measurement rather than omission:
 
