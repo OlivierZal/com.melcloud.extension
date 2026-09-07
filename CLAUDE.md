@@ -315,13 +315,16 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   unreachable, still writing setpoints nothing could settle. The
   listener registry is keyed by device id for the same reason: an array
   cleared by length reset cannot express ownership.
-- Independent per-device work goes through `settleAll`
-  (`lib/settle-all.mts`), not `Promise.all`: the aggregate must attempt
+- Independent per-device work goes through the kit's `settleAll`
+  (`@olivierzal/homey-kit` root, on the same `Logger` seam as
+  `fireAndForget`), not `Promise.all`: the aggregate must attempt
   every branch and report each failure on its own. `Promise.all` would
   abandon the restart at the first rejection — skipping the very
   reconciliation meant to repair it — and would surface one reason while
   hiding the others. Keep `Promise.all` only where the caller genuinely
-  cannot continue without every branch.
+  cannot continue without every branch. The helper was born here as
+  `lib/settle-all.mts` and hoisted at the 5.2.0 adoption, once
+  com.melcloud carried a byte-identical copy.
 - Outdoor sources are per device (`outdoorSources` setting: null/absent
   = Homey weather, `'none'` = the device is not adjusted at all); the
   legacy global `capabilityPath` is migrated to every known AC device
@@ -515,8 +518,13 @@ swallowed outcome and the `webview_hashes_changed` poke — which
 `start` awaits first and skips its own init on `true` (`/settings`);
 the package-time stamp producer `stampPackagedPages` (+ `stampHtml`,
 `stampReferences`) and the manifest reader (`/node`);
-`fireAndForget`/`getErrorMessage`/`sequential`/`selectChangelogEntries`
-(+ the `Logger` seam) (root); the typed element accessors (`/dom`); and,
+`fireAndForget`/`settleAll`/`getErrorMessage`/`sequential` (+ the
+`Logger` seam), the changelog announcement `announceChangelog` (over
+`selectChangelogEntries`; `NOTIFICATION_DELAY_MS` is exported so the
+suite advances its fake timers by the kit's figure, never a restated
+one) and the settings-page breadcrumb `logSettingsRoute` (+ the
+`BreadcrumbLogger` seam; labels are `METHOD /path`, one spelling for
+the three apps) (root); the typed element accessors (`/dom`); and,
 under `/testing`, the
 analysis kernels — the API contract, the route guards, and the
 webview-floor closure walk `analyzeWebviewFloor` with its
@@ -528,7 +536,16 @@ adopted here by a pin bump — never a local edit, and never a
 re-derivation. The three former copies (the inlined stamp producer in
 `scripts/bundle.mts`, the freshness triplet in `settings/index.mts`,
 the closure walk in `tests/unit/webview-floor.test.ts`) and the shared
-helpers in `tests/helpers.ts` were deleted at the 5.1.0 adoption.
+helpers in `tests/helpers.ts` were deleted at the 5.1.0 adoption; the
+5.2.0 adoption deleted three more — `lib/settle-all.mts`, the inlined
+changelog delivery in `app.mts` `#createNotification` (now one
+`announceChangelog` call, the Homey instance passed as the scheduler so
+the timer stays `this`-bound and disposed at uninit) and the local
+`logSettingsRoute` in `api.mts`. The kit's `createSettingManager` and
+`watchWidgetFreshness` (`/widget`) have no consumer here — this app
+persists no API-library session and ships no widget — and neither does
+`sequential` any more: its one caller was the changelog delivery, which
+now runs inside `announceChangelog`.
 
 What stays local, by measurement rather than omission:
 

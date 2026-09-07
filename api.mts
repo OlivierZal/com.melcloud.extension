@@ -1,4 +1,5 @@
 import type { Homey } from 'homey/lib/Homey'
+import { logSettingsRoute } from '@olivierzal/homey-kit'
 import { getWebviewHashes } from '@olivierzal/homey-kit/node'
 
 import { NotFoundError } from './lib/errors.mts'
@@ -10,15 +11,6 @@ import {
   MEASURE_TEMPERATURE,
   OUTDOOR_TEMPERATURE,
 } from './types.mts'
-
-// Diagnostics breadcrumb: the settings webview is otherwise invisible in
-// diagnostic reports (its routes are all local IPC / inter-app reads, no
-// MELCloud round-trip to log), which would make "settings fail to load"
-// reports undecidable — no line = the page's JS never ran; lines without
-// a completed sequence = where it stopped. Mirrors com.melcloud.
-const logSettingsRoute = (app: Homey['app'], route: string): void => {
-  app.log({ dataType: 'Settings page', route })
-}
 
 const api = {
   /**

@@ -1,4 +1,5 @@
 import type * as HomeyApi from 'homey-api'
+import { NOTIFICATION_DELAY_MS } from '@olivierzal/homey-kit'
 import { assertDefined } from '@olivierzal/homey-kit/testing'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -42,7 +43,6 @@ vi.mock(import('homey-api'), async () => {
 })
 
 const INIT_DELAY = 1000
-const NOTIFICATION_DELAY = 10_000
 
 const LATEST_VERSION = Object.keys(changelog).at(-1) ?? ''
 
@@ -784,7 +784,7 @@ describe(MELCloudExtensionApp, () => {
       version: LATEST_VERSION,
     })
 
-    await vi.advanceTimersByTimeAsync(NOTIFICATION_DELAY)
+    await vi.advanceTimersByTimeAsync(NOTIFICATION_DELAY_MS)
 
     expect(mockHomey.createNotification).toHaveBeenCalledTimes(1)
     expect(mockHomey.settingsStore.notifiedVersion).toBe(LATEST_VERSION)
@@ -797,7 +797,7 @@ describe(MELCloudExtensionApp, () => {
       version: LATEST_VERSION,
     })
 
-    await vi.advanceTimersByTimeAsync(NOTIFICATION_DELAY)
+    await vi.advanceTimersByTimeAsync(NOTIFICATION_DELAY_MS)
 
     expect(mockHomey.createNotification).toHaveBeenCalledTimes(0)
   })
@@ -808,21 +808,9 @@ describe(MELCloudExtensionApp, () => {
       version: '0.0.0',
     })
 
-    await vi.advanceTimersByTimeAsync(NOTIFICATION_DELAY)
+    await vi.advanceTimersByTimeAsync(NOTIFICATION_DELAY_MS)
 
     expect(mockHomey.createNotification).toHaveBeenCalledTimes(0)
-  })
-
-  it('should keep the version unnotified when the notification fails', async () => {
-    const { classicDevice } = createDevices()
-    const { mockHomey } = await createHarness([classicDevice], {
-      version: LATEST_VERSION,
-    })
-    mockHomey.createNotification.mockRejectedValueOnce(new Error('offline'))
-
-    await vi.advanceTimersByTimeAsync(NOTIFICATION_DELAY)
-
-    expect(mockHomey.settingsStore.notifiedVersion).toBeUndefined()
   })
 
   it('should destroy the listeners on uninit', async () => {

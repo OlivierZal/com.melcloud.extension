@@ -1,6 +1,7 @@
+import { settleAll } from '@olivierzal/homey-kit'
+
 import type MELCloudExtensionApp from '../app.mts'
 import { formatTemperature } from '../lib/format-temperature.mts'
-import { settleAll } from '../lib/settle-all.mts'
 import { toTemperature } from '../lib/to-temperature.mts'
 import type { MELCloudListener } from './melcloud.mts'
 
