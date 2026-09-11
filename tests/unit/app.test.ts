@@ -1029,18 +1029,30 @@ describe(MELCloudExtensionApp, () => {
       })
     })
 
-    it('should keep the debt when the restore write fails', async () => {
+    // A failed restore says so, and keeps the debt. It used to report
+    // the device as not found whatever the cause — which sent the user
+    // hunting for a device that is present — while the cause itself
+    // reached no log at all.
+    it('should keep the debt and report a failed restore as one', async () => {
       const { classicDevice } = createDevices()
       Object.assign(classicDevice.values, {
         target_temperature: 26,
         thermostat_mode: 'heat',
       })
       classicDevice.setCapabilityValue.mockRejectedValueOnce(new Error('gone'))
-      const { mockHomey } = await createOwingHarness(classicDevice)
+      const { app, mockHomey } = await createOwingHarness(classicDevice)
+      const error = vi.spyOn(app, 'error')
 
       await advancePastInit()
 
-      expect(logMessages(mockHomey)).toContain('log.notFound')
+      expect(logMessages(mockHomey)).toContain('log.revertFailed')
+      expect(logMessages(mockHomey)).not.toContain('log.notFound')
+      expect(error).toHaveBeenCalledWith(
+        'Reverting the temperature failed:',
+        expect.any(String),
+        expect.any(Number),
+        expect.any(Error),
+      )
       expect(mockHomey.settingsStore.adjustments).toStrictEqual({
         'classic-1': OWED,
       })
