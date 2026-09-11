@@ -604,10 +604,15 @@ export default class MELCloudExtensionApp extends App {
         name: device.name,
         value: formatTemperature(value),
       })
-    } catch {
-      this.pushToUI('error.notFound', {
-        idOrName: device.name,
-        type: this.names.device,
+    } catch (error) {
+      // Anything can fail here — the device gone, MELCloud refusing,
+      // the write timing out — and only the first of those is a missing
+      // device. Saying so for all three sent the user hunting for a
+      // device that is present, and the cause reached no log at all.
+      this.error('Reverting the temperature failed:', device.name, value, error)
+      this.pushToUI('error.revertFailed', {
+        name: device.name,
+        value: formatTemperature(value),
       })
     }
   }

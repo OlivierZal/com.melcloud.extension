@@ -7,6 +7,7 @@
     "listened": "__name__의 __capability__ 수신 중: __value__",
     "notFound": "__type__ `__idOrName__`을(를) 찾을 수 없습니다",
     "noThreshold": "__name__에 저장된 온도가 없습니다: 명령을 보내지 않았습니다",
+    "revertFailed": "__name__의 온도를 __value__(으)로 되돌리지 못했습니다. 나중에 다시 시도합니다",
     "reverted": "__name__의 온도 복원 중: __value__",
     "saved": "__name__의 온도 저장 중: __value__",
     "kept": "__name__의 온도 유지: __value__는 조정 후에 설정되었습니다"

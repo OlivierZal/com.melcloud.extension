@@ -7,6 +7,7 @@
     "listened": "In ascolto di __capability__ di __name__: __value__",
     "notFound": "__type__ `__idOrName__` non trovato",
     "noThreshold": "Nessuna temperatura salvata per __name__: nessun comando inviato",
+    "revertFailed": "Impossibile ripristinare la temperatura di __name__ a __value__; verrà riprovato più tardi",
     "reverted": "Ripristino della temperatura di __name__: __value__",
     "saved": "Salvataggio della temperatura di __name__: __value__",
     "kept": "Mantenimento della temperatura di __name__: __value__ è stata impostata dopo la regolazione"

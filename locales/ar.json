@@ -7,6 +7,7 @@
     "listened": "الاستماع إلى __capability__ في __name__: __value__",
     "notFound": "__type__ `__idOrName__` غير موجود",
     "noThreshold": "لا توجد درجة حرارة مرجعية محفوظة لـ __name__: لم يتم إرسال أي أمر",
+    "revertFailed": "تعذّر إرجاع درجة حرارة __name__ إلى __value__؛ ستتم إعادة المحاولة",
     "reverted": "استعادة درجة حرارة __name__: __value__",
     "saved": "حفظ درجة حرارة __name__: __value__",
     "kept": "الحفاظ على درجة حرارة __name__: تم ضبط __value__ بعد التعديل"
