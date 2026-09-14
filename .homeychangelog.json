@@ -823,5 +823,20 @@
     "pl": "Aplikacja zawsze przywraca teraz Twoją własną temperaturę, gdy automatyczna regulacja się kończy — także po restarcie, przerwaniu połączenia lub wyłączeniu urządzenia bez jej wiedzy.",
     "ru": "Теперь приложение всегда восстанавливает заданную вами температуру после остановки автоматической регулировки — в том числе после перезапуска, обрыва связи или выключения устройства незаметно для него.",
     "sv": "Appen återställer nu alltid din egen temperatur när den automatiska justeringen upphör – även efter en omstart, ett avbrott eller en enhet som stängdes av utan att appen såg det."
+  },
+  "25.3.4": {
+    "ar": "عندما تفشل استعادة درجة الحرارة التي ضبطتها، يخبرك التطبيق الآن بذلك ويعيد المحاولة لاحقًا، بدلًا من الإبلاغ خطأً بأن الجهاز غير موجود.",
+    "da": "Når gendannelsen af din egen temperatur mislykkes, giver appen nu besked og prøver igen senere i stedet for fejlagtigt at melde, at enheden ikke blev fundet.",
+    "de": "Wenn das Wiederherstellen Ihrer eigenen Temperatur fehlschlägt, sagt die App das jetzt und versucht es später erneut, statt das Gerät fälschlich als nicht gefunden zu melden.",
+    "en": "When restoring your own temperature fails, the app now says so and tries again later, instead of wrongly reporting the device as not found.",
+    "es": "Cuando no se puede restaurar tu propia temperatura, la aplicación ahora lo indica y vuelve a intentarlo más tarde, en lugar de informar erróneamente de que el dispositivo no se encuentra.",
+    "fr": "Lorsque le rétablissement de votre propre température échoue, l'app le dit désormais et réessaie plus tard, au lieu de signaler à tort l'appareil comme introuvable.",
+    "it": "Quando il ripristino della tua temperatura non riesce, l'app ora lo segnala e riprova più tardi, invece di indicare erroneamente il dispositivo come non trovato.",
+    "ko": "사용자가 설정한 온도를 복원하지 못하면 이제 앱이 그 사실을 알리고 나중에 다시 시도합니다. 더 이상 기기를 찾을 수 없다고 잘못 보고하지 않습니다.",
+    "nl": "Als het herstellen van je eigen temperatuur mislukt, zegt de app dat nu en probeert het later opnieuw, in plaats van het apparaat ten onrechte als niet gevonden te melden.",
+    "no": "Når gjenopprettingen av din egen temperatur mislykkes, sier appen nå fra og prøver igjen senere, i stedet for feilaktig å melde enheten som ikke funnet.",
+    "pl": "Gdy przywrócenie Twojej własnej temperatury się nie powiedzie, aplikacja teraz o tym informuje i ponawia próbę później, zamiast błędnie zgłaszać, że urządzenie nie zostało znalezione.",
+    "ru": "Если восстановить заданную вами температуру не удалось, приложение теперь сообщает об этом и повторяет попытку позже, вместо того чтобы ошибочно считать устройство не найденным.",
+    "sv": "När återställningen av din egen temperatur misslyckas säger appen nu till och försöker igen senare, i stället för att felaktigt rapportera enheten som inte hittad."
   }
 }
