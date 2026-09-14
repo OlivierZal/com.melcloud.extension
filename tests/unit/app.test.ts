@@ -172,18 +172,18 @@ describe(MELCloudExtensionApp, () => {
     expect(app.deviceGroups).toStrictEqual(groups)
   })
 
-  // The poke that used to fire here reached nobody: an app restart has
-  // just disconnected every open page. Kit 6.0.0 dropped the channel;
-  // this pins that the boot emits no such event (the log channel stays).
+  // A restart disconnects every open page before `onInit` ends, so no
+  // realtime poke can reach one: the freshness guarantee is the boot
+  // check and the foreground trigger, never an event from here (the
+  // `log` channel is the boot's only realtime traffic).
   it('should emit no freshness poke at boot', async () => {
     const { classicDevice } = createDevices()
     const { mockHomey } = await createHarness([classicDevice])
 
     await advancePastInit()
 
-    expect(mockHomey.realtime).not.toHaveBeenCalledWith(
+    expect(mockHomey.realtime.mock.calls.map(([event]) => event)).not.toContain(
       'webview_hashes_changed',
-      null,
     )
   })
 
