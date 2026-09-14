@@ -172,13 +172,16 @@ describe(MELCloudExtensionApp, () => {
     expect(app.deviceGroups).toStrictEqual(groups)
   })
 
-  it('should poke open webviews with the freshness event at boot', async () => {
+  // The poke that used to fire here reached nobody: an app restart has
+  // just disconnected every open page. Kit 6.0.0 dropped the channel;
+  // this pins that the boot emits no such event (the log channel stays).
+  it('should emit no freshness poke at boot', async () => {
     const { classicDevice } = createDevices()
     const { mockHomey } = await createHarness([classicDevice])
 
     await advancePastInit()
 
-    expect(mockHomey.realtime).toHaveBeenCalledWith(
+    expect(mockHomey.realtime).not.toHaveBeenCalledWith(
       'webview_hashes_changed',
       null,
     )

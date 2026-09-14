@@ -797,14 +797,5 @@ describe('settings page', () => {
       )
       expect(ready).not.toHaveBeenCalled()
     })
-
-    it('should re-run the handshake on the app boot poke', async () => {
-      const { emit } = await bootPage()
-
-      emit('webview_hashes_changed')
-      await settleDetached()
-
-      expect(logRows()).toHaveLength(0)
-    })
   })
 })

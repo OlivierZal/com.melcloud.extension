@@ -194,13 +194,14 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   mobile widgets reload too — both are fresh for free. Only the mobile
   settings page survives an app restart, so it alone never boots again;
   that is why the watcher re-checks on RETURN TO THE FOREGROUND
-  (`visibilitychange`), the trigger that covers it. The app also emits a
-  `webview_hashes_changed` realtime event at its own boot and the page
-  subscribes to it, but it guarantees NOTHING on its own: it fires at
-  the end of the app's `onInit`, i.e. exactly when the restart has just
-  disconnected every open page, so its audience is absent by
-  construction (measured: an open mobile page produced no request and no
-  breadcrumb). Never fold the visibility trigger into it. Every failure
+  (`visibilitychange`), the trigger that covers it. The
+  `webview_hashes_changed` realtime event the app used to emit at its
+  own boot guaranteed NOTHING on its own: it fired at the end of
+  `onInit`, i.e. exactly when the restart had just disconnected every
+  open page, so its audience was absent by construction (measured: an
+  open mobile page produced no request and no breadcrumb). Kit 6.0.0
+  dropped the channel and this app stopped emitting it; never re-add a
+  poke as a substitute for the visibility trigger. Every failure
   path stays open: an unstamped page, an absent route or denied
   storage must never take a working webview down.
   When the bundle still fails to boot, the `onHomeyReady` poll's timeout
@@ -534,7 +535,7 @@ the three apps: the dirty gate and the freshness primitive
 (`/webview`); the settings transport and `watchSettingsFreshness`, the
 settings page's whole handshake — the `settings` entry,
 `GET /webview-hashes`, the `POST /boot-error` breadcrumb with a
-swallowed outcome and the `webview_hashes_changed` poke — which
+swallowed outcome — which
 `start` awaits first and skips its own init on `true` (`/settings`);
 the package-time stamp producer `stampPackagedPages` (+ `stampHtml`,
 `stampReferences`) and the manifest reader (`/node`);
