@@ -172,15 +172,20 @@ describe(MELCloudExtensionApp, () => {
     expect(app.deviceGroups).toStrictEqual(groups)
   })
 
-  it('should poke open webviews with the freshness event at boot', async () => {
+  // A restart disconnects every open page before `onInit` ends, so no
+  // realtime poke can reach one: the freshness guarantee is the boot
+  // check and the foreground trigger, never an event from here (the
+  // `log` channel is the boot's only realtime traffic).
+  it('should emit no freshness poke at boot', async () => {
     const { classicDevice } = createDevices()
     const { mockHomey } = await createHarness([classicDevice])
 
     await advancePastInit()
 
-    expect(mockHomey.realtime).toHaveBeenCalledWith(
+    const { calls }: { calls: unknown[][] } = mockHomey.realtime.mock
+
+    expect(calls.map(([event]) => event)).not.toContain(
       'webview_hashes_changed',
-      null,
     )
   })
 
