@@ -491,23 +491,29 @@ vulnerabilities are GitHub's own — Dependabot alerts scan continuously
 and carry the named, reasoned dismissals (an exception lives on the
 advisory, so it cannot outlive it, and this repo's `parseuri` ReDoS is
 dismissed there), while `dependency-review` judges what a PR
-introduces. `publish.yml` and `validate.yml` stay local: the release
-reusables configs ships since 5.0.0 (`reusable-publish.yml`,
-`reusable-docs.yml`) are the LIBRARIES' path — an npm publish with
-provenance and a Pages deploy — while this app's `publish.yml` is the
-Homey App Store path through Athom's publish action, which no reusable
-covers. So the composite action stays too — as the family's VERBATIM
-copy of `OlivierZal/configs/.github/actions/setup-node-and-install`,
-re-copied at each adoption. Whatever is app-specific travels as caller
-inputs, never as an edit to the copy: `node-version: '22'` (the Homey
-runtime; the family default is `lts/*`), the `@olivierzal`
-`registry-url`/`scope` (also what makes setup-node write the user-level
-`.npmrc` that `publish.yml` copies for the publish action), and
-`require-npm-token: 'true'` with `npm-token` (the configs and homey-kit
-dependencies live on GitHub Packages, where even reads need auth).
-`.npmrc` (scope registry + `NODE_AUTH_TOKEN` auth) is load-bearing:
-the configs devDependency lives on GitHub Packages, where even reads
-need auth.
+introduces. `validate.yml` and `publish.yml` are stubs since configs
+6.0.0 / homey-kit 6.1.0, over the kit's `reusable-homey-validate.yml`
+and `reusable-homey-publish.yml`: the Homey App Store path is Homey
+process, so it lives with the kit — a TWO-CHANNEL package from 6.1.0,
+pinned by SHA with the release tag as the version comment, the same tag
+as the npm pin (configs' `check-pins.sh` polices the pair for the kit
+as it does for configs, so a kit adoption moves the `uses:` refs in the
+same commit as the pin). The caller keeps its triggers, its grants,
+its `HOMEY_PAT` secret and its bundle list (`settings/index.js` and
+`.mjs`, the compat pair); the required check reads
+`validate / Validate app`. The composite action stays — the reusables
+resolve `./.github/actions/setup-node-and-install` in the CALLER's
+checkout — as the family's VERBATIM copy of
+`OlivierZal/configs/.github/actions/setup-node-and-install`, re-copied
+at each adoption; what used to be this app's own settings on it
+(`node-version: '22'`, the `@olivierzal` `registry-url`/`scope` that
+makes setup-node write the `.npmrc` the publish action needs,
+`require-npm-token: 'true'` with `npm-token` — GitHub Packages needs
+auth even for reads) now lives in the reusables.
+`claude-dependabot-fix.yml` and `.github/zizmor.yml` went with configs
+6.0.0: the fix workflow was retired (zero successes in 4,296 runs, and
+a success path the Sonar gate refuses by design), and the zizmor
+ignore existed only for it.
 
 The bare `homey-apps-sdk-v3-types` devDependency beside the
 `@types/homey` alias is NOT a duplicate, and the two lines must move
