@@ -182,7 +182,9 @@ describe(MELCloudExtensionApp, () => {
 
     await advancePastInit()
 
-    expect(mockHomey.realtime.mock.calls.map(([event]) => event)).not.toContain(
+    const calls: unknown[][] = mockHomey.realtime.mock.calls
+
+    expect(calls.map(([event]) => event)).not.toContain(
       'webview_hashes_changed',
     )
   })
