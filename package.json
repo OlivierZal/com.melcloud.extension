@@ -30,12 +30,12 @@
   },
   "prettier": "@olivierzal/configs/prettier",
   "dependencies": {
-    "@olivierzal/homey-kit": "6.1.0",
+    "@olivierzal/homey-kit": "6.2.0",
     "homey-api": "^3.19.3",
     "temporal-polyfill": "^1.0.4"
   },
   "devDependencies": {
-    "@olivierzal/configs": "6.0.0",
+    "@olivierzal/configs": "6.1.0",
     "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.12",
     "@types/node": "^26.4.1",
     "@typescript/native": "npm:typescript@^7.0.2",
