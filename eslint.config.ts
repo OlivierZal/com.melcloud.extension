@@ -1,6 +1,8 @@
 import { homeyApp } from '@olivierzal/configs/eslint/homey-app'
 import { type Config, defineConfig } from 'eslint/config'
 
+import { webviewFloorFiles } from './scripts/webview-perimeter.mts'
+
 const config: Config[] = defineConfig([
   { ignores: ['.homeybuild/', 'coverage/'] },
   ...homeyApp({
@@ -11,9 +13,7 @@ const config: Config[] = defineConfig([
       'lib/**/*.mts',
       'listeners/**/*.mts',
     ],
-    // `types.mts` is cross-surface: the settings bundle emits its
-    // constants (measured by metafile), so it carries the floor too.
-    webviewFloorFiles: ['settings/**/*.mts', 'types.mts'],
+    webviewFloorFiles,
   }),
   {
     // Ambient declaration files: `declare module` blocks parse as scripts,

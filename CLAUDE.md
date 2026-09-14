@@ -546,14 +546,20 @@ one) and the settings-page breadcrumb `logSettingsRoute` (+ the
 `BreadcrumbLogger` seam; labels are `METHOD /path`, one spelling for
 the three apps) (root); the typed element accessors (`/dom`); and,
 under `/testing`, the
-analysis kernels — the API contract, the route guards, and the
-webview-floor closure walk `analyzeWebviewFloor` with its
-`getQuotedEntries` list reader (which throws on an empty sweep, the
-guard the suite used to carry by hand) — plus the plain test helpers
-`assertDefined`, `mock`, `settleDetached`, `getMockCallArg` and the
-`InteropModule` shape. A change to any of them is a kit release
-adopted here by a pin bump — never a local edit, and never a
-re-derivation. The three former copies (the inlined stamp producer in
+analysis kernels — the API contract and the route guards — plus the
+plain test helpers `assertDefined`, `mock`, `settleDetached`,
+`getMockCallArg` and the `InteropModule` shape. A change to any of them
+is a kit release adopted here by a pin bump — never a local edit, and
+never a re-derivation. The webview-floor closure is NOT one of them any
+more: since 2026-09-14 `tests/unit/webview-floor.test.ts` asks esbuild
+for the metafile of the real entry points (node_modules excluded) and
+checks every input against `webviewFloorFiles`, both read from
+`scripts/webview-perimeter.mts` — the one declaration the bundler and
+the lint share. That is the bundler's own answer to what the bundle
+emits, neither a text scrape of two config files nor a re-derivation
+of the kit's `analyzeWebviewFloor` walk, which this app no longer
+imports; the kit-floored modules a bundle pulls in are the kit's
+lint's business. The three former copies (the inlined stamp producer in
 `scripts/bundle.mts`, the freshness triplet in `settings/index.mts`,
 the closure walk in `tests/unit/webview-floor.test.ts`) and the shared
 helpers in `tests/helpers.ts` were deleted at the 5.1.0 adoption; the
