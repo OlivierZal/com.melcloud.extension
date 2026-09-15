@@ -58,7 +58,6 @@ describe(WeatherOutdoorSource, () => {
 
   afterEach(() => {
     vi.useRealTimers()
-    vi.clearAllMocks()
   })
 
   it('should read the Homey weather with the first subscriber', async () => {

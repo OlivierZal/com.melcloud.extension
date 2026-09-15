@@ -157,7 +157,6 @@ describe(MELCloudExtensionApp, () => {
 
   afterEach(() => {
     vi.useRealTimers()
-    vi.clearAllMocks()
   })
 
   it('should expose the building grouping fetched from com.melcloud', async () => {

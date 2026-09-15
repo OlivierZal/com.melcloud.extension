@@ -1,5 +1,5 @@
 import { assertDefined, mock } from '@olivierzal/homey-kit/testing'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type MELCloudExtensionApp from '../../app.mts'
 import type { OutdoorSource } from '../../listeners/outdoor-source.mts'
@@ -150,10 +150,6 @@ const comfortOf = (harness: Harness): number | undefined =>
   harness.settingsStore.adjustments?.['ac-1']?.previous
 
 describe(MELCloudListener, () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('should start monitoring the target temperature when already cooling', async () => {
     const harness = createHarness()
 
