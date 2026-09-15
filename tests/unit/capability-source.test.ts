@@ -1,5 +1,5 @@
 import { assertDefined, mock } from '@olivierzal/homey-kit/testing'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type MELCloudExtensionApp from '../../app.mts'
 import type { MELCloudListener } from '../../listeners/melcloud.mts'
@@ -59,10 +59,6 @@ const getOutdoorInstance = (
 }
 
 describe(CapabilityOutdoorSource, () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('should reject an unknown device in the capability path', async () => {
     const harness = createHarness()
 
