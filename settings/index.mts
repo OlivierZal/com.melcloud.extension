@@ -269,10 +269,12 @@ const initialCollapseState = { isApplied: false }
 const handleSettings = (settings: HomeySettings): void => {
   displayRetainedLogs(settings.lastLogs ?? [])
   enabledElement.value = String(settings.isEnabled === true)
-  if (!initialCollapseState.isApplied) {
-    initialCollapseState.isApplied = true
-    configurationElement.open = settings.isEnabled !== true
+  if (initialCollapseState.isApplied) {
+    return
   }
+
+  initialCollapseState.isApplied = true
+  configurationElement.open = settings.isEnabled !== true
 }
 
 const fetchLanguage = async (homey: Homey): Promise<void> => {
@@ -518,11 +520,13 @@ const wireCombobox = (parts: ComboboxParts, config: ComboboxConfig): void => {
       openList(parts, config, pick)
       return
     }
-    if (input.inputMode === 'none') {
-      input.inputMode = 'text'
-      input.blur()
-      input.focus()
+    if (input.inputMode !== 'none') {
+      return
     }
+
+    input.inputMode = 'text'
+    input.blur()
+    input.focus()
   })
   input.addEventListener('input', () => {
     if (list.hidden === true) {

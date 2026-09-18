@@ -55,10 +55,9 @@ const groupByBuilding = (
       if (group1.name === null) {
         return 1
       }
-      if (group2.name === null) {
-        return SORT_BEFORE
-      }
-      return group1.name.localeCompare(group2.name)
+      return group2.name === null
+        ? SORT_BEFORE
+        : group1.name.localeCompare(group2.name)
     })
 }
 

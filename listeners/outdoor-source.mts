@@ -59,10 +59,12 @@ export abstract class OutdoorSource {
 
   public detach(listener: MELCloudListener): void {
     this.#subscribers.delete(listener)
-    if (this.#subscribers.size === 0) {
-      this.stop()
-      this.#watching = null
+    if (this.#subscribers.size > 0) {
+      return
     }
+
+    this.stop()
+    this.#watching = null
   }
 
   protected initialize(reading: unknown): void {
