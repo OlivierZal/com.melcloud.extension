@@ -7,16 +7,12 @@ const WEATHER_PATH = '/api/manager/weather/weather'
 // The Homey weather refreshes from Athom's cloud on an hourly-ish cadence
 const POLL_INTERVAL = 900_000
 
-const readTemperature = (report: unknown): unknown => {
-  if (
-    typeof report === 'object' &&
-    report !== null &&
-    'temperatureCelsius' in report
-  ) {
-    return report.temperatureCelsius
-  }
-  return null
-}
+const readTemperature = (report: unknown): unknown =>
+  typeof report === 'object' &&
+  report !== null &&
+  'temperatureCelsius' in report
+    ? report.temperatureCelsius
+    : null
 
 // Default outdoor feed: the weather Homey displays on its home screen
 // (Athom cloud weather at the Homey's location), read from the local
