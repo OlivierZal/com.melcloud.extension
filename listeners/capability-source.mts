@@ -64,7 +64,7 @@ export class CapabilityOutdoorSource extends OutdoorSource {
         deviceId: this.#device.id,
       }),
     )
-    // homey-api invokes the listener bare: route it through
+    // `homey-api` invokes the listener bare: route it through
     // fireAndForget so a failed recalculation logs instead of crashing
     // the app with an unhandled rejection.
     this.#capabilityInstance = this.#device.makeCapabilityInstance(

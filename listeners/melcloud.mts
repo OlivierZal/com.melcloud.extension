@@ -76,7 +76,7 @@ export class MELCloudListener {
   public async listenToThermostatMode(): Promise<void> {
     const currentThermostatMode =
       await this.#getCapabilityValue(THERMOSTAT_MODE)
-    // homey-api invokes capability listeners bare: route the async
+    // `homey-api` invokes capability listeners bare: route the async
     // bodies through fireAndForget so a failure (e.g. the device going
     // offline mid-update) logs instead of crashing the app with an
     // unhandled rejection.
