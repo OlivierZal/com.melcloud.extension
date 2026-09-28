@@ -435,7 +435,7 @@ const createOptionItem = (
     option.value === selectedValue ? 'true' : 'false',
   )
   item.textContent = option.name
-  // click, not pointerdown: a touch drag must scroll the list, not pick
+  // `click`, not `pointerdown`: a touch drag must scroll the list, not pick
   item.addEventListener('click', (event) => {
     if (isDragClick(list, event)) {
       return

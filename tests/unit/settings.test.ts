@@ -266,7 +266,7 @@ describe('settings page', () => {
     vi.spyOn(Temporal.Now, 'instant').mockReturnValue(
       Temporal.Instant.fromEpochMilliseconds(NOW_MS),
     )
-    vi.spyOn(Temporal.Now, 'zonedDateTimeISO').mockImplementation(() =>
+    vi.spyOn(Temporal.Now, 'zonedDateTimeISO').mockReturnValue(
       Temporal.Instant.fromEpochMilliseconds(NOW_MS).toZonedDateTimeISO(
         Temporal.Now.timeZoneId(),
       ),

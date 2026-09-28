@@ -2,14 +2,14 @@
 
 Homey app extending com.melcloud with automatic cooling adjustment based
 on an outdoor temperature source. ESM only. Two Node floors, never
-confused: `engines` (`^22.22.2 || >=24.15.0`, `.nvmrc` on its lower
-bound) is the TOOLCHAIN floor, derived from the installed tree the way
-configs derives its own; the DEVICE floor is the manifest's
-`compatibility` (`>=12.9.0`, Athom's Node 22 boundary — see the floor
-doctrine under Naming & authored-content conventions). It talks to
-the MELCloud devices exclusively through the local Homey API (`homey-api`)
-— device behavior is fixed in com.melcloud (sibling repo with its own
-CLAUDE.md), never worked around here.
+confused: `engines` (`^22.23.0 || ^24.18.0 || >=26.4.0`, `.nvmrc` on
+its lower bound) is the TOOLCHAIN floor, derived from the installed
+tree the way configs derives its own; the DEVICE floor is the
+manifest's `compatibility` (`>=12.9.0`, Athom's Node 22 boundary — see
+the floor doctrine under Naming & authored-content conventions). It
+talks to the MELCloud devices exclusively through the local Homey API
+(`homey-api`) — device behavior is fixed in com.melcloud (sibling repo
+with its own CLAUDE.md), never worked around here.
 
 ## Inter-app API dependency
 
@@ -430,16 +430,22 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   toolchain needs in order to install and run this tree — and is
   derived from the installed dependency tree exactly as configs derives
   its own, never copied from a sibling or nudged by hand (measured
-  2026-09-08 over the TOOLCHAIN — the devDependencies and their trees:
-  `@olivierzal/configs`, `eslint-plugin-package-json`,
-  `eslint-plugin-jsdoc` and jsdoc's two parsers require
-  `^22.22.2 || >=24.15.0`, the value `engines` and `.nvmrc` carry;
-  re-derive it when that tree moves). The one SHIPPED dependency that
-  declares a higher engine, `homey-api` (`>=24`), is left out on
-  purpose: it speaks about the device runtime, where this app runs on
-  the Node 22 firmware regardless, and folding it in would raise the
-  toolchain floor to a Node no Homey ships — `npm ci` warns on it (no
-  `engine-strict`) and nothing else.
+  2026-09-28 over the TOOLCHAIN — the devDependencies and their trees:
+  `@olivierzal/configs` 7.0.0 and its `eslint-plugin-es-x` 10.0.1
+  require `^22.23.0 || ^24.18.0 || >=26.4.0`;
+  `eslint-plugin-package-json`, `eslint-plugin-jsdoc` and jsdoc's two
+  parsers `^22.22.2 || >=24.15.0`; vitest 5
+  `^22.12.0 || ^24.0.0 || >=26.0.0`; their intersection,
+  `^22.23.0 || ^24.18.0 || >=26.4.0`, is the value `engines` carries,
+  with `.nvmrc` on its lower bound; re-derive it when that tree
+  moves). A SHIPPED dependency's engine never enters the derivation:
+  it speaks about the device runtime, where this app runs on the
+  Node 22 firmware regardless, and folding a higher one in would raise
+  the toolchain floor to a Node no Homey ships — `homey-api` once
+  declared `>=24` and was left out for exactly that reason; at 3.20.0
+  it declares `>=22` (read 2026-09-28), inside the range, so today
+  nothing stands above the floor. `npm ci` only warns on an engine
+  mismatch (no `engine-strict`) and nothing else.
   It states nothing about the device, and CI's `22.20` coverage leg
   legitimately runs BELOW it: that leg is the on-device fleet floor
   (a Pro 2019, measured 2026-08), and the reusable CI sets no

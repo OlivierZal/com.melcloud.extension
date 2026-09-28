@@ -14,8 +14,8 @@ whole surface is that page plus the listeners that keep it in step.
 ## Prerequisites
 
 - Node.js matching `engines.node` in [`package.json`](package.json) —
-  currently `^22.22.2 || >=24.15.0`, the **development** floor derived
-  from the installed tree, not the floor the device runs
+  currently `^22.23.0 || ^24.18.0 || >=26.4.0`, the **development**
+  floor derived from the installed tree, not the floor the device runs
 - npm 10+
 - A GitHub personal access token with the `read:packages` scope, exported
   as `NODE_AUTH_TOKEN` — [`.npmrc`](.npmrc) reads that variable to fetch
