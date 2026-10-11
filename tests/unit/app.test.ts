@@ -145,7 +145,7 @@ const advancePastInit = async (): Promise<void> => {
 }
 
 const logCategories = (mockHomey: MockHomey): string[] =>
-  (mockHomey.settingsStore.lastLogs ?? []).map(({ category }) => category ?? '')
+  (mockHomey.settingsStore.lastLogs ?? []).map(({ category = '' }) => category)
 
 const logMessages = (mockHomey: MockHomey): string[] =>
   (mockHomey.settingsStore.lastLogs ?? []).map(({ message }) => message)

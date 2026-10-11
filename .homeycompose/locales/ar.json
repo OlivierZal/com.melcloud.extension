@@ -24,7 +24,7 @@
     "configuration": "التكوين",
     "defaultSource": "طقس Homey",
     "disabledSource": "عدم الضبط",
-    "enabled": "الإبقاء ضمن 8 °C من درجة الحرارة الخارجية",
+    "enabled": "الإبقاء ضمن 8\u00A0°C من درجة الحرارة الخارجية",
     "install": "تثبيت تطبيق MELCloud",
     "loadFailed": "فشل التحميل",
     "log": "السجل",

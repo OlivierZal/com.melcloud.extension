@@ -193,11 +193,11 @@ const createDayElement = (time: number): HTMLDivElement => {
 }
 
 const createLogRow = ({
-  category,
+  category = 'error',
   message,
   time,
 }: TimestampedLog): HTMLDivElement => {
-  const { colorClass, icon } = categories[category ?? 'error'] ?? errorCategory
+  const { colorClass, icon } = categories[category] ?? errorCategory
   const rowElement = document.createElement('div')
   rowElement.classList.add('log-row')
   rowElement.append(
