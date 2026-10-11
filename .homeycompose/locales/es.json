@@ -24,7 +24,7 @@
     "configuration": "Configuración",
     "defaultSource": "Tiempo de Homey",
     "disabledSource": "No ajustar",
-    "enabled": "Mantener dentro de los 8 °C de la temperatura exterior",
+    "enabled": "Mantener dentro de los 8\u00A0°C de la temperatura exterior",
     "install": "Instalar la aplicación MELCloud",
     "loadFailed": "Error al cargar",
     "log": "Historial",

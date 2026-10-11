@@ -1,15 +1,15 @@
 {
   "log": {
-    "calculated": "Calcul de la température de __name__ : __value__ (à partir du seuil __threshold__ et de la température extérieure __outdoorTemperature__)",
+    "calculated": "Calcul de la température de __name__\u00A0: __value__ (à partir du seuil __threshold__ et de la température extérieure __outdoorTemperature__)",
     "cleaned": "Nettoyage de l'écouteur pour __capability__ de __name__",
     "cleanedAll": "Nettoyage de tous les écouteurs",
     "created": "Création d'un écouteur pour __capability__ de __name__",
     "kept": "Conservation de la température de __name__ : __value__ a été réglée après l'ajustement",
-    "listened": "Écoute de __capability__ de __name__ : __value__",
+    "listened": "Écoute de __capability__ de __name__\u00A0: __value__",
     "noThreshold": "Aucune température enregistrée pour __name__ : aucune commande envoyée",
     "notFound": "__type__ `__idOrName__` introuvable",
-    "reverted": "Rétablissement de la température de __name__ : __value__",
-    "saved": "Enregistrement de la température de __name__ : __value__"
+    "reverted": "Rétablissement de la température de __name__\u00A0: __value__",
+    "saved": "Enregistrement de la température de __name__\u00A0: __value__"
   },
   "names": {
     "device": "L'appareil",
@@ -24,7 +24,7 @@
     "configuration": "Configuration",
     "defaultSource": "Météo Homey",
     "disabledSource": "Ne pas activer",
-    "enabled": "Maintenir à moins de 8 °C de la température extérieure",
+    "enabled": "Maintenir à moins de 8\u00A0°C de la température extérieure",
     "install": "Installer l'app MELCloud",
     "loadFailed": "Le chargement a échoué",
     "log": "Historique",

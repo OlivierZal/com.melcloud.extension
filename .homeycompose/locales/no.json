@@ -24,7 +24,7 @@
     "configuration": "Konfigurasjon",
     "defaultSource": "Homey-vær",
     "disabledSource": "Ikke juster",
-    "enabled": "Hold innenfor 8 °C av utetemperaturen",
+    "enabled": "Hold innenfor 8\u00A0°C av utetemperaturen",
     "install": "Installer MELCloud-appen",
     "loadFailed": "Innlasting mislyktes",
     "log": "Historikk",

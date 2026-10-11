@@ -2,10 +2,9 @@
    longest one, so the messages align across rows whatever the relative
    time's length ("il y a 1 heure" vs "il y a 13 heures"). */
 #logs {
-  column-gap: 1em;
   display: grid;
+  gap: 1em;
   grid-template-columns: max-content minmax(0, 1fr);
-  row-gap: 1em;
 }
 
 .log-row {
@@ -94,8 +93,8 @@ fieldset[disabled] button:disabled {
 /* Thin chevron at the field's end, matching the Homey select */
 .combobox::after {
   block-size: 0.5em;
-  border-block-end: 0.15em solid currentColor;
-  border-inline-end: 0.15em solid currentColor;
+  border-block-end: 0.15em solid currentcolor;
+  border-inline-end: 0.15em solid currentcolor;
   content: '';
   inline-size: 0.5em;
   inset-block-start: 50%;
@@ -145,8 +144,8 @@ fieldset[disabled] button:disabled {
 /* Thin stroke checkmark, same pen as the field chevron */
 .combobox-option.is-selected::before {
   block-size: 0.55em;
-  border-block-end: 0.15em solid currentColor;
-  border-inline-end: 0.15em solid currentColor;
+  border-block-end: 0.15em solid currentcolor;
+  border-inline-end: 0.15em solid currentcolor;
   content: '';
   inline-size: 0.3em;
   inset-block-start: 50%;
@@ -195,8 +194,8 @@ summary.homey-form-legend::-webkit-details-marker {
 
 summary.homey-form-legend::before {
   block-size: 0.45em;
-  border-block-start: 0.14em solid currentColor;
-  border-inline-end: 0.14em solid currentColor;
+  border-block-start: 0.14em solid currentcolor;
+  border-inline-end: 0.14em solid currentcolor;
   content: '';
   inline-size: 0.45em;
   rotate: 45deg;
