@@ -445,16 +445,13 @@ const createOptionItem = (
   return item
 }
 
-const renderOptions = (
-  list: HTMLUListElement,
-  params: RenderOptionsParams,
-): void => {
+const renderOptions = (params: RenderOptionsParams): void => {
   const needle = params.filter.trim().toLowerCase()
   const matches =
     needle === ''
       ? sourceOptions
       : sourceOptions.filter(({ name }) => name.toLowerCase().includes(needle))
-  list.replaceChildren(
+  params.list.replaceChildren(
     ...matches.map((option) => createOptionItem(option, params)),
   )
 }
@@ -491,7 +488,7 @@ const openList = (
   onPick: (option: SourceOption) => void,
 ): void => {
   closeOpenCombobox()
-  renderOptions(parts.list, {
+  renderOptions({
     filter: '',
     list: parts.list,
     onPick,
@@ -532,7 +529,7 @@ const wireCombobox = (parts: ComboboxParts, config: ComboboxConfig): void => {
     if (list.hidden === true) {
       openList(parts, config, pick)
     }
-    renderOptions(list, {
+    renderOptions({
       filter: input.value,
       list,
       onPick: pick,

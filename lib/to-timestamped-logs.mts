@@ -8,9 +8,7 @@ const hasValidCategory = (entry: object): boolean =>
 
 const isTimestampedLog = (entry: unknown): entry is TimestampedLog =>
   isRecord(entry) &&
-  'message' in entry &&
   typeof entry.message === 'string' &&
-  'time' in entry &&
   typeof entry.time === 'number' &&
   Number.isFinite(entry.time) &&
   hasValidCategory(entry)

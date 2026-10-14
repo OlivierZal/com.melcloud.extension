@@ -3,7 +3,11 @@ import { mock } from '@olivierzal/homey-kit/testing'
 import { describe, expect, it, vi } from 'vitest'
 
 import type MELCloudExtensionApp from '../../app.mts'
-import type { HomeySettings, TemperatureListenerData } from '../../types.mts'
+import type {
+  DeviceGroups,
+  HomeySettings,
+  TemperatureListenerData,
+} from '../../types.mts'
 import { toOutdoorSources } from '../../lib/to-outdoor-sources.mts'
 import { createMockDevice } from '../mocks.ts'
 import api from '../../api.mts'
@@ -44,7 +48,7 @@ const createHomeyContext = ({
 }: {
   readonly melcloudDevices: MELCloudExtensionApp['melcloudDevices']
   readonly temperatureSensors: MELCloudExtensionApp['temperatureSensors']
-  readonly deviceGroups?: MELCloudExtensionApp['deviceGroups']
+  readonly deviceGroups?: DeviceGroups | null
   readonly settings?: Partial<HomeySettings>
 }): { autoAdjustCooling: ReturnType<typeof vi.fn>; homey: Homey } => {
   const autoAdjustCooling = vi

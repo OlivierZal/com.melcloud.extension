@@ -5,9 +5,7 @@ const isGroup = (
   entry: unknown,
 ): entry is { deviceIds: readonly string[]; name: string } =>
   isRecord(entry) &&
-  'name' in entry &&
   typeof entry.name === 'string' &&
-  'deviceIds' in entry &&
   Array.isArray(entry.deviceIds) &&
   entry.deviceIds.every((id) => typeof id === 'string')
 
