@@ -199,7 +199,12 @@ summary.homey-form-legend::before {
   content: '';
   inline-size: 0.45em;
   rotate: 45deg;
-  transition: rotate 0.15s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  summary.homey-form-legend::before {
+    transition: rotate 0.15s ease;
+  }
 }
 
 details[open] > summary.homey-form-legend::before {

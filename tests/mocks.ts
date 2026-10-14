@@ -41,7 +41,7 @@ export const createMockDevice = ({
   capabilitiesOptions = {},
   driverId,
   id,
-  melcloudId,
+  melcloudId = id,
   name,
   values = {},
 }: {
@@ -73,7 +73,7 @@ export const createMockDevice = ({
         },
       ]),
     ),
-    data: { id: melcloudId ?? id },
+    data: { id: melcloudId },
     driverId,
     id,
     name,

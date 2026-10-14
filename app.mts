@@ -175,10 +175,10 @@ export default class MELCloudExtensionApp extends App {
   // Parses "category.messageId" (e.g. "error.notFound") into a log entry
   // and broadcasts it to the settings UI via realtime events.
   public pushToUI(name: string, params?: ListenerParams): void {
-    const [messageId = '', category] = name.split('.').toReversed()
+    const [messageId = '', category = messageId] = name.split('.').toReversed()
     const translated = this.homey.__(`log.${messageId}`, params)
     const newLog: TimestampedLog = {
-      category: category ?? messageId,
+      category,
       // Fix i18n grammar: "de el" → "del" (Spanish), "de le" → "du" (French)
       message: (translated === '' ? messageId : translated)
         .replaceAll(/de el /giv, 'del ')
