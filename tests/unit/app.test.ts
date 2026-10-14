@@ -168,7 +168,7 @@ describe(MELCloudExtensionApp, () => {
     await advancePastInit()
 
     expect(mockHomey.apiAppGet).toHaveBeenCalledWith('/devices/groups')
-    expect(app.deviceGroups).toStrictEqual(groups)
+    await expect(app.refreshDeviceGroups()).resolves.toStrictEqual(groups)
   })
 
   // A restart disconnects every open page before `onInit` ends, so no
@@ -300,9 +300,6 @@ describe(MELCloudExtensionApp, () => {
     await expect(app.refreshDeviceGroups()).resolves.toStrictEqual([
       { deviceIds: ['1000'], name: 'Nouvelle maison' },
     ])
-    expect(app.deviceGroups).toStrictEqual([
-      { deviceIds: ['1000'], name: 'Nouvelle maison' },
-    ])
   })
 
   it('should read an off-shape grouping payload as no grouping', async () => {
@@ -312,7 +309,7 @@ describe(MELCloudExtensionApp, () => {
 
     await advancePastInit()
 
-    expect(app.deviceGroups).toBeNull()
+    await expect(app.refreshDeviceGroups()).resolves.toBeNull()
   })
 
   it('should read a failed grouping fetch as no grouping', async () => {
@@ -322,7 +319,7 @@ describe(MELCloudExtensionApp, () => {
 
     await advancePastInit()
 
-    expect(app.deviceGroups).toBeNull()
+    await expect(app.refreshDeviceGroups()).resolves.toBeNull()
   })
 
   it('should classify Classic and Home AC devices as adjustable', async () => {

@@ -72,10 +72,6 @@ export default class MELCloudExtensionApp extends App {
     return this.#api
   }
 
-  public get deviceGroups(): DeviceGroups | null {
-    return this.#deviceGroups
-  }
-
   public get melcloudDevices(): HomeyAPIV3Local.ManagerDevices.Device[] {
     return this.#melcloudDevices
   }
@@ -217,7 +213,12 @@ export default class MELCloudExtensionApp extends App {
   // 45.2.0 — so the settings page follows building renames without an
   // app restart.
   public async refreshDeviceGroups(): Promise<DeviceGroups | null> {
-    this.#deviceGroups = await this.#fetchDeviceGroups()
+    try {
+      const payload: unknown = await this.#melcloudApp.get('/devices/groups')
+      this.#deviceGroups = toDeviceGroups(payload)
+    } catch {
+      this.#deviceGroups = null
+    }
     return this.#deviceGroups
   }
 
@@ -282,15 +283,6 @@ export default class MELCloudExtensionApp extends App {
       }),
     )
     this.#sources.clear()
-  }
-
-  async #fetchDeviceGroups(): Promise<DeviceGroups | null> {
-    try {
-      const payload: unknown = await this.#melcloudApp.get('/devices/groups')
-      return toDeviceGroups(payload)
-    } catch {
-      return null
-    }
   }
 
   // Bridges the two id spaces: the building payload speaks MELCloud

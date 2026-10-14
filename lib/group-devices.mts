@@ -28,16 +28,20 @@ const byName = <T extends { readonly name: string }>(
   entry2: T,
 ): number => entry1.name.localeCompare(entry2.name)
 
-// Buildings are joined on the MELCloud device id carried by the Homey
-// device data; same-name buildings (one per dialect for the same house)
-// merge into a single row.
-const groupByBuilding = (
+// Shapes the settings rows: one named group per building when the
+// com.melcloud grouping is available, unmatched devices in a trailing
+// unnamed group rendered per device — and "no grouping" is the empty
+// grouping, which yields that single unnamed group. Buildings are
+// joined on the MELCloud device id carried by the Homey device data;
+// same-name buildings (one per dialect for the same house) merge into a
+// single row.
+export const groupAdjustableDevices = (
   devices: readonly HomeyAPIV3Local.ManagerDevices.Device[],
   outdoorSources: OutdoorSources,
-  deviceGroups: DeviceGroups,
+  deviceGroups: DeviceGroups | null,
 ): AdjustableGroup[] => {
   const nameByMelcloudId = new Map(
-    deviceGroups.flatMap(({ deviceIds, name }) =>
+    (deviceGroups ?? []).flatMap(({ deviceIds, name }) =>
       deviceIds.map((id): [string, string] => [id, name]),
     ),
   )
@@ -59,26 +63,4 @@ const groupByBuilding = (
         ? SORT_BEFORE
         : group1.name.localeCompare(group2.name)
     })
-}
-
-// Shapes the settings rows: one named group per building when the
-// com.melcloud grouping is available (unmatched devices land in a
-// trailing unnamed group rendered per device), or a single unnamed
-// flat group otherwise.
-export const groupAdjustableDevices = (
-  devices: readonly HomeyAPIV3Local.ManagerDevices.Device[],
-  outdoorSources: OutdoorSources,
-  deviceGroups: DeviceGroups | null,
-): AdjustableGroup[] => {
-  if (deviceGroups === null) {
-    return [
-      {
-        devices: devices
-          .map((device) => toAdjustableDevice(device, outdoorSources))
-          .toSorted(byName),
-        name: null,
-      },
-    ]
-  }
-  return groupByBuilding(devices, outdoorSources, deviceGroups)
 }
