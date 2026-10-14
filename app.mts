@@ -611,6 +611,13 @@ export default class MELCloudExtensionApp extends App {
   // never written. The first seeding on an existing install stamps the
   // legacy default (null = Homey weather) and changes nothing;
   // afterwards newcomers go through #inheritedSource.
+  //
+  // The sibling vote reads `stored`, the PRE-SEED map, which this method
+  // never mutates: only entries that predate this reconciliation — user
+  // decisions and past seeds — may decide a newcomer, so one newcomer's
+  // inferred value cannot leak into another's vote and the result does
+  // not depend on the order the newcomers are visited in (PR #1264). The
+  // seeded map is built beside it and written in one go.
   #seedOutdoorSources(): void {
     const stored: OutdoorSources = this.outdoorSources
     const newcomers = this.#melcloudDevices.filter(
@@ -618,9 +625,19 @@ export default class MELCloudExtensionApp extends App {
     )
     const isLegacySeed =
       this.homey.settings.get('hasSeededOutdoorSources') !== true
-    this.#writeNewcomerEntries(stored, newcomers, isLegacySeed)
     if (newcomers.length > 0) {
-      this.outdoorSources = stored
+      const homeyIdByMelcloudId = this.#getHomeyIdByMelcloudId()
+      this.outdoorSources = {
+        ...stored,
+        ...Object.fromEntries(
+          newcomers.map((device) => [
+            device.id,
+            isLegacySeed
+              ? null
+              : this.#inheritedSource(device, stored, homeyIdByMelcloudId),
+          ]),
+        ),
+      }
     }
     if (isLegacySeed) {
       this.homey.settings.set('hasSeededOutdoorSources', true)
@@ -646,24 +663,5 @@ export default class MELCloudExtensionApp extends App {
       return
     }
     await this.#restoreTemperature(device, adjustment.previous)
-  }
-
-  // The sibling vote reads a pre-seed snapshot, never the map being
-  // written: only entries that predate this reconciliation — user
-  // decisions and past seeds — may decide a newcomer, so one
-  // newcomer's inferred value cannot leak into another's vote. The
-  // first (legacy) seed stamps the historical default instead.
-  #writeNewcomerEntries(
-    stored: OutdoorSources,
-    newcomers: readonly HomeyAPIV3Local.ManagerDevices.Device[],
-    isLegacySeed: boolean,
-  ): void {
-    const homeyIdByMelcloudId = this.#getHomeyIdByMelcloudId()
-    const decided: OutdoorSources = { ...stored }
-    for (const device of newcomers) {
-      stored[device.id] = isLegacySeed
-        ? null
-        : this.#inheritedSource(device, decided, homeyIdByMelcloudId)
-    }
   }
 }
