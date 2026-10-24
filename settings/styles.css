@@ -93,8 +93,8 @@ fieldset[disabled] button:disabled {
 /* Thin chevron at the field's end, matching the Homey select */
 .combobox::after {
   block-size: 0.5em;
-  border-block-end: 0.15em solid currentcolor;
-  border-inline-end: 0.15em solid currentcolor;
+  border-block-end: 0.15em solid;
+  border-inline-end: 0.15em solid;
   content: '';
   inline-size: 0.5em;
   inset-block-start: 50%;
@@ -144,8 +144,8 @@ fieldset[disabled] button:disabled {
 /* Thin stroke checkmark, same pen as the field chevron */
 .combobox-option.is-selected::before {
   block-size: 0.55em;
-  border-block-end: 0.15em solid currentcolor;
-  border-inline-end: 0.15em solid currentcolor;
+  border-block-end: 0.15em solid;
+  border-inline-end: 0.15em solid;
   content: '';
   inline-size: 0.3em;
   inset-block-start: 50%;
@@ -194,8 +194,8 @@ summary.homey-form-legend::-webkit-details-marker {
 
 summary.homey-form-legend::before {
   block-size: 0.45em;
-  border-block-start: 0.14em solid currentcolor;
-  border-inline-end: 0.14em solid currentcolor;
+  border-block-start: 0.14em solid;
+  border-inline-end: 0.14em solid;
   content: '';
   inline-size: 0.45em;
   rotate: 45deg;
@@ -203,7 +203,7 @@ summary.homey-form-legend::before {
 
 @media (prefers-reduced-motion: no-preference) {
   summary.homey-form-legend::before {
-    transition: rotate 0.15s ease;
+    transition: rotate 0.15s;
   }
 }
 

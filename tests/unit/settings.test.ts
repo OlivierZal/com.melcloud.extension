@@ -34,8 +34,6 @@ const HOURS_2_MS = 7_200_000
 const HOURS_26_MS = 93_600_000
 const DAYS_8_MS = 691_200_000
 
-type ApiCallback = (error: Error | null, result: unknown) => void
-
 interface Harness {
   readonly alert: ReturnType<typeof vi.fn>
   readonly api: ReturnType<typeof vi.fn>
@@ -103,6 +101,8 @@ const createApiMock = (
   routes: Record<string, unknown>,
 ): ReturnType<typeof vi.fn> =>
   vi.fn<(...callArgs: ApiCallArgs) => void>((...callArgs) => {
+    type ApiCallback = (error: Error | null, result: unknown) => void
+
     const [method, path] = callArgs
     const callback = callArgs.findLast(
       (argument): argument is ApiCallback => typeof argument === 'function',
