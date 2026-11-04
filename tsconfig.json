@@ -1,4 +1,7 @@
 {
-  "compilerOptions": { "outDir": ".homeybuild" },
+  "compilerOptions": {
+    "outDir": ".homeybuild",
+    "paths": { "homey-api": ["./homey-api-override.d.ts"] }
+  },
   "extends": "@olivierzal/configs/tsconfig/app"
 }

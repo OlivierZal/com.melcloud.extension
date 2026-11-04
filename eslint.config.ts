@@ -16,13 +16,12 @@ const config: Config[] = defineConfig([
     webviewFloorFiles,
   }),
   {
-    // Ambient declaration files: `declare module` blocks parse as scripts,
-    // and typing the homey-api surface requires several merged classes in
-    // the single augmented module.
+    // Declaration files: the homey-api replacement states the package's
+    // surface as several merged classes in one module, and a declaration
+    // carries no access modifier.
     files: ['**/*.d.ts'],
     rules: {
       '@typescript-eslint/explicit-member-accessibility': 'off',
-      'import-x/unambiguous': 'off',
       'max-classes-per-file': 'off',
     },
   },
