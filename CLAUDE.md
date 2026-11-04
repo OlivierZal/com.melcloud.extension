@@ -227,12 +227,17 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   Nothing checks a `.d.ts` under `skipLibCheck`: the bare `Homey` it
   carried until 2026-11-04 decayed to the error type and `createAppAPI`
   accepted anything in silence; `tests/types/homey-api-override.ts`
-  pins the parameter — the SDK instance fits, a number is refused — so
-  a wrong spelling stops `typecheck`. The refusal is the guard that
-  trips: a decayed name relates like `any` yet resolves a conditional
-  type to both branches (measured on TypeScript 7, 2026-11-04), so an
-  `IsAny`-style probe stays silent while an unused `@ts-expect-error`
-  does not. `homey-override.d.ts` is the SDK's
+  pins the parameter — the SDK instance fits, a number is refused — as
+  the semantic guard, and `typecheck` chains a second program,
+  `tsconfig.declarations.json`, that checks this one file with
+  `skipLibCheck: false` (one second; the ambient replacement keeps
+  homey-api's own 145-error `.d.ts` out of that graph, so the check
+  stays clean). `skipLibCheck: true` itself stays: it is the modern
+  default (`tsc --init`, `@tsconfig/strictest`), TypeScript has no
+  per-package exemption, and homey-api's `.d.ts` does not compile. A
+  `.ts` spelling of this file was measured and refused: the Homey CLI
+  compiles from `tsconfig.json` and would ship six empty fossils per
+  app. `homey-override.d.ts` is the SDK's
   one augmentation seam and nothing else: the `HomeyTypes` interface
   augmented under `declare module 'homey'` with
   `app: MELCloudExtensionApp`, which types `homey.app` — how the

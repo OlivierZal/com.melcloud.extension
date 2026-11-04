@@ -1,0 +1,5 @@
+{
+  "compilerOptions": { "noEmit": true, "skipLibCheck": false },
+  "extends": "./tsconfig.json",
+  "files": ["homey-api-override.d.ts"]
+}

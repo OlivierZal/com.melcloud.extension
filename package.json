@@ -27,7 +27,7 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "vitest run",
     "test:coverage": "npm test -- --coverage",
-    "typecheck": "node ./node_modules/@typescript/native/bin/tsc --noEmit"
+    "typecheck": "node ./node_modules/@typescript/native/bin/tsc --noEmit && node ./node_modules/@typescript/native/bin/tsc -p tsconfig.declarations.json"
   },
   "prettier": "@olivierzal/configs/prettier",
   "dependencies": {
