@@ -760,6 +760,21 @@ describe(MELCloudExtensionApp, () => {
     expect(lastLog?.message).toBe('Temperatura del exterior du salon')
   })
 
+  it('should log a rejected realtime push and keep the entry', async () => {
+    const { classicDevice } = createDevices()
+    const { app, mockHomey } = await createHarness([classicDevice])
+    mockHomey.realtime.mockRejectedValueOnce(new Error('realtime_down'))
+
+    app.pushToUI('saved')
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(app.error).toHaveBeenCalledWith(
+      'Failed to push a log to the settings page',
+      new Error('realtime_down'),
+    )
+    expect(logCategories(mockHomey)).toContain('saved')
+  })
+
   it('should cap the persisted log history', async () => {
     const { classicDevice } = createDevices()
     const seededLogs = Array.from({ length: 100 }, (_element, index) => ({

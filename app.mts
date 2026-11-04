@@ -12,7 +12,7 @@ import type { OutdoorSource } from './listeners/outdoor-source.mts'
 import { changelog } from './files.mts'
 import { formatTemperature } from './lib/format-temperature.mts'
 import { toJoinKey } from './lib/group-devices.mts'
-import { type Homey, App } from './lib/homey.mts'
+import { App } from './lib/homey.mts'
 import { toAdjustments } from './lib/to-adjustments.mts'
 import { toDeviceGroups } from './lib/to-device-groups.mts'
 import { toListenerData } from './lib/to-listener-data.mts'
@@ -28,6 +28,7 @@ import {
   type Adjustments,
   type DeviceGroups,
   type ListenerParams,
+  type MELCloudExtensionHomey,
   type Names,
   type OutdoorSources,
   type TemperatureListenerData,
@@ -57,7 +58,7 @@ const WEATHER_SOURCE_KEY = 'homey:weather'
 // Main Homey app: discovers MELCloud AC devices and outdoor temperature
 // sensors, then manages automatic cooling adjustment listeners.
 export default class MELCloudExtensionApp extends App {
-  declare public readonly homey: Homey.Homey
+  declare public readonly homey: MELCloudExtensionHomey
 
   // Sanitized and fresh on every read, like the other persisted maps.
   public get adjustments(): Adjustments {
@@ -112,7 +113,7 @@ export default class MELCloudExtensionApp extends App {
   // settle.
   readonly #deviceListeners = new Map<string, MELCloudListener>()
 
-  #initTimeout: NodeJS.Timeout | null = null
+  #initTimeout: NodeJS.Timeout | undefined = undefined
 
   #melcloudApp!: ApiApp
 
@@ -176,7 +177,13 @@ export default class MELCloudExtensionApp extends App {
   // and broadcasts it to the settings UI via realtime events.
   public pushToUI(name: string, params?: ListenerParams): void {
     const [messageId = '', category = messageId] = name.split('.').toReversed()
-    const translated = this.homey.__(`log.${messageId}`, params)
+    // The SDK interpolates a dense record of string tags; the params are
+    // sparse by design (each message names its own), so only the tags
+    // the message carries are rendered.
+    const tags = Object.fromEntries(
+      Object.entries(params ?? {}).map(([key, value]) => [key, String(value)]),
+    )
+    const translated = this.homey.__(`log.${messageId}`, tags)
     const newLog: TimestampedLog = {
       category,
       // Fix i18n grammar: "de el" → "del" (Spanish), "de le" → "du" (French)
@@ -185,7 +192,11 @@ export default class MELCloudExtensionApp extends App {
         .replaceAll(/de le /giv, 'du '),
       time: Temporal.Now.instant().epochMilliseconds,
     }
-    this.homey.api.realtime('log', newLog)
+    fireAndForget(
+      this.homey.api.realtime('log', newLog),
+      this,
+      'Failed to push a log to the settings page',
+    )
     this.#persistLog(newLog)
   }
 

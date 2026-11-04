@@ -1,3 +1,24 @@
+import type { TypedManagerSettings } from '@olivierzal/homey-kit/types'
+import type { Homey } from 'homey'
+import type SdkManagerSettings from 'homey/manager/settings'
+
+// The SDK's settings manager, keyed by this app's own setting names. The
+// members are picked one by one from the kit generic: a second parent
+// declaring the same member would resolve silently towards the SDK's
+// wide type; the SDK class supplies everything else.
+export interface ManagerSettings extends SdkManagerSettings {
+  readonly get: TypedManagerSettings<HomeySettings>['get']
+  readonly set: TypedManagerSettings<HomeySettings>['set']
+  readonly unset: TypedManagerSettings<HomeySettings>['unset']
+}
+
+// The Homey instance as this app sees it: `app` is typed by the SDK's
+// `HomeyTypes` seam (homey-override.d.ts), `settings` by the interface
+// above. Only the app class re-declares `homey` with it.
+export interface MELCloudExtensionHomey extends Homey {
+  readonly settings: ManagerSettings
+}
+
 export const MEASURE_TEMPERATURE = 'measure_temperature'
 export const OUTDOOR_TEMPERATURE = 'measure_temperature.outdoor'
 export const TARGET_TEMPERATURE = 'target_temperature'

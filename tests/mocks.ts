@@ -1,8 +1,8 @@
+import type { Homey } from 'homey'
 import type { HomeyAPIV3Local } from 'homey-api'
 import { mock } from '@olivierzal/homey-kit/testing'
 import { vi } from 'vitest'
 
-import type { Homey } from '../lib/homey.mts'
 import type { HomeySettings, Names } from '../types.mts'
 
 // The homey-api capability value contract (the shape
@@ -167,7 +167,7 @@ export interface MockHomey {
   readonly apiAppGet: ReturnType<typeof vi.fn>
   readonly createNotification: ReturnType<typeof vi.fn>
   readonly eventHandlers: Map<string, (...args: unknown[]) => void>
-  readonly homey: Homey.Homey
+  readonly homey: Homey
   readonly realtime: ReturnType<typeof vi.fn>
   readonly settingsStore: Partial<HomeySettings>
   readonly translate: ReturnType<typeof vi.fn>
@@ -188,7 +188,9 @@ export const createMockHomey = ({
     .fn<(options: { excerpt: string }) => Promise<void>>()
     .mockResolvedValue()
   const apiAppGet = vi.fn<(path: string) => unknown>().mockReturnValue([])
-  const realtime = vi.fn<(event: string, data: unknown) => void>()
+  const realtime = vi
+    .fn<(event: string, data: unknown) => Promise<void>>()
+    .mockResolvedValue()
   const translate = vi
     .fn<(key: string, params?: Record<string, unknown>) => string>()
     .mockImplementation((key) => key)
@@ -202,7 +204,7 @@ export const createMockHomey = ({
     .mockImplementation((key) => {
       Reflect.deleteProperty(settingsStore, key)
     })
-  const homey = mock<Homey.Homey>({
+  const homey = mock<Homey>({
     __: translate,
     api: {
       realtime,
@@ -216,15 +218,11 @@ export const createMockHomey = ({
       unset: unsetSetting,
       get: (key: keyof HomeySettings): unknown => settingsStore[key] ?? null,
     },
-    clearInterval: (interval: NodeJS.Timeout | null): void => {
-      if (interval !== null) {
-        clearInterval(interval)
-      }
+    clearInterval: (interval?: NodeJS.Timeout): void => {
+      clearInterval(interval)
     },
-    clearTimeout: (timeout: NodeJS.Timeout | null): void => {
-      if (timeout !== null) {
-        clearTimeout(timeout)
-      }
+    clearTimeout: (timeout?: NodeJS.Timeout): void => {
+      clearTimeout(timeout)
     },
     on: (event: string, callback: (...args: unknown[]) => void): void => {
       eventHandlers.set(event, callback)
