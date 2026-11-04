@@ -219,11 +219,30 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   markup across the two, nor from com.melcloud's settings (which nest
   controls inside labels).
 - `homey-api-override.d.ts` — ambient module declaration for the
-  homey-api surface actually used; `homey-override.d.ts` types the app
-  settings. `lib/homey.mts` re-exports the runtime-provided `homey` SDK;
-  the `import-x/no-extraneous-dependencies` / `no-named-as-default-member`
-  carve-out for that one file is the preset's `homeyShimBlock` in
-  `@olivierzal/configs`, not a local disable.
+  homey-api surface actually used. `homey-override.d.ts` is the SDK's
+  one augmentation seam and nothing else: the `HomeyTypes` interface
+  augmented under `declare module 'homey'` with
+  `app: MELCloudExtensionApp`, which types `homey.app` — how the
+  `api.mts` handlers and the listeners see the app class. The settings
+  manager is narrowed app-side, in `types.mts`: `ManagerSettings`
+  extends the SDK's class and takes its `get`/`set`/`unset` signatures
+  from the kit's `TypedManagerSettings<HomeySettings>` (`settings.get`
+  is `any` on the SDK manager — the narrowing is what keeps the direct
+  reads typed), gathered in `MELCloudExtensionHomey extends Homey`,
+  which only the app class re-declares `homey` with. Since the SDK
+  types 1.x, `homey` exports the `Homey` class by name
+  (`import type { Homey } from 'homey'`), so the 0.3.x-era
+  `interface Homey extends HomeyLib { … }` augmentation names the
+  class as its own base and collides on every member it re-types —
+  errors `skipLibCheck` hides inside a `.d.ts`, leaving a block that
+  narrows nothing (measured 2026-11-04 against 1.8.3); never bring it
+  back. `lib/homey.mts` re-exports the runtime `App` class only, under
+  the `HomeySdk` default binding (`Homey` is one of the SDK's named
+  exports, so `import-x/no-named-as-default` refuses it as the
+  default's local name); the `import-x/no-extraneous-dependencies` /
+  `no-named-as-default-member` carve-out for that one file is the
+  preset's `homeyShimBlock` in `@olivierzal/configs`, not a local
+  disable.
 
 ## Platform gotchas
 
@@ -523,8 +542,10 @@ verdict is in configs' `.github/zizmor.yml` and `CLAUDE.md`).
 
 The bare `homey-apps-sdk-v3-types` devDependency beside the
 `@types/homey` alias is NOT a duplicate, and the two lines must move
-together when the SDK types bump (none since the bare line landed on
-2026-07-13, and Dependabot's `minor-and-patch` group does not cover the
+together when the SDK types bump (`^0.3.12` → `^1.8.3` on 2026-11-04,
+with the kit 9.0.0 adoption; Dependabot's `minor-and-patch` group does
+not cover the alias — its #1378 moved the bare name alone, which
+changes nothing for TypeScript since `homey` resolves through the
 alias — the pair is a hand-kept invariant). The alias is what lets `homey` and
 `homey/lib/…` resolve for TypeScript; the bare name is what satisfies
 `import-x/no-extraneous-dependencies`, which checks the RESOLVED
@@ -557,7 +578,10 @@ the package-time stamp producer `stampPackagedPages` (+ `stampHtml`,
 suite advances its fake timers by the kit's figure, never a restated
 one) and the settings-page breadcrumb `logSettingsRoute` (+ the
 `BreadcrumbLogger` seam; labels are `METHOD /path`, one spelling for
-the three apps) (root); the typed element accessors (`/dom`); and,
+the three apps) (root); the typed-manager generics (`/types`:
+`TypedManagerSettings`, whose member signatures `types.mts`'s
+`ManagerSettings` takes — `TypedManagerDrivers` has no consumer here,
+this app ships no drivers); the typed element accessors (`/dom`); and,
 under `/testing`, the
 analysis kernels — the API contract and the route guards — plus the
 plain test helpers `assertDefined`, `mock`, `settleDetached`,
@@ -584,7 +608,10 @@ the timer stays `this`-bound and disposed at uninit) and the local
 `watchWidgetFreshness` (`/widget`) have no consumer here — this app
 persists no API-library session and ships no widget — and neither does
 `sequential` any more: its one caller was the changelog delivery, which
-now runs inside `announceChangelog`.
+now runs inside `announceChangelog`. `/manifest` has none either: 9.0.0
+types its inputs with the SDK's own `DriverManifest` shapes, and this
+app ships no drivers — its one manifest read is
+`homey.manifest.version`, the SDK's `AppManifest`.
 
 What stays local, by measurement rather than omission:
 

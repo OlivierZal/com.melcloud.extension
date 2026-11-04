@@ -1,4 +1,4 @@
-import type { Homey } from 'homey/lib/Homey'
+import type { Homey } from 'homey'
 import { logSettingsRoute } from '@olivierzal/homey-kit'
 import { getWebviewHashes } from '@olivierzal/homey-kit/node'
 
