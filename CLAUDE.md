@@ -219,7 +219,20 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   markup across the two, nor from com.melcloud's settings (which nest
   controls inside labels).
 - `homey-api-override.d.ts` — ambient module declaration for the
-  homey-api surface actually used. `homey-override.d.ts` is the SDK's
+  homey-api surface actually used. A script on purpose: a top-level
+  `import type` would turn it into an augmentation of homey-api's own
+  types, which it replaces, so its one outside reference — the SDK
+  instance `createAppAPI` takes — is spelled `import('homey').Homey`
+  behind a reasoned `consistent-type-imports` disable at that line.
+  Nothing checks a `.d.ts` under `skipLibCheck`: the bare `Homey` it
+  carried until 2026-11-04 decayed to the error type and `createAppAPI`
+  accepted anything in silence; `tests/types/homey-api-override.ts`
+  pins the parameter — the SDK instance fits, a number is refused — so
+  a wrong spelling stops `typecheck`. The refusal is the guard that
+  trips: a decayed name relates like `any` yet resolves a conditional
+  type to both branches (measured on TypeScript 7, 2026-11-04), so an
+  `IsAny`-style probe stays silent while an unused `@ts-expect-error`
+  does not. `homey-override.d.ts` is the SDK's
   one augmentation seam and nothing else: the `HomeyTypes` interface
   augmented under `declare module 'homey'` with
   `app: MELCloudExtensionApp`, which types `homey.app` — how the

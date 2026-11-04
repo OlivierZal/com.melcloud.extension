@@ -179,7 +179,10 @@ export default class MELCloudExtensionApp extends App {
     const [messageId = '', category = messageId] = name.split('.').toReversed()
     // The SDK interpolates a dense record of string tags; the params are
     // sparse by design (each message names its own), so only the tags
-    // the message carries are rendered.
+    // the message carries are rendered. `Object.entries` over the
+    // interface types the values `any` (an interface has no implicit index
+    // signature; a type alias would read `unknown`, and the family keeps
+    // interfaces): `String()` is their only consumer, measured 2026-11-04.
     const tags = Object.fromEntries(
       Object.entries(params ?? {}).map(([key, value]) => [key, String(value)]),
     )
