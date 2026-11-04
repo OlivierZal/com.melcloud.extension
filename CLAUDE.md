@@ -234,18 +234,19 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   silence. Two guards now: `tests/types/homey-api-override.ts` pins the
   parameter — the SDK instance fits, a number is refused — and
   `typecheck` chains `tsconfig.declarations.json`, the family's
-  `tsconfig/declarations` overlay (configs 8.6.0: `skipLibCheck:
-false`, `noEmit`) over this repository's own `.d.ts`, which the
+  `tsconfig/declarations` overlay (configs 8.6.0: `skipLibCheck: false`
+  and `noEmit`) over this repository's own `.d.ts`, which the
   `check-declarations.sh` step of the family CI proves reaches each of
-  them (one second; nothing of homey-api in that graph). `skipLibCheck:
-true` itself stays: the modern default (`tsc --init`,
+  them (one second; nothing of homey-api in that graph).
+  `skipLibCheck: true` itself stays: the modern default (`tsc --init`,
   `@tsconfig/strictest`), with no per-package exemption in TypeScript
   and a homey-api `.d.ts` that does not compile. Measured and refused:
   the `.ts` spelling of a declaration file (the Homey CLI compiles from
   `tsconfig.json` and would ship six empty fossils per app) and the
   ambient `declare module` form (a script by necessity, hence an
   `import('homey').Homey` the lint forbids, and a package file the
-  main program still loads under the shadow). `homey-override.d.ts` is the SDK's
+  main program still loads under the shadow). `homey-override.d.ts` is
+  the SDK's
   one augmentation seam and nothing else: the `HomeyTypes` interface
   augmented under `declare module 'homey'` with
   `app: MELCloudExtensionApp`, which types `homey.app` — how the
