@@ -218,26 +218,34 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   get injected CSS variables and their own class set. Do not copy
   markup across the two, nor from com.melcloud's settings (which nest
   controls inside labels).
-- `homey-api-override.d.ts` — ambient module declaration for the
-  homey-api surface actually used. A script on purpose: a top-level
-  `import type` would turn it into an augmentation of homey-api's own
-  types, which it replaces, so its one outside reference — the SDK
-  instance `createAppAPI` takes — is spelled `import('homey').Homey`
-  behind a reasoned `consistent-type-imports` disable at that line.
-  Nothing checks a `.d.ts` under `skipLibCheck`: the bare `Homey` it
-  carried until 2026-11-04 decayed to the error type and `createAppAPI`
-  accepted anything in silence; `tests/types/homey-api-override.ts`
-  pins the parameter — the SDK instance fits, a number is refused — as
-  the semantic guard, and `typecheck` chains a second program,
-  `tsconfig.declarations.json`, that checks this one file with
-  `skipLibCheck: false` (one second; the ambient replacement keeps
-  homey-api's own 145-error `.d.ts` out of that graph, so the check
-  stays clean). `skipLibCheck: true` itself stays: it is the modern
-  default (`tsc --init`, `@tsconfig/strictest`), TypeScript has no
-  per-package exemption, and homey-api's `.d.ts` does not compile. A
-  `.ts` spelling of this file was measured and refused: the Homey CLI
-  compiles from `tsconfig.json` and would ship six empty fossils per
-  app. `homey-override.d.ts` is the SDK's
+- `homey-api-override.d.ts` — the declaration module `paths` maps
+  `homey-api` to (`tsconfig.json`): the surface actually used, in place
+  of the package's own `.d.ts`, which carries 145 errors of its own and
+  a `createAppAPI({ homey: Homey })` whose `Homey` it never declares.
+  A module, not an ambient `declare module`: it imports the SDK
+  instance by name at the top, and the mapping keeps the package's
+  file out of every program — which is what lets the family's
+  declarations program (below) include `**/*.d.ts` and reach
+  `homey-override.d.ts`, whose `import type` of `app.mts` drags the
+  app graph and its `homey-api` imports along. Nothing checks a `.d.ts`
+  under `skipLibCheck`: the bare `Homey` this file carried from
+  2025-09-08 (a copy of the package's 4 256 lines) to 2026-11-04
+  decayed to the error type and `createAppAPI` accepted anything in
+  silence. Two guards now: `tests/types/homey-api-override.ts` pins the
+  parameter — the SDK instance fits, a number is refused — and
+  `typecheck` chains `tsconfig.declarations.json`, the family's
+  `tsconfig/declarations` overlay (configs 8.6.0: `skipLibCheck:
+false`, `noEmit`) over this repository's own `.d.ts`, which the
+  `check-declarations.sh` step of the family CI proves reaches each of
+  them (one second; nothing of homey-api in that graph). `skipLibCheck:
+true` itself stays: the modern default (`tsc --init`,
+  `@tsconfig/strictest`), with no per-package exemption in TypeScript
+  and a homey-api `.d.ts` that does not compile. Measured and refused:
+  the `.ts` spelling of a declaration file (the Homey CLI compiles from
+  `tsconfig.json` and would ship six empty fossils per app) and the
+  ambient `declare module` form (a script by necessity, hence an
+  `import('homey').Homey` the lint forbids, and a package file the
+  main program still loads under the shadow). `homey-override.d.ts` is the SDK's
   one augmentation seam and nothing else: the `HomeyTypes` interface
   augmented under `declare module 'homey'` with
   `app: MELCloudExtensionApp`, which types `homey.app` — how the

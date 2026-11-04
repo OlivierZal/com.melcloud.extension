@@ -1,5 +1,5 @@
 /**
- * Compile-time guards over the ambient `homey-api` declaration. A `.d.ts`
+ * Compile-time guards over the `homey-api` declaration module. A `.d.ts`
  * is never checked under `skipLibCheck`: a name it fails to resolve — as
  * `Homey` did until 2026-11-04 — keeps its spelling but relates like
  * `any`, so `createAppAPI` accepted anything in silence, and a
