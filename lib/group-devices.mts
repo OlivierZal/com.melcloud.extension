@@ -23,6 +23,11 @@ const SORT_BEFORE = -1
 export const toJoinKey = (id: unknown): string | null =>
   typeof id === 'string' || typeof id === 'number' ? String(id) : null
 
+// Two buildings are the same house when their names match once trimmed
+// and composed alike (NFC), the rule com.melcloud pairs them by; letter
+// case still tells them apart. The row reads the name so keyed.
+const toBuildingKey = (name: string): string => name.trim().normalize('NFC')
+
 const byName = <T extends { readonly name: string }>(
   entry1: T,
   entry2: T,
@@ -34,7 +39,7 @@ const byName = <T extends { readonly name: string }>(
 // grouping, which yields that single unnamed group. Buildings are
 // joined on the MELCloud device id carried by the Homey device data;
 // same-name buildings (one per dialect for the same house) merge into a
-// single row.
+// single row under com.melcloud's same-house rule (`toBuildingKey`).
 export const groupAdjustableDevices = (
   devices: readonly HomeyAPIV3Local.ManagerDevices.Device[],
   outdoorSources: OutdoorSources,
@@ -42,7 +47,7 @@ export const groupAdjustableDevices = (
 ): AdjustableGroup[] => {
   const nameByMelcloudId = new Map(
     (deviceGroups ?? []).flatMap(({ deviceIds, name }) =>
-      deviceIds.map((id): [string, string] => [id, name]),
+      deviceIds.map((id): [string, string] => [id, toBuildingKey(name)]),
     ),
   )
   const grouped = new Map<string | null, AdjustableDevice[]>()

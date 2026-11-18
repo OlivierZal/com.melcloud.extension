@@ -127,7 +127,9 @@ to judge success.
   `lib/to-device-groups.mts`) and the settings fall back to one row
   per device. The join key is `String(device.data.id)` — the MELCloud
   id com.melcloud writes at pairing (Classic numeric DeviceID, Home
-  uuid); same-name buildings across dialects merge into one group and
+  uuid); same-name buildings across dialects merge into one group —
+  names compared trimmed and NFC-composed, letter case kept, the rule
+  com.melcloud pairs them by — and
   unmatched devices trail in an unnamed group
   (`lib/group-devices.mts`). The settings UI renders ONE select per
   building and fans the pick out to every device of the group before
