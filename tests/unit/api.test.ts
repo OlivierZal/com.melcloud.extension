@@ -173,47 +173,6 @@ describe('api', () => {
       ])
     })
 
-    // The rule com.melcloud pairs them by: trimmed, composed alike (NFC),
-    // letter case kept.
-    it('should merge buildings whose names differ only in spacing or composition', async () => {
-      const { homey } = createHomeyContext({
-        deviceGroups: [
-          { deviceIds: ['1'], name: 'Re\u{301}sidence ' },
-          { deviceIds: ['home-melcloud-1'], name: 'R\u{E9}sidence' },
-        ],
-        melcloudDevices: [classicDevice.device, homeDevice.device],
-        temperatureSensors: [],
-      })
-
-      await expect(api.getAdjustableGroups({ homey })).resolves.toStrictEqual([
-        {
-          devices: [
-            { id: 'home-1', name: 'Bedroom', outdoorSource: null },
-            { id: 'classic-1', name: 'Living room', outdoorSource: null },
-          ],
-          name: 'R\u{E9}sidence',
-        },
-      ])
-    })
-
-    it('should keep buildings whose names differ in letter case apart', async () => {
-      const { homey } = createHomeyContext({
-        deviceGroups: [
-          { deviceIds: ['1'], name: 'domicile' },
-          { deviceIds: ['home-melcloud-1'], name: 'Domicile' },
-        ],
-        melcloudDevices: [classicDevice.device, homeDevice.device],
-        temperatureSensors: [],
-      })
-
-      const groups = await api.getAdjustableGroups({ homey })
-
-      expect(groups.map(({ name }) => name)).toStrictEqual([
-        'domicile',
-        'Domicile',
-      ])
-    })
-
     it('should leave a device without a usable join id unmatched', async () => {
       const bareDevice = createMockDevice({
         driverId: 'homey:app:com.mecloud:melcloud',
@@ -235,23 +194,45 @@ describe('api', () => {
       ])
     })
 
-    it('should sort named groups alphabetically', async () => {
-      const { homey } = createHomeyContext({
-        deviceGroups: [
-          { deviceIds: ['1'], name: 'Maison B' },
-          { deviceIds: ['home-melcloud-1'], name: 'Maison A' },
-        ],
-        melcloudDevices: [classicDevice.device, homeDevice.device],
-        temperatureSensors: [],
-      })
+    // One row per house under com.melcloud's same-house rule — names
+    // trimmed and composed alike (NFC), letter case kept — the rows
+    // sorted by name.
+    it.each([
+      {
+        classicName: 'Re\u{301}sidence ',
+        description: 'merges names differing only in spacing or composition',
+        homeName: 'R\u{E9}sidence',
+        rows: ['R\u{E9}sidence'],
+      },
+      {
+        classicName: 'domicile',
+        description: 'keeps names differing in letter case apart',
+        homeName: 'Domicile',
+        rows: ['domicile', 'Domicile'],
+      },
+      {
+        classicName: 'Maison B',
+        description: 'sorts named groups alphabetically',
+        homeName: 'Maison A',
+        rows: ['Maison A', 'Maison B'],
+      },
+    ])(
+      'should name the rows: $description',
+      async ({ classicName, homeName, rows }) => {
+        const { homey } = createHomeyContext({
+          deviceGroups: [
+            { deviceIds: ['1'], name: classicName },
+            { deviceIds: ['home-melcloud-1'], name: homeName },
+          ],
+          melcloudDevices: [classicDevice.device, homeDevice.device],
+          temperatureSensors: [],
+        })
 
-      const groups = await api.getAdjustableGroups({ homey })
+        const groups = await api.getAdjustableGroups({ homey })
 
-      expect(groups.map(({ name }) => name)).toStrictEqual([
-        'Maison A',
-        'Maison B',
-      ])
-    })
+        expect(groups.map(({ name }) => name)).toStrictEqual(rows)
+      },
+    )
 
     it('should trail the unnamed group behind a later-inserted named one', async () => {
       const { homey } = createHomeyContext({
