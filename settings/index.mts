@@ -728,12 +728,12 @@ const reportInitFailure = (homey: Homey, error: unknown): void => {
  * @param homey - The Homey instance handed to `onHomeyReady`.
  */
 export const start = async (homey: Homey): Promise<void> => {
-  // Boot check first: the kit's settings handshake (`GET /webview-hashes`,
-  // the `POST /boot-error` breadcrumb and the foreground re-check a
-  // mobile page outliving an app restart needs) answers true when the
-  // document is being replaced, so this page's own init must not run. Listeners before the data load: the
-  // Refresh button is the retry affordance when the initial load fails
-  // or times out, so it must work regardless of how `run` ends.
+  // Boot check first: the kit's settings handshake (`GET /webview-hashes`, the
+  // `POST /boot-error` breadcrumb and the foreground re-check a mobile page
+  // outliving an app restart needs) answers true when the document is being
+  // replaced, so this page's own init must not run. Listeners before the data
+  // load: the Refresh button is the retry affordance when the initial load
+  // fails or times out, so it must work regardless of how `run` ends.
   if (await watchSettingsFreshness(homey)) {
     return
   }
