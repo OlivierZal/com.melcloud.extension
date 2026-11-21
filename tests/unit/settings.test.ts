@@ -254,7 +254,7 @@ const loadPage = (): void => {
 }
 
 describe('settings page', () => {
-  let reportErrorMock = vi.fn<(error: unknown) => void>()
+  const reportErrorMock = vi.fn<(error: unknown) => void>()
 
   beforeEach(() => {
     vi.resetModules()
@@ -271,7 +271,6 @@ describe('settings page', () => {
         Temporal.Now.timeZoneId(),
       ),
     )
-    reportErrorMock = vi.fn<(error: unknown) => void>()
     vi.stubGlobal('reportError', reportErrorMock)
     sessionStorage.clear()
     loadPage()

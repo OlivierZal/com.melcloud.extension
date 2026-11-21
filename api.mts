@@ -25,7 +25,7 @@ const api = {
    * @param options - Homey API context.
    * @param options.homey - Homey instance carrying the app.
    * @returns The groups, sorted by name, devices sorted within.
-   * @throws {@link NotFoundError} when no MELCloud AC device is paired yet.
+   * @throws A {@link NotFoundError} when no MELCloud AC device is paired yet.
    */
   async getAdjustableGroups({
     homey,
@@ -61,7 +61,7 @@ const api = {
    * @param options - Homey API context.
    * @param options.homey - Homey instance carrying the app.
    * @returns The selectable sensors.
-   * @throws {@link NotFoundError} when no MELCloud AC device is paired yet.
+   * @throws A {@link NotFoundError} when no MELCloud AC device is paired yet.
    */
   getTemperatureSensors({ homey }: { homey: Homey }): TemperatureSensor[] {
     const { app } = homey
