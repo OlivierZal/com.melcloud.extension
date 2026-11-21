@@ -154,8 +154,17 @@ to judge success.
   which polls `globalThis.MELCloudWebview` and calls its `start(homey)`.
   `defer` (as in com.melcloud) is the right fit for an app bundle that
   reads the DOM — ordered, after `<body>` parses, before
-  DOMContentLoaded — and here it is doubly required: this entry does DOM
-  lookups at module top level, which `defer` makes safe. The poll's 10 s
+  DOMContentLoaded. The entry reads NOTHING of the document as it
+  loads: its fixed elements and the gate over them are read on first
+  use (`getPage`), which comes after `start` has asked whether the page
+  is stale. The page a stale cache serves is an earlier version's, and
+  a bundle that looked an element up while loading would die there on
+  the first id that version lacked, before any refetch. This entry did
+  so until 2026-11-21 (nine lookups and the gate at module top level,
+  latent since no version had added an element they read); the class
+  was found on com.melcloud 46.19.0, whose settings page read one new
+  span before its own check, and the suite now boots a stale page that
+  lacks an element. The poll's 10 s
   timeout still ends the overlay if the script failed to load. Init work is separately
   time-bounded (10 s) with `homey.ready()` in a `finally`; `start` is
   non-throwing by construction (failure alerts go through
