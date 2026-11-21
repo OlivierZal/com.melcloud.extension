@@ -14,6 +14,7 @@ import {
   watchSettingsFreshness,
 } from '@olivierzal/homey-kit/settings'
 import {
+  type DirtyGate,
   createDirtyGate,
   fireAndForget,
   runWebview,
@@ -54,19 +55,6 @@ const categories: Partial<Record<string, LogCategory>> = {
   saved: { icon: '☁️' },
 }
 
-// Safe at module load: the bundle is a `defer` classic script, so it runs
-// only after <body> is parsed (see settings/index.html).
-const applyElement = getButton('apply')
-const adjustmentElement = getFieldset('adjustment')
-const emptyElement = getDiv('empty_state')
-const installElement = getButton('install')
-const refreshElement = getButton('refresh')
-const enabledElement = getSelect('enabled')
-const configurationElement = getDetails('configuration')
-
-const logsElement = getDiv('logs')
-const sourcesElement = getFieldset('sources')
-
 interface SourceOption {
   readonly name: string
   readonly value: string
@@ -89,22 +77,65 @@ const closeOpenCombobox = (): void => {
   openCombobox.close = null
 }
 
-// "Update" only means something once the form diverges from the last
-// saved state — the snapshot greys it out otherwise.
-const serializeState = (): string =>
-  JSON.stringify([
-    enabledElement.value,
-    [...sourceSelections].toSorted(([id1], [id2]) => id1.localeCompare(id2)),
-  ])
+// The page's fixed elements and the gate over them.
+interface Page {
+  readonly adjustment: HTMLFieldSetElement
+  readonly apply: HTMLButtonElement
+  readonly configuration: HTMLDetailsElement
+  readonly dirtyGate: DirtyGate
+  readonly empty: HTMLDivElement
+  readonly enabled: HTMLSelectElement
+  readonly install: HTMLButtonElement
+  readonly logs: HTMLDivElement
+  readonly refresh: HTMLButtonElement
+  readonly sources: HTMLFieldSetElement
+}
 
-// Busy buttons only grey out (com.melcloud behavior): the style
-// library's `is-loading` spinner shifts the label sideways.
-const dirtyGate = createDirtyGate({
-  applyElement,
-  fieldsetElements: [adjustmentElement, sourcesElement],
-  refreshElements: [refreshElement],
-  serialize: serializeState,
-})
+const buildPage = (): Page => {
+  const adjustment = getFieldset('adjustment')
+  const apply = getButton('apply')
+  const enabled = getSelect('enabled')
+  const refresh = getButton('refresh')
+  const sources = getFieldset('sources')
+  return {
+    adjustment,
+    apply,
+    configuration: getDetails('configuration'),
+    // Busy buttons only grey out (com.melcloud behavior): the style
+    // library's `is-loading` spinner shifts the label sideways.
+    dirtyGate: createDirtyGate({
+      applyElement: apply,
+      fieldsetElements: [adjustment, sources],
+      refreshElements: [refresh],
+      // "Update" only means something once the form diverges from the
+      // last saved state — the snapshot greys it out otherwise.
+      serialize: (): string =>
+        JSON.stringify([
+          enabled.value,
+          [...sourceSelections].toSorted(([id1], [id2]) =>
+            id1.localeCompare(id2),
+          ),
+        ]),
+    }),
+    empty: getDiv('empty_state'),
+    enabled,
+    install: getButton('install'),
+    logs: getDiv('logs'),
+    refresh,
+    sources,
+  }
+}
+
+// Read on first use, never as the bundle loads: `start` asks whether
+// the page is stale before anything else, and the page a stale cache
+// serves is an earlier version's, which may lack what this bundle
+// expects of it.
+const pageState: { current: Page | null } = { current: null }
+
+const getPage = (): Page => {
+  pageState.current ??= buildPage()
+  return pageState.current
+}
 
 // The document language is the display locale: `fetchLanguage` overwrites
 // the html attribute's default with the Homey-configured language.
@@ -208,18 +239,19 @@ const createLogRow = ({
 }
 
 const displayLog = (log: TimestampedLog): void => {
+  const { logs } = getPage()
   const rowElement = createLogRow(log)
   const day = dayOf(log.time)
   if (day === topDay.value) {
     // Below the day separator sitting on top — `item` hands
     // `insertBefore` its null itself, so no fallback branch dangles on
     // a pane the separator invariant already guarantees is populated.
-    logsElement.insertBefore(rowElement, logsElement.children.item(1))
+    logs.insertBefore(rowElement, logs.children.item(1))
     return
   }
   topDay.value = day
-  logsElement.insertBefore(rowElement, logsElement.firstChild)
-  logsElement.insertBefore(createDayElement(log.time), rowElement)
+  logs.insertBefore(rowElement, logs.firstChild)
+  logs.insertBefore(createDayElement(log.time), rowElement)
 }
 
 // Only show logs from the last LOG_RETENTION_DAYS (midnight cutoff)
@@ -242,7 +274,7 @@ const displayRetainedLogs = (logs: readonly TimestampedLog[]): void => {
   // Any live row displayed before this first fetch is also part of the
   // retained list (the app persists before the fetch can answer):
   // rebuild the pane from scratch — right order, no duplicates.
-  logsElement.replaceChildren()
+  getPage().logs.replaceChildren()
   topDay.value = null
   const oldestInstant = getOldestDisplayableInstant()
   const retainedLogs = logs
@@ -267,14 +299,15 @@ const displayRetainedLogs = (logs: readonly TimestampedLog[]): void => {
 const initialCollapseState = { isApplied: false }
 
 const handleSettings = (settings: HomeySettings): void => {
+  const { configuration, enabled } = getPage()
   displayRetainedLogs(settings.lastLogs ?? [])
-  enabledElement.value = String(settings.isEnabled === true)
+  enabled.value = String(settings.isEnabled === true)
   if (initialCollapseState.isApplied) {
     return
   }
 
   initialCollapseState.isApplied = true
-  configurationElement.open = settings.isEnabled !== true
+  configuration.open = settings.isEnabled !== true
 }
 
 const fetchLanguage = async (homey: Homey): Promise<void> => {
@@ -332,8 +365,9 @@ const fetchAdjustableGroups = async (
 
 // Auto-enable when the user picks a different source (UX convenience)
 const enableAdjustment = (): void => {
-  if (enabledElement.value === 'false') {
-    enabledElement.value = 'true'
+  const { dirtyGate, enabled } = getPage()
+  if (enabled.value === 'false') {
+    enabled.value = 'true'
   }
   dirtyGate.recompute()
 }
@@ -570,7 +604,7 @@ const appendComboboxRow = (homey: Homey, config: ComboboxConfig): void => {
   const group = document.createElement('div')
   group.classList.add('homey-form-group')
   group.append(createComboboxLabel(config.label, input), element)
-  sourcesElement.append(group)
+  getPage().sources.append(group)
 }
 
 // One row drives every device of the building; devices without a
@@ -630,15 +664,16 @@ const populateSources = async (homey: Homey): Promise<void> => {
     fetchAdjustableGroups(homey),
     fetchTemperatureSensors(homey),
   ])
+  const { empty, sources } = getPage()
   populateSourceOptions(homey, sensors)
   sourceSelections.clear()
-  sourcesElement.replaceChildren()
+  sources.replaceChildren()
   const devices = groups.flatMap((group) => group.devices)
   for (const device of devices) {
     sourceSelections.set(device.id, device.outdoorSource ?? '')
   }
   appendSourceRows(homey, groups)
-  emptyElement.hidden = devices.length > 0
+  empty.hidden = devices.length > 0
 }
 
 // Spread (not `.entries().map()`): iterator helpers are a 2025-era
@@ -652,11 +687,12 @@ const getSelectedSources = (): OutdoorSources =>
     ]),
   )
 
-const autoAdjustCooling = async (homey: Homey): Promise<void> =>
-  dirtyGate.runBusy(async () => {
+const autoAdjustCooling = async (homey: Homey): Promise<void> => {
+  const { dirtyGate, enabled } = getPage()
+  await dirtyGate.runBusy(async () => {
     try {
       await homeyApiPut(homey, '/cooling/auto-adjustment', {
-        isEnabled: enabledElement.value === 'true',
+        isEnabled: enabled.value === 'true',
         outdoorSources: getSelectedSources(),
       } satisfies TemperatureListenerData)
       dirtyGate.markSaved()
@@ -664,17 +700,21 @@ const autoAdjustCooling = async (homey: Homey): Promise<void> =>
       await homey.alert(getErrorMessage(error))
     }
   })
+}
 
 // Refresh restores every value to the last saved state (the stored
 // enable flag and per-device sources)
-const refreshAll = async (homey: Homey): Promise<void> =>
-  dirtyGate.runBusy(async () => {
+const refreshAll = async (homey: Homey): Promise<void> => {
+  const { dirtyGate } = getPage()
+  await dirtyGate.runBusy(async () => {
     await populateSources(homey)
     await loadHomeySettings(homey)
     dirtyGate.markSaved()
   })
+}
 
 const addEventListeners = (homey: Homey): void => {
+  const { apply, dirtyGate, enabled, install, refresh } = getPage()
   // Any pointer press outside a combobox dismisses the open one.
   document.addEventListener('pointerdown', (event) => {
     if (
@@ -685,14 +725,14 @@ const addEventListeners = (homey: Homey): void => {
     }
     closeOpenCombobox()
   })
-  refreshElement.addEventListener('click', () => {
+  refresh.addEventListener('click', () => {
     fireAndForget(refreshAll(homey))
   })
-  applyElement.addEventListener('click', () => {
+  apply.addEventListener('click', () => {
     fireAndForget(autoAdjustCooling(homey))
   })
-  dirtyGate.wire([enabledElement])
-  installElement.addEventListener('click', () => {
+  dirtyGate.wire([enabled])
+  install.addEventListener('click', () => {
     fireAndForget(homey.openURL('https://homey.app/a/com.mecloud'))
   })
   homey.on('log', displayLog)
@@ -714,7 +754,7 @@ const run = async (homey: Homey): Promise<void> => {
 // rejected alert must not trip the HTML loader's catch (double
 // `ready()`, second generic alert).
 const reportInitFailure = (homey: Homey, error: unknown): void => {
-  dirtyGate.setBusy(false)
+  getPage().dirtyGate.setBusy(false)
   fireAndForget(homey.alert(getErrorMessage(error)))
 }
 

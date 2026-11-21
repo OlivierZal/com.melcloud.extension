@@ -188,8 +188,9 @@ const defaultSettings = (): Record<string, unknown> => ({
   lastLogs: [],
 })
 
-// The page captures its elements at module load, so every boot needs a
-// fresh evaluation against the freshly loaded document.
+// The page keeps what it read of the document and its source maps as
+// module state, so every boot needs a fresh evaluation against the
+// freshly loaded document.
 const bootPage = async (options: HomeyOptions = {}): Promise<Harness> => {
   const harness = createHarness({
     routes: defaultRoutes(),
@@ -771,30 +772,41 @@ describe('settings page', () => {
     })
   })
 
+  // The page that needs replacing is an earlier version's and may lack
+  // what this bundle reads from it: nothing of the document is read
+  // before the freshness check. Read as the bundle loads, a missing
+  // element kills it there and the page never refetches.
   describe('freshness', () => {
-    it('should refetch a stale page and skip the build entirely', async () => {
-      const stamped = document.createElement('link')
-      stamped.setAttribute('href', 'styles.css?v=aaaa1111')
-      document.head.append(stamped)
-      const { api, ready } = await bootPage({
-        routes: {
-          ...defaultRoutes(),
-          'GET /webview-hashes': { settings: 'bbbb2222' },
-        },
-      })
+    it.each([
+      { description: 'a stale page', lacking: '#no-such-element' },
+      { description: 'a stale page that lacks an element', lacking: '#logs' },
+    ])(
+      'should refetch $description and skip the build entirely',
+      async ({ lacking }) => {
+        document.querySelector(lacking)?.remove()
+        const stamped = document.createElement('link')
+        stamped.setAttribute('href', 'styles.css?v=aaaa1111')
+        document.head.append(stamped)
+        const { api, ready } = await bootPage({
+          routes: {
+            ...defaultRoutes(),
+            'GET /webview-hashes': { settings: 'bbbb2222' },
+          },
+        })
 
-      expect(api).toHaveBeenCalledWith(
-        'POST',
-        '/boot-error',
-        expect.objectContaining({ name: 'WebviewFreshness' }),
-        expect.any(Function),
-      )
-      expect(api).not.toHaveBeenCalledWith(
-        'GET',
-        '/devices/groups',
-        expect.any(Function),
-      )
-      expect(ready).not.toHaveBeenCalled()
-    })
+        expect(api).toHaveBeenCalledWith(
+          'POST',
+          '/boot-error',
+          expect.objectContaining({ name: 'WebviewFreshness' }),
+          expect.any(Function),
+        )
+        expect(api).not.toHaveBeenCalledWith(
+          'GET',
+          '/devices/groups',
+          expect.any(Function),
+        )
+        expect(ready).not.toHaveBeenCalled()
+      },
+    )
   })
 })
