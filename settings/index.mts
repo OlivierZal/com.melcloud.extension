@@ -79,7 +79,6 @@ const closeOpenCombobox = (): void => {
 
 // The page's fixed elements and the gate over them.
 interface Page {
-  readonly adjustment: HTMLFieldSetElement
   readonly apply: HTMLButtonElement
   readonly configuration: HTMLDetailsElement
   readonly dirtyGate: DirtyGate
@@ -92,20 +91,18 @@ interface Page {
 }
 
 const buildPage = (): Page => {
-  const adjustment = getFieldset('adjustment')
   const apply = getButton('apply')
   const enabled = getSelect('enabled')
   const refresh = getButton('refresh')
   const sources = getFieldset('sources')
   return {
-    adjustment,
     apply,
     configuration: getDetails('configuration'),
     // Busy buttons only grey out (com.melcloud behavior): the style
     // library's `is-loading` spinner shifts the label sideways.
     dirtyGate: createDirtyGate({
       applyElement: apply,
-      fieldsetElements: [adjustment, sources],
+      fieldsetElements: [getFieldset('adjustment'), sources],
       refreshElements: [refresh],
       // "Update" only means something once the form diverges from the
       // last saved state — the snapshot greys it out otherwise.
