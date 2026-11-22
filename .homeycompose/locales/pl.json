@@ -8,6 +8,7 @@
     "listened": "Nasłuchiwanie __capability__ urządzenia __name__: __value__",
     "noThreshold": "Brak zapisanej temperatury dla __name__: nie wysłano żadnego polecenia",
     "notFound": "Nie znaleziono: __type__ `__idOrName__`",
+    "revertFailed": "Nie udało się przywrócić temperatury __name__ do __value__; nastąpi ponowna próba",
     "reverted": "Przywracanie temperatury __name__: __value__",
     "saved": "Zapisywanie temperatury __name__: __value__"
   },

@@ -8,6 +8,7 @@
     "listened": "Luisteren naar __capability__ van __name__: __value__",
     "noThreshold": "Geen opgeslagen temperatuur voor __name__: er is niets verstuurd",
     "notFound": "__type__ `__idOrName__` niet gevonden",
+    "revertFailed": "Kon de temperatuur van __name__ niet terugzetten naar __value__; wordt later opnieuw geprobeerd",
     "reverted": "Herstellen van de temperatuur van __name__: __value__",
     "saved": "Opslaan van de temperatuur van __name__: __value__"
   },

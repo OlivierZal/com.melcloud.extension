@@ -8,6 +8,7 @@
     "listened": "Écoute de __capability__ de __name__\u00A0: __value__",
     "noThreshold": "Aucune température enregistrée pour __name__ : aucune commande envoyée",
     "notFound": "__type__ `__idOrName__` introuvable",
+    "revertFailed": "Impossible de rétablir la température de __name__ à __value__ ; nouvelle tentative plus tard",
     "reverted": "Rétablissement de la température de __name__\u00A0: __value__",
     "saved": "Enregistrement de la température de __name__\u00A0: __value__"
   },

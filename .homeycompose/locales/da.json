@@ -8,6 +8,7 @@
     "listened": "Lytter til __capability__ af __name__: __value__",
     "noThreshold": "Ingen gemt måltemperatur for __name__: der blev ikke sendt nogen kommando",
     "notFound": "__type__ `__idOrName__` ikke fundet",
+    "revertFailed": "Kunne ikke gendanne temperaturen for __name__ til __value__; prøver igen senere",
     "reverted": "Gendanner temperaturen for __name__: __value__",
     "saved": "Gemmer temperaturen for __name__: __value__"
   },

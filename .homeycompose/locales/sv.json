@@ -8,6 +8,7 @@
     "listened": "Lyssnar på __capability__ av __name__: __value__",
     "noThreshold": "Ingen sparad temperatur för __name__: inget kommando skickades",
     "notFound": "__type__ `__idOrName__` hittades inte",
+    "revertFailed": "Kunde inte återställa temperaturen för __name__ till __value__; försöker igen senare",
     "reverted": "Återställer temperaturen för __name__: __value__",
     "saved": "Sparar temperaturen för __name__: __value__"
   },
