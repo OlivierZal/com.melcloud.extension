@@ -50,6 +50,7 @@ const categories: Partial<Record<string, LogCategory>> = {
   cleanedAll: { icon: '🛑' },
   created: { icon: '📡' },
   error: errorCategory,
+  kept: { icon: '📌' },
   listened: { colorClass: 'log-message-listened', icon: '👂' },
   reverted: { icon: '↩️' },
   saved: { icon: '☁️' },

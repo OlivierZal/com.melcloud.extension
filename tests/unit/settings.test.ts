@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 // @vitest-environment-options {"settings": {"disableJavaScriptFileLoading": true, "handleDisabledFileLoadingAsSuccess": true, "navigation": {"disableMainFrameNavigation": true}}}
 
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 
 import type HomeySettings from 'homey/lib/HomeySettings'
 import {
@@ -24,6 +24,17 @@ import type {
 // A plain relative path: under the happy-dom environment
 // `import.meta.url` is an http URL the fs module refuses.
 const pageHtml = readFileSync('settings/index.html', 'utf8')
+
+// The messages of the History, and the sources that push them.
+const { log: logMessages } = JSON.parse(
+  readFileSync('.homeycompose/locales/en.json', 'utf8'),
+) as { log: Record<string, string> }
+const appSources = [
+  'app.mts',
+  ...readdirSync('listeners').map((file) => `listeners/${file}`),
+]
+  .map((file) => readFileSync(file, 'utf8'))
+  .join('\n')
 
 // Fixed mid-day clock (pinned at `Temporal.Now`, so `setImmediate`
 // stays real for settleDetached): every relative-time offset below
@@ -460,6 +471,24 @@ describe('settings page', () => {
       expect(row?.textContent).toContain('⚠️')
       expect(row?.textContent).toContain('il y a 2 heures')
       expect(row?.querySelector('.log-message-error')).not.toBeNull()
+    })
+
+    // An entry's category is its message id, except for the messages
+    // the app files under `error`: every other one is an event of its
+    // own and must not be drawn as a failure.
+    it.each(
+      Object.keys(logMessages).filter(
+        (id) => !appSources.includes(`'error.${id}'`),
+      ),
+    )('should give a "%s" entry a row of its own', async (category) => {
+      const { emit } = await bootPage()
+
+      emit('log', { category, message: 'Done', time: NOW_MS - HOURS_2_MS })
+
+      const [row] = logRows()
+
+      expect(row?.textContent).not.toContain('⚠️')
+      expect(row?.querySelector('.log-message-error')).toBeNull()
     })
 
     it('should insert a same-day live log right below the separator', async () => {

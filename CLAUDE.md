@@ -285,7 +285,25 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
 ## Platform gotchas
 
 - `.homeycompose/` is the SOURCE for `app.json` and `locales/*.json`;
-  commit the CLI-generated outputs verbatim (no trailing newline).
+  commit the CLI-generated outputs verbatim (no trailing newline). The
+  CLI MERGES each source locale into the generated file it finds
+  (`HomeyCompose._composeLocales`, read in homey 4.6.3 on 2026-11-22):
+  a text written in a generated locale alone survives every build and
+  is lost the day the file is generated afresh, and nothing ever
+  removes a key the source dropped. `log.revertFailed` lived that way,
+  in the thirteen generated locales and in no source, from 2026-09-11
+  to 2026-11-22. `tests/unit/locales.test.ts` holds every message the
+  app pushes to the English source, and every language to English's
+  texts.
+- The History draws a row by its category: `pushToUI` files
+  `error.<id>` under `error` and a plain id under itself, and the page
+  falls back to the error row for a category its `categories` table
+  does not know. That fallback is right for an app newer than the page
+  a phone cached, and wrong for an event: `kept` was drawn as a failure
+  from 2026-08-15 to 2026-11-22 for want of an entry. A message pushed
+  plain needs its entry in that table; `tests/unit/settings.test.ts`
+  derives the list (the `log` messages of the English source that no
+  source pushes as `error.<id>`) and fails on a missing row.
 - App-API surface conventions (aligned on com.melcloud): paths are
   kebab-case REST, `get*` for GET — except `is*` for a boolean GET —,
   `update*` for PUT, a business verb for POST (`logWebviewBoot` on

@@ -8,6 +8,7 @@
     "listened": "Escucha de __capability__ de __name__: __value__",
     "noThreshold": "No hay temperatura guardada para __name__: no se envió ninguna orden",
     "notFound": "No se puede encontrar __type__ `__idOrName__`",
+    "revertFailed": "No se pudo restablecer la temperatura de __name__ a __value__; se reintentará más tarde",
     "reverted": "Restablecimiento de la temperatura de __name__: __value__",
     "saved": "Guardado de la temperatura de __name__: __value__"
   },
