@@ -292,9 +292,9 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   is lost the day the file is generated afresh, and nothing ever
   removes a key the source dropped. `log.revertFailed` lived that way,
   in the thirteen generated locales and in no source, from 2026-09-11
-  to 2026-11-22. `tests/unit/locales.test.ts` holds every message the
-  app pushes to the English source, and every language to English's
-  texts.
+  to 2026-11-22. `tests/unit/locales.test.ts` holds each generated
+  locale to what its source declares, no more, every message the app
+  pushes to the English source, and every language to English's texts.
 - The History draws a row by its category: `pushToUI` files
   `error.<id>` under `error` and a plain id under itself, and the page
   falls back to the error row for a category its `categories` table

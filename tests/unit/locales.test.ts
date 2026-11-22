@@ -4,8 +4,11 @@ import { describe, expect, it } from 'vitest'
 
 const SOURCES = '.homeycompose/locales'
 
+const readJson = (file: string): unknown =>
+  JSON.parse(readFileSync(file, 'utf8'))
+
 const readLocale = (language: string): unknown =>
-  JSON.parse(readFileSync(`${SOURCES}/${language}.json`, 'utf8'))
+  readJson(`${SOURCES}/${language}.json`)
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null
@@ -35,9 +38,19 @@ const pushedMessages = [
 ].map(({ groups }) => groups?.id ?? '')
 
 describe('locale sources', () => {
-  // The generated `locales/*.json` keep whatever they once held: a text
-  // written there alone survives every build and is lost the day the
-  // file is generated afresh.
+  // The Homey CLI merges a source into the generated file it finds: a
+  // text written in `locales/*.json` alone survives every build and is
+  // lost the day the file is generated afresh, and a text the source
+  // dropped is never removed.
+  it.each(languages)(
+    'should hold in the generated "%s" what its source declares, no more',
+    (language) => {
+      expect(
+        new Set(keyPaths(readJson(`locales/${language}.json`))),
+      ).toStrictEqual(new Set(keyPaths(readLocale(language))))
+    },
+  )
+
   it.each([...new Set(pushedMessages)])(
     'should declare the "%s" message the app pushes',
     (id) => {
