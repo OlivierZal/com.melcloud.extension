@@ -612,7 +612,9 @@ export default class MELCloudExtensionApp extends App {
       // the write timing out — and only the first of those is a missing
       // device. Saying so for all three sent the user hunting for a
       // device that is present, and the cause reached no log at all.
-      this.error('Reverting the temperature failed:', device.name, value, error)
+      // The line names the device by its id: its name is what its owner
+      // typed, and is for the history shown to that owner, below.
+      this.error('Reverting the temperature failed:', device.id, value, error)
       this.pushToUI('error.revertFailed', {
         name: device.name,
         value: formatTemperature(value),

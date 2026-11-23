@@ -307,6 +307,13 @@ start`. Never rename or drop a shipped bundle filename; add alongside. A second 
   9.2.0: texts, wordings, and a language that has only one of the two
   files), every message the app pushes to the English source, and every
   language to English's texts.
+- A device's name is for the History, never for the log. The History
+  is shown to the person who named the device; the log is what a
+  diagnostic report reproduces, and reports get pasted into public
+  issues. The one line that names a device, `Reverting the temperature
+failed:`, carries its Homey id (it carried `device.name` until
+  2026-11-23, found when a com.melcloud report showed a device name on
+  every device line of the twin apps).
 - The History draws a row by its category: `pushToUI` files
   `error.<id>` under `error` and a plain id under itself, and the page
   falls back to the error row for a category its `categories` table

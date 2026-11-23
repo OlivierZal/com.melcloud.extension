@@ -1063,9 +1063,11 @@ describe(MELCloudExtensionApp, () => {
 
       expect(logMessages(mockHomey)).toContain('log.revertFailed')
       expect(logMessages(mockHomey)).not.toContain('log.notFound')
+      // The device is named by its id: its name is what its owner
+      // typed, and a diagnostic report reproduces the line.
       expect(error).toHaveBeenCalledWith(
         'Reverting the temperature failed:',
-        expect.any(String),
+        'classic-1',
         expect.any(Number),
         expect.any(Error),
       )
