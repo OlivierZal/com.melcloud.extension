@@ -57,13 +57,23 @@ Run the FULL suite before any push — CI runs all of it:
   cover formatting).
 - `npm run lint` / `npm run lint:fix` — ESLint (also lints CSS, HTML,
   JSON, YAML and Markdown via the language plugins).
-- `npm run typecheck` — the native TypeScript 7 compiler, reached by
-  its explicit path, `node ./node_modules/@typescript/native/bin/tsc`
-  (`build` spells out the same path). Keep the path explicit: the
-  native package ships no `.bin` shim, and the `tsc` and `tsc6` shims
-  that do exist come from the compat package `@typescript/typescript6`
-  and run TypeScript 6 — a bare `tsc` would silently typecheck on the
-  wrong compiler.
+- `npm run typecheck` — the native TypeScript 7 compiler, reached by its
+  explicit path, `node ./node_modules/@typescript/native/bin/tsc`
+  (`build` spells out the same path). Keep the path explicit. Not
+  because a bare `tsc` runs the wrong compiler today: re-measured
+  2026-11-22, in this tree and in fresh installs under npm 10.9.8 and
+  11.20.0, `.bin/tsc` is the native 7.x compiler and `tsc6` the only
+  shim of the TypeScript 6 compat package (it was the other way round
+  when the layout was adopted, in August 2026). Two installed packages
+  declare a `tsc` bin, `@typescript/native` and `@typescript/old` (the
+  TypeScript 6 the compat package depends on), and npm gives the shim to
+  one of them: the explicit path names the package the script means, so
+  a layout change fails loudly instead of swapping the compiler behind
+  the shim. The two compilers are npm aliases in `package.json`, the
+  official TypeScript 6/7 side-by-side layout: `@typescript/native` is
+  `typescript@7`, and the TS6 JS API continues as
+  `@typescript/typescript6`, installed under the `typescript` name for
+  tools with a `typescript` peer (typescript-eslint).
 - `npm test` / `npm run test:coverage` — vitest; coverage is at 100%
   (branches included) across the whole tree — the settings page
   (happy-dom) and `scripts/bundle.mts` included; only `.homeybuild/**`
@@ -744,6 +754,11 @@ app-side, from the app root.
   SECURITY.md, CLAUDE.md) — never a later sweep; the 2026-08 README
   audit caught exactly the drift this prevents (a shipped Home ATW
   driver absent from its README, a stale `Result` kind list).
+- README.md speaks to the app's USER, a Homey owner: what the app does,
+  in the words Homey shows, how to get started, and what the UI does
+  not say by itself. No technical detail there (build, compiler, tests,
+  modules, protocols): that is CONTRIBUTING.md's and this file's
+  (owner's rule, 2026-11-22).
 - Every substantive wave ends with a cleanup pass over its own diff —
   residue (history comments, orphaned helpers, stale doc claims),
   simplification, and the factoring the change just made possible.
