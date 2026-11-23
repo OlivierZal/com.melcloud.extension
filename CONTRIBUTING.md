@@ -20,6 +20,8 @@ whole surface is that page plus the listeners that keep it in step.
 - A GitHub personal access token with the `read:packages` scope, exported
   as `NODE_AUTH_TOKEN` — [`.npmrc`](.npmrc) reads that variable to fetch
   the `@olivierzal` packages from GitHub Packages
+- The [Homey CLI](https://apps.developer.homey.app/the-basics/getting-started),
+  which the `homey:*` scripts run through `npx homey`
 - A Homey Pro with the MELCloud app installed and at least one air-to-air
   device paired, for anything beyond a unit test
 
