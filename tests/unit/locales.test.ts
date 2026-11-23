@@ -1,14 +1,12 @@
 import { readdirSync, readFileSync } from 'node:fs'
 
+import { findLocaleDrift } from '@olivierzal/homey-kit/testing'
 import { describe, expect, it } from 'vitest'
 
 const SOURCES = '.homeycompose/locales'
 
-const readJson = (file: string): unknown =>
-  JSON.parse(readFileSync(file, 'utf8'))
-
 const readLocale = (language: string): unknown =>
-  readJson(`${SOURCES}/${language}.json`)
+  JSON.parse(readFileSync(`${SOURCES}/${language}.json`, 'utf8'))
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null
@@ -41,15 +39,11 @@ describe('locale sources', () => {
   // The Homey CLI merges a source into the generated file it finds: a
   // text written in `locales/*.json` alone survives every build and is
   // lost the day the file is generated afresh, and a text the source
-  // dropped is never removed.
-  it.each(languages)(
-    'should hold in the generated "%s" what its source declares, no more',
-    (language) => {
-      expect(
-        new Set(keyPaths(readJson(`locales/${language}.json`))),
-      ).toStrictEqual(new Set(keyPaths(readLocale(language))))
-    },
-  )
+  // dropped is never removed. The comparison is the kit's: texts and
+  // wordings, and a language that has only one of the two files.
+  it('should generate exactly what the sources declare', async () => {
+    await expect(findLocaleDrift('.')).resolves.toStrictEqual([])
+  })
 
   it.each([...new Set(pushedMessages)])(
     'should declare the "%s" message the app pushes',
